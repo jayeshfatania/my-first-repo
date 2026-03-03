@@ -1,2 +1,3 @@
 # my-first-repo
-My first reportitory
+My first repository
+This is my first GitHub repository. I'm still learning Git!
