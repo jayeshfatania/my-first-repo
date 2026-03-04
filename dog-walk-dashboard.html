@@ -3,386 +3,146 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🐾 Walk Planner — London</title>
+  <title>🐾 Walk Planner</title>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --sky-day: #d4e9f7;
-      --sky-night: #0f1b2d;
-      --amber: #e8a838;
-      --moss: #5a7a52;
-      --sand: #f0e8d5;
-      --ink: #1a1a2e;
-      --mist: rgba(255,255,255,0.15);
-      --card-bg: rgba(255,255,255,0.18);
-      --card-border: rgba(255,255,255,0.35);
+      --amber: #e8a838; --moss: #5a7a52; --ink: #1a2a1a;
+      --card-bg: rgba(255,255,255,0.22); --card-border: rgba(255,255,255,0.4);
+      --text-muted: rgba(26,42,26,0.55);
     }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
-      background: var(--sky-day);
-      transition: background 1.5s ease;
-      overflow-x: hidden;
-    }
-
-    body.night {
-      background: var(--sky-night);
-      --card-bg: rgba(255,255,255,0.07);
-      --card-border: rgba(255,255,255,0.15);
-      --sand: #1e2a3a;
-      --ink: #e8f0f8;
-    }
-
-    /* Animated sky background */
-    .sky {
-      position: fixed; inset: 0; z-index: 0;
-      background: linear-gradient(180deg, #87c4e8 0%, #c9dff0 40%, #e8f4fb 100%);
-      transition: background 1.5s ease;
-    }
-    body.night .sky {
-      background: linear-gradient(180deg, #060d1a 0%, #0f1b2d 50%, #1a2a40 100%);
-    }
-
-    .stars {
-      position: fixed; inset: 0; z-index: 1;
-      opacity: 0; transition: opacity 1.5s ease;
-      background-image:
-        radial-gradient(1px 1px at 10% 20%, white, transparent),
-        radial-gradient(1px 1px at 25% 60%, white, transparent),
-        radial-gradient(1.5px 1.5px at 40% 10%, white, transparent),
-        radial-gradient(1px 1px at 55% 40%, white, transparent),
-        radial-gradient(1px 1px at 70% 15%, white, transparent),
-        radial-gradient(1.5px 1.5px at 80% 55%, white, transparent),
-        radial-gradient(1px 1px at 90% 30%, white, transparent),
-        radial-gradient(1px 1px at 15% 80%, white, transparent),
-        radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,0.6), transparent),
-        radial-gradient(1px 1px at 60% 75%, white, transparent),
-        radial-gradient(1.5px 1.5px at 75% 85%, white, transparent),
-        radial-gradient(1px 1px at 5% 50%, rgba(255,255,255,0.5), transparent);
-    }
+    body { font-family: 'DM Sans', sans-serif; min-height: 100vh; background: #c8dfc8; transition: background 1.5s ease; overflow-x: hidden; }
+    body.night { background: #0d1a0d; --card-bg: rgba(255,255,255,0.07); --card-border: rgba(255,255,255,0.12); --ink: #d8ead8; --text-muted: rgba(216,234,216,0.5); }
+    .sky { position: fixed; inset: 0; z-index: 0; background: linear-gradient(160deg,#7fb8a0 0%,#a8d4b8 35%,#c8dfc8 70%,#dde8cc 100%); transition: background 1.5s ease; }
+    body.night .sky { background: linear-gradient(160deg,#050f05 0%,#0a160a 40%,#0d1a10 100%); }
+    .stars { position: fixed; inset: 0; z-index: 1; opacity: 0; transition: opacity 1.5s ease; background-image: radial-gradient(1px 1px at 8% 15%,white,transparent),radial-gradient(1px 1px at 22% 55%,white,transparent),radial-gradient(1.5px 1.5px at 38% 8%,white,transparent),radial-gradient(1px 1px at 52% 38%,white,transparent),radial-gradient(1px 1px at 67% 12%,white,transparent),radial-gradient(1.5px 1.5px at 78% 52%,white,transparent),radial-gradient(1px 1px at 88% 28%,white,transparent),radial-gradient(1px 1px at 12% 75%,white,transparent); }
     body.night .stars { opacity: 1; }
-
-    /* Clouds */
     .clouds { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
-    .cloud {
-      position: absolute;
-      background: rgba(255,255,255,0.7);
-      border-radius: 50px;
-      filter: blur(4px);
-      animation: drift linear infinite;
-    }
-    .cloud::before, .cloud::after {
-      content: ''; position: absolute;
-      background: rgba(255,255,255,0.7);
-      border-radius: 50%;
-    }
-    .c1 { width: 120px; height: 35px; top: 12%; left: -140px; animation-duration: 60s; animation-delay: 0s; }
-    .c1::before { width: 60px; height: 55px; top: -25px; left: 20px; }
-    .c1::after  { width: 45px; height: 40px; top: -18px; left: 55px; }
-    .c2 { width: 90px; height: 28px; top: 22%; left: -110px; animation-duration: 80s; animation-delay: -30s; opacity: 0.6; }
-    .c2::before { width: 45px; height: 40px; top: -20px; left: 15px; }
-    .c3 { width: 150px; height: 40px; top: 8%; left: -170px; animation-duration: 100s; animation-delay: -60s; opacity: 0.5; }
-    .c3::before { width: 75px; height: 65px; top: -30px; left: 30px; }
-    .c3::after  { width: 55px; height: 50px; top: -22px; left: 80px; }
+    .cloud { position: absolute; background: rgba(255,255,255,0.55); border-radius: 50px; filter: blur(3px); animation: drift linear infinite; }
+    .cloud::before, .cloud::after { content: ''; position: absolute; background: rgba(255,255,255,0.55); border-radius: 50%; }
+    .c1 { width: 130px; height: 38px; top: 10%; left: -150px; animation-duration: 65s; }
+    .c1::before { width: 65px; height: 58px; top: -28px; left: 22px; }
+    .c1::after  { width: 48px; height: 42px; top: -20px; left: 60px; }
+    .c2 { width: 95px; height: 30px; top: 20%; left: -115px; animation-duration: 85s; animation-delay: -35s; opacity: 0.5; }
+    .c2::before { width: 48px; height: 42px; top: -22px; left: 18px; }
+    .c3 { width: 160px; height: 44px; top: 6%; left: -180px; animation-duration: 105s; animation-delay: -65s; opacity: 0.4; }
+    .c3::before { width: 80px; height: 68px; top: -32px; left: 32px; }
+    body.night .clouds { opacity: 0.08; }
+    @keyframes drift { from{transform:translateX(0)} to{transform:translateX(120vw)} }
 
-    body.night .clouds { opacity: 0.1; }
+    .wrapper { position: relative; z-index: 10; max-width: 920px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    header { text-align: center; margin-bottom: 1.8rem; animation: fadeUp 0.7s ease both; }
+    .logo { font-size: 2.6rem; margin-bottom: 0.2rem; }
+    h1 { font-family: 'Fraunces', serif; font-size: 2.2rem; font-weight: 300; color: var(--ink); letter-spacing: -0.02em; }
+    .subtitle { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem; }
 
-    @keyframes drift { from { transform: translateX(0); } to { transform: translateX(120vw); } }
+    .search-wrap { animation: fadeUp 0.7s ease 0.05s both; margin-bottom: 1.5rem; }
+    .search-box { display: flex; gap: 0.6rem; align-items: center; background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 16px; padding: 0.7rem 1rem; transition: border-color 0.2s; }
+    .search-box:focus-within { border-color: rgba(255,255,255,0.7); }
+    .search-icon { font-size: 1.1rem; flex-shrink: 0; opacity: 0.6; }
+    .search-input { flex: 1; background: none; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--ink); }
+    .search-input::placeholder { color: var(--text-muted); }
+    .search-btn { background: var(--ink); color: #fff; border: none; border-radius: 10px; padding: 0.45rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s; flex-shrink: 0; }
+    .search-btn:hover { opacity: 0.8; }
+    body.night .search-btn { background: rgba(255,255,255,0.18); color: var(--ink); }
+    .location-name { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; min-height: 1.2em; }
+    .search-error { text-align: center; font-size: 0.8rem; color: #c0392b; margin-top: 0.5rem; display: none; }
+    body.night .search-error { color: #e07070; }
 
-    /* Layout */
-    .wrapper {
-      position: relative; z-index: 10;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 4rem;
-    }
+    .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .tab { flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--card-border); background: var(--card-bg); backdrop-filter: blur(16px); border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; color: var(--ink); cursor: pointer; transition: all 0.2s; text-align: center; }
+    .tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    body.night .tab.active { background: rgba(255,255,255,0.18); color: var(--ink); }
 
-    /* Header */
-    header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-      animation: fadeUp 0.8s ease both;
-    }
+    .recommendation { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 20px; padding: 1.5rem 1.8rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 1.2rem; animation: fadeUp 0.7s ease 0.1s both; }
+    .rec-icon { font-size: 2.6rem; flex-shrink: 0; }
+    .rec-text h2 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 400; color: var(--ink); }
+    .rec-text p { font-size: 0.83rem; color: var(--text-muted); margin-top: 0.2rem; line-height: 1.5; }
 
-    .logo {
-      font-size: 2.8rem;
-      margin-bottom: 0.3rem;
-    }
-
-    h1 {
-      font-family: 'Fraunces', serif;
-      font-size: 2.4rem;
-      font-weight: 300;
-      color: var(--ink);
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-    }
-
-    .subtitle {
-      font-size: 0.9rem;
-      color: var(--ink);
-      opacity: 0.6;
-      margin-top: 0.4rem;
-      font-weight: 300;
-    }
-
-    /* Walk recommendation banner */
-    .recommendation {
-      background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 1.6rem 2rem;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1.2rem;
-      animation: fadeUp 0.8s ease 0.1s both;
-      transition: background 0.5s, border 0.5s;
-    }
-
-    .rec-icon { font-size: 2.8rem; flex-shrink: 0; }
-    .rec-text h2 {
-      font-family: 'Fraunces', serif;
-      font-size: 1.4rem;
-      font-weight: 400;
-      color: var(--ink);
-    }
-    .rec-text p {
-      font-size: 0.85rem;
-      color: var(--ink);
-      opacity: 0.7;
-      margin-top: 0.2rem;
-      line-height: 1.5;
-    }
-
-    /* Cards grid */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--card-border);
-      border-radius: 18px;
-      padding: 1.4rem 1.2rem;
-      transition: transform 0.2s ease, background 0.5s, border 0.5s;
-      animation: fadeUp 0.8s ease both;
-    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px,1fr)); gap: 0.9rem; margin-bottom: 1.2rem; }
+    .card { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.3rem 1.1rem; transition: transform 0.2s; animation: fadeUp 0.7s ease both; }
     .card:hover { transform: translateY(-3px); }
+    .card-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 500; }
+    .card-icon { font-size: 1.5rem; margin-bottom: 0.35rem; }
+    .card-value { font-family: 'Fraunces', serif; font-size: 1.9rem; font-weight: 300; color: var(--ink); line-height: 1; }
+    .card-unit { font-size: 0.78rem; color: var(--text-muted); margin-left: 0.15rem; }
+    .card-sub { font-size: 0.76rem; color: var(--text-muted); margin-top: 0.25rem; }
 
-    .card-label {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--ink);
-      opacity: 0.5;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
+    .rain-card { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.3rem 1.5rem; margin-bottom: 1.2rem; animation: fadeUp 0.7s ease 0.3s both; }
+    .rain-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .rain-summary-inline { font-size: 0.78rem; color: var(--text-muted); max-width: 55%; line-height: 1.4; text-align: right; }
+    .rain-summary-inline strong { color: var(--ink); }
+    .rain-hours { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.3rem; scrollbar-width: none; }
+    .rain-hours::-webkit-scrollbar { display: none; }
+    .rain-hour { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; min-width: 46px; }
+    .rain-hour .rh-time { font-size: 0.67rem; color: var(--text-muted); }
+    .rain-hour .rh-bar-wrap { width: 26px; height: 56px; background: rgba(0,0,0,0.06); border-radius: 6px; display: flex; align-items: flex-end; overflow: hidden; }
+    body.night .rain-hour .rh-bar-wrap { background: rgba(255,255,255,0.06); }
+    .rain-hour .rh-bar { width: 100%; border-radius: 6px; }
+    .rain-hour .rh-pct { font-size: 0.67rem; color: var(--ink); font-weight: 500; }
+    .rain-hour .rh-icon { font-size: 0.85rem; }
 
-    .card-icon { font-size: 1.6rem; margin-bottom: 0.4rem; }
-
-    .card-value {
-      font-family: 'Fraunces', serif;
-      font-size: 2rem;
-      font-weight: 300;
-      color: var(--ink);
-      line-height: 1;
-    }
-
-    .card-unit {
-      font-size: 0.8rem;
-      color: var(--ink);
-      opacity: 0.5;
-      margin-left: 0.2rem;
-    }
-
-    .card-sub {
-      font-size: 0.78rem;
-      color: var(--ink);
-      opacity: 0.6;
-      margin-top: 0.3rem;
-    }
-
-    /* Sun timeline */
-    .sun-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--card-border);
-      border-radius: 18px;
-      padding: 1.4rem 1.6rem;
-      margin-bottom: 1.5rem;
-      animation: fadeUp 0.8s ease 0.3s both;
-      transition: background 0.5s, border 0.5s;
-    }
-
-    .sun-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .sun-header .card-label { margin: 0; }
-
-    .sun-times {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .sun-time {
-      text-align: center;
-    }
-
-    .sun-time .icon { font-size: 1.4rem; }
-    .sun-time .time {
-      font-family: 'Fraunces', serif;
-      font-size: 1.4rem;
-      font-weight: 300;
-      color: var(--ink);
-    }
-    .sun-time .label {
-      font-size: 0.72rem;
-      color: var(--ink);
-      opacity: 0.5;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    /* Progress bar for daylight */
-    .daylight-bar {
-      flex: 1;
-      position: relative;
-      height: 6px;
-      background: rgba(0,0,0,0.1);
-      border-radius: 10px;
-      margin: 0 0.8rem;
-    }
+    .sun-card { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.3rem 1.5rem; margin-bottom: 1.2rem; animation: fadeUp 0.7s ease 0.35s both; }
+    .sun-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .sun-times { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .sun-time { text-align: center; }
+    .sun-time .icon { font-size: 1.3rem; }
+    .sun-time .time { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 300; color: var(--ink); }
+    .sun-time .label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .daylight-bar { flex: 1; position: relative; height: 6px; background: rgba(0,0,0,0.08); border-radius: 10px; margin: 0 0.7rem; }
     body.night .daylight-bar { background: rgba(255,255,255,0.1); }
+    .daylight-fill { height: 100%; background: linear-gradient(90deg,#f5a623,#f8d347); border-radius: 10px; }
+    .sun-marker { position: absolute; top: 50%; transform: translate(-50%,-50%); font-size: 0.9rem; }
+    .uv-bar-wrap { margin-top: 0.5rem; }
+    .uv-bar { height: 5px; border-radius: 10px; background: linear-gradient(90deg,#5cb85c,#f0ad4e,#d9534f); position: relative; }
+    .uv-marker { position: absolute; top: -4px; width: 13px; height: 13px; background: white; border: 2px solid #555; border-radius: 50%; transform: translateX(-50%); }
 
-    .daylight-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #f5a623, #f8d347);
-      border-radius: 10px;
-      transition: width 1s ease;
-    }
+    .walks-intro { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.3rem 1.5rem; margin-bottom: 1rem; animation: fadeUp 0.7s ease 0.1s both; }
+    .walks-intro h3 { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 400; color: var(--ink); margin-bottom: 0.3rem; }
+    .walks-intro p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+    .walk-list { display: flex; flex-direction: column; gap: 0.9rem; }
+    .walk-card { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.2rem 1.4rem; transition: transform 0.2s; animation: fadeUp 0.7s ease both; }
+    .walk-card:hover { transform: translateY(-2px); }
+    .walk-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+    .walk-name { font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 400; color: var(--ink); margin-bottom: 0.15rem; }
+    .walk-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+    .walk-tag { font-size: 0.68rem; padding: 0.15rem 0.55rem; border-radius: 20px; border: 1px solid var(--card-border); color: var(--text-muted); background: rgba(255,255,255,0.15); }
+    .walk-meta { display: flex; gap: 1rem; font-size: 0.76rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .walk-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+    .walk-badge { flex-shrink: 0; font-size: 1.8rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); border-radius: 12px; }
+    .walk-map-link { display: inline-block; margin-top: 0.5rem; font-size: 0.75rem; color: var(--moss); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+    .walk-map-link:hover { opacity: 0.7; }
+    body.night .walk-map-link { color: #7ab87a; }
+    .walk-card:nth-child(1){animation-delay:0.10s} .walk-card:nth-child(2){animation-delay:0.17s} .walk-card:nth-child(3){animation-delay:0.24s}
 
-    .sun-marker {
-      position: absolute;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 1rem;
-      transition: left 1s ease;
-    }
+    .splash { text-align: center; padding: 3rem 1rem; animation: fadeUp 0.7s ease both; }
+    .splash-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .splash h2 { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 300; color: var(--ink); margin-bottom: 0.5rem; }
+    .splash p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; max-width: 340px; margin: 0 auto; }
+    .splash-examples { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-top: 1.2rem; }
+    .example-pill { background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: 20px; padding: 0.35rem 0.9rem; font-size: 0.78rem; color: var(--ink); cursor: pointer; transition: all 0.2s; }
+    .example-pill:hover { background: var(--ink); color: #fff; }
 
-    /* UV index bar */
-    .uv-bar-wrap {
-      margin-top: 0.6rem;
-    }
-    .uv-bar {
-      height: 6px;
-      border-radius: 10px;
-      background: linear-gradient(90deg, #5cb85c, #f0ad4e, #d9534f);
-      position: relative;
-    }
-    .uv-marker {
-      position: absolute;
-      top: -4px;
-      width: 14px; height: 14px;
-      background: white;
-      border: 2px solid #333;
-      border-radius: 50%;
-      transform: translateX(-50%);
-      transition: left 1s ease;
-    }
-
-    /* Footer */
-    .footer {
-      text-align: center;
-      font-size: 0.75rem;
-      color: var(--ink);
-      opacity: 0.4;
-      margin-top: 1rem;
-      animation: fadeUp 0.8s ease 0.5s both;
-    }
-
-    .refresh-btn {
-      background: none;
-      border: 1px solid rgba(0,0,0,0.15);
-      border-radius: 20px;
-      padding: 0.3rem 0.8rem;
-      font-size: 0.75rem;
-      cursor: pointer;
-      color: var(--ink);
-      opacity: 0.5;
-      font-family: 'DM Sans', sans-serif;
-      margin-top: 0.4rem;
-      transition: opacity 0.2s;
-    }
+    .footer { text-align: center; font-size: 0.73rem; color: var(--text-muted); margin-top: 1rem; }
+    .refresh-btn { background: none; border: 1px solid rgba(0,0,0,0.15); border-radius: 20px; padding: 0.3rem 0.8rem; font-size: 0.73rem; cursor: pointer; color: var(--ink); opacity: 0.5; font-family: 'DM Sans', sans-serif; margin-top: 0.4rem; transition: opacity 0.2s; }
     .refresh-btn:hover { opacity: 1; }
     body.night .refresh-btn { border-color: rgba(255,255,255,0.2); }
 
-    /* Loading state */
-    .loading {
-      text-align: center;
-      padding: 4rem 2rem;
-      color: var(--ink);
-      opacity: 0.5;
-      font-family: 'Fraunces', serif;
-      font-size: 1.2rem;
-      font-weight: 300;
-      font-style: italic;
-    }
+    .loading { text-align: center; padding: 3rem 2rem; color: var(--ink); opacity: 0.5; font-family: 'Fraunces', serif; font-size: 1.1rem; font-style: italic; }
+    .spinner { display: inline-block; width: 22px; height: 22px; border: 2px solid rgba(0,0,0,0.1); border-top-color: var(--amber); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 0.8rem; }
 
-    .spinner {
-      display: inline-block;
-      width: 24px; height: 24px;
-      border: 2px solid rgba(0,0,0,0.15);
-      border-top-color: var(--amber);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-bottom: 1rem;
-    }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .card:nth-child(1){animation-delay:0.10s} .card:nth-child(2){animation-delay:0.15s}
+    .card:nth-child(3){animation-delay:0.20s} .card:nth-child(4){animation-delay:0.25s}
+    .card:nth-child(5){animation-delay:0.30s} .card:nth-child(6){animation-delay:0.35s}
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Stagger card animations */
-    .card:nth-child(1) { animation-delay: 0.15s; }
-    .card:nth-child(2) { animation-delay: 0.20s; }
-    .card:nth-child(3) { animation-delay: 0.25s; }
-    .card:nth-child(4) { animation-delay: 0.30s; }
-    .card:nth-child(5) { animation-delay: 0.35s; }
-    .card:nth-child(6) { animation-delay: 0.40s; }
-
-    /* walk score ring */
-    .score-ring {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      font-size: 1.6rem;
-      flex-shrink: 0;
-    }
-
-    @media (max-width: 480px) {
-      h1 { font-size: 1.8rem; }
-      .grid { grid-template-columns: repeat(2, 1fr); }
-      .recommendation { flex-direction: column; text-align: center; }
+    @media(max-width:480px){
+      h1{font-size:1.7rem} .grid{grid-template-columns:repeat(2,1fr)}
+      .recommendation{flex-direction:column;text-align:center}
+      .rain-summary-inline{max-width:100%;text-align:left;margin-top:0.4rem}
+      .rain-header{flex-direction:column;align-items:flex-start}
     }
   </style>
 </head>
@@ -399,240 +159,210 @@
     <header>
       <div class="logo">🐾</div>
       <h1>Walk Planner</h1>
-      <p class="subtitle">London · Live weather conditions</p>
+      <p class="subtitle">Real-time weather for wherever you're walking</p>
     </header>
 
+    <div class="search-wrap">
+      <div class="search-box">
+        <span class="search-icon">📍</span>
+        <input class="search-input" id="searchInput" type="text" placeholder="Type a postcode or place… e.g. KT2, Battersea, SW11" autocomplete="off" />
+        <button class="search-btn" onclick="doSearch()">Search</button>
+      </div>
+      <div class="location-name" id="locationName"></div>
+      <div class="search-error" id="searchError">Couldn't find that location — try a postcode like SW11 or a place name like Battersea.</div>
+    </div>
+
     <div id="app">
-      <div class="loading">
-        <div class="spinner"></div><br>
-        Fetching today's conditions…
+      <div class="splash">
+        <div class="splash-icon">🗺️</div>
+        <h2>Where are you walking today?</h2>
+        <p>Enter a UK postcode or place name above to get live weather, rain forecast and nearby walk suggestions.</p>
+        <div class="splash-examples">
+          <div class="example-pill" onclick="useExample('KT2')">KT2</div>
+          <div class="example-pill" onclick="useExample('Battersea')">Battersea</div>
+          <div class="example-pill" onclick="useExample('Richmond')">Richmond</div>
+          <div class="example-pill" onclick="useExample('Hampstead Heath')">Hampstead Heath</div>
+          <div class="example-pill" onclick="useExample('SW11')">SW11</div>
+          <div class="example-pill" onclick="useExample('Hyde Park London')">Hyde Park</div>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    const WMO = {
-      0:  ['☀️',  'Clear sky'],
-      1:  ['🌤️', 'Mainly clear'],
-      2:  ['⛅',  'Partly cloudy'],
-      3:  ['☁️',  'Overcast'],
-      45: ['🌫️', 'Foggy'],
-      48: ['🌫️', 'Icy fog'],
-      51: ['🌦️', 'Light drizzle'],
-      53: ['🌦️', 'Drizzle'],
-      55: ['🌧️', 'Heavy drizzle'],
-      61: ['🌧️', 'Slight rain'],
-      63: ['🌧️', 'Moderate rain'],
-      65: ['🌧️', 'Heavy rain'],
-      71: ['🌨️', 'Light snow'],
-      73: ['🌨️', 'Moderate snow'],
-      75: ['❄️',  'Heavy snow'],
-      80: ['🌦️', 'Rain showers'],
-      81: ['🌧️', 'Heavy showers'],
-      82: ['⛈️',  'Violent showers'],
-      95: ['⛈️',  'Thunderstorm'],
-      99: ['⛈️',  'Thunderstorm + hail'],
-    };
+    const WMO={0:['☀️','Clear sky'],1:['🌤️','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],45:['🌫️','Foggy'],48:['🌫️','Icy fog'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Heavy drizzle'],61:['🌧️','Slight rain'],63:['🌧️','Moderate rain'],65:['🌧️','Heavy rain'],71:['🌨️','Light snow'],73:['🌨️','Moderate snow'],75:['❄️','Heavy snow'],80:['🌦️','Rain showers'],81:['🌧️','Heavy showers'],82:['⛈️','Violent showers'],95:['⛈️','Thunderstorm'],99:['⛈️','Thunderstorm+hail']};
 
-    function getWmo(code) {
-      return WMO[code] || ['🌡️', 'Unknown conditions'];
+    let weatherData=null, currentTab='weather', currentLocation=null;
+
+    function getWmo(c){return WMO[c]||['🌡️','Unknown']}
+    function fmtTime(iso){return new Date(iso).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}
+    function windDir(d){return['N','NE','E','SE','S','SW','W','NW'][Math.round(d/45)%8]}
+    function uvLevel(u){if(u<=2)return['🟢','Low'];if(u<=5)return['🟡','Moderate'];if(u<=7)return['🟠','High'];if(u<=10)return['🔴','Very High'];return['🟣','Extreme']}
+    function daylightPct(rise,set){const n=Date.now(),r=new Date(rise).getTime(),s=new Date(set).getTime();if(n<r)return 0;if(n>s)return 100;return Math.round(((n-r)/(s-r))*100)}
+    function rainColor(p){if(p<20)return'#a8d4b8';if(p<50)return'#6aabde';if(p<75)return'#3b82c4';return'#1a4fa0'}
+
+    function walkRec(d){
+      const rain=[51,53,55,61,63,65,80,81,82,95,99].includes(d.weatherCode);
+      const storm=[82,95,99].includes(d.weatherCode);
+      const fog=[45,48].includes(d.weatherCode);
+      if(storm)return['⛈️','⚠️ Stay in today','Thunderstorms make this a bad day for walks. Wait it out!'];
+      if(d.windGust>=50)return['💨','⚠️ Very windy',`Gusts of ${Math.round(d.windGust)} km/h are too strong. Try later.`];
+      if(rain&&d.feelsLike<5)return['🥶','Bundle up & make it quick','Cold and rainy — a short walk with a good coat is fine.'];
+      if(rain)return['🌧️','Grab the lead & a raincoat','A bit wet but walkable. Stick to shorter paved routes.'];
+      if(fog)return['🌫️','Foggy — stay visible','Low visibility. Stick to familiar routes.'];
+      if(d.feelsLike<2)return['🥶','Brisk walk day',`Feels like ${Math.round(d.feelsLike)}°C — keep it short, watch for ice.`];
+      if(d.feelsLike>28)return['🌡️','Stay cool on your walk','Quite warm. Walk early or evening and bring water for your dog.'];
+      if(d.uvMax>=6)return['☀️','Great walk — watch the UV',`Lovely day but UV is ${d.uvMax}. Walk in shade, check paw temps on tarmac.`];
+      return['🐕','Great day for a walk!',`${getWmo(d.weatherCode)[1]} with ${Math.round(d.feelsLike)}°C feels-like. Perfect conditions!`];
     }
 
-    function fmtTime(iso) {
-      const d = new Date(iso);
-      return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    function buildRainSection(d){
+      const now=new Date();
+      const hours=d.hourlyTimes.map((t,i)=>({time:fmtTime(t),fullTime:new Date(t),prob:d.hourlyRainProb[i],precip:d.hourlyPrecip[i],wmo:d.hourlyWmo[i]})).filter(h=>h.fullTime>=now).slice(0,12);
+      const maxProb=Math.max(...hours.map(h=>h.prob),0);
+      const rainHours=hours.filter(h=>h.prob>=40).length;
+      const totalPrecip=hours.reduce((s,h)=>s+h.precip,0);
+      let summary;
+      if(maxProb<20)summary=`<strong>Looks dry</strong> for the rest of today.`;
+      else if(maxProb<50)summary=`<strong>Mostly dry</strong> — light showers possible. Worth a jacket.`;
+      else if(rainHours<=2)summary=`<strong>Brief showers</strong> (~${rainHours}h). Plan around the dry windows.`;
+      else summary=`<strong>Rainy ahead</strong> — ${rainHours}h of rain, up to ${totalPrecip.toFixed(1)}mm expected.`;
+      const bars=hours.map(h=>`<div class="rain-hour"><div class="rh-time">${h.time}</div><div class="rh-bar-wrap"><div class="rh-bar" style="height:${h.prob}%;background:${rainColor(h.prob)}"></div></div><div class="rh-pct">${h.prob}%</div><div class="rh-icon">${getWmo(h.wmo)[0]}</div></div>`).join('');
+      return`<div class="rain-card"><div class="rain-header"><span class="card-label">Rain forecast — next 12 hours</span><span class="rain-summary-inline">${summary}</span></div><div class="rain-hours">${bars}</div></div>`;
     }
 
-    function windDir(deg) {
-      const dirs = ['N','NE','E','SE','S','SW','W','NW'];
-      return dirs[Math.round(deg / 45) % 8];
-    }
-
-    function uvLevel(uv) {
-      if (uv <= 2)  return ['🟢', 'Low'];
-      if (uv <= 5)  return ['🟡', 'Moderate'];
-      if (uv <= 7)  return ['🟠', 'High'];
-      if (uv <= 10) return ['🔴', 'Very High'];
-      return ['🟣', 'Extreme'];
-    }
-
-    function walkRecommendation(data) {
-      const { temp, feelsLike, humidity, windSpeed, windGust, weatherCode, uvMax } = data;
-      const [,desc] = getWmo(weatherCode);
-      const isRaining = [51,53,55,61,63,65,80,81,82,95,99].includes(weatherCode);
-      const isStormy  = [82,95,99].includes(weatherCode);
-      const isFoggy   = [45,48].includes(weatherCode);
-      const windOk    = windGust < 50;
-      const tempOk    = feelsLike > 1 && feelsLike < 35;
-
-      if (isStormy)           return ['⛈️',  '⚠️ Stay in today', `Thunderstorms make this a bad day for walks. Wait it out — your dog will understand!`];
-      if (!windOk)            return ['💨',  '⚠️ Very windy', `Gusts of ${Math.round(windGust)} km/h are too strong for a comfortable walk. Try later if they ease.`];
-      if (isRaining && feelsLike < 5) return ['🥶', 'Bundle up & make it quick', `It's cold and rainy. A short walk with a good coat is fine — keep it brief.`];
-      if (isRaining)          return ['🌧️',  'Grab the lead & a raincoat', `A bit wet but walkable. Stick to shorter routes and dry off when you're back.`];
-      if (isFoggy)            return ['🌫️',  'Foggy — stay visible', `Low visibility today. Stick to familiar routes and consider a hi-vis lead.`];
-      if (feelsLike < 2)      return ['🥶',  'Brisk walk day', `Feels like ${Math.round(feelsLike)}°C — keep it short and watch for icy pavements.`];
-      if (feelsLike > 28)     return ['🌡️',  'Stay cool on your walk', `Quite warm at ${Math.round(feelsLike)}°C. Walk early morning or evening, bring water for your dog.`];
-      if (uvMax >= 6)         return ['☀️',  'Great walk — watch the UV', `Lovely conditions but UV is ${uvMax}. Walk in shade where possible and protect paws on hot pavements.`];
-      return ['🐕',  'Great day for a walk!', `${desc} with ${Math.round(feelsLike)}°C feels-like. Perfect conditions — enjoy your time outside!`];
-    }
-
-    function daylightProgress(sunrise, sunset) {
-      const now = Date.now();
-      const rise = new Date(sunrise).getTime();
-      const set  = new Date(sunset).getTime();
-      if (now < rise) return 0;
-      if (now > set)  return 100;
-      return Math.round(((now - rise) / (set - rise)) * 100);
-    }
-
-    async function fetchWeather() {
-      const url = 'https://api.open-meteo.com/v1/forecast' +
-        '?latitude=51.5074&longitude=-0.1278' +
-        '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,' +
-        'wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day' +
-        '&daily=sunrise,sunset,uv_index_max' +
-        '&timezone=Europe%2FLondon&forecast_days=1';
-
-      const res  = await fetch(url);
-      const json = await res.json();
-      const c = json.current;
-      const d = json.daily;
-
-      return {
-        temp:        Math.round(c.temperature_2m),
-        feelsLike:   c.apparent_temperature,
-        humidity:    c.relative_humidity_2m,
-        windSpeed:   Math.round(c.wind_speed_10m),
-        windDir:     windDir(c.wind_direction_10m),
-        windGust:    c.wind_gusts_10m,
-        weatherCode: c.weather_code,
-        isDay:       c.is_day,
-        sunrise:     d.sunrise[0],
-        sunset:      d.sunset[0],
-        uvMax:       d.uv_index_max[0],
-        updatedAt:   new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
-      };
-    }
-
-    function render(data) {
-      const [wmoIcon, wmoDesc] = getWmo(data.weatherCode);
-      const [recIcon, recTitle, recText] = walkRecommendation(data);
-      const [uvDot, uvText] = uvLevel(data.uvMax);
-      const dayPct = daylightProgress(data.sunrise, data.sunset);
-      const uvPct  = Math.min((data.uvMax / 11) * 100, 100);
-
-      document.body.classList.toggle('night', !data.isDay);
-
-      document.getElementById('app').innerHTML = `
-        <div class="recommendation">
-          <div class="score-ring">${recIcon}</div>
-          <div class="rec-text">
-            <h2>${recTitle}</h2>
-            <p>${recText}</p>
-          </div>
-        </div>
-
+    function renderWeather(d){
+      const[wi,wd]=getWmo(d.weatherCode),[ri,rt,rp]=walkRec(d),[ud,ut]=uvLevel(d.uvMax);
+      const dp=daylightPct(d.sunrise,d.sunset),up=Math.min((d.uvMax/11)*100,100);
+      return`
+        <div class="recommendation"><div class="rec-icon">${ri}</div><div class="rec-text"><h2>${rt}</h2><p>${rp}</p></div></div>
         <div class="grid">
-          <div class="card">
-            <div class="card-label">Conditions</div>
-            <div class="card-icon">${wmoIcon}</div>
-            <div class="card-value" style="font-size:1.1rem; padding-top:0.2rem">${wmoDesc}</div>
-          </div>
-
-          <div class="card">
-            <div class="card-label">Temperature</div>
-            <div class="card-icon">🌡️</div>
-            <div class="card-value">${data.temp}<span class="card-unit">°C</span></div>
-            <div class="card-sub">Feels like ${Math.round(data.feelsLike)}°C</div>
-          </div>
-
-          <div class="card">
-            <div class="card-label">Humidity</div>
-            <div class="card-icon">💧</div>
-            <div class="card-value">${data.humidity}<span class="card-unit">%</span></div>
-            <div class="card-sub">${data.humidity < 40 ? 'Dry air' : data.humidity < 70 ? 'Comfortable' : 'Quite humid'}</div>
-          </div>
-
-          <div class="card">
-            <div class="card-label">Wind</div>
-            <div class="card-icon">💨</div>
-            <div class="card-value">${data.windSpeed}<span class="card-unit">km/h</span></div>
-            <div class="card-sub">${data.windDir} · Gusts ${Math.round(data.windGust)} km/h</div>
-          </div>
-
-          <div class="card">
-            <div class="card-label">UV Index</div>
-            <div class="card-icon">${uvDot}</div>
-            <div class="card-value">${data.uvMax.toFixed(1)}</div>
-            <div class="card-sub">${uvText}</div>
-            <div class="uv-bar-wrap">
-              <div class="uv-bar">
-                <div class="uv-marker" style="left: ${uvPct}%"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-label">Paw Check</div>
-            <div class="card-icon">${data.temp > 25 ? '🔥' : data.temp < 0 ? '🧊' : '✅'}</div>
-            <div class="card-value" style="font-size:1rem; padding-top:0.2rem">
-              ${data.temp > 25 ? 'Hot pavements' : data.temp < 0 ? 'Ice risk' : 'Paws safe'}
-            </div>
-            <div class="card-sub">${data.temp > 25 ? 'Check tarmac temp' : data.temp < 0 ? 'Watch for gritting' : 'Ground temp is fine'}</div>
-          </div>
+          <div class="card"><div class="card-label">Conditions</div><div class="card-icon">${wi}</div><div class="card-value" style="font-size:1rem;padding-top:.2rem">${wd}</div></div>
+          <div class="card"><div class="card-label">Temperature</div><div class="card-icon">🌡️</div><div class="card-value">${d.temp}<span class="card-unit">°C</span></div><div class="card-sub">Feels like ${Math.round(d.feelsLike)}°C</div></div>
+          <div class="card"><div class="card-label">Humidity</div><div class="card-icon">💧</div><div class="card-value">${d.humidity}<span class="card-unit">%</span></div><div class="card-sub">${d.humidity<40?'Dry air':d.humidity<70?'Comfortable':'Quite humid'}</div></div>
+          <div class="card"><div class="card-label">Wind</div><div class="card-icon">💨</div><div class="card-value">${d.windSpeed}<span class="card-unit">km/h</span></div><div class="card-sub">${d.windDir} · Gusts ${Math.round(d.windGust)} km/h</div></div>
+          <div class="card"><div class="card-label">UV Index</div><div class="card-icon">${ud}</div><div class="card-value">${d.uvMax.toFixed(1)}</div><div class="card-sub">${ut}</div><div class="uv-bar-wrap"><div class="uv-bar"><div class="uv-marker" style="left:${up}%"></div></div></div></div>
+          <div class="card"><div class="card-label">Paw Check</div><div class="card-icon">${d.temp>25?'🔥':d.temp<0?'🧊':'✅'}</div><div class="card-value" style="font-size:.95rem;padding-top:.2rem">${d.temp>25?'Hot pavements':d.temp<0?'Ice risk':'Paws safe'}</div><div class="card-sub">${d.temp>25?'Check tarmac before walking':d.temp<0?'Watch for gritting salt':'Ground temp is fine'}</div></div>
         </div>
-
+        ${buildRainSection(d)}
         <div class="sun-card">
-          <div class="sun-header">
-            <span class="card-label">Daylight · ${fmtTime(data.sunrise)} – ${fmtTime(data.sunset)}</span>
-            <span style="font-size:0.78rem; opacity:0.4; color:var(--ink)">${dayPct}% through the day</span>
-          </div>
+          <div class="sun-header"><span class="card-label">Daylight · ${fmtTime(d.sunrise)} – ${fmtTime(d.sunset)}</span><span style="font-size:.74rem;color:var(--text-muted)">${dp}% through the day</span></div>
           <div class="sun-times">
-            <div class="sun-time">
-              <div class="icon">🌅</div>
-              <div class="time">${fmtTime(data.sunrise)}</div>
-              <div class="label">Sunrise</div>
-            </div>
-            <div class="daylight-bar">
-              <div class="daylight-fill" style="width: ${dayPct}%"></div>
-              <div class="sun-marker" style="left: ${dayPct}%">☀️</div>
-            </div>
-            <div class="sun-time">
-              <div class="icon">🌇</div>
-              <div class="time">${fmtTime(data.sunset)}</div>
-              <div class="label">Sunset</div>
-            </div>
+            <div class="sun-time"><div class="icon">🌅</div><div class="time">${fmtTime(d.sunrise)}</div><div class="label">Sunrise</div></div>
+            <div class="daylight-bar"><div class="daylight-fill" style="width:${dp}%"></div><div class="sun-marker" style="left:${dp}%">☀️</div></div>
+            <div class="sun-time"><div class="icon">🌇</div><div class="time">${fmtTime(d.sunset)}</div><div class="label">Sunset</div></div>
           </div>
         </div>
-
-        <div class="footer">
-          <div>Updated at ${data.updatedAt} · Source: Open-Meteo · London</div>
-          <button class="refresh-btn" onclick="init()">↻ Refresh</button>
-        </div>
-      `;
+        <div class="footer"><div>Updated ${d.updatedAt} · Open-Meteo · ${currentLocation.displayName}</div><button class="refresh-btn" onclick="refreshWeather()">↻ Refresh</button></div>`;
     }
 
-    async function init() {
-      document.getElementById('app').innerHTML = `
-        <div class="loading">
-          <div class="spinner"></div><br>
-          Fetching today's conditions…
-        </div>`;
-      try {
-        const data = await fetchWeather();
-        render(data);
-      } catch (e) {
-        document.getElementById('app').innerHTML = `
-          <div class="loading">
-            Couldn't load weather data.<br>
-            <button class="refresh-btn" onclick="init()" style="margin-top:1rem">Try again</button>
-          </div>`;
+    function renderWalks(d){
+      const rain=[51,53,55,61,63,65,80,81,82,95,99].includes(d.weatherCode);
+      const hot=d.feelsLike>22;
+      const loc=encodeURIComponent('dog walks near '+currentLocation.displayName);
+      const condNote=rain?`It's wet today — look for paved or sheltered routes.`:hot?`It's warm today — look for shaded or riverside walks.`:`Conditions look great today!`;
+      return`
+        <div class="walks-intro"><h3>Dog walks near ${currentLocation.displayName}</h3><p>${condNote} Browse dog-friendly walks in this area on Google Maps.</p></div>
+        <div class="walk-list">
+          <div class="walk-card"><div class="walk-top"><div><div class="walk-name">🗺️ Find walks near ${currentLocation.displayName}</div><div class="walk-tags"><span class="walk-tag">Google Maps</span><span class="walk-tag">Dog-friendly</span></div><div class="walk-meta"><span>📍 Your area</span><span>🐕 Dog-friendly</span></div></div><div class="walk-badge">🔍</div></div><div class="walk-desc">Search for dog walks, parks and green spaces near ${currentLocation.displayName}. See ratings, photos and directions.</div><a class="walk-map-link" href="https://www.google.com/maps/search/${loc}" target="_blank">Search dog walks on Google Maps →</a></div>
+          <div class="walk-card"><div class="walk-top"><div><div class="walk-name">🌳 Parks & green spaces</div><div class="walk-tags"><span class="walk-tag">Parks</span><span class="walk-tag">Off-lead areas</span></div><div class="walk-meta"><span>📍 ${currentLocation.displayName}</span></div></div><div class="walk-badge">🏞️</div></div><div class="walk-desc">Find the nearest parks and commons to let your dog off the lead and explore.</div><a class="walk-map-link" href="https://www.google.com/maps/search/${encodeURIComponent('dog friendly parks near '+currentLocation.displayName)}" target="_blank">Find parks on Google Maps →</a></div>
+          <div class="walk-card"><div class="walk-top"><div><div class="walk-name">☕ Dog-friendly cafés</div><div class="walk-tags"><span class="walk-tag">Cafés & pubs</span><span class="walk-tag">Post-walk</span></div><div class="walk-meta"><span>📍 ${currentLocation.displayName}</span></div></div><div class="walk-badge">☕</div></div><div class="walk-desc">Find dog-friendly cafés and pubs near ${currentLocation.displayName} for a well-earned post-walk treat.</div><a class="walk-map-link" href="https://www.google.com/maps/search/${encodeURIComponent('dog friendly cafe near '+currentLocation.displayName)}" target="_blank">Find dog-friendly cafés →</a></div>
+        </div>
+        <div class="footer" style="margin-top:1.5rem"><div>Walk suggestions powered by Google Maps · Always check conditions before heading out</div></div>`;
+    }
+
+    function showTab(tab){
+      currentTab=tab;
+      document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['weather','walks'][i]===tab));
+      if(!weatherData)return;
+      const p=document.getElementById('panel');
+      if(tab==='weather')p.innerHTML=renderWeather(weatherData);
+      if(tab==='walks')p.innerHTML=renderWalks(weatherData);
+    }
+
+    function renderShell(){
+      document.getElementById('app').innerHTML=`
+        <div class="tabs">
+          <div class="tab ${currentTab==='weather'?'active':''}" onclick="showTab('weather')">🌤️ Weather & Rain</div>
+          <div class="tab ${currentTab==='walks'?'active':''}" onclick="showTab('walks')">🗺️ Local Walks</div>
+        </div>
+        <div id="panel"><div class="loading"><div class="spinner"></div><br>Fetching conditions…</div></div>`;
+    }
+
+    // Geocoding: try postcodes.io first for UK postcodes, then Nominatim for place names
+    function isPostcode(q){ return /^[a-z]{1,2}\d{1,2}[a-z]?\s*\d?[a-z]{0,2}$/i.test(q.trim()); }
+
+    async function geocodePostcode(pc){
+      const clean=pc.replace(/\s/g,'').toUpperCase();
+      // Use the outward code (e.g. KT2, SW11) via postcodes.io
+      const url=`https://api.postcodes.io/outcodes/${encodeURIComponent(clean)}`;
+      const j=await(await fetch(url)).json();
+      if(j.status!==200||!j.result) throw new Error('not found');
+      return { lat:j.result.latitude, lon:j.result.longitude, displayName: clean };
+    }
+
+    async function geocodePlaceName(name){
+      // Nominatim - open geocoding, works from local files
+      const q=encodeURIComponent(name+', United Kingdom');
+      const url=`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&countrycodes=gb`;
+      const j=await(await fetch(url,{headers:{'Accept-Language':'en'}})).json();
+      if(!j||j.length===0) throw new Error('not found');
+      return { lat:parseFloat(j[0].lat), lon:parseFloat(j[0].lon), displayName: j[0].display_name.split(',').slice(0,2).join(',').trim() };
+    }
+
+    async function geocode(query){
+      const q=query.trim();
+      if(isPostcode(q)){
+        try{ return await geocodePostcode(q); }catch(e){}
+      }
+      // Fall through to Nominatim for place names (and postcode fallback)
+      return await geocodePlaceName(q);
+    }
+
+    async function fetchWeather(lat,lon){
+      const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day&hourly=precipitation_probability,precipitation,weather_code&daily=sunrise,sunset,uv_index_max&timezone=Europe%2FLondon&forecast_days=1`;
+      const j=await(await fetch(url)).json();
+      const c=j.current,d=j.daily,h=j.hourly;
+      return{temp:Math.round(c.temperature_2m),feelsLike:c.apparent_temperature,humidity:c.relative_humidity_2m,windSpeed:Math.round(c.wind_speed_10m),windDir:windDir(c.wind_direction_10m),windGust:c.wind_gusts_10m,weatherCode:c.weather_code,isDay:c.is_day,sunrise:d.sunrise[0],sunset:d.sunset[0],uvMax:d.uv_index_max[0],hourlyTimes:h.time,hourlyRainProb:h.precipitation_probability,hourlyPrecip:h.precipitation,hourlyWmo:h.weather_code,updatedAt:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})};
+    }
+
+    async function doSearch(){
+      const query=document.getElementById('searchInput').value.trim();
+      if(!query)return;
+      document.getElementById('searchError').style.display='none';
+      document.getElementById('locationName').textContent='Searching…';
+      renderShell();
+      try{
+        currentLocation=await geocode(query);
+        document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
+        weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
+        document.body.classList.toggle('night',!weatherData.isDay);
+        showTab(currentTab);
+      }catch(e){
+        document.getElementById('locationName').textContent='';
+        document.getElementById('searchError').style.display='block';
+        document.getElementById('app').innerHTML=`<div class="splash"><div class="splash-icon">🗺️</div><h2>Where are you walking today?</h2><p>Enter a UK postcode or place name above to get live weather, rain forecast and nearby walk suggestions.</p><div class="splash-examples"><div class="example-pill" onclick="useExample('KT2')">KT2</div><div class="example-pill" onclick="useExample('Battersea')">Battersea</div><div class="example-pill" onclick="useExample('Richmond')">Richmond</div><div class="example-pill" onclick="useExample('Hampstead Heath')">Hampstead Heath</div><div class="example-pill" onclick="useExample('SW11')">SW11</div><div class="example-pill" onclick="useExample('Hyde Park London')">Hyde Park</div></div></div>`;
       }
     }
 
-    init();
-    // Auto-refresh every 15 minutes
-    setInterval(init, 15 * 60 * 1000);
+    function useExample(val){
+      document.getElementById('searchInput').value=val;
+      doSearch();
+    }
+
+    async function refreshWeather(){
+      if(!currentLocation)return;
+      renderShell();
+      try{
+        weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
+        document.body.classList.toggle('night',!weatherData.isDay);
+        showTab(currentTab);
+      }catch(e){
+        document.getElementById('panel').innerHTML=`<div class="loading">Couldn't refresh. <button class="refresh-btn" onclick="refreshWeather()">Try again</button></div>`;
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('keydown',e=>{ if(e.key==='Enter') doSearch(); });
   </script>
 </body>
 </html>
