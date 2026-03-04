@@ -777,7 +777,7 @@ function goHome(){
   document.getElementById('searchInput').value='';
   document.getElementById('topNavSearchInput').value='';
   document.getElementById('locationName').textContent='';
-  document.getElementById('topNavLinks').style.display='none';
+  document.getElementById('topNavLinks') && (document.getElementById('topNavLinks').style.display='none');
   document.getElementById('bottomNav').style.display='none';
   ['weather','walks','places'].forEach(t=>{const sb=document.getElementById('sb'+t.charAt(0).toUpperCase()+t.slice(1));if(sb)sb.classList.toggle('active',t==='weather')});
   const hdr=document.querySelector('header');
@@ -798,15 +798,12 @@ async function doSearch(){
   renderShell();
   try{
     document.getElementById('bottomNav').style.display='none';
-    document.getElementById('topNavLinks').style.display='none';
     currentLocation=await geocode(query);
     saveRecentSearch(query);
     // collapse mobile header
     const hdr=document.querySelector('header');
     if(hdr)hdr.classList.add('collapsed');
-    // update top nav
     document.getElementById('bottomNav').style.display='';
-    document.getElementById('topNavLinks').style.display='';
     document.getElementById('topNavSearchInput').value=query;
     document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
     weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
