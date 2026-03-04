@@ -22,7 +22,7 @@
     .c3{width:160px;height:44px;top:6%;left:-180px;animation-duration:105s;animation-delay:-65s;opacity:.4}.c3::before{width:80px;height:68px;top:-32px;left:32px}
     body.night .clouds{opacity:.08}
     @keyframes drift{from{transform:translateX(0)}to{transform:translateX(120vw)}}
-    .wrapper{position:relative;z-index:10;max-width:920px;margin:0 auto;padding:2rem 1.5rem 4rem}
+    .wrapper{position:relative;z-index:10;max-width:920px;margin:0 auto;padding:2rem 1.5rem 6rem}
     header{text-align:center;margin-bottom:1.8rem;animation:fadeUp .7s ease both}
     .logo{font-size:2.6rem;margin-bottom:.2rem}
     h1{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:300;color:var(--ink);letter-spacing:-.02em}
@@ -39,10 +39,17 @@
     .location-name{text-align:center;font-size:.8rem;color:var(--text-muted);margin-top:.5rem;min-height:1.2em}
     .search-error{text-align:center;font-size:.8rem;color:#c0392b;margin-top:.5rem;display:none}
     body.night .search-error{color:#e07070}
-    .tabs{display:flex;gap:.5rem;margin-bottom:1.5rem}
-    .tab{flex:1;padding:.6rem .4rem;border:1px solid var(--card-border);background:var(--card-bg);backdrop-filter:blur(16px);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:var(--ink);cursor:pointer;transition:all .2s;text-align:center}
-    .tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
-    body.night .tab.active{background:rgba(255,255,255,.18);color:var(--ink)}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;background:rgba(255,255,255,0.55);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.5);padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom))}
+    body.night .bottom-nav{background:rgba(10,20,10,0.75);border-top-color:rgba(255,255,255,0.08)}
+    .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;cursor:pointer;padding:.3rem .5rem;transition:opacity .2s}
+    .nav-item-icon{font-size:1.3rem;transition:transform .2s}
+    .nav-item-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:500;transition:color .2s}
+    .nav-item.active .nav-item-label{color:var(--moss)}
+    body.night .nav-item.active .nav-item-label{color:#7ab87a}
+    .nav-item.active .nav-item-icon{transform:scale(1.15)}
+    .nav-dot{width:4px;height:4px;border-radius:50%;background:var(--moss);margin:0 auto;opacity:0;transition:opacity .2s}
+    body.night .nav-dot{background:#7ab87a}
+    .nav-item.active .nav-dot{opacity:1}
     .recommendation{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:20px;padding:1.5rem 1.8rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:1.2rem;animation:fadeUp .7s ease .1s both}
     .rec-icon{font-size:2.6rem;flex-shrink:0}
     .rec-text h2{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:400;color:var(--ink)}
@@ -178,7 +185,7 @@
     @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
     .card:nth-child(1){animation-delay:.10s}.card:nth-child(2){animation-delay:.15s}.card:nth-child(3){animation-delay:.20s}.card:nth-child(4){animation-delay:.25s}.card:nth-child(5){animation-delay:.30s}.card:nth-child(6){animation-delay:.35s}
     .item-card:nth-child(1){animation-delay:.10s}.item-card:nth-child(2){animation-delay:.17s}.item-card:nth-child(3){animation-delay:.24s}.item-card:nth-child(4){animation-delay:.31s}.item-card:nth-child(5){animation-delay:.38s}.item-card:nth-child(6){animation-delay:.45s}
-    @media(max-width:480px){h1{font-size:1.7rem}.grid{grid-template-columns:repeat(2,1fr)}.recommendation{flex-direction:column;text-align:center}.rain-summary-inline{max-width:100%;text-align:left;margin-top:.4rem}.rain-header{flex-direction:column;align-items:flex-start}.tab{font-size:.7rem;padding:.5rem .3rem}.form-row{grid-template-columns:1fr}}
+    @media(max-width:480px){h1{font-size:1.7rem}.grid{grid-template-columns:repeat(2,1fr)}.recommendation{flex-direction:column;text-align:center}.rain-summary-inline{max-width:100%;text-align:left;margin-top:.4rem}.rain-header{flex-direction:column;align-items:flex-start}.nav-item-label{font-size:.58rem}.form-row{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -216,6 +223,23 @@
       </div>
     </div>
   </div>
+  <nav class="bottom-nav" id="bottomNav" style="display:none">
+    <div class="nav-item active" onclick="showTab('weather')">
+      <div class="nav-item-icon">🌤️</div>
+      <div class="nav-item-label">Weather</div>
+      <div class="nav-dot"></div>
+    </div>
+    <div class="nav-item" onclick="showTab('walks')">
+      <div class="nav-item-icon">🥾</div>
+      <div class="nav-item-label">Walks</div>
+      <div class="nav-dot"></div>
+    </div>
+    <div class="nav-item" onclick="showTab('places')">
+      <div class="nav-item-icon">☕</div>
+      <div class="nav-item-label">Places</div>
+      <div class="nav-dot"></div>
+    </div>
+  </nav>
 <script>
 // ── WALKS DATABASE ────────────────────────────────────────────────────────────
 const WALKS_DB=[
@@ -549,7 +573,7 @@ async function loadPlaces(){
 // ── TAB & NAVIGATION ──────────────────────────────────────────────────────────
 function showTab(tab){
   currentTab=tab;
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['weather','walks','places'][i]===tab));
+  document.querySelectorAll('.nav-item').forEach((t,i)=>t.classList.toggle('active',['weather','walks','places'][i]===tab));
   if(!weatherData)return;
   const p=document.getElementById('panel');
   if(tab==='weather')p.innerHTML=renderWeather(weatherData);
@@ -558,11 +582,6 @@ function showTab(tab){
 }
 function renderShell(){
   document.getElementById('app').innerHTML=`
-    <div class="tabs">
-      <div class="tab ${currentTab==='weather'?'active':''}" onclick="showTab('weather')">🌤️ Weather</div>
-      <div class="tab ${currentTab==='walks'?'active':''}" onclick="showTab('walks')">🥾 Walks</div>
-      <div class="tab ${currentTab==='places'?'active':''}" onclick="showTab('places')">☕ Places</div>
-    </div>
     <div id="panel"><div class="loading"><div class="spinner"></div><br>Fetching conditions…</div></div>`;
 }
 
@@ -586,7 +605,9 @@ async function doSearch(){
   document.getElementById('locationName').textContent='Searching…';
   placesData=null;renderShell();
   try{
+    document.getElementById('bottomNav').style.display='none';
     currentLocation=await geocode(query);
+    document.getElementById('bottomNav').style.display='';
     document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
     weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
     document.body.classList.toggle('night',!weatherData.isDay);
