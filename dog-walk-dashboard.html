@@ -199,13 +199,25 @@
     body.night .success-msg{color:#7ab87a}
     .community-badge{display:inline-block;font-size:.68rem;padding:.12rem .5rem;border-radius:20px;background:rgba(232,168,56,.2);color:#a0680a;font-weight:500;margin-left:.4rem}
     body.night .community-badge{background:rgba(232,168,56,.15);color:var(--amber)}
-    .splash{text-align:center;padding:3rem 1rem;animation:fadeUp .7s ease both}
-    .splash-icon{font-size:3rem;margin-bottom:1rem}
-    .splash h2{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:var(--ink);margin-bottom:.5rem}
-    .splash p{font-size:.85rem;color:var(--text-muted);line-height:1.6;max-width:340px;margin:0 auto}
-    .splash-examples{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1.2rem}
-    .example-pill{background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:20px;padding:.35rem .9rem;font-size:.78rem;color:var(--ink);cursor:pointer;transition:all .2s}
+    .splash{text-align:center;padding:2.5rem 1rem 3rem;animation:fadeUp .7s ease both}
+    .splash-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;font-weight:500;color:var(--moss);background:rgba(90,122,82,.1);border:1px solid rgba(90,122,82,.2);border-radius:20px;padding:.28rem .85rem;margin-bottom:1.1rem}
+    body.night .splash-badge{color:#7ab87a;background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.25)}
+    .splash h2{font-family:'Fraunces',serif;font-size:1.9rem;font-weight:300;color:var(--ink);margin-bottom:.65rem;line-height:1.2;max-width:400px;margin-left:auto;margin-right:auto}
+    .splash h2 em{font-style:italic;color:var(--moss)}
+    .splash p{font-size:.85rem;color:var(--text-muted);line-height:1.65;max-width:340px;margin:0 auto}
+    .splash-stats{display:flex;gap:0;justify-content:center;margin:1.5rem auto 0;max-width:380px;background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:16px;overflow:hidden}
+    .splash-stat{flex:1;padding:.85rem .5rem;position:relative}
+    .splash-stat+.splash-stat::before{content:'';position:absolute;left:0;top:20%;height:60%;width:1px;background:var(--card-border)}
+    .splash-stat-num{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:300;color:var(--ink);display:block;line-height:1}
+    .splash-stat-label{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-top:.25rem;display:block}
+    .splash-features{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:1.2rem}
+    .splash-feat{display:flex;align-items:center;gap:.3rem;font-size:.75rem;color:var(--text-muted);background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;padding:.28rem .75rem;backdrop-filter:blur(12px)}
+    .splash-recent{margin-top:1.4rem}
+    .splash-recent-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);font-weight:500;margin-bottom:.55rem}
+    .splash-examples{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center}
+    .example-pill{background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:20px;padding:.35rem .9rem;font-size:.78rem;color:var(--ink);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.3rem}
     .example-pill:hover{background:var(--ink);color:#fff}
+    .splash-first-visit{font-size:.78rem;color:var(--text-muted);margin-top:1.2rem;font-style:italic}
     .footer{text-align:center;font-size:.73rem;color:var(--text-muted);margin-top:1rem}
     .refresh-btn{background:none;border:1px solid rgba(0,0,0,.15);border-radius:20px;padding:.3rem .8rem;font-size:.73rem;cursor:pointer;color:var(--ink);opacity:.5;font-family:'DM Sans',sans-serif;margin-top:.4rem;transition:opacity .2s}
     .refresh-btn:hover{opacity:1}
@@ -251,19 +263,7 @@
       <div class="search-error" id="searchError">Couldn't find that location — try a postcode like SW11 or a place name.</div>
     </div>
     <div id="app">
-      <div class="splash">
-        <div class="splash-icon">🗺️</div>
-        <h2>Where are you walking today?</h2>
-        <p>Enter a UK postcode or place name to get live weather, curated walks, dog-friendly spots and community reviews.</p>
-        <div class="splash-examples">
-          <div class="example-pill" onclick="useExample('KT2')">KT2</div>
-          <div class="example-pill" onclick="useExample('Battersea')">Battersea</div>
-          <div class="example-pill" onclick="useExample('Richmond')">Richmond</div>
-          <div class="example-pill" onclick="useExample('Hampstead Heath')">Hampstead Heath</div>
-          <div class="example-pill" onclick="useExample('Edinburgh')">Edinburgh</div>
-          <div class="example-pill" onclick="useExample('Brighton')">Brighton</div>
-        </div>
-      </div>
+      <div class="splash" id="splashContent"></div>
     </div>
   </div>
   <nav class="bottom-nav" id="bottomNav" style="display:none">
@@ -651,9 +651,32 @@ async function fetchWeather(lat,lon){
   const j=await(await fetch(url)).json();const c=j.current,d=j.daily,h=j.hourly;
   return{temp:Math.round(c.temperature_2m),feelsLike:c.apparent_temperature,humidity:c.relative_humidity_2m,windSpeed:Math.round(c.wind_speed_10m),windDir:windDir(c.wind_direction_10m),windGust:c.wind_gusts_10m,weatherCode:c.weather_code,isDay:c.is_day,sunrise:d.sunrise[0],sunset:d.sunset[0],uvMax:d.uv_index_max[0],hourlyTimes:h.time,hourlyRainProb:h.precipitation_probability,hourlyPrecip:h.precipitation,hourlyWmo:h.weather_code,updatedAt:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}
 }
+// ── RECENT SEARCHES ──────────────────────────────────────────────────────────
+function getRecentSearches(){try{return JSON.parse(localStorage.getItem('recentSearches')||'[]')}catch(e){return[]}}
+function saveRecentSearch(query){try{let r=getRecentSearches().filter(s=>s.toLowerCase()!==query.toLowerCase());r.unshift(query);r=r.slice(0,5);localStorage.setItem('recentSearches',JSON.stringify(r))}catch(e){}}
 function showSplash(){
-  document.getElementById('app').innerHTML=`<div class="splash"><div class="splash-icon">🗺️</div><h2>Where are you walking today?</h2><p>Enter a UK postcode or place name to get live weather, curated walks, dog-friendly spots and community reviews.</p><div class="splash-examples"><div class="example-pill" onclick="useExample('KT2')">KT2</div><div class="example-pill" onclick="useExample('Battersea')">Battersea</div><div class="example-pill" onclick="useExample('Richmond')">Richmond</div><div class="example-pill" onclick="useExample('Hampstead Heath')">Hampstead Heath</div><div class="example-pill" onclick="useExample('Edinburgh')">Edinburgh</div><div class="example-pill" onclick="useExample('Brighton')">Brighton</div></div></div>`;
-}
+  const totalWalks=WALKS_DB.length;
+  const recent=getRecentSearches();
+  const recentHTML=recent.length>0
+    ?`<div class="splash-recent"><div class="splash-recent-label">Recent searches</div><div class="splash-examples">${recent.map(r=>`<div class="example-pill" onclick="useExample('${r}')">🕐 ${r}</div>`).join('')}</div></div>`
+    :`<p class="splash-first-visit">Try searching for Richmond, SW11, Hampstead Heath or Edinburgh</p>`;
+  document.getElementById('app').innerHTML=`<div class="splash">
+    <div class="splash-badge">🐾 UK Dog Walk Planner</div>
+    <h2>Discover great walks<br><em>for you and your dog</em></h2>
+    <p>Curated routes, live weather conditions and dog-friendly places — everything you need before you head out.</p>
+    <div class="splash-stats">
+      <div class="splash-stat"><span class="splash-stat-num">${totalWalks}+</span><span class="splash-stat-label">Curated walks</span></div>
+      <div class="splash-stat"><span class="splash-stat-num">Live</span><span class="splash-stat-label">Weather data</span></div>
+      <div class="splash-stat"><span class="splash-stat-num">Free</span><span class="splash-stat-label">No login needed</span></div>
+    </div>
+    <div class="splash-features">
+      <div class="splash-feat">🌤️ Hazard warnings</div>
+      <div class="splash-feat">🥾 Walks near you</div>
+      <div class="splash-feat">☕ Dog-friendly places</div>
+      <div class="splash-feat">⭐ Community reviews</div>
+    </div>
+    ${recentHTML}
+  </div>`;};
 async function doSearch(){
   const query=document.getElementById('searchInput').value.trim();
   if(!query)return;
@@ -664,6 +687,7 @@ async function doSearch(){
     document.getElementById('bottomNav').style.display='none';
     document.getElementById('topNavLinks').style.display='none';
     currentLocation=await geocode(query);
+    saveRecentSearch(query);
     document.getElementById('bottomNav').style.display='';
     document.getElementById('topNavLinks').style.display='';    document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
     weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
@@ -682,6 +706,7 @@ async function refreshWeather(){
   catch(e){document.getElementById('panel').innerHTML=`<div class="loading">Couldn't refresh. <button class="refresh-btn" onclick="refreshWeather()">Try again</button></div>`}
 }
 document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch()});
+showSplash();
 setInterval(()=>{if(weatherData)refreshWeather()},15*60*1000);
 </script>
 </body>
