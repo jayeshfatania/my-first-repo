@@ -152,19 +152,37 @@
     .section-intro h3{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:400;color:var(--ink);margin-bottom:.25rem}
     .section-intro p{font-size:.8rem;color:var(--text-muted);line-height:1.5}
     .item-list{display:flex;flex-direction:column;gap:.9rem}
-    .item-card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1.2rem 1.4rem;transition:transform .2s;animation:fadeUp .7s ease both}
-    .item-card:hover{transform:translateY(-2px)}
-    .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
-    .item-name{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:400;color:var(--ink);margin-bottom:.15rem}
-    .item-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.4rem}
-    .item-tag{font-size:.68rem;padding:.15rem .55rem;border-radius:20px;border:1px solid var(--card-border);color:var(--text-muted);background:rgba(255,255,255,.15)}
-    .item-meta{display:flex;gap:1rem;font-size:.76rem;color:var(--text-muted);margin-bottom:.4rem;flex-wrap:wrap}
-    .item-desc{font-size:.8rem;color:var(--text-muted);line-height:1.5}
-    .item-weather-note{margin-top:.6rem;padding:.5rem .7rem;background:rgba(0,0,0,.04);border-radius:8px;font-size:.75rem;color:var(--text-muted)}
-    body.night .item-weather-note{background:rgba(255,255,255,.04)}
-    .item-badge{flex-shrink:0;font-size:1.6rem;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.2);border-radius:12px}
-    .item-distance-badge{display:inline-block;font-size:.72rem;background:rgba(90,122,82,.15);color:var(--moss);border-radius:20px;padding:.15rem .6rem;font-weight:500}
-    body.night .item-distance-badge{background:rgba(122,184,122,.15);color:#7ab87a}
+    .item-card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:20px;overflow:hidden;transition:box-shadow .2s;animation:fadeUp .7s ease both;margin-bottom:.7rem}
+    .item-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.07)}
+    /* Compact row — always visible */
+    .item-card-compact{display:flex;align-items:center;gap:1rem;padding:1rem 1.2rem;cursor:pointer;user-select:none}
+    .item-card-compact:hover .item-name{color:var(--moss)}
+    body.night .item-card-compact:hover .item-name{color:#7ab87a}
+    .item-badge{flex-shrink:0;font-size:1.6rem;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.25);border:1px solid var(--card-border);border-radius:12px}
+    .item-compact-body{flex:1;min-width:0}
+    .item-name{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:400;color:var(--ink);line-height:1.3;margin-bottom:.3rem;transition:color .2s}
+    .item-compact-meta{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+    .item-tag{font-size:.67rem;padding:.15rem .55rem;border-radius:20px;border:1px solid var(--card-border);color:var(--text-muted);background:rgba(255,255,255,.15)}
+    .item-distance-badge{font-size:.67rem;padding:.15rem .55rem;border-radius:20px;background:rgba(90,122,82,.12);color:var(--moss);border:1px solid rgba(90,122,82,.2);font-weight:500}
+    body.night .item-distance-badge{background:rgba(122,184,122,.12);color:#7ab87a;border-color:rgba(122,184,122,.2)}
+    .item-compact-right{display:flex;flex-direction:column;align-items:flex-end;gap:.35rem;flex-shrink:0}
+    .item-compact-stats{display:flex;gap:.35rem}
+    .item-compact-stat{font-size:.72rem;color:var(--text-muted)}
+    .item-expand-icon{font-size:.75rem;color:var(--text-muted);transition:transform .25s}
+    .item-card.expanded .item-expand-icon{transform:rotate(180deg)}
+    .avg-stars-compact{display:flex;align-items:center;gap:.2rem}
+    .avg-star-s{font-size:.75rem;opacity:.25}
+    .avg-star-s.filled{opacity:1}
+    .avg-label-s{font-size:.68rem;color:var(--text-muted)}
+    /* Expanded detail — hidden by default */
+    .item-card-detail{display:none;padding:0 1.2rem 1.2rem;border-top:1px solid var(--card-border)}
+    .item-card.expanded .item-card-detail{display:block}
+    .item-stats{display:flex;gap:.45rem;flex-wrap:wrap;margin:.85rem 0 .65rem}
+    .item-stat{display:inline-flex;align-items:center;gap:.3rem;font-size:.75rem;color:var(--ink);background:rgba(255,255,255,.2);border:1px solid var(--card-border);border-radius:8px;padding:.22rem .65rem}
+    body.night .item-stat{background:rgba(255,255,255,.07)}
+    .item-desc{font-size:.82rem;color:var(--text-muted);line-height:1.65;margin-bottom:.65rem}
+    .item-weather-note{padding:.55rem .8rem;background:rgba(90,122,82,.07);border-left:3px solid rgba(90,122,82,.3);border-radius:0 8px 8px 0;font-size:.76rem;color:var(--text-muted);margin-bottom:.65rem;line-height:1.5}
+    body.night .item-weather-note{background:rgba(122,184,122,.07);border-left-color:rgba(122,184,122,.3)}
     .walk-map-link{display:inline-block;margin-top:.5rem;font-size:.75rem;color:var(--moss);text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:1px}
     .walk-map-link:hover{opacity:.7}
     body.night .walk-map-link{color:#7ab87a}
@@ -173,24 +191,26 @@
     .star{font-size:1.3rem;cursor:pointer;opacity:.3;transition:opacity .15s,transform .15s}
     .star.filled,.star:hover{opacity:1}
     .star:hover{transform:scale(1.2)}
-    .avg-stars{display:flex;align-items:center;gap:.35rem;margin:.4rem 0}
-    .avg-star{font-size:.95rem;opacity:.25}
+    .avg-stars{display:flex;align-items:center;gap:.35rem}
+    .avg-star{font-size:.9rem;opacity:.25}
     .avg-star.filled{opacity:1}
-    .avg-label{font-size:.75rem;color:var(--text-muted)}
-    /* Reviews */
-    .reviews-section{margin-top:1rem;border-top:1px solid var(--card-border);padding-top:.9rem}
-    .reviews-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);font-weight:500;margin-bottom:.6rem}
-    .review-item{margin-bottom:.7rem;padding:.6rem .8rem;background:rgba(0,0,0,.03);border-radius:10px}
-    body.night .review-item{background:rgba(255,255,255,.04)}
-    .review-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem}
-    .review-stars{font-size:.8rem}
-    .review-date{font-size:.68rem;color:var(--text-muted)}
-    .review-text{font-size:.8rem;color:var(--text-muted);line-height:1.5}
-    .review-photo{margin-top:.5rem;width:100%;max-width:280px;border-radius:8px;object-fit:cover;max-height:180px}
-    /* Add review form */
-    .add-review-btn{display:inline-flex;align-items:center;gap:.4rem;margin-top:.7rem;font-size:.78rem;color:var(--moss);background:rgba(90,122,82,.1);border:1px solid rgba(90,122,82,.2);border-radius:20px;padding:.35rem .9rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+    .avg-label{font-size:.73rem;color:var(--text-muted)}
+    /* Reviews section */
+    .reviews-section{border-top:1px solid var(--card-border);padding-top:1rem;margin-top:.25rem}
+    .reviews-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+    .reviews-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);font-weight:500}
+    .add-review-btn{display:inline-flex;align-items:center;gap:.35rem;font-size:.75rem;color:var(--moss);background:rgba(90,122,82,.1);border:1px solid rgba(90,122,82,.25);border-radius:20px;padding:.3rem .85rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;font-weight:500}
     .add-review-btn:hover{background:rgba(90,122,82,.2)}
     body.night .add-review-btn{color:#7ab87a;background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.2)}
+    .review-item{margin-bottom:.6rem;padding:.65rem .85rem;background:rgba(255,255,255,.12);border:1px solid var(--card-border);border-radius:12px}
+    body.night .review-item{background:rgba(255,255,255,.04)}
+    .review-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}
+    .review-stars{font-size:.8rem}
+    .review-date{font-size:.68rem;color:var(--text-muted)}
+    .review-text{font-size:.8rem;color:var(--text-muted);line-height:1.55}
+    .review-photo{margin-top:.5rem;width:100%;max-width:280px;border-radius:8px;object-fit:cover;max-height:180px}
+    .no-reviews{font-size:.8rem;color:var(--text-muted);font-style:italic;margin-bottom:.6rem}
+    /* Add review form */
     .review-form{margin-top:.8rem;padding:.9rem;background:rgba(255,255,255,.12);border-radius:12px;border:1px solid var(--card-border);display:none}
     .review-form.open{display:block}
     .review-form textarea{width:100%;background:rgba(255,255,255,.2);border:1px solid var(--card-border);border-radius:8px;padding:.6rem .8rem;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--ink);resize:vertical;min-height:70px;outline:none}
@@ -200,9 +220,9 @@
     .photo-label:hover{background:rgba(255,255,255,.25)}
     .photo-input{display:none}
     .photo-preview{margin-top:.5rem;max-width:200px;max-height:120px;border-radius:8px;object-fit:cover;display:none}
-    .submit-review-btn{background:var(--ink);color:#fff;border:none;border-radius:10px;padding:.4rem 1rem;font-family:'DM Sans',sans-serif;font-size:.8rem;cursor:pointer;transition:opacity .2s;margin-left:auto}
+    .submit-review-btn{background:var(--moss);color:#fff;border:none;border-radius:10px;padding:.4rem 1rem;font-family:'DM Sans',sans-serif;font-size:.8rem;cursor:pointer;transition:opacity .2s;margin-left:auto}
     .submit-review-btn:hover{opacity:.8}
-    body.night .submit-review-btn{background:rgba(255,255,255,.2);color:var(--ink)}
+    body.night .submit-review-btn{background:#7ab87a;color:var(--ink)}
     .cancel-review-btn{background:none;border:none;font-size:.78rem;color:var(--text-muted);cursor:pointer;font-family:'DM Sans',sans-serif;padding:.4rem .5rem}
     /* Community tab */
     .cat-filter{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
@@ -518,7 +538,8 @@ function renderWeather(d){
 function renderReviewsBlock(walkId){
   const reviews=(getReviews()[walkId]||[]);
   const avg=getAvgRating(walkId);
-  const avgHtml=avg?`<div class="avg-stars">${starsHtml(avg)}<span class="avg-label">${avg} / 5 · ${reviews.length} review${reviews.length!==1?'s':''}</span></div>`:'<div class="avg-label" style="font-size:.75rem;color:var(--text-muted);margin:.4rem 0">No reviews yet — be the first!</div>';
+  const avgHtml=avg?`<div class="avg-stars" style="margin-bottom:.6rem">${starsHtml(avg)}<span class="avg-label">${avg} / 5 · ${reviews.length} review${reviews.length!==1?'s':''}</span></div>`:'';
+  const noReviews=!reviews.length?`<div class="no-reviews">No reviews yet — be the first!</div>`:'';
   const reviewItems=reviews.map(r=>`
     <div class="review-item">
       <div class="review-meta"><span class="review-stars">${[1,2,3,4,5].map(i=>i<=r.stars?'⭐':'☆').join('')}</span><span class="review-date">${r.date}</span></div>
@@ -527,10 +548,13 @@ function renderReviewsBlock(walkId){
     </div>`).join('');
   return`
     <div class="reviews-section" id="reviews-${walkId}">
-      <div class="reviews-title">Community reviews</div>
+      <div class="reviews-section-header">
+        <div class="reviews-title">Community reviews</div>
+        <button class="add-review-btn" onclick="toggleReviewForm('${walkId}')">✏️ Add review</button>
+      </div>
       ${avgHtml}
+      ${noReviews}
       ${reviewItems}
-      <button class="add-review-btn" onclick="toggleReviewForm('${walkId}')">✏️ Add your review</button>
       <div class="review-form" id="form-${walkId}">
         <div class="stars-row" id="stars-${walkId}">
           ${[1,2,3,4,5].map(i=>`<span class="star" data-v="${i}" onclick="setStars('${walkId}',${i})">☆</span>`).join('')}
@@ -582,22 +606,47 @@ function submitReview(walkId){
 // ── WALKS RENDERING ───────────────────────────────────────────────────────────
 function renderWalkCard(w,distStr,showWeatherNote){
   const avg=getAvgRating(w.id);
-  const avgLine=avg?`<div class="avg-stars" style="margin:.3rem 0">${starsHtml(avg,'0.9rem')}<span class="avg-label">${avg}/5</span></div>`:'';
   const communityTag=w.community?`<span class="community-badge">Community</span>`:'';
-  return`<div class="item-card">
-    <div class="item-top">
-      <div>
-        <div class="item-name">${w.icon} ${w.name}${communityTag}</div>
-        <div class="item-tags">${w.tags.map(t=>`<span class="item-tag">${t}</span>`).join('')}<span class="item-distance-badge">📍 ${distStr}</span></div>
-        <div class="item-meta"><span>🗺️ ${w.distance}</span><span>⏱️ ${w.duration}</span><span>💪 ${w.difficulty}</span><span>🌿 ${w.terrain}</span></div>
-        ${avgLine}
-      </div>
+  const weatherNote=showWeatherNote?`<div class="item-weather-note">🌤️ Today: ${showWeatherNote}</div>`:'';
+  const avgCompact=avg
+    ?`<div class="avg-stars-compact">${[1,2,3,4,5].map(i=>`<span class="avg-star-s${i<=Math.round(avg)?' filled':''}">★</span>`).join('')}<span class="avg-label-s">${avg}/5</span></div>`
+    :'';
+  return`<div class="item-card" id="card-${w.id}">
+    <div class="item-card-compact" onclick="toggleWalkCard('${w.id}')">
       <div class="item-badge">${w.icon}</div>
+      <div class="item-compact-body">
+        <div class="item-name">${w.name}${communityTag}</div>
+        <div class="item-compact-meta">
+          <span class="item-distance-badge">📍 ${distStr}</span>
+          ${w.tags.slice(0,2).map(t=>`<span class="item-tag">${t}</span>`).join('')}
+        </div>
+      </div>
+      <div class="item-compact-right">
+        <div class="item-compact-stats">
+          <span class="item-compact-stat">🗺️ ${w.distance}</span>
+          <span class="item-compact-stat">⏱️ ${w.duration}</span>
+          <span class="item-compact-stat">💪 ${w.difficulty}</span>
+        </div>
+        ${avgCompact}
+        <span class="item-expand-icon">▼</span>
+      </div>
     </div>
-    <div class="item-desc">${w.desc}</div>
-    ${showWeatherNote?`<div class="item-weather-note">🌤️ Today: ${showWeatherNote}</div>`:''}
-    ${renderReviewsBlock(w.id)}
+    <div class="item-card-detail">
+      <div class="item-stats">
+        <span class="item-stat">🗺️ ${w.distance}</span>
+        <span class="item-stat">⏱️ ${w.duration}</span>
+        <span class="item-stat">💪 ${w.difficulty}</span>
+        <span class="item-stat">🌿 ${w.terrain}</span>
+      </div>
+      <div class="item-desc">${w.desc}</div>
+      ${weatherNote}
+      ${renderReviewsBlock(w.id)}
+    </div>
   </div>`;
+}
+function toggleWalkCard(id){
+  const card=document.getElementById('card-'+id);
+  card.classList.toggle('expanded');
 }
 
 function renderWalks(){
