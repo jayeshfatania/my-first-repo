@@ -59,6 +59,16 @@
     .top-nav-search-btn:hover{opacity:.8}
     body.night .top-nav-search-btn{background:rgba(255,255,255,.18);color:var(--ink)}
     .top-nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto;z-index:1}
+    .theme-toggle{width:32px;height:32px;border-radius:50%;background:var(--card-bg);border:1px solid var(--card-border);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:all .2s;flex-shrink:0}
+    .theme-toggle:hover{background:rgba(255,255,255,.4)}
+    .theme-toggle::before{content:'☀️'}
+    body.night .theme-toggle::before{content:'🌙'}
+    /* Floating toggle for mobile */
+    .theme-toggle-float{position:fixed;top:.85rem;right:1rem;z-index:200;width:36px;height:36px;border-radius:50%;background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    .theme-toggle-float:hover{background:rgba(255,255,255,.5)}
+    .theme-toggle-float::before{content:'☀️'}
+    body.night .theme-toggle-float::before{content:'🌙'}
+    @media(min-width:768px){.theme-toggle-float{display:none}}
     .top-nav-profile{width:32px;height:32px;border-radius:50%;background:var(--card-bg);border:1px solid var(--card-border);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:all .2s;flex-shrink:0}
     .top-nav-profile:hover{background:rgba(255,255,255,.4)}
     /* ── BOTTOM NAV (mobile only) ── */
@@ -149,8 +159,18 @@
     .uv-bar{height:5px;border-radius:10px;background:linear-gradient(90deg,#5cb85c,#f0ad4e,#d9534f);position:relative}
     .uv-marker{position:absolute;top:-4px;width:13px;height:13px;background:white;border:2px solid #555;border-radius:50%;transform:translateX(-50%)}
     .section-intro{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1.2rem 1.5rem;margin-bottom:1rem;animation:fadeUp .7s ease .05s both}
-    .section-intro h3{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:400;color:var(--ink);margin-bottom:.25rem}
-    .section-intro p{font-size:.8rem;color:var(--text-muted);line-height:1.5}
+    .section-intro-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.25rem}
+    .section-intro h3{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:400;color:var(--ink)}
+    .section-intro p{font-size:.8rem;color:var(--text-muted);line-height:1.5;margin-bottom:.9rem}
+    .add-walk-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.38rem .9rem;border-radius:20px;background:var(--moss);color:#fff;font-size:.78rem;font-weight:500;font-family:'DM Sans',sans-serif;border:none;cursor:pointer;transition:opacity .2s;flex-shrink:0}
+    .add-walk-btn:hover{opacity:.85}
+    body.night .add-walk-btn{background:#7ab87a;color:var(--ink)}
+    .filter-bar{display:flex;gap:.4rem;flex-wrap:wrap}
+    .filter-chip{padding:.3rem .8rem;border-radius:20px;border:1px solid var(--card-border);background:rgba(255,255,255,.15);font-size:.75rem;color:var(--text-muted);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+    .filter-chip:hover{border-color:rgba(90,122,82,.4);color:var(--ink)}
+    .filter-chip.active{background:rgba(90,122,82,.12);border-color:rgba(90,122,82,.3);color:var(--moss);font-weight:500}
+    body.night .filter-chip.active{background:rgba(122,184,122,.12);border-color:rgba(122,184,122,.3);color:#7ab87a}
+    .walks-count{font-size:.75rem;color:var(--text-muted);margin-top:.6rem}
     .item-list{display:flex;flex-direction:column;gap:.9rem}
     .item-card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:20px;overflow:hidden;transition:box-shadow .2s;animation:fadeUp .7s ease both;margin-bottom:.7rem}
     .item-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.07)}
@@ -246,6 +266,34 @@
     body.night .success-msg{color:#7ab87a}
     .community-badge{display:inline-block;font-size:.68rem;padding:.12rem .5rem;border-radius:20px;background:rgba(232,168,56,.2);color:#a0680a;font-weight:500;margin-left:.4rem}
     body.night .community-badge{background:rgba(232,168,56,.15);color:var(--amber)}
+    /* Contribution banner */
+    .contrib-banner{background:linear-gradient(135deg,rgba(90,122,82,.15),rgba(90,122,82,.05));border:1px solid rgba(90,122,82,.25);border-radius:20px;padding:1.4rem 1.6rem;margin:1rem 0;animation:fadeUp .7s ease both}
+    body.night .contrib-banner{background:linear-gradient(135deg,rgba(122,184,122,.1),rgba(122,184,122,.03));border-color:rgba(122,184,122,.2)}
+    .contrib-banner-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.6rem}
+    .contrib-banner-title{font-family:'Fraunces',serif;font-size:1rem;font-weight:400;color:var(--ink);margin-bottom:.25rem}
+    .contrib-banner-sub{font-size:.8rem;color:var(--text-muted);line-height:1.55}
+    .contrib-banner-emoji{font-size:2rem;flex-shrink:0}
+    .contrib-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.9rem}
+    .contrib-btn-primary{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem 1rem;border-radius:20px;background:var(--moss);color:#fff;font-size:.78rem;font-weight:500;font-family:'DM Sans',sans-serif;border:none;cursor:pointer;transition:opacity .2s}
+    .contrib-btn-primary:hover{opacity:.85}
+    body.night .contrib-btn-primary{background:#7ab87a;color:var(--ink)}
+    .contrib-btn-secondary{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem 1rem;border-radius:20px;background:rgba(90,122,82,.1);color:var(--moss);border:1px solid rgba(90,122,82,.25);font-size:.78rem;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s}
+    .contrib-btn-secondary:hover{background:rgba(90,122,82,.2)}
+    body.night .contrib-btn-secondary{color:#7ab87a;background:rgba(122,184,122,.08);border-color:rgba(122,184,122,.2)}
+    .contrib-stats{display:flex;gap:1.2rem;margin-top:.85rem;padding-top:.85rem;border-top:1px solid rgba(90,122,82,.15)}
+    .contrib-stat{text-align:center}
+    .contrib-stat-num{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:300;color:var(--moss);display:block}
+    body.night .contrib-stat-num{color:#7ab87a}
+    .contrib-stat-label{font-size:.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em}
+    /* Progress bar */
+    .progress-bar-wrap{margin-top:.6rem}
+    .progress-bar-label{font-size:.75rem;color:var(--text-muted);margin-bottom:.3rem}
+    .progress-bar-track{height:5px;background:rgba(0,0,0,.08);border-radius:10px;overflow:hidden}
+    body.night .progress-bar-track{background:rgba(255,255,255,.1)}
+    .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--moss),#7ab87a);border-radius:10px;transition:width .6s ease}
+    /* first to review nudge */
+    .first-review-nudge{font-size:.78rem;color:var(--moss);font-style:italic;margin-bottom:.5rem;font-weight:500}
+    body.night .first-review-nudge{color:#7ab87a}
     .splash{text-align:center;padding:2.5rem 1rem 3rem;animation:fadeUp .7s ease both}
     .splash-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;font-weight:500;color:var(--moss);background:rgba(90,122,82,.1);border:1px solid rgba(90,122,82,.2);border-radius:20px;padding:.28rem .85rem;margin-bottom:1.1rem}
     body.night .splash-badge{color:#7ab87a;background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.25)}
@@ -283,6 +331,7 @@
   <div class="sky"></div>
   <div class="stars"></div>
   <div class="clouds"><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div></div>
+  <button class="theme-toggle-float" onclick="toggleTheme()" title="Toggle dark mode"></button>
   <nav class="top-nav" id="topNav">
     <div class="top-nav-brand" onclick="goHome()">
       <span class="top-nav-brand-icon">🐾</span>
@@ -296,6 +345,7 @@
       </div>
     </div>
     <div class="top-nav-right">
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark mode"></button>
       <div class="top-nav-profile" title="Sign in coming soon">👤</div>
     </div>
   </nav>
@@ -539,7 +589,7 @@ function renderReviewsBlock(walkId){
   const reviews=(getReviews()[walkId]||[]);
   const avg=getAvgRating(walkId);
   const avgHtml=avg?`<div class="avg-stars" style="margin-bottom:.6rem">${starsHtml(avg)}<span class="avg-label">${avg} / 5 · ${reviews.length} review${reviews.length!==1?'s':''}</span></div>`:'';
-  const noReviews=!reviews.length?`<div class="no-reviews">No reviews yet — be the first!</div>`:'';
+  const noReviews=!reviews.length?`<div class="first-review-nudge">✨ Be the first to review this walk!</div>`:'';
   const reviewItems=reviews.map(r=>`
     <div class="review-item">
       <div class="review-meta"><span class="review-stars">${[1,2,3,4,5].map(i=>i<=r.stars?'⭐':'☆').join('')}</span><span class="review-date">${r.date}</span></div>
@@ -649,41 +699,122 @@ function toggleWalkCard(id){
   card.classList.toggle('expanded');
 }
 
-function renderWalks(){
+function renderWalks(activeFilter='all'){
   const rain=[51,53,55,61,63,65,80,81,82,95,99].includes(weatherData.weatherCode);
   const hot=weatherData.feelsLike>22;
   const lat=currentLocation.lat,lon=currentLocation.lon;
   const MAX_KM=3;
-  // Merge curated + community walks
   const communityWalks=getCommunityWalks().map(w=>({...w,community:true}));
   const allWalks=[...WALKS_DB,...communityWalks];
   const nearby=allWalks.map(w=>({...w,dist:haversine(lat,lon,w.lat,w.lon)})).filter(w=>w.dist<=MAX_KM).sort((a,b)=>a.dist-b.dist);
-  const note=rain?`It's wet today — walks with good wet-weather notes shown first.`:hot?`It's warm today — look for shaded or riverside routes.`:`Conditions look great today!`;
+  const note=rain?`Wet today — great day for a waterproof walk.`:hot?`It's warm — look for shaded or riverside routes.`:`Conditions look great today!`;
+
+  // Social proof stats
+  const allReviews=getReviews();
+  const totalReviews=Object.values(allReviews).reduce((sum,r)=>sum+r.length,0);
+  const reviewedWalks=Object.keys(allReviews).filter(id=>allReviews[id].length>0).length;
+  const exploredCount=reviewedWalks;
+  const progressPct=nearby.length>0?Math.round((exploredCount/nearby.length)*100):0;
+
+  // Filters
+  const filters=[
+    {id:'all',label:'All walks'},
+    {id:'easy',label:'💪 Easy'},
+    {id:'moderate',label:'💪 Moderate'},
+    {id:'short',label:'🗺️ Under 3km'},
+    {id:'riverside',label:'🌊 Riverside'},
+    {id:'woodland',label:'🌳 Woodland'},
+  ];
+
+  const filtered=nearby.filter(w=>{
+    if(activeFilter==='all')return true;
+    if(activeFilter==='easy')return w.difficulty==='Easy';
+    if(activeFilter==='moderate')return w.difficulty==='Moderate';
+    if(activeFilter==='short'){const km=parseFloat(w.distance);return km<3}
+    if(activeFilter==='riverside')return w.tags.some(t=>t.toLowerCase().includes('river')||w.terrain.toLowerCase().includes('river'));
+    if(activeFilter==='woodland')return w.tags.some(t=>t.toLowerCase().includes('wood')||t.toLowerCase().includes('forest')||w.terrain.toLowerCase().includes('wood'));
+    return true;
+  });
+
+  const filterBar=`<div class="filter-bar">${filters.map(f=>`<button class="filter-chip${activeFilter===f.id?' active':''}" onclick="renderWalksFiltered('${f.id}')">${f.label}</button>`).join('')}</div>`;
+
+  // Progress framing
+  const progressBar=nearby.length>0?`
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-label">You've explored ${exploredCount} of ${nearby.length} walks nearby</div>
+      <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${progressPct}%"></div></div>
+    </div>`:'';
+
+  // Contribution banner
+  const contribBanner=`
+    <div class="contrib-banner">
+      <div class="contrib-banner-top">
+        <div>
+          <div class="contrib-banner-title">🐾 Help your community grow</div>
+          <div class="contrib-banner-sub">Every rating and walk you add helps dog owners near ${currentLocation.displayName} discover great routes. It only takes a minute!</div>
+        </div>
+        <div class="contrib-banner-emoji">🌿</div>
+      </div>
+      <div class="contrib-actions">
+        <button class="contrib-btn-primary" onclick="toggleSubmitWalkForm();document.getElementById('submit-walk-wrapper').scrollIntoView({behavior:'smooth'})">＋ Share a walk</button>
+        <button class="contrib-btn-secondary" onclick="document.querySelector('.item-card').classList.add('expanded');document.querySelector('.add-review-btn').click()">⭐ Rate a walk</button>
+      </div>
+      <div class="contrib-stats">
+        <div class="contrib-stat"><span class="contrib-stat-num">${nearby.length}</span><span class="contrib-stat-label">Walks nearby</span></div>
+        <div class="contrib-stat"><span class="contrib-stat-num">${communityWalks.length}</span><span class="contrib-stat-label">Community added</span></div>
+        <div class="contrib-stat"><span class="contrib-stat-num">${totalReviews}</span><span class="contrib-stat-label">Reviews left</span></div>
+      </div>
+    </div>`;
 
   let walksHtml;
   if(nearby.length===0){
     const loc=encodeURIComponent('dog walks near '+currentLocation.displayName);
     const parks=encodeURIComponent('dog friendly parks near '+currentLocation.displayName);
-    const trails=encodeURIComponent('walking trails near '+currentLocation.displayName);
-    walksHtml=`<div class="item-list">
-      <div class="item-card"><div class="item-top"><div><div class="item-name">🗺️ No curated walks within 3km yet</div><div class="item-tags"><span class="item-tag">Our database</span></div></div><div class="item-badge">🔍</div></div><div class="item-desc">We don't have walks in our database within 3km of ${currentLocation.displayName} yet. Browse options below or add one yourself using the form!</div></div>
-      <div class="item-card"><div class="item-top"><div><div class="item-name">🐕 Dog walks near ${currentLocation.displayName}</div><div class="item-tags"><span class="item-tag">Google Maps</span></div></div><div class="item-badge">🗺️</div></div><div class="item-desc">Search for dog-friendly walks and green spaces in this area.</div><a class="walk-map-link" href="https://www.google.com/maps/search/${loc}" target="_blank">Search on Google Maps →</a></div>
-      <div class="item-card"><div class="item-top"><div><div class="item-name">🌳 Parks & open spaces</div><div class="item-tags"><span class="item-tag">Google Maps</span></div></div><div class="item-badge">🏞️</div></div><div class="item-desc">Find the nearest parks, commons and off-lead areas for your dog.</div><a class="walk-map-link" href="https://www.google.com/maps/search/${parks}" target="_blank">Find parks on Google Maps →</a></div>
-      <div class="item-card"><div class="item-top"><div><div class="item-name">🥾 Walking trails nearby</div><div class="item-tags"><span class="item-tag">Google Maps</span></div></div><div class="item-badge">🧭</div></div><div class="item-desc">Explore walking routes and trails in the wider area.</div><a class="walk-map-link" href="https://www.google.com/maps/search/${trails}" target="_blank">Find trails on Google Maps →</a></div>
+    walksHtml=`<div class="item-card" style="padding:2rem;text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:.75rem">🗺️</div>
+      <div class="item-name" style="margin-bottom:.5rem">No walks added here yet</div>
+      <p style="font-size:.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:1.2rem">Be the first to add a walk near ${currentLocation.displayName}! Your suggestion will help other dog owners discover great routes.</p>
+      <div style="display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap">
+        <a class="walk-map-link" href="https://www.google.com/maps/search/${loc}" target="_blank">Search Google Maps →</a>
+        <a class="walk-map-link" href="https://www.google.com/maps/search/${parks}" target="_blank">Find parks →</a>
+      </div>
+    </div>`;
+  } else if(filtered.length===0){
+    walksHtml=`<div class="item-card" style="padding:1.5rem;text-align:center">
+      <p style="font-size:.85rem;color:var(--text-muted)">No walks match this filter. <button onclick="renderWalksFiltered('all')" style="background:none;border:none;color:var(--moss);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.85rem;text-decoration:underline">Show all walks</button></p>
     </div>`;
   } else {
-    walksHtml=`<div class="item-list">${nearby.map(w=>{
+    // Inject contribution banner after 2nd walk card
+    const cards=filtered.map((w,i)=>{
       const distStr=w.dist<1?`${Math.round(w.dist*1000)}m away`:`${w.dist.toFixed(1)}km away`;
       const wn=rain?w.wetNote:hot?w.hotNote:null;
       return renderWalkCard(w,distStr,wn);
-    }).join('')}</div>`;
+    });
+    if(cards.length>2){cards.splice(2,0,contribBanner)}
+    walksHtml=`<div class="item-list">${cards.join('')}</div>`;
   }
 
   return`
-    <div class="section-intro"><h3>Walks near ${currentLocation.displayName}</h3><p>${note} Showing walks within 3km of your location. Rate and review walks you've done — or suggest a new one below!</p></div>
+    <div class="section-intro">
+      <div class="section-intro-top">
+        <h3>Walks near ${currentLocation.displayName}</h3>
+      </div>
+      <p>${note} ${nearby.length} walk${nearby.length!==1?'s':''} within 3km of your location.</p>
+      ${filterBar}
+      ${filtered.length!==nearby.length?`<div class="walks-count">Showing ${filtered.length} of ${nearby.length} walks</div>`:''}
+      ${progressBar}
+    </div>
+    <div id="submit-walk-wrapper" style="display:none;margin-bottom:1rem">${renderSubmitWalkForm()}</div>
+    ${nearby.length<=2?contribBanner:''}
     ${walksHtml}
-    ${renderSubmitWalkForm()}
     <div class="footer" style="margin-top:1.5rem"><div>Curated walks + community submissions · Reviews saved on your device</div></div>`;
+}
+function renderWalksFiltered(filter){
+  document.getElementById('panel').innerHTML=renderWalks(filter);
+}
+function toggleSubmitWalkForm(){
+  const el=document.getElementById('submit-walk-wrapper');
+  el.style.display=el.style.display==='none'?'block':'none';
 }
 
 function renderSubmitWalkForm(){
@@ -856,7 +987,7 @@ async function doSearch(){
     document.getElementById('topNavSearchInput').value=query;
     document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
     weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
-    document.body.classList.toggle('night',!weatherData.isDay);
+    if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
     showTab(currentTab);
   }catch(e){
     document.getElementById('locationName').textContent='';
@@ -870,8 +1001,20 @@ async function refreshWeather(){
   try{weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);document.body.classList.toggle('night',!weatherData.isDay);showTab(currentTab)}
   catch(e){document.getElementById('panel').innerHTML=`<div class="loading">Couldn't refresh. <button class="refresh-btn" onclick="refreshWeather()">Try again</button></div>`}
 }
+function toggleTheme(){
+  const isNight=document.body.classList.toggle('night');
+  localStorage.setItem('theme',isNight?'night':'day');
+}
 document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch()});
 document.getElementById('topNavSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doDesktopSearch()});
+// Apply saved theme preference, or fall back to time-of-day
+const savedTheme=localStorage.getItem('theme');
+if(savedTheme){
+  document.body.classList.toggle('night',savedTheme==='night');
+} else {
+  const localHour=new Date().getHours();
+  if(localHour<6||localHour>=20)document.body.classList.add('night');
+}
 showSplash();
 setInterval(()=>{if(weatherData)refreshWeather()},15*60*1000);
 </script>
