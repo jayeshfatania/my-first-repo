@@ -46,26 +46,21 @@
     /* ── TOP NAV (desktop) ── */
     .top-nav{display:none;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.45);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.5);height:58px;align-items:center;padding:0 1.5rem;display:none}
     body.night .top-nav{background:rgba(10,20,10,0.7);border-bottom-color:rgba(255,255,255,0.08)}
-    .top-nav-brand{display:flex;align-items:center;gap:.55rem;text-decoration:none;flex-shrink:0;flex:1}
+    .top-nav-brand{display:flex;align-items:center;gap:.55rem;flex-shrink:0;cursor:pointer;z-index:1}
+    .top-nav-brand:hover .top-nav-brand-name{opacity:.7}
     .top-nav-brand-icon{font-size:1.35rem;line-height:1}
-    .top-nav-brand-name{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:400;color:var(--ink);letter-spacing:-.01em}
-    .top-nav-links{display:flex;gap:.25rem;align-items:center;flex:1;justify-content:center}
-    .top-nav-link{display:flex;align-items:center;gap:.4rem;padding:.4rem .85rem;border-radius:10px;font-size:.82rem;font-weight:500;color:var(--text-muted);cursor:pointer;transition:all .2s;border:1px solid transparent;font-family:'DM Sans',sans-serif;background:none}
-    .top-nav-link:hover{color:var(--ink);background:rgba(255,255,255,.35)}
-    .top-nav-link.active{color:var(--moss);background:rgba(90,122,82,.1);border-color:rgba(90,122,82,.2)}
-    body.night .top-nav-link{color:var(--text-muted)}
-    body.night .top-nav-link:hover{color:var(--ink);background:rgba(255,255,255,.1)}
-    body.night .top-nav-link.active{color:#7ab87a;background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.25)}
-    .top-nav-link-icon{font-size:1rem}
-    /* search in top nav */
-    .top-nav-search{display:none;align-items:center;gap:.5rem;background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:12px;padding:.38rem .75rem;flex:1;justify-content:flex-end;max-width:280px;margin-left:auto;transition:border-color .2s}
+    .top-nav-brand-name{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:400;color:var(--ink);letter-spacing:-.01em;transition:opacity .2s}
+    .top-nav-centre{position:absolute;left:calc(50% + 110px);transform:translateX(-50%)}
+    .top-nav-search{display:none;align-items:center;gap:.5rem;background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:12px;padding:.38rem .75rem;width:320px;transition:border-color .2s}
     .top-nav-search:focus-within{border-color:rgba(255,255,255,.7)}
     .top-nav-search-input{flex:1;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--ink);min-width:0}
     .top-nav-search-input::placeholder{color:var(--text-muted)}
     .top-nav-search-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:.28rem .7rem;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;cursor:pointer;transition:opacity .2s;flex-shrink:0}
     .top-nav-search-btn:hover{opacity:.8}
     body.night .top-nav-search-btn{background:rgba(255,255,255,.18);color:var(--ink)}
-    .top-nav-location{font-size:.72rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;flex-shrink:0}
+    .top-nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto;z-index:1}
+    .top-nav-profile{width:32px;height:32px;border-radius:50%;background:var(--card-bg);border:1px solid var(--card-border);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:all .2s;flex-shrink:0}
+    .top-nav-profile:hover{background:rgba(255,255,255,.4)}
     /* ── BOTTOM NAV (mobile only) ── */
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;background:rgba(255,255,255,0.55);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.5);padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom))}
     body.night .bottom-nav{background:rgba(10,20,10,0.75);border-top-color:rgba(255,255,255,0.08)}
@@ -78,12 +73,29 @@
     .nav-dot{width:4px;height:4px;border-radius:50%;background:var(--moss);margin:0 auto;opacity:0;transition:opacity .2s}
     body.night .nav-dot{background:#7ab87a}
     .nav-item.active .nav-dot{opacity:1}
-    /* ── RESPONSIVE BREAKPOINT ── */
+    /* ── LEFT SIDEBAR (desktop) ── */
+    .left-sidebar{display:none;position:fixed;top:58px;left:0;bottom:0;width:220px;z-index:90;padding:1.5rem 1rem;overflow-y:auto;background:rgba(255,255,255,0.25);backdrop-filter:blur(20px);border-right:1px solid rgba(255,255,255,0.4)}
+    body.night .left-sidebar{background:rgba(10,20,10,0.4);border-right-color:rgba(255,255,255,0.08)}
+    .sidebar-section{margin-bottom:1.5rem}
+    .sidebar-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;font-weight:500;color:var(--text-muted);padding:.2rem .75rem;margin-bottom:.35rem}
+    .sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.6rem .75rem;border-radius:12px;cursor:pointer;transition:all .2s;font-size:.88rem;color:var(--ink);font-family:'DM Sans',sans-serif;border:1px solid transparent;width:100%;background:none;text-align:left}
+    .sidebar-link:hover{background:rgba(255,255,255,.4);border-color:rgba(255,255,255,.5)}
+    .sidebar-link.active{background:rgba(90,122,82,.12);border-color:rgba(90,122,82,.2);color:var(--moss);font-weight:500}
+    body.night .sidebar-link{color:var(--ink)}
+    body.night .sidebar-link:hover{background:rgba(255,255,255,.08)}
+    body.night .sidebar-link.active{background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.2);color:#7ab87a}
+    .sidebar-link-icon{font-size:1.15rem;flex-shrink:0}
+    .sidebar-divider{height:1px;background:var(--card-border);margin:.5rem .75rem 1rem}
+    .sidebar-coming-soon{font-size:.72rem;color:var(--text-muted);padding:.4rem .75rem;font-style:italic}
+    /* ── DESKTOP LAYOUT ── */
+    .desktop-layout{display:contents}
     @media(min-width:768px){
       .top-nav{display:flex!important}
       .top-nav-search{display:flex}
+      .top-nav-links{display:none!important}
       .bottom-nav{display:none!important}
-      .wrapper{padding-top:5rem;padding-bottom:2rem}
+      .left-sidebar{display:block}
+      .wrapper{padding-top:5rem;padding-bottom:2rem;padding-left:240px;max-width:none;margin:0;padding-right:2rem}
       header{display:none}
       .search-wrap{display:none}
     }
@@ -252,22 +264,34 @@
   <div class="stars"></div>
   <div class="clouds"><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div></div>
   <nav class="top-nav" id="topNav">
-    <div class="top-nav-brand">
+    <div class="top-nav-brand" onclick="goHome()">
       <span class="top-nav-brand-icon">🐾</span>
       <span class="top-nav-brand-name">Walk Planner</span>
     </div>
-    <div class="top-nav-links" id="topNavLinks" style="display:none">
-      <button class="top-nav-link active" id="tnWeather" onclick="showTab('weather')"><span class="top-nav-link-icon">🌤️</span> Weather</button>
-      <button class="top-nav-link" id="tnWalks" onclick="showTab('walks')"><span class="top-nav-link-icon">🥾</span> Walks</button>
-      <button class="top-nav-link" id="tnPlaces" onclick="showTab('places')"><span class="top-nav-link-icon">☕</span> Places</button>
+    <div class="top-nav-centre">
+      <div class="top-nav-search" id="topNavSearch">
+        <span style="font-size:.9rem;opacity:.5">📍</span>
+        <input class="top-nav-search-input" id="topNavSearchInput" type="text" placeholder="Postcode or place…" autocomplete="off"/>
+        <button class="top-nav-search-btn" onclick="doDesktopSearch()">Search</button>
+      </div>
     </div>
-    <div class="top-nav-search" id="topNavSearch">
-      <span style="font-size:.9rem;opacity:.5">📍</span>
-      <input class="top-nav-search-input" id="topNavSearchInput" type="text" placeholder="Postcode or place…" autocomplete="off"/>
-      <button class="top-nav-search-btn" onclick="doDesktopSearch()">Search</button>
+    <div class="top-nav-right">
+      <div class="top-nav-profile" title="Sign in coming soon">👤</div>
     </div>
-    <span class="top-nav-location" id="topNavLocation"></span>
   </nav>
+  <aside class="left-sidebar" id="leftSidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Explore</div>
+      <button class="sidebar-link active" id="sbWeather" onclick="showTab('weather')"><span class="sidebar-link-icon">🌤️</span> Weather</button>
+      <button class="sidebar-link" id="sbWalks" onclick="showTab('walks')"><span class="sidebar-link-icon">🥾</span> Walks</button>
+      <button class="sidebar-link" id="sbPlaces" onclick="showTab('places')"><span class="sidebar-link-icon">☕</span> Places</button>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Community</div>
+      <div class="sidebar-coming-soon">Coming soon</div>
+    </div>
+  </aside>
   <div class="wrapper">
     <header>
       <div class="logo">🐾</div>
@@ -695,7 +719,12 @@ function switchCat(cat){activeCat=cat;if(currentTab==='places'){document.getElem
 function showTab(tab){
   currentTab=tab;
   document.querySelectorAll('.nav-item').forEach((t,i)=>t.classList.toggle('active',['weather','walks','places'][i]===tab));
-  ['weather','walks','places'].forEach(t=>{const el=document.getElementById('tn'+t.charAt(0).toUpperCase()+t.slice(1));if(el)el.classList.toggle('active',t===tab)});
+  ['weather','walks','places'].forEach(t=>{
+    const tn=document.getElementById('tn'+t.charAt(0).toUpperCase()+t.slice(1));
+    const sb=document.getElementById('sb'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(tn)tn.classList.toggle('active',t===tab);
+    if(sb)sb.classList.toggle('active',t===tab);
+  });
   if(!weatherData)return;
   const p=document.getElementById('panel');
   if(tab==='weather')p.innerHTML=renderWeather(weatherData);
@@ -743,6 +772,18 @@ function showSplash(){
     </div>
     ${recentHTML}
   </div>`;};
+function goHome(){
+  weatherData=null;currentLocation=null;
+  document.getElementById('searchInput').value='';
+  document.getElementById('topNavSearchInput').value='';
+  document.getElementById('locationName').textContent='';
+  document.getElementById('topNavLinks').style.display='none';
+  document.getElementById('bottomNav').style.display='none';
+  ['weather','walks','places'].forEach(t=>{const sb=document.getElementById('sb'+t.charAt(0).toUpperCase()+t.slice(1));if(sb)sb.classList.toggle('active',t==='weather')});
+  const hdr=document.querySelector('header');
+  if(hdr)hdr.classList.remove('collapsed');
+  showSplash();
+}
 function doDesktopSearch(){
   const val=document.getElementById('topNavSearchInput').value.trim();
   if(!val)return;
@@ -766,7 +807,6 @@ async function doSearch(){
     // update top nav
     document.getElementById('bottomNav').style.display='';
     document.getElementById('topNavLinks').style.display='';
-    document.getElementById('topNavLocation').textContent='📍 '+currentLocation.displayName;
     document.getElementById('topNavSearchInput').value=query;
     document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
     weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
