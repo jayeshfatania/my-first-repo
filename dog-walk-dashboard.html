@@ -23,7 +23,11 @@
     body.night .clouds{opacity:.08}
     @keyframes drift{from{transform:translateX(0)}to{transform:translateX(120vw)}}
     .wrapper{position:relative;z-index:10;max-width:920px;margin:0 auto;padding:2rem 1.5rem 6rem}
-    header{text-align:center;margin-bottom:1.8rem;animation:fadeUp .7s ease both}
+    header{text-align:center;margin-bottom:1.8rem;animation:fadeUp .7s ease both;transition:all .4s ease}
+    header.collapsed{margin-bottom:.8rem}
+    header.collapsed .logo{display:none}
+    header.collapsed h1{font-size:1.1rem;margin-bottom:0}
+    header.collapsed .subtitle{display:none}
     .logo{font-size:2.6rem;margin-bottom:.2rem}
     h1{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:300;color:var(--ink);letter-spacing:-.02em}
     .subtitle{font-size:.85rem;color:var(--text-muted);margin-top:.3rem}
@@ -40,7 +44,7 @@
     .search-error{text-align:center;font-size:.8rem;color:#c0392b;margin-top:.5rem;display:none}
     body.night .search-error{color:#e07070}
     /* ── TOP NAV (desktop) ── */
-    .top-nav{display:none;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.45);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.5);height:58px;align-items:center;padding:0 2rem}
+    .top-nav{display:none;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.45);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.5);height:58px;align-items:center;padding:0 1.5rem;gap:1rem}
     body.night .top-nav{background:rgba(10,20,10,0.7);border-bottom-color:rgba(255,255,255,0.08)}
     .top-nav-brand{display:flex;align-items:center;gap:.55rem;text-decoration:none;flex-shrink:0}
     .top-nav-brand-icon{font-size:1.35rem;line-height:1}
@@ -53,6 +57,15 @@
     body.night .top-nav-link:hover{color:var(--ink);background:rgba(255,255,255,.1)}
     body.night .top-nav-link.active{color:#7ab87a;background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.25)}
     .top-nav-link-icon{font-size:1rem}
+    /* search in top nav */
+    .top-nav-search{display:none;align-items:center;gap:.5rem;background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:12px;padding:.38rem .75rem;margin-left:auto;width:260px;transition:border-color .2s}
+    .top-nav-search:focus-within{border-color:rgba(255,255,255,.7)}
+    .top-nav-search-input{flex:1;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--ink)}
+    .top-nav-search-input::placeholder{color:var(--text-muted)}
+    .top-nav-search-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:.28rem .7rem;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;cursor:pointer;transition:opacity .2s;flex-shrink:0}
+    .top-nav-search-btn:hover{opacity:.8}
+    body.night .top-nav-search-btn{background:rgba(255,255,255,.18);color:var(--ink)}
+    .top-nav-location{font-size:.72rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;margin-left:.2rem}
     /* ── BOTTOM NAV (mobile only) ── */
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;background:rgba(255,255,255,0.55);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.5);padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom))}
     body.night .bottom-nav{background:rgba(10,20,10,0.75);border-top-color:rgba(255,255,255,0.08)}
@@ -68,9 +81,11 @@
     /* ── RESPONSIVE BREAKPOINT ── */
     @media(min-width:768px){
       .top-nav{display:flex}
+      .top-nav-search{display:flex}
       .bottom-nav{display:none!important}
       .wrapper{padding-top:5rem;padding-bottom:2rem}
       header{display:none}
+      .search-wrap{display:none}
     }
     .hazard-warning{border-radius:18px;padding:1.1rem 1.4rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:.9rem;animation:fadeUp .5s ease both;border:1.5px solid}
     .hazard-warning.red{background:rgba(200,50,50,.1);border-color:rgba(200,50,50,.3)}
@@ -246,6 +261,12 @@
       <button class="top-nav-link" id="tnWalks" onclick="showTab('walks')"><span class="top-nav-link-icon">🥾</span> Walks</button>
       <button class="top-nav-link" id="tnPlaces" onclick="showTab('places')"><span class="top-nav-link-icon">☕</span> Places</button>
     </div>
+    <div class="top-nav-search" id="topNavSearch">
+      <span style="font-size:.9rem;opacity:.5">📍</span>
+      <input class="top-nav-search-input" id="topNavSearchInput" type="text" placeholder="Postcode or place…" autocomplete="off"/>
+      <button class="top-nav-search-btn" onclick="doDesktopSearch()">Search</button>
+    </div>
+    <span class="top-nav-location" id="topNavLocation"></span>
   </nav>
   <div class="wrapper">
     <header>
@@ -722,6 +743,12 @@ function showSplash(){
     </div>
     ${recentHTML}
   </div>`;};
+function doDesktopSearch(){
+  const val=document.getElementById('topNavSearchInput').value.trim();
+  if(!val)return;
+  document.getElementById('searchInput').value=val;
+  doSearch();
+}
 async function doSearch(){
   const query=document.getElementById('searchInput').value.trim();
   if(!query)return;
@@ -733,8 +760,15 @@ async function doSearch(){
     document.getElementById('topNavLinks').style.display='none';
     currentLocation=await geocode(query);
     saveRecentSearch(query);
+    // collapse mobile header
+    const hdr=document.querySelector('header');
+    if(hdr)hdr.classList.add('collapsed');
+    // update top nav
     document.getElementById('bottomNav').style.display='';
-    document.getElementById('topNavLinks').style.display='';    document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
+    document.getElementById('topNavLinks').style.display='';
+    document.getElementById('topNavLocation').textContent='📍 '+currentLocation.displayName;
+    document.getElementById('topNavSearchInput').value=query;
+    document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
     weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
     document.body.classList.toggle('night',!weatherData.isDay);
     showTab(currentTab);
@@ -751,6 +785,7 @@ async function refreshWeather(){
   catch(e){document.getElementById('panel').innerHTML=`<div class="loading">Couldn't refresh. <button class="refresh-btn" onclick="refreshWeather()">Try again</button></div>`}
 }
 document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch()});
+document.getElementById('topNavSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doDesktopSearch()});
 showSplash();
 setInterval(()=>{if(weatherData)refreshWeather()},15*60*1000);
 </script>
