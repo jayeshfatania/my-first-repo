@@ -44,12 +44,12 @@
     .search-error{text-align:center;font-size:.8rem;color:#c0392b;margin-top:.5rem;display:none}
     body.night .search-error{color:#e07070}
     /* ── TOP NAV (desktop) ── */
-    .top-nav{display:none;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.45);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.5);height:58px;align-items:center;padding:0 1.5rem;gap:1rem}
+    .top-nav{display:none;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.45);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.5);height:58px;align-items:center;padding:0 1.5rem;display:none}
     body.night .top-nav{background:rgba(10,20,10,0.7);border-bottom-color:rgba(255,255,255,0.08)}
-    .top-nav-brand{display:flex;align-items:center;gap:.55rem;text-decoration:none;flex-shrink:0}
+    .top-nav-brand{display:flex;align-items:center;gap:.55rem;text-decoration:none;flex-shrink:0;flex:1}
     .top-nav-brand-icon{font-size:1.35rem;line-height:1}
     .top-nav-brand-name{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:400;color:var(--ink);letter-spacing:-.01em}
-    .top-nav-links{display:flex;gap:.25rem;position:absolute;left:50%;transform:translateX(-50%);align-items:center}
+    .top-nav-links{display:flex;gap:.25rem;align-items:center;flex:1;justify-content:center}
     .top-nav-link{display:flex;align-items:center;gap:.4rem;padding:.4rem .85rem;border-radius:10px;font-size:.82rem;font-weight:500;color:var(--text-muted);cursor:pointer;transition:all .2s;border:1px solid transparent;font-family:'DM Sans',sans-serif;background:none}
     .top-nav-link:hover{color:var(--ink);background:rgba(255,255,255,.35)}
     .top-nav-link.active{color:var(--moss);background:rgba(90,122,82,.1);border-color:rgba(90,122,82,.2)}
@@ -58,14 +58,14 @@
     body.night .top-nav-link.active{color:#7ab87a;background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.25)}
     .top-nav-link-icon{font-size:1rem}
     /* search in top nav */
-    .top-nav-search{display:none;align-items:center;gap:.5rem;background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:12px;padding:.38rem .75rem;margin-left:auto;width:260px;transition:border-color .2s}
+    .top-nav-search{display:none;align-items:center;gap:.5rem;background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:12px;padding:.38rem .75rem;flex:1;justify-content:flex-end;max-width:280px;margin-left:auto;transition:border-color .2s}
     .top-nav-search:focus-within{border-color:rgba(255,255,255,.7)}
-    .top-nav-search-input{flex:1;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--ink)}
+    .top-nav-search-input{flex:1;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--ink);min-width:0}
     .top-nav-search-input::placeholder{color:var(--text-muted)}
     .top-nav-search-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:.28rem .7rem;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;cursor:pointer;transition:opacity .2s;flex-shrink:0}
     .top-nav-search-btn:hover{opacity:.8}
     body.night .top-nav-search-btn{background:rgba(255,255,255,.18);color:var(--ink)}
-    .top-nav-location{font-size:.72rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;margin-left:.2rem}
+    .top-nav-location{font-size:.72rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;flex-shrink:0}
     /* ── BOTTOM NAV (mobile only) ── */
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;background:rgba(255,255,255,0.55);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.5);padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom))}
     body.night .bottom-nav{background:rgba(10,20,10,0.75);border-top-color:rgba(255,255,255,0.08)}
@@ -80,7 +80,7 @@
     .nav-item.active .nav-dot{opacity:1}
     /* ── RESPONSIVE BREAKPOINT ── */
     @media(min-width:768px){
-      .top-nav{display:flex}
+      .top-nav{display:flex!important}
       .top-nav-search{display:flex}
       .bottom-nav{display:none!important}
       .wrapper{padding-top:5rem;padding-bottom:2rem}
