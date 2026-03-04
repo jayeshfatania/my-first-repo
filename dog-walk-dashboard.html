@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🐾 Walk Planner</title>
+  <title>🐾 Sniffout</title>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -335,7 +335,7 @@
   <nav class="top-nav" id="topNav">
     <div class="top-nav-brand" onclick="goHome()">
       <span class="top-nav-brand-icon">🐾</span>
-      <span class="top-nav-brand-name">Walk Planner</span>
+      <span class="top-nav-brand-name">Sniffout</span>
     </div>
     <div class="top-nav-centre">
       <div class="top-nav-search" id="topNavSearch">
@@ -365,7 +365,7 @@
   <div class="wrapper">
     <header>
       <div class="logo">🐾</div>
-      <h1>Walk Planner</h1>
+      <h1>Sniffout</h1>
       <p class="subtitle">Your dog walking companion</p>
     </header>
     <div class="search-wrap">
@@ -936,7 +936,7 @@ function showSplash(){
     ?`<div class="splash-recent"><div class="splash-recent-label">Recent searches</div><div class="splash-examples">${recent.map(r=>`<div class="example-pill" onclick="useExample('${r}')">🕐 ${r}</div>`).join('')}</div></div>`
     :`<p class="splash-first-visit">Try searching for Richmond, SW11, Hampstead Heath or Edinburgh</p>`;
   document.getElementById('app').innerHTML=`<div class="splash">
-    <div class="splash-badge">🐾 UK Dog Walk Planner</div>
+    <div class="splash-badge">🐾 Sniffout — UK Dog Walks</div>
     <h2>Discover great walks<br><em>for you and your dog</em></h2>
     <p>Curated routes, live weather conditions and dog-friendly places — everything you need before you head out.</p>
     <div class="splash-stats">
