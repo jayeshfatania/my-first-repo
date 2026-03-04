@@ -1,368 +1,610 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🐾 Walk Planner</title>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --amber: #e8a838; --moss: #5a7a52; --ink: #1a2a1a;
-      --card-bg: rgba(255,255,255,0.22); --card-border: rgba(255,255,255,0.4);
-      --text-muted: rgba(26,42,26,0.55);
-    }
-    body { font-family: 'DM Sans', sans-serif; min-height: 100vh; background: #c8dfc8; transition: background 1.5s ease; overflow-x: hidden; }
-    body.night { background: #0d1a0d; --card-bg: rgba(255,255,255,0.07); --card-border: rgba(255,255,255,0.12); --ink: #d8ead8; --text-muted: rgba(216,234,216,0.5); }
-    .sky { position: fixed; inset: 0; z-index: 0; background: linear-gradient(160deg,#7fb8a0 0%,#a8d4b8 35%,#c8dfc8 70%,#dde8cc 100%); transition: background 1.5s ease; }
-    body.night .sky { background: linear-gradient(160deg,#050f05 0%,#0a160a 40%,#0d1a10 100%); }
-    .stars { position: fixed; inset: 0; z-index: 1; opacity: 0; transition: opacity 1.5s ease; background-image: radial-gradient(1px 1px at 8% 15%,white,transparent),radial-gradient(1px 1px at 22% 55%,white,transparent),radial-gradient(1.5px 1.5px at 38% 8%,white,transparent),radial-gradient(1px 1px at 52% 38%,white,transparent),radial-gradient(1px 1px at 67% 12%,white,transparent),radial-gradient(1.5px 1.5px at 78% 52%,white,transparent),radial-gradient(1px 1px at 88% 28%,white,transparent),radial-gradient(1px 1px at 12% 75%,white,transparent); }
-    body.night .stars { opacity: 1; }
-    .clouds { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
-    .cloud { position: absolute; background: rgba(255,255,255,0.55); border-radius: 50px; filter: blur(3px); animation: drift linear infinite; }
-    .cloud::before, .cloud::after { content: ''; position: absolute; background: rgba(255,255,255,0.55); border-radius: 50%; }
-    .c1 { width: 130px; height: 38px; top: 10%; left: -150px; animation-duration: 65s; }
-    .c1::before { width: 65px; height: 58px; top: -28px; left: 22px; }
-    .c1::after  { width: 48px; height: 42px; top: -20px; left: 60px; }
-    .c2 { width: 95px; height: 30px; top: 20%; left: -115px; animation-duration: 85s; animation-delay: -35s; opacity: 0.5; }
-    .c2::before { width: 48px; height: 42px; top: -22px; left: 18px; }
-    .c3 { width: 160px; height: 44px; top: 6%; left: -180px; animation-duration: 105s; animation-delay: -65s; opacity: 0.4; }
-    .c3::before { width: 80px; height: 68px; top: -32px; left: 32px; }
-    body.night .clouds { opacity: 0.08; }
-    @keyframes drift { from{transform:translateX(0)} to{transform:translateX(120vw)} }
-
-    .wrapper { position: relative; z-index: 10; max-width: 920px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-    header { text-align: center; margin-bottom: 1.8rem; animation: fadeUp 0.7s ease both; }
-    .logo { font-size: 2.6rem; margin-bottom: 0.2rem; }
-    h1 { font-family: 'Fraunces', serif; font-size: 2.2rem; font-weight: 300; color: var(--ink); letter-spacing: -0.02em; }
-    .subtitle { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem; }
-
-    .search-wrap { animation: fadeUp 0.7s ease 0.05s both; margin-bottom: 1.5rem; }
-    .search-box { display: flex; gap: 0.6rem; align-items: center; background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 16px; padding: 0.7rem 1rem; transition: border-color 0.2s; }
-    .search-box:focus-within { border-color: rgba(255,255,255,0.7); }
-    .search-icon { font-size: 1.1rem; flex-shrink: 0; opacity: 0.6; }
-    .search-input { flex: 1; background: none; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--ink); }
-    .search-input::placeholder { color: var(--text-muted); }
-    .search-btn { background: var(--ink); color: #fff; border: none; border-radius: 10px; padding: 0.45rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s; flex-shrink: 0; }
-    .search-btn:hover { opacity: 0.8; }
-    body.night .search-btn { background: rgba(255,255,255,0.18); color: var(--ink); }
-    .location-name { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; min-height: 1.2em; }
-    .search-error { text-align: center; font-size: 0.8rem; color: #c0392b; margin-top: 0.5rem; display: none; }
-    body.night .search-error { color: #e07070; }
-
-    .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
-    .tab { flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--card-border); background: var(--card-bg); backdrop-filter: blur(16px); border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; color: var(--ink); cursor: pointer; transition: all 0.2s; text-align: center; }
-    .tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
-    body.night .tab.active { background: rgba(255,255,255,0.18); color: var(--ink); }
-
-    .recommendation { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 20px; padding: 1.5rem 1.8rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 1.2rem; animation: fadeUp 0.7s ease 0.1s both; }
-    .rec-icon { font-size: 2.6rem; flex-shrink: 0; }
-    .rec-text h2 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 400; color: var(--ink); }
-    .rec-text p { font-size: 0.83rem; color: var(--text-muted); margin-top: 0.2rem; line-height: 1.5; }
-
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px,1fr)); gap: 0.9rem; margin-bottom: 1.2rem; }
-    .card { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.3rem 1.1rem; transition: transform 0.2s; animation: fadeUp 0.7s ease both; }
-    .card:hover { transform: translateY(-3px); }
-    .card-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 500; }
-    .card-icon { font-size: 1.5rem; margin-bottom: 0.35rem; }
-    .card-value { font-family: 'Fraunces', serif; font-size: 1.9rem; font-weight: 300; color: var(--ink); line-height: 1; }
-    .card-unit { font-size: 0.78rem; color: var(--text-muted); margin-left: 0.15rem; }
-    .card-sub { font-size: 0.76rem; color: var(--text-muted); margin-top: 0.25rem; }
-
-    .rain-card { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.3rem 1.5rem; margin-bottom: 1.2rem; animation: fadeUp 0.7s ease 0.3s both; }
-    .rain-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .rain-summary-inline { font-size: 0.78rem; color: var(--text-muted); max-width: 55%; line-height: 1.4; text-align: right; }
-    .rain-summary-inline strong { color: var(--ink); }
-    .rain-hours { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.3rem; scrollbar-width: none; }
-    .rain-hours::-webkit-scrollbar { display: none; }
-    .rain-hour { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; min-width: 46px; }
-    .rain-hour .rh-time { font-size: 0.67rem; color: var(--text-muted); }
-    .rain-hour .rh-bar-wrap { width: 26px; height: 56px; background: rgba(0,0,0,0.06); border-radius: 6px; display: flex; align-items: flex-end; overflow: hidden; }
-    body.night .rain-hour .rh-bar-wrap { background: rgba(255,255,255,0.06); }
-    .rain-hour .rh-bar { width: 100%; border-radius: 6px; }
-    .rain-hour .rh-pct { font-size: 0.67rem; color: var(--ink); font-weight: 500; }
-    .rain-hour .rh-icon { font-size: 0.85rem; }
-
-    .sun-card { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.3rem 1.5rem; margin-bottom: 1.2rem; animation: fadeUp 0.7s ease 0.35s both; }
-    .sun-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .sun-times { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
-    .sun-time { text-align: center; }
-    .sun-time .icon { font-size: 1.3rem; }
-    .sun-time .time { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 300; color: var(--ink); }
-    .sun-time .label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
-    .daylight-bar { flex: 1; position: relative; height: 6px; background: rgba(0,0,0,0.08); border-radius: 10px; margin: 0 0.7rem; }
-    body.night .daylight-bar { background: rgba(255,255,255,0.1); }
-    .daylight-fill { height: 100%; background: linear-gradient(90deg,#f5a623,#f8d347); border-radius: 10px; }
-    .sun-marker { position: absolute; top: 50%; transform: translate(-50%,-50%); font-size: 0.9rem; }
-    .uv-bar-wrap { margin-top: 0.5rem; }
-    .uv-bar { height: 5px; border-radius: 10px; background: linear-gradient(90deg,#5cb85c,#f0ad4e,#d9534f); position: relative; }
-    .uv-marker { position: absolute; top: -4px; width: 13px; height: 13px; background: white; border: 2px solid #555; border-radius: 50%; transform: translateX(-50%); }
-
-    .walks-intro { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.3rem 1.5rem; margin-bottom: 1rem; animation: fadeUp 0.7s ease 0.1s both; }
-    .walks-intro h3 { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 400; color: var(--ink); margin-bottom: 0.3rem; }
-    .walks-intro p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
-    .walk-list { display: flex; flex-direction: column; gap: 0.9rem; }
-    .walk-card { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.2rem 1.4rem; transition: transform 0.2s; animation: fadeUp 0.7s ease both; }
-    .walk-card:hover { transform: translateY(-2px); }
-    .walk-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
-    .walk-name { font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 400; color: var(--ink); margin-bottom: 0.15rem; }
-    .walk-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
-    .walk-tag { font-size: 0.68rem; padding: 0.15rem 0.55rem; border-radius: 20px; border: 1px solid var(--card-border); color: var(--text-muted); background: rgba(255,255,255,0.15); }
-    .walk-meta { display: flex; gap: 1rem; font-size: 0.76rem; color: var(--text-muted); margin-bottom: 0.5rem; }
-    .walk-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
-    .walk-badge { flex-shrink: 0; font-size: 1.8rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); border-radius: 12px; }
-    .walk-map-link { display: inline-block; margin-top: 0.5rem; font-size: 0.75rem; color: var(--moss); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 1px; }
-    .walk-map-link:hover { opacity: 0.7; }
-    body.night .walk-map-link { color: #7ab87a; }
-    .walk-card:nth-child(1){animation-delay:0.10s} .walk-card:nth-child(2){animation-delay:0.17s} .walk-card:nth-child(3){animation-delay:0.24s}
-
-    .splash { text-align: center; padding: 3rem 1rem; animation: fadeUp 0.7s ease both; }
-    .splash-icon { font-size: 3rem; margin-bottom: 1rem; }
-    .splash h2 { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 300; color: var(--ink); margin-bottom: 0.5rem; }
-    .splash p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; max-width: 340px; margin: 0 auto; }
-    .splash-examples { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-top: 1.2rem; }
-    .example-pill { background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: 20px; padding: 0.35rem 0.9rem; font-size: 0.78rem; color: var(--ink); cursor: pointer; transition: all 0.2s; }
-    .example-pill:hover { background: var(--ink); color: #fff; }
-
-    .footer { text-align: center; font-size: 0.73rem; color: var(--text-muted); margin-top: 1rem; }
-    .refresh-btn { background: none; border: 1px solid rgba(0,0,0,0.15); border-radius: 20px; padding: 0.3rem 0.8rem; font-size: 0.73rem; cursor: pointer; color: var(--ink); opacity: 0.5; font-family: 'DM Sans', sans-serif; margin-top: 0.4rem; transition: opacity 0.2s; }
-    .refresh-btn:hover { opacity: 1; }
-    body.night .refresh-btn { border-color: rgba(255,255,255,0.2); }
-
-    .loading { text-align: center; padding: 3rem 2rem; color: var(--ink); opacity: 0.5; font-family: 'Fraunces', serif; font-size: 1.1rem; font-style: italic; }
-    .spinner { display: inline-block; width: 22px; height: 22px; border: 2px solid rgba(0,0,0,0.1); border-top-color: var(--amber); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 0.8rem; }
-
-    @keyframes spin { to{transform:rotate(360deg)} }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-    .card:nth-child(1){animation-delay:0.10s} .card:nth-child(2){animation-delay:0.15s}
-    .card:nth-child(3){animation-delay:0.20s} .card:nth-child(4){animation-delay:0.25s}
-    .card:nth-child(5){animation-delay:0.30s} .card:nth-child(6){animation-delay:0.35s}
-
-    @media(max-width:480px){
-      h1{font-size:1.7rem} .grid{grid-template-columns:repeat(2,1fr)}
-      .recommendation{flex-direction:column;text-align:center}
-      .rain-summary-inline{max-width:100%;text-align:left;margin-top:0.4rem}
-      .rain-header{flex-direction:column;align-items:flex-start}
-    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--amber:#e8a838;--moss:#5a7a52;--ink:#1a2a1a;--card-bg:rgba(255,255,255,0.22);--card-border:rgba(255,255,255,0.4);--text-muted:rgba(26,42,26,0.55)}
+    body{font-family:'DM Sans',sans-serif;min-height:100vh;background:#c8dfc8;transition:background 1.5s ease;overflow-x:hidden}
+    body.night{background:#0d1a0d;--card-bg:rgba(255,255,255,0.07);--card-border:rgba(255,255,255,0.12);--ink:#d8ead8;--text-muted:rgba(216,234,216,0.5)}
+    .sky{position:fixed;inset:0;z-index:0;background:linear-gradient(160deg,#7fb8a0 0%,#a8d4b8 35%,#c8dfc8 70%,#dde8cc 100%);transition:background 1.5s ease}
+    body.night .sky{background:linear-gradient(160deg,#050f05 0%,#0a160a 40%,#0d1a10 100%)}
+    .stars{position:fixed;inset:0;z-index:1;opacity:0;transition:opacity 1.5s ease;background-image:radial-gradient(1px 1px at 8% 15%,white,transparent),radial-gradient(1px 1px at 22% 55%,white,transparent),radial-gradient(1.5px 1.5px at 38% 8%,white,transparent),radial-gradient(1px 1px at 52% 38%,white,transparent),radial-gradient(1px 1px at 67% 12%,white,transparent),radial-gradient(1.5px 1.5px at 78% 52%,white,transparent),radial-gradient(1px 1px at 88% 28%,white,transparent),radial-gradient(1px 1px at 12% 75%,white,transparent)}
+    body.night .stars{opacity:1}
+    .clouds{position:fixed;inset:0;z-index:2;pointer-events:none}
+    .cloud{position:absolute;background:rgba(255,255,255,0.55);border-radius:50px;filter:blur(3px);animation:drift linear infinite}
+    .cloud::before,.cloud::after{content:'';position:absolute;background:rgba(255,255,255,0.55);border-radius:50%}
+    .c1{width:130px;height:38px;top:10%;left:-150px;animation-duration:65s}.c1::before{width:65px;height:58px;top:-28px;left:22px}.c1::after{width:48px;height:42px;top:-20px;left:60px}
+    .c2{width:95px;height:30px;top:20%;left:-115px;animation-duration:85s;animation-delay:-35s;opacity:.5}.c2::before{width:48px;height:42px;top:-22px;left:18px}
+    .c3{width:160px;height:44px;top:6%;left:-180px;animation-duration:105s;animation-delay:-65s;opacity:.4}.c3::before{width:80px;height:68px;top:-32px;left:32px}
+    body.night .clouds{opacity:.08}
+    @keyframes drift{from{transform:translateX(0)}to{transform:translateX(120vw)}}
+    .wrapper{position:relative;z-index:10;max-width:920px;margin:0 auto;padding:2rem 1.5rem 4rem}
+    header{text-align:center;margin-bottom:1.8rem;animation:fadeUp .7s ease both}
+    .logo{font-size:2.6rem;margin-bottom:.2rem}
+    h1{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:300;color:var(--ink);letter-spacing:-.02em}
+    .subtitle{font-size:.85rem;color:var(--text-muted);margin-top:.3rem}
+    .search-wrap{animation:fadeUp .7s ease .05s both;margin-bottom:1.5rem}
+    .search-box{display:flex;gap:.6rem;align-items:center;background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:16px;padding:.7rem 1rem;transition:border-color .2s}
+    .search-box:focus-within{border-color:rgba(255,255,255,.7)}
+    .search-icon{font-size:1.1rem;flex-shrink:0;opacity:.6}
+    .search-input{flex:1;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--ink)}
+    .search-input::placeholder{color:var(--text-muted)}
+    .search-btn{background:var(--ink);color:#fff;border:none;border-radius:10px;padding:.45rem 1rem;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:opacity .2s;flex-shrink:0}
+    .search-btn:hover{opacity:.8}
+    body.night .search-btn{background:rgba(255,255,255,.18);color:var(--ink)}
+    .location-name{text-align:center;font-size:.8rem;color:var(--text-muted);margin-top:.5rem;min-height:1.2em}
+    .search-error{text-align:center;font-size:.8rem;color:#c0392b;margin-top:.5rem;display:none}
+    body.night .search-error{color:#e07070}
+    .tabs{display:flex;gap:.5rem;margin-bottom:1.5rem}
+    .tab{flex:1;padding:.6rem .4rem;border:1px solid var(--card-border);background:var(--card-bg);backdrop-filter:blur(16px);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:var(--ink);cursor:pointer;transition:all .2s;text-align:center}
+    .tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+    body.night .tab.active{background:rgba(255,255,255,.18);color:var(--ink)}
+    .recommendation{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:20px;padding:1.5rem 1.8rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:1.2rem;animation:fadeUp .7s ease .1s both}
+    .rec-icon{font-size:2.6rem;flex-shrink:0}
+    .rec-text h2{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:400;color:var(--ink)}
+    .rec-text p{font-size:.83rem;color:var(--text-muted);margin-top:.2rem;line-height:1.5}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:.9rem;margin-bottom:1.2rem}
+    .card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1.3rem 1.1rem;transition:transform .2s;animation:fadeUp .7s ease both}
+    .card:hover{transform:translateY(-3px)}
+    .card-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:.5rem;font-weight:500}
+    .card-icon{font-size:1.5rem;margin-bottom:.35rem}
+    .card-value{font-family:'Fraunces',serif;font-size:1.9rem;font-weight:300;color:var(--ink);line-height:1}
+    .card-unit{font-size:.78rem;color:var(--text-muted);margin-left:.15rem}
+    .card-sub{font-size:.76rem;color:var(--text-muted);margin-top:.25rem}
+    .rain-card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1.3rem 1.5rem;margin-bottom:1.2rem;animation:fadeUp .7s ease .3s both}
+    .rain-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+    .rain-summary-inline{font-size:.78rem;color:var(--text-muted);max-width:55%;line-height:1.4;text-align:right}
+    .rain-summary-inline strong{color:var(--ink)}
+    .rain-hours{display:flex;gap:.5rem;overflow-x:auto;padding-bottom:.3rem;scrollbar-width:none}
+    .rain-hours::-webkit-scrollbar{display:none}
+    .rain-hour{display:flex;flex-direction:column;align-items:center;gap:.3rem;min-width:46px}
+    .rain-hour .rh-time{font-size:.67rem;color:var(--text-muted)}
+    .rain-hour .rh-bar-wrap{width:26px;height:56px;background:rgba(0,0,0,.06);border-radius:6px;display:flex;align-items:flex-end;overflow:hidden}
+    body.night .rain-hour .rh-bar-wrap{background:rgba(255,255,255,.06)}
+    .rain-hour .rh-bar{width:100%;border-radius:6px}
+    .rain-hour .rh-pct{font-size:.67rem;color:var(--ink);font-weight:500}
+    .rain-hour .rh-icon{font-size:.85rem}
+    .sun-card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1.3rem 1.5rem;margin-bottom:1.2rem;animation:fadeUp .7s ease .35s both}
+    .sun-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+    .sun-times{display:flex;justify-content:space-between;align-items:center;gap:1rem}
+    .sun-time{text-align:center}
+    .sun-time .icon{font-size:1.3rem}
+    .sun-time .time{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:300;color:var(--ink)}
+    .sun-time .label{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
+    .daylight-bar{flex:1;position:relative;height:6px;background:rgba(0,0,0,.08);border-radius:10px;margin:0 .7rem}
+    body.night .daylight-bar{background:rgba(255,255,255,.1)}
+    .daylight-fill{height:100%;background:linear-gradient(90deg,#f5a623,#f8d347);border-radius:10px}
+    .sun-marker{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:.9rem}
+    .uv-bar-wrap{margin-top:.5rem}
+    .uv-bar{height:5px;border-radius:10px;background:linear-gradient(90deg,#5cb85c,#f0ad4e,#d9534f);position:relative}
+    .uv-marker{position:absolute;top:-4px;width:13px;height:13px;background:white;border:2px solid #555;border-radius:50%;transform:translateX(-50%)}
+    .section-intro{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1.2rem 1.5rem;margin-bottom:1rem;animation:fadeUp .7s ease .05s both}
+    .section-intro h3{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:400;color:var(--ink);margin-bottom:.25rem}
+    .section-intro p{font-size:.8rem;color:var(--text-muted);line-height:1.5}
+    .item-list{display:flex;flex-direction:column;gap:.9rem}
+    .item-card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1.2rem 1.4rem;transition:transform .2s;animation:fadeUp .7s ease both}
+    .item-card:hover{transform:translateY(-2px)}
+    .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+    .item-name{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:400;color:var(--ink);margin-bottom:.15rem}
+    .item-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.4rem}
+    .item-tag{font-size:.68rem;padding:.15rem .55rem;border-radius:20px;border:1px solid var(--card-border);color:var(--text-muted);background:rgba(255,255,255,.15)}
+    .item-meta{display:flex;gap:1rem;font-size:.76rem;color:var(--text-muted);margin-bottom:.4rem;flex-wrap:wrap}
+    .item-desc{font-size:.8rem;color:var(--text-muted);line-height:1.5}
+    .item-weather-note{margin-top:.6rem;padding:.5rem .7rem;background:rgba(0,0,0,.04);border-radius:8px;font-size:.75rem;color:var(--text-muted)}
+    body.night .item-weather-note{background:rgba(255,255,255,.04)}
+    .item-badge{flex-shrink:0;font-size:1.6rem;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.2);border-radius:12px}
+    .item-distance-badge{display:inline-block;font-size:.72rem;background:rgba(90,122,82,.15);color:var(--moss);border-radius:20px;padding:.15rem .6rem;font-weight:500}
+    body.night .item-distance-badge{background:rgba(122,184,122,.15);color:#7ab87a}
+    .walk-map-link{display:inline-block;margin-top:.5rem;font-size:.75rem;color:var(--moss);text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:1px}
+    .walk-map-link:hover{opacity:.7}
+    body.night .walk-map-link{color:#7ab87a}
+    /* Stars rating */
+    .stars-row{display:flex;gap:.25rem;margin:.6rem 0 .3rem}
+    .star{font-size:1.3rem;cursor:pointer;opacity:.3;transition:opacity .15s,transform .15s}
+    .star.filled,.star:hover{opacity:1}
+    .star:hover{transform:scale(1.2)}
+    .avg-stars{display:flex;align-items:center;gap:.35rem;margin:.4rem 0}
+    .avg-star{font-size:.95rem;opacity:.25}
+    .avg-star.filled{opacity:1}
+    .avg-label{font-size:.75rem;color:var(--text-muted)}
+    /* Reviews */
+    .reviews-section{margin-top:1rem;border-top:1px solid var(--card-border);padding-top:.9rem}
+    .reviews-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);font-weight:500;margin-bottom:.6rem}
+    .review-item{margin-bottom:.7rem;padding:.6rem .8rem;background:rgba(0,0,0,.03);border-radius:10px}
+    body.night .review-item{background:rgba(255,255,255,.04)}
+    .review-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem}
+    .review-stars{font-size:.8rem}
+    .review-date{font-size:.68rem;color:var(--text-muted)}
+    .review-text{font-size:.8rem;color:var(--text-muted);line-height:1.5}
+    .review-photo{margin-top:.5rem;width:100%;max-width:280px;border-radius:8px;object-fit:cover;max-height:180px}
+    /* Add review form */
+    .add-review-btn{display:inline-flex;align-items:center;gap:.4rem;margin-top:.7rem;font-size:.78rem;color:var(--moss);background:rgba(90,122,82,.1);border:1px solid rgba(90,122,82,.2);border-radius:20px;padding:.35rem .9rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+    .add-review-btn:hover{background:rgba(90,122,82,.2)}
+    body.night .add-review-btn{color:#7ab87a;background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.2)}
+    .review-form{margin-top:.8rem;padding:.9rem;background:rgba(255,255,255,.12);border-radius:12px;border:1px solid var(--card-border);display:none}
+    .review-form.open{display:block}
+    .review-form textarea{width:100%;background:rgba(255,255,255,.2);border:1px solid var(--card-border);border-radius:8px;padding:.6rem .8rem;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--ink);resize:vertical;min-height:70px;outline:none}
+    .review-form textarea::placeholder{color:var(--text-muted)}
+    .review-form-row{display:flex;gap:.6rem;align-items:center;margin-top:.6rem;flex-wrap:wrap}
+    .photo-label{display:inline-flex;align-items:center;gap:.3rem;font-size:.78rem;color:var(--text-muted);background:rgba(255,255,255,.15);border:1px solid var(--card-border);border-radius:8px;padding:.35rem .7rem;cursor:pointer}
+    .photo-label:hover{background:rgba(255,255,255,.25)}
+    .photo-input{display:none}
+    .photo-preview{margin-top:.5rem;max-width:200px;max-height:120px;border-radius:8px;object-fit:cover;display:none}
+    .submit-review-btn{background:var(--ink);color:#fff;border:none;border-radius:10px;padding:.4rem 1rem;font-family:'DM Sans',sans-serif;font-size:.8rem;cursor:pointer;transition:opacity .2s;margin-left:auto}
+    .submit-review-btn:hover{opacity:.8}
+    body.night .submit-review-btn{background:rgba(255,255,255,.2);color:var(--ink)}
+    .cancel-review-btn{background:none;border:none;font-size:.78rem;color:var(--text-muted);cursor:pointer;font-family:'DM Sans',sans-serif;padding:.4rem .5rem}
+    /* Community tab */
+    .cat-filter{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+    .cat-btn{padding:.35rem .85rem;border-radius:20px;border:1px solid var(--card-border);background:var(--card-bg);backdrop-filter:blur(12px);font-size:.78rem;color:var(--ink);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+    .cat-btn.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+    body.night .cat-btn.active{background:rgba(255,255,255,.18);color:var(--ink)}
+    .places-loading{text-align:center;padding:2rem;font-size:.85rem;color:var(--text-muted);font-style:italic}
+    /* Submit walk form */
+    .submit-walk-card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1.2rem 1.4rem;margin-top:1rem}
+    .submit-walk-card h4{font-family:'Fraunces',serif;font-size:1rem;font-weight:400;color:var(--ink);margin-bottom:.8rem}
+    .form-field{margin-bottom:.7rem}
+    .form-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:500;display:block;margin-bottom:.3rem}
+    .form-input{width:100%;background:rgba(255,255,255,.2);border:1px solid var(--card-border);border-radius:8px;padding:.55rem .8rem;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--ink);outline:none}
+    .form-input::placeholder{color:var(--text-muted)}
+    .form-input:focus{border-color:rgba(255,255,255,.6)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+    .primary-btn{background:var(--ink);color:#fff;border:none;border-radius:12px;padding:.6rem 1.4rem;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:opacity .2s;width:100%;margin-top:.5rem}
+    .primary-btn:hover{opacity:.8}
+    body.night .primary-btn{background:rgba(255,255,255,.2);color:var(--ink)}
+    .success-msg{text-align:center;padding:.8rem;background:rgba(90,122,82,.1);border-radius:10px;font-size:.82rem;color:var(--moss);margin-top:.7rem;display:none}
+    body.night .success-msg{color:#7ab87a}
+    .community-badge{display:inline-block;font-size:.68rem;padding:.12rem .5rem;border-radius:20px;background:rgba(232,168,56,.2);color:#a0680a;font-weight:500;margin-left:.4rem}
+    body.night .community-badge{background:rgba(232,168,56,.15);color:var(--amber)}
+    .splash{text-align:center;padding:3rem 1rem;animation:fadeUp .7s ease both}
+    .splash-icon{font-size:3rem;margin-bottom:1rem}
+    .splash h2{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:var(--ink);margin-bottom:.5rem}
+    .splash p{font-size:.85rem;color:var(--text-muted);line-height:1.6;max-width:340px;margin:0 auto}
+    .splash-examples{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1.2rem}
+    .example-pill{background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:20px;padding:.35rem .9rem;font-size:.78rem;color:var(--ink);cursor:pointer;transition:all .2s}
+    .example-pill:hover{background:var(--ink);color:#fff}
+    .footer{text-align:center;font-size:.73rem;color:var(--text-muted);margin-top:1rem}
+    .refresh-btn{background:none;border:1px solid rgba(0,0,0,.15);border-radius:20px;padding:.3rem .8rem;font-size:.73rem;cursor:pointer;color:var(--ink);opacity:.5;font-family:'DM Sans',sans-serif;margin-top:.4rem;transition:opacity .2s}
+    .refresh-btn:hover{opacity:1}
+    body.night .refresh-btn{border-color:rgba(255,255,255,.2)}
+    .loading{text-align:center;padding:3rem 2rem;color:var(--ink);opacity:.5;font-family:'Fraunces',serif;font-size:1.1rem;font-style:italic}
+    .spinner{display:inline-block;width:22px;height:22px;border:2px solid rgba(0,0,0,.1);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:.8rem}
+    .no-results{text-align:center;padding:2rem 1rem;font-size:.85rem;color:var(--text-muted);font-style:italic}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    .card:nth-child(1){animation-delay:.10s}.card:nth-child(2){animation-delay:.15s}.card:nth-child(3){animation-delay:.20s}.card:nth-child(4){animation-delay:.25s}.card:nth-child(5){animation-delay:.30s}.card:nth-child(6){animation-delay:.35s}
+    .item-card:nth-child(1){animation-delay:.10s}.item-card:nth-child(2){animation-delay:.17s}.item-card:nth-child(3){animation-delay:.24s}.item-card:nth-child(4){animation-delay:.31s}.item-card:nth-child(5){animation-delay:.38s}.item-card:nth-child(6){animation-delay:.45s}
+    @media(max-width:480px){h1{font-size:1.7rem}.grid{grid-template-columns:repeat(2,1fr)}.recommendation{flex-direction:column;text-align:center}.rain-summary-inline{max-width:100%;text-align:left;margin-top:.4rem}.rain-header{flex-direction:column;align-items:flex-start}.tab{font-size:.7rem;padding:.5rem .3rem}.form-row{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <div class="sky"></div>
   <div class="stars"></div>
-  <div class="clouds">
-    <div class="cloud c1"></div>
-    <div class="cloud c2"></div>
-    <div class="cloud c3"></div>
-  </div>
-
+  <div class="clouds"><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div></div>
   <div class="wrapper">
     <header>
       <div class="logo">🐾</div>
       <h1>Walk Planner</h1>
       <p class="subtitle">Real-time weather for wherever you're walking</p>
     </header>
-
     <div class="search-wrap">
       <div class="search-box">
         <span class="search-icon">📍</span>
-        <input class="search-input" id="searchInput" type="text" placeholder="Type a postcode or place… e.g. KT2, Battersea, SW11" autocomplete="off" />
+        <input class="search-input" id="searchInput" type="text" placeholder="Postcode or place… e.g. KT2, Battersea, Edinburgh" autocomplete="off"/>
         <button class="search-btn" onclick="doSearch()">Search</button>
       </div>
       <div class="location-name" id="locationName"></div>
-      <div class="search-error" id="searchError">Couldn't find that location — try a postcode like SW11 or a place name like Battersea.</div>
+      <div class="search-error" id="searchError">Couldn't find that location — try a postcode like SW11 or a place name.</div>
     </div>
-
     <div id="app">
       <div class="splash">
         <div class="splash-icon">🗺️</div>
         <h2>Where are you walking today?</h2>
-        <p>Enter a UK postcode or place name above to get live weather, rain forecast and nearby walk suggestions.</p>
+        <p>Enter a UK postcode or place name to get live weather, curated walks, dog-friendly spots and community reviews.</p>
         <div class="splash-examples">
           <div class="example-pill" onclick="useExample('KT2')">KT2</div>
           <div class="example-pill" onclick="useExample('Battersea')">Battersea</div>
           <div class="example-pill" onclick="useExample('Richmond')">Richmond</div>
           <div class="example-pill" onclick="useExample('Hampstead Heath')">Hampstead Heath</div>
-          <div class="example-pill" onclick="useExample('SW11')">SW11</div>
-          <div class="example-pill" onclick="useExample('Hyde Park London')">Hyde Park</div>
+          <div class="example-pill" onclick="useExample('Edinburgh')">Edinburgh</div>
+          <div class="example-pill" onclick="useExample('Brighton')">Brighton</div>
         </div>
       </div>
     </div>
   </div>
+<script>
+// ── WALKS DATABASE ────────────────────────────────────────────────────────────
+const WALKS_DB=[
+  {id:'thames-kt2',name:"Thames Path — Kingston to Richmond",area:"Kingston upon Thames",lat:51.4085,lon:-0.3064,icon:"🌊",distance:"8.5km",duration:"2h",difficulty:"Easy",terrain:"Riverside path",tags:["Riverside","Flat","Scenic"],desc:"Gorgeous flat route along the Thames passing Canbury Gardens, Teddington Lock, Ham Lands and Petersham Meadows. Dogs can access the river at multiple points.",wetNote:"Mostly paved and accessible after light rain. Avoid after heavy rain — Ham Lands can flood.",hotNote:"Riverside breezes keep it cool. Dogs can access the river easily."},
+  {id:'richmond-park',name:"Richmond Park Loop",area:"Richmond",lat:51.4408,lon:-0.2815,icon:"🦌",distance:"11km",duration:"2.5h",difficulty:"Easy–Moderate",terrain:"Parkland & grass",tags:["Royal Park","Deer","Wildlife"],desc:"2,500 acres of open grassland with 650 roaming deer. Views of St Paul's from King Henry's Mound. Dogs on leads near deer May–August.",wetNote:"Tarmac paths great in wet weather. Grassy sections can be muddy — stick to the main loop.",hotNote:"Woodland sections offer good shade. Ponds perfect for dogs to cool off."},
+  {id:'bushy-park',name:"Bushy Park & River Crane",area:"Hampton",lat:51.4136,lon:-0.3407,icon:"🌳",distance:"9km",duration:"2h",difficulty:"Easy",terrain:"Parkland & riverside",tags:["Royal Park","Woodland","Riverside"],desc:"1,000 acres with 320 free-roaming deer. Follow the famous Chestnut Avenue then pick up the River Crane trail through beautiful woodland.",wetNote:"Tarmac paths excellent in wet weather. River trail can be muddy — wellies recommended.",hotNote:"Large ornamental pond perfect for dogs to cool down. Plenty of shade."},
+  {id:'hampstead-heath',name:"Hampstead Heath Circuit",area:"Hampstead",lat:51.5625,lon:-0.1606,icon:"🌿",distance:"7km",duration:"1.75h",difficulty:"Moderate",terrain:"Heathland & woodland",tags:["Heathland","Swimming ponds","Views"],desc:"North London's wild open space with rolling hills, ancient woodland and swimming ponds. Stunning views over London from Parliament Hill.",wetNote:"Can be very muddy after rain — good boots essential. East side paths are better drained.",hotNote:"Shaded woodland walks. Dogs allowed in the mixed pond area to splash around."},
+  {id:'regents-canal',name:"Regent's Canal — Little Venice to Victoria Park",area:"Paddington",lat:51.5199,lon:-0.1873,icon:"🛶",distance:"8km",duration:"2h",difficulty:"Easy",terrain:"Canal towpath",tags:["Canal","Flat","Urban nature"],desc:"Peaceful towpath walk through the heart of London, passing Little Venice, London Zoo, Broadway Market and finishing at Victoria Park.",wetNote:"Tarmac towpath perfect in rain — stays dry underfoot. Most rain-friendly walk in London.",hotNote:"Shaded by trees for much of the route. Stop at Broadway Market for a coffee."},
+  {id:'epping-forest',name:"Epping Forest — Chingford to Connaught Water",area:"Epping Forest",lat:51.6333,lon:0.0080,icon:"🌲",distance:"10km",duration:"2.5h",difficulty:"Moderate",terrain:"Ancient woodland",tags:["Ancient woodland","Off-lead","Wildlife"],desc:"Ancient royal hunting forest stretching 12 miles. Beautiful woodland trails with off-lead freedom. Look out for deer and rare fungi.",wetNote:"Forest floor can be very boggy. Stick to bridleways after rain.",hotNote:"Dense canopy provides excellent shade all summer."},
+  {id:'canbury-gardens',name:"Canbury Gardens & Kingston Riverside",area:"Kingston upon Thames",lat:51.4120,lon:-0.3063,icon:"🌿",distance:"3km",duration:"45min",difficulty:"Easy",terrain:"Park & riverside",tags:["Short","Urban park","Quick"],desc:"Perfect short loop — open grass in Canbury Gardens with easy river access, continuing along the promenade past Kingston Bridge.",wetNote:"Mostly paved — great rainy-day option. Quick and not too muddy.",hotNote:"Shaded by trees in summer. Dogs can access the river easily."},
+  {id:'hogsmill-river',name:"Hogsmill River Greenway",area:"Kingston upon Thames",lat:51.3944,lon:-0.2980,icon:"🏞️",distance:"6km",duration:"1.5h",difficulty:"Easy",terrain:"Riverside path",tags:["Hidden gem","Wildlife","Quiet"],desc:"Hidden green corridor along the Hogsmill River. Surprisingly rural for London — look for kingfishers, herons and water voles.",wetNote:"Riverbank can be muddy after rain. Stick to upper paths.",hotNote:"Well shaded along the river. Calm water great for dogs to paddle."},
+  {id:'wimbledon-common',name:"Wimbledon Common Loop",area:"Wimbledon",lat:51.4350,lon:-0.2380,icon:"🌾",distance:"8km",duration:"2h",difficulty:"Easy–Moderate",terrain:"Common & woodland",tags:["Common land","Off-lead","Windmill"],desc:"Nearly 1,100 acres of common land, woodland and ponds. Completely off-lead friendly. Visit the iconic windmill at the centre.",wetNote:"Can be muddy but well-trodden paths hold up well.",hotNote:"Plenty of ponds for dogs to splash in. Shaded woodland paths throughout."},
+  {id:'primrose-hill',name:"Primrose Hill & Regent's Park",area:"Primrose Hill",lat:51.5388,lon:-0.1591,icon:"🌸",distance:"5km",duration:"1.25h",difficulty:"Easy",terrain:"Parkland",tags:["Views","City park","Flat"],desc:"Climb Primrose Hill for the best skyline views in London, then loop through Regent's Park. Beautiful gardens and open grass.",wetNote:"Well maintained paths stay accessible in most weather. Hill can be slippery when wet.",hotNote:"Regent's Park has shaded avenues. Bring water — limited river access."},
+  {id:'blackheath-greenwich',name:"Blackheath & Greenwich Park",area:"Greenwich",lat:51.4769,lon:-0.0005,icon:"🏛️",distance:"6km",duration:"1.5h",difficulty:"Easy",terrain:"Parkland & heath",tags:["Royal Park","Views","History"],desc:"Vast open heath leading into beautiful Greenwich Park. Views over the Thames and Canary Wharf. Visit the Royal Observatory.",wetNote:"Blackheath exposed and windy in bad weather. Greenwich Park paths well maintained.",hotNote:"The park has shaded avenues. Good views from the hilltop."},
+  {id:'south-downs-ditchling',name:"South Downs Way — Ditchling Beacon",area:"Brighton",lat:50.9003,lon:-0.1083,icon:"⛰️",distance:"10km",duration:"2.5h",difficulty:"Moderate",terrain:"Chalk downland",tags:["Countryside","Views","Off-lead"],desc:"Classic South Downs ridge walk from Ditchling Beacon with sweeping views over Brighton and the Weald. Ancient drove roads and open chalk grassland.",wetNote:"Chalk paths get slippery when wet. Can be very exposed in wind.",hotNote:"Exposed ridge can be very hot in summer. Early morning walk recommended."},
+  {id:'box-hill',name:"Box Hill & Stepping Stones",area:"Dorking",lat:51.2514,lon:-0.3104,icon:"🌄",distance:"8km",duration:"2h",difficulty:"Moderate",terrain:"Woodland & chalk hills",tags:["National Trust","Woodland","River"],desc:"Climb Box Hill through ancient yew woodland to panoramic Surrey Hills views. Descend to the famous stepping stones across the River Mole.",wetNote:"Woodland paths can be slippery. Stepping stones may be submerged after heavy rain.",hotNote:"Woodland shade throughout. The River Mole perfect for dogs to cool off."},
+  {id:'ashdown-forest',name:"Ashdown Forest — Poohsticks Bridge",area:"Ashdown Forest",lat:51.0833,lon:0.0333,icon:"🍯",distance:"7km",duration:"1.75h",difficulty:"Easy",terrain:"Heathland & woodland",tags:["Heathland","Family","Off-lead"],desc:"The real Hundred Acre Wood. Sweeping heathland with ancient woodland. Play Poohsticks on the original bridge!",wetNote:"Heathland drains well after rain. Forest tracks can be boggy in winter.",hotNote:"Open heathland with little shade — early morning walks best in summer."},
+  {id:'seven-sisters',name:"Cuckmere Haven & Seven Sisters",area:"Eastbourne",lat:50.7517,lon:0.1539,icon:"🏖️",distance:"11km",duration:"3h",difficulty:"Moderate",terrain:"Coastal cliffs & beach",tags:["Coastal","Cliffs","Stunning views"],desc:"One of England's most spectacular coastal walks. White chalk cliffs, a meandering river and a shingle beach.",wetNote:"Cliff path can be exposed and slippery. Valley floor path safer in bad weather.",hotNote:"Very exposed — sun cream and plenty of water essential. Dogs can swim in the Cuckmere River."},
+  {id:'stanage-edge',name:"Stanage Edge",area:"Peak District",lat:53.3667,lon:-1.6500,icon:"🪨",distance:"9km",duration:"2.5h",difficulty:"Moderate",terrain:"Moorland & gritstone edge",tags:["Peak District","Moorland","Dramatic views"],desc:"Iconic gritstone escarpment above the Hope Valley. Dramatic moorland views and fascinating rock formations.",wetNote:"Moorland paths can be very boggy. Gritstone rocks slippery when wet.",hotNote:"Exposed moorland — bring sun protection. The edge catches any breeze."},
+  {id:'windermere',name:"Fell Foot to Ambleside — Windermere",area:"Lake District",lat:54.3481,lon:-2.9282,icon:"🏔️",distance:"14km",duration:"3.5h",difficulty:"Moderate",terrain:"Lakeshore & fell",tags:["Lake District","Lakeshore","Fells"],desc:"Beautiful walk along the eastern shore of England's largest lake, with stunning mountain reflections in the water.",wetNote:"Lakeshore path can flood after heavy rain. Fell sections require good boots.",hotNote:"The lake provides plenty of cooling opportunities for dogs."},
+  {id:'malham-cove',name:"Malham Cove & Gordale Scar",area:"Yorkshire Dales",lat:54.0696,lon:-2.1568,icon:"🏞️",distance:"9km",duration:"2.5h",difficulty:"Moderate",terrain:"Limestone scenery",tags:["Yorkshire Dales","Geology","Spectacular"],desc:"One of Yorkshire's most dramatic landscapes. Climb the ancient limestone pavement above Malham Cove then squeeze through the towering Gordale Scar gorge.",wetNote:"Limestone can be very slippery when wet — take extreme care.",hotNote:"Sheltered in the gorge but exposed on the tops."},
+  {id:'hadrians-wall',name:"Hadrian's Wall — Steel Rigg to Housesteads",area:"Northumberland",lat:55.0000,lon:-2.3833,icon:"🏰",distance:"8km",duration:"2h",difficulty:"Moderate",terrain:"Moorland & historic wall",tags:["History","Moorland","UNESCO"],desc:"Walk along the best preserved section of the ancient Roman wall with sweeping views north into Scotland.",wetNote:"Exposed moorland — very wet and windy in bad weather.",hotNote:"Exposed ridge with strong winds even in summer. Bring layers."},
+  {id:'arthurs-seat',name:"Arthur's Seat — Holyrood Park",area:"Edinburgh",lat:55.9447,lon:-3.1623,icon:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",distance:"5km",duration:"1.5h",difficulty:"Moderate",terrain:"Volcanic hill & parkland",tags:["Edinburgh","Views","City walk"],desc:"Extinct volcano rising dramatically in the heart of Edinburgh. Stunning 360° views over the city and the Firth of Forth.",wetNote:"Paths can be slippery on steeper sections when wet.",hotNote:"Exposed summit — bring layers even in summer."},
+  {id:'ben-aan',name:"Ben A'an — Loch Katrine",area:"Trossachs",lat:56.2333,lon:-4.4167,icon:"⛰️",distance:"5km",duration:"2h",difficulty:"Moderate",terrain:"Highland hill",tags:["Scotland","Highlands","Views"],desc:"A compact but rewarding Highland hill with a dramatic rocky summit and stunning views over Loch Katrine.",wetNote:"Rocky path can be slippery when wet. Summit scramble requires care.",hotNote:"Summit can be very exposed. Loch Katrine is beautiful on a clear day."},
+  {id:'pen-y-fan',name:"Brecon Beacons — Pen y Fan",area:"Brecon Beacons",lat:51.8836,lon:-3.4364,icon:"🏴󠁧󠁢󠁷󠁬󠁳󠁿",distance:"12km",duration:"3.5h",difficulty:"Challenging",terrain:"Mountain & moorland",tags:["Wales","Mountain","Spectacular"],desc:"The highest peak in southern Britain. Classic ridge walk over Corn Du and Pen y Fan with dramatic views in all directions.",wetNote:"Mountain paths can be dangerous in poor visibility. Check forecasts carefully.",hotNote:"Exposed mountain top — bring warm layers regardless of forecast."},
+  {id:'pembrokeshire-coast',name:"Pembrokeshire Coast Path — Marloes to St Bride's",area:"Pembrokeshire",lat:51.7667,lon:-5.1833,icon:"🌊",distance:"10km",duration:"2.5h",difficulty:"Moderate",terrain:"Coastal cliffs",tags:["Wales","Coastal","Wildlife"],desc:"Spectacular coastal walk with dramatic red sandstone cliffs, sea stacks and stunning beaches. Grey seals visible from the cliff tops.",wetNote:"Coastal paths can be very exposed and slippery in rain.",hotNote:"Sea breezes keep it cool. Dogs allowed on most beaches outside summer restrictions."},
+];
 
-  <script>
-    const WMO={0:['☀️','Clear sky'],1:['🌤️','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],45:['🌫️','Foggy'],48:['🌫️','Icy fog'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Heavy drizzle'],61:['🌧️','Slight rain'],63:['🌧️','Moderate rain'],65:['🌧️','Heavy rain'],71:['🌨️','Light snow'],73:['🌨️','Moderate snow'],75:['❄️','Heavy snow'],80:['🌦️','Rain showers'],81:['🌧️','Heavy showers'],82:['⛈️','Violent showers'],95:['⛈️','Thunderstorm'],99:['⛈️','Thunderstorm+hail']};
+const WMO={0:['☀️','Clear sky'],1:['🌤️','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],45:['🌫️','Foggy'],48:['🌫️','Icy fog'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Heavy drizzle'],61:['🌧️','Slight rain'],63:['🌧️','Moderate rain'],65:['🌧️','Heavy rain'],71:['🌨️','Light snow'],73:['🌨️','Moderate snow'],75:['❄️','Heavy snow'],80:['🌦️','Rain showers'],81:['🌧️','Heavy showers'],82:['⛈️','Violent showers'],95:['⛈️','Thunderstorm'],99:['⛈️','Thunderstorm+hail']};
 
-    let weatherData=null, currentTab='weather', currentLocation=null;
+// ── STORAGE (localStorage) ────────────────────────────────────────────────────
+function getReviews(){try{return JSON.parse(localStorage.getItem('walkReviews')||'{}')}catch{return{}}}
+function saveReviews(r){localStorage.setItem('walkReviews',JSON.stringify(r))}
+function getCommunityWalks(){try{return JSON.parse(localStorage.getItem('communityWalks')||'[]')}catch{return[]}}
+function saveCommunityWalks(w){localStorage.setItem('communityWalks',JSON.stringify(w))}
 
-    function getWmo(c){return WMO[c]||['🌡️','Unknown']}
-    function fmtTime(iso){return new Date(iso).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}
-    function windDir(d){return['N','NE','E','SE','S','SW','W','NW'][Math.round(d/45)%8]}
-    function uvLevel(u){if(u<=2)return['🟢','Low'];if(u<=5)return['🟡','Moderate'];if(u<=7)return['🟠','High'];if(u<=10)return['🔴','Very High'];return['🟣','Extreme']}
-    function daylightPct(rise,set){const n=Date.now(),r=new Date(rise).getTime(),s=new Date(set).getTime();if(n<r)return 0;if(n>s)return 100;return Math.round(((n-r)/(s-r))*100)}
-    function rainColor(p){if(p<20)return'#a8d4b8';if(p<50)return'#6aabde';if(p<75)return'#3b82c4';return'#1a4fa0'}
+function addReview(walkId,stars,text,photoDataUrl){
+  const reviews=getReviews();
+  if(!reviews[walkId])reviews[walkId]=[];
+  reviews[walkId].unshift({stars,text,photo:photoDataUrl||null,date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})});
+  saveReviews(reviews);
+}
+function getAvgRating(walkId){
+  const reviews=getReviews();
+  const r=reviews[walkId]||[];
+  if(!r.length)return null;
+  return(r.reduce((s,x)=>s+x.stars,0)/r.length).toFixed(1);
+}
 
-    function walkRec(d){
-      const rain=[51,53,55,61,63,65,80,81,82,95,99].includes(d.weatherCode);
-      const storm=[82,95,99].includes(d.weatherCode);
-      const fog=[45,48].includes(d.weatherCode);
-      if(storm)return['⛈️','⚠️ Stay in today','Thunderstorms make this a bad day for walks. Wait it out!'];
-      if(d.windGust>=50)return['💨','⚠️ Very windy',`Gusts of ${Math.round(d.windGust)} km/h are too strong. Try later.`];
-      if(rain&&d.feelsLike<5)return['🥶','Bundle up & make it quick','Cold and rainy — a short walk with a good coat is fine.'];
-      if(rain)return['🌧️','Grab the lead & a raincoat','A bit wet but walkable. Stick to shorter paved routes.'];
-      if(fog)return['🌫️','Foggy — stay visible','Low visibility. Stick to familiar routes.'];
-      if(d.feelsLike<2)return['🥶','Brisk walk day',`Feels like ${Math.round(d.feelsLike)}°C — keep it short, watch for ice.`];
-      if(d.feelsLike>28)return['🌡️','Stay cool on your walk','Quite warm. Walk early or evening and bring water for your dog.'];
-      if(d.uvMax>=6)return['☀️','Great walk — watch the UV',`Lovely day but UV is ${d.uvMax}. Walk in shade, check paw temps on tarmac.`];
-      return['🐕','Great day for a walk!',`${getWmo(d.weatherCode)[1]} with ${Math.round(d.feelsLike)}°C feels-like. Perfect conditions!`];
-    }
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+let weatherData=null,currentTab='weather',currentLocation=null,placesData=null,activeCat='cafe';
+function getWmo(c){return WMO[c]||['🌡️','Unknown']}
+function fmtTime(iso){return new Date(iso).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}
+function windDir(d){return['N','NE','E','SE','S','SW','W','NW'][Math.round(d/45)%8]}
+function uvLevel(u){if(u<=2)return['🟢','Low'];if(u<=5)return['🟡','Moderate'];if(u<=7)return['🟠','High'];if(u<=10)return['🔴','Very High'];return['🟣','Extreme']}
+function daylightPct(rise,set){const n=Date.now(),r=new Date(rise).getTime(),s=new Date(set).getTime();if(n<r)return 0;if(n>s)return 100;return Math.round(((n-r)/(s-r))*100)}
+function rainColor(p){if(p<20)return'#a8d4b8';if(p<50)return'#6aabde';if(p<75)return'#3b82c4';return'#1a4fa0'}
+function haversine(lat1,lon1,lat2,lon2){const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
+function starsHtml(avg,size=''){const full=Math.round(avg||0);return[1,2,3,4,5].map(i=>`<span class="avg-star${i<=full?' filled':''}" style="font-size:${size||'.95rem'}">${i<=full?'⭐':'☆'}</span>`).join('')}
 
-    function buildRainSection(d){
-      const now=new Date();
-      const hours=d.hourlyTimes.map((t,i)=>({time:fmtTime(t),fullTime:new Date(t),prob:d.hourlyRainProb[i],precip:d.hourlyPrecip[i],wmo:d.hourlyWmo[i]})).filter(h=>h.fullTime>=now).slice(0,12);
-      const maxProb=Math.max(...hours.map(h=>h.prob),0);
-      const rainHours=hours.filter(h=>h.prob>=40).length;
-      const totalPrecip=hours.reduce((s,h)=>s+h.precip,0);
-      let summary;
-      if(maxProb<20)summary=`<strong>Looks dry</strong> for the rest of today.`;
-      else if(maxProb<50)summary=`<strong>Mostly dry</strong> — light showers possible. Worth a jacket.`;
-      else if(rainHours<=2)summary=`<strong>Brief showers</strong> (~${rainHours}h). Plan around the dry windows.`;
-      else summary=`<strong>Rainy ahead</strong> — ${rainHours}h of rain, up to ${totalPrecip.toFixed(1)}mm expected.`;
-      const bars=hours.map(h=>`<div class="rain-hour"><div class="rh-time">${h.time}</div><div class="rh-bar-wrap"><div class="rh-bar" style="height:${h.prob}%;background:${rainColor(h.prob)}"></div></div><div class="rh-pct">${h.prob}%</div><div class="rh-icon">${getWmo(h.wmo)[0]}</div></div>`).join('');
-      return`<div class="rain-card"><div class="rain-header"><span class="card-label">Rain forecast — next 12 hours</span><span class="rain-summary-inline">${summary}</span></div><div class="rain-hours">${bars}</div></div>`;
-    }
+function walkRec(d){
+  const rain=[51,53,55,61,63,65,80,81,82,95,99].includes(d.weatherCode),storm=[82,95,99].includes(d.weatherCode),fog=[45,48].includes(d.weatherCode);
+  if(storm)return['⛈️','⚠️ Stay in today','Thunderstorms make this a bad day for walks. Wait it out!'];
+  if(d.windGust>=50)return['💨','⚠️ Very windy',`Gusts of ${Math.round(d.windGust)} km/h are too strong. Try later.`];
+  if(rain&&d.feelsLike<5)return['🥶','Bundle up & make it quick','Cold and rainy — a short walk with a good coat is fine.'];
+  if(rain)return['🌧️','Grab the lead & a raincoat','A bit wet but walkable. Stick to shorter paved routes.'];
+  if(fog)return['🌫️','Foggy — stay visible','Low visibility. Stick to familiar routes.'];
+  if(d.feelsLike<2)return['🥶','Brisk walk day',`Feels like ${Math.round(d.feelsLike)}°C — keep it short, watch for ice.`];
+  if(d.feelsLike>28)return['🌡️','Stay cool on your walk','Quite warm. Walk early or evening and bring water for your dog.'];
+  if(d.uvMax>=6)return['☀️','Great walk — watch the UV',`Lovely day but UV is ${d.uvMax}. Walk in shade, check paw temps on tarmac.`];
+  return['🐕','Great day for a walk!',`${getWmo(d.weatherCode)[1]} with ${Math.round(d.feelsLike)}°C feels-like. Perfect conditions!`];
+}
 
-    function renderWeather(d){
-      const[wi,wd]=getWmo(d.weatherCode),[ri,rt,rp]=walkRec(d),[ud,ut]=uvLevel(d.uvMax);
-      const dp=daylightPct(d.sunrise,d.sunset),up=Math.min((d.uvMax/11)*100,100);
-      return`
-        <div class="recommendation"><div class="rec-icon">${ri}</div><div class="rec-text"><h2>${rt}</h2><p>${rp}</p></div></div>
-        <div class="grid">
-          <div class="card"><div class="card-label">Conditions</div><div class="card-icon">${wi}</div><div class="card-value" style="font-size:1rem;padding-top:.2rem">${wd}</div></div>
-          <div class="card"><div class="card-label">Temperature</div><div class="card-icon">🌡️</div><div class="card-value">${d.temp}<span class="card-unit">°C</span></div><div class="card-sub">Feels like ${Math.round(d.feelsLike)}°C</div></div>
-          <div class="card"><div class="card-label">Humidity</div><div class="card-icon">💧</div><div class="card-value">${d.humidity}<span class="card-unit">%</span></div><div class="card-sub">${d.humidity<40?'Dry air':d.humidity<70?'Comfortable':'Quite humid'}</div></div>
-          <div class="card"><div class="card-label">Wind</div><div class="card-icon">💨</div><div class="card-value">${d.windSpeed}<span class="card-unit">km/h</span></div><div class="card-sub">${d.windDir} · Gusts ${Math.round(d.windGust)} km/h</div></div>
-          <div class="card"><div class="card-label">UV Index</div><div class="card-icon">${ud}</div><div class="card-value">${d.uvMax.toFixed(1)}</div><div class="card-sub">${ut}</div><div class="uv-bar-wrap"><div class="uv-bar"><div class="uv-marker" style="left:${up}%"></div></div></div></div>
-          <div class="card"><div class="card-label">Paw Check</div><div class="card-icon">${d.temp>25?'🔥':d.temp<0?'🧊':'✅'}</div><div class="card-value" style="font-size:.95rem;padding-top:.2rem">${d.temp>25?'Hot pavements':d.temp<0?'Ice risk':'Paws safe'}</div><div class="card-sub">${d.temp>25?'Check tarmac before walking':d.temp<0?'Watch for gritting salt':'Ground temp is fine'}</div></div>
+// ── RAIN & WEATHER RENDERING ─────────────────────────────────────────────────
+function buildRainSection(d){
+  const now=new Date();
+  const hours=d.hourlyTimes.map((t,i)=>({time:fmtTime(t),fullTime:new Date(t),prob:d.hourlyRainProb[i],precip:d.hourlyPrecip[i],wmo:d.hourlyWmo[i]})).filter(h=>h.fullTime>=now).slice(0,12);
+  const maxProb=Math.max(...hours.map(h=>h.prob),0),rainHours=hours.filter(h=>h.prob>=40).length,totalPrecip=hours.reduce((s,h)=>s+h.precip,0);
+  let summary;
+  if(maxProb<20)summary=`<strong>Looks dry</strong> for the rest of today.`;
+  else if(maxProb<50)summary=`<strong>Mostly dry</strong> — light showers possible. Worth a jacket.`;
+  else if(rainHours<=2)summary=`<strong>Brief showers</strong> (~${rainHours}h). Plan around the dry windows.`;
+  else summary=`<strong>Rainy ahead</strong> — ${rainHours}h of rain, up to ${totalPrecip.toFixed(1)}mm expected.`;
+  const bars=hours.map(h=>`<div class="rain-hour"><div class="rh-time">${h.time}</div><div class="rh-bar-wrap"><div class="rh-bar" style="height:${h.prob}%;background:${rainColor(h.prob)}"></div></div><div class="rh-pct">${h.prob}%</div><div class="rh-icon">${getWmo(h.wmo)[0]}</div></div>`).join('');
+  return`<div class="rain-card"><div class="rain-header"><span class="card-label">Rain forecast — next 12 hours</span><span class="rain-summary-inline">${summary}</span></div><div class="rain-hours">${bars}</div></div>`;
+}
+
+function renderWeather(d){
+  const[wi,wd]=getWmo(d.weatherCode),[ri,rt,rp]=walkRec(d),[ud,ut]=uvLevel(d.uvMax);
+  const dp=daylightPct(d.sunrise,d.sunset),up=Math.min((d.uvMax/11)*100,100);
+  return`
+    <div class="recommendation"><div class="rec-icon">${ri}</div><div class="rec-text"><h2>${rt}</h2><p>${rp}</p></div></div>
+    <div class="grid">
+      <div class="card"><div class="card-label">Conditions</div><div class="card-icon">${wi}</div><div class="card-value" style="font-size:1rem;padding-top:.2rem">${wd}</div></div>
+      <div class="card"><div class="card-label">Temperature</div><div class="card-icon">🌡️</div><div class="card-value">${d.temp}<span class="card-unit">°C</span></div><div class="card-sub">Feels like ${Math.round(d.feelsLike)}°C</div></div>
+      <div class="card"><div class="card-label">Humidity</div><div class="card-icon">💧</div><div class="card-value">${d.humidity}<span class="card-unit">%</span></div><div class="card-sub">${d.humidity<40?'Dry air':d.humidity<70?'Comfortable':'Quite humid'}</div></div>
+      <div class="card"><div class="card-label">Wind</div><div class="card-icon">💨</div><div class="card-value">${d.windSpeed}<span class="card-unit">km/h</span></div><div class="card-sub">${d.windDir} · Gusts ${Math.round(d.windGust)} km/h</div></div>
+      <div class="card"><div class="card-label">UV Index</div><div class="card-icon">${ud}</div><div class="card-value">${d.uvMax.toFixed(1)}</div><div class="card-sub">${ut}</div><div class="uv-bar-wrap"><div class="uv-bar"><div class="uv-marker" style="left:${up}%"></div></div></div></div>
+      <div class="card"><div class="card-label">Paw Check</div><div class="card-icon">${d.temp>25?'🔥':d.temp<0?'🧊':'✅'}</div><div class="card-value" style="font-size:.95rem;padding-top:.2rem">${d.temp>25?'Hot pavements':d.temp<0?'Ice risk':'Paws safe'}</div><div class="card-sub">${d.temp>25?'Check tarmac before walking':d.temp<0?'Watch for gritting salt':'Ground temp is fine'}</div></div>
+    </div>
+    ${buildRainSection(d)}
+    <div class="sun-card">
+      <div class="sun-header"><span class="card-label">Daylight · ${fmtTime(d.sunrise)} – ${fmtTime(d.sunset)}</span><span style="font-size:.74rem;color:var(--text-muted)">${dp}% through the day</span></div>
+      <div class="sun-times">
+        <div class="sun-time"><div class="icon">🌅</div><div class="time">${fmtTime(d.sunrise)}</div><div class="label">Sunrise</div></div>
+        <div class="daylight-bar"><div class="daylight-fill" style="width:${dp}%"></div><div class="sun-marker" style="left:${dp}%">☀️</div></div>
+        <div class="sun-time"><div class="icon">🌇</div><div class="time">${fmtTime(d.sunset)}</div><div class="label">Sunset</div></div>
+      </div>
+    </div>
+    <div class="footer"><div>Updated ${d.updatedAt} · Open-Meteo · ${currentLocation.displayName}</div><button class="refresh-btn" onclick="refreshWeather()">↻ Refresh</button></div>`;
+}
+
+// ── REVIEW UI ─────────────────────────────────────────────────────────────────
+function renderReviewsBlock(walkId){
+  const reviews=(getReviews()[walkId]||[]);
+  const avg=getAvgRating(walkId);
+  const avgHtml=avg?`<div class="avg-stars">${starsHtml(avg)}<span class="avg-label">${avg} / 5 · ${reviews.length} review${reviews.length!==1?'s':''}</span></div>`:'<div class="avg-label" style="font-size:.75rem;color:var(--text-muted);margin:.4rem 0">No reviews yet — be the first!</div>';
+  const reviewItems=reviews.map(r=>`
+    <div class="review-item">
+      <div class="review-meta"><span class="review-stars">${[1,2,3,4,5].map(i=>i<=r.stars?'⭐':'☆').join('')}</span><span class="review-date">${r.date}</span></div>
+      ${r.text?`<div class="review-text">${r.text}</div>`:''}
+      ${r.photo?`<img class="review-photo" src="${r.photo}" alt="Walk photo"/>`:''}
+    </div>`).join('');
+  return`
+    <div class="reviews-section" id="reviews-${walkId}">
+      <div class="reviews-title">Community reviews</div>
+      ${avgHtml}
+      ${reviewItems}
+      <button class="add-review-btn" onclick="toggleReviewForm('${walkId}')">✏️ Add your review</button>
+      <div class="review-form" id="form-${walkId}">
+        <div class="stars-row" id="stars-${walkId}">
+          ${[1,2,3,4,5].map(i=>`<span class="star" data-v="${i}" onclick="setStars('${walkId}',${i})">☆</span>`).join('')}
+          <span style="font-size:.78rem;color:var(--text-muted);margin-left:.5rem" id="starlabel-${walkId}">Tap to rate</span>
         </div>
-        ${buildRainSection(d)}
-        <div class="sun-card">
-          <div class="sun-header"><span class="card-label">Daylight · ${fmtTime(d.sunrise)} – ${fmtTime(d.sunset)}</span><span style="font-size:.74rem;color:var(--text-muted)">${dp}% through the day</span></div>
-          <div class="sun-times">
-            <div class="sun-time"><div class="icon">🌅</div><div class="time">${fmtTime(d.sunrise)}</div><div class="label">Sunrise</div></div>
-            <div class="daylight-bar"><div class="daylight-fill" style="width:${dp}%"></div><div class="sun-marker" style="left:${dp}%">☀️</div></div>
-            <div class="sun-time"><div class="icon">🌇</div><div class="time">${fmtTime(d.sunset)}</div><div class="label">Sunset</div></div>
-          </div>
+        <textarea placeholder="Share your experience… What was the path like? Would you recommend it?" id="text-${walkId}"></textarea>
+        <div>
+          <label class="photo-label" for="photo-${walkId}">📷 Add a photo</label>
+          <input class="photo-input" type="file" accept="image/*" id="photo-${walkId}" onchange="previewPhoto('${walkId}')"/>
+          <img class="photo-preview" id="preview-${walkId}" alt="preview"/>
         </div>
-        <div class="footer"><div>Updated ${d.updatedAt} · Open-Meteo · ${currentLocation.displayName}</div><button class="refresh-btn" onclick="refreshWeather()">↻ Refresh</button></div>`;
-    }
-
-    function renderWalks(d){
-      const rain=[51,53,55,61,63,65,80,81,82,95,99].includes(d.weatherCode);
-      const hot=d.feelsLike>22;
-      const loc=encodeURIComponent('dog walks near '+currentLocation.displayName);
-      const condNote=rain?`It's wet today — look for paved or sheltered routes.`:hot?`It's warm today — look for shaded or riverside walks.`:`Conditions look great today!`;
-      return`
-        <div class="walks-intro"><h3>Dog walks near ${currentLocation.displayName}</h3><p>${condNote} Browse dog-friendly walks in this area on Google Maps.</p></div>
-        <div class="walk-list">
-          <div class="walk-card"><div class="walk-top"><div><div class="walk-name">🗺️ Find walks near ${currentLocation.displayName}</div><div class="walk-tags"><span class="walk-tag">Google Maps</span><span class="walk-tag">Dog-friendly</span></div><div class="walk-meta"><span>📍 Your area</span><span>🐕 Dog-friendly</span></div></div><div class="walk-badge">🔍</div></div><div class="walk-desc">Search for dog walks, parks and green spaces near ${currentLocation.displayName}. See ratings, photos and directions.</div><a class="walk-map-link" href="https://www.google.com/maps/search/${loc}" target="_blank">Search dog walks on Google Maps →</a></div>
-          <div class="walk-card"><div class="walk-top"><div><div class="walk-name">🌳 Parks & green spaces</div><div class="walk-tags"><span class="walk-tag">Parks</span><span class="walk-tag">Off-lead areas</span></div><div class="walk-meta"><span>📍 ${currentLocation.displayName}</span></div></div><div class="walk-badge">🏞️</div></div><div class="walk-desc">Find the nearest parks and commons to let your dog off the lead and explore.</div><a class="walk-map-link" href="https://www.google.com/maps/search/${encodeURIComponent('dog friendly parks near '+currentLocation.displayName)}" target="_blank">Find parks on Google Maps →</a></div>
-          <div class="walk-card"><div class="walk-top"><div><div class="walk-name">☕ Dog-friendly cafés</div><div class="walk-tags"><span class="walk-tag">Cafés & pubs</span><span class="walk-tag">Post-walk</span></div><div class="walk-meta"><span>📍 ${currentLocation.displayName}</span></div></div><div class="walk-badge">☕</div></div><div class="walk-desc">Find dog-friendly cafés and pubs near ${currentLocation.displayName} for a well-earned post-walk treat.</div><a class="walk-map-link" href="https://www.google.com/maps/search/${encodeURIComponent('dog friendly cafe near '+currentLocation.displayName)}" target="_blank">Find dog-friendly cafés →</a></div>
+        <div class="review-form-row">
+          <button class="cancel-review-btn" onclick="toggleReviewForm('${walkId}')">Cancel</button>
+          <button class="submit-review-btn" onclick="submitReview('${walkId}')">Submit review</button>
         </div>
-        <div class="footer" style="margin-top:1.5rem"><div>Walk suggestions powered by Google Maps · Always check conditions before heading out</div></div>`;
-    }
+      </div>
+    </div>`;
+}
 
-    function showTab(tab){
-      currentTab=tab;
-      document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['weather','walks'][i]===tab));
-      if(!weatherData)return;
-      const p=document.getElementById('panel');
-      if(tab==='weather')p.innerHTML=renderWeather(weatherData);
-      if(tab==='walks')p.innerHTML=renderWalks(weatherData);
-    }
+let selectedStars={};
+function setStars(walkId,val){
+  selectedStars[walkId]=val;
+  const row=document.getElementById('stars-'+walkId);
+  row.querySelectorAll('.star').forEach(s=>{const v=parseInt(s.dataset.v);s.textContent=v<=val?'⭐':'☆';s.classList.toggle('filled',v<=val)});
+  document.getElementById('starlabel-'+walkId).textContent=['','⭐ Poor','⭐⭐ Fair','⭐⭐⭐ Good','⭐⭐⭐⭐ Great','⭐⭐⭐⭐⭐ Excellent'][val];
+}
+function toggleReviewForm(walkId){
+  const f=document.getElementById('form-'+walkId);
+  f.classList.toggle('open');
+}
+function previewPhoto(walkId){
+  const file=document.getElementById('photo-'+walkId).files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{const img=document.getElementById('preview-'+walkId);img.src=e.target.result;img.style.display='block'};
+  reader.readAsDataURL(file);
+}
+function submitReview(walkId){
+  const stars=selectedStars[walkId]||0;
+  const text=document.getElementById('text-'+walkId).value.trim();
+  const preview=document.getElementById('preview-'+walkId);
+  const photo=preview.style.display!=='none'?preview.src:null;
+  if(!stars){alert('Please tap a star to rate this walk!');return}
+  addReview(walkId,stars,text,photo);
+  // Re-render walk panel to show new review
+  showTab('walks');
+}
 
-    function renderShell(){
-      document.getElementById('app').innerHTML=`
-        <div class="tabs">
-          <div class="tab ${currentTab==='weather'?'active':''}" onclick="showTab('weather')">🌤️ Weather & Rain</div>
-          <div class="tab ${currentTab==='walks'?'active':''}" onclick="showTab('walks')">🗺️ Local Walks</div>
-        </div>
-        <div id="panel"><div class="loading"><div class="spinner"></div><br>Fetching conditions…</div></div>`;
-    }
+// ── WALKS RENDERING ───────────────────────────────────────────────────────────
+function renderWalkCard(w,distStr,showWeatherNote){
+  const avg=getAvgRating(w.id);
+  const avgLine=avg?`<div class="avg-stars" style="margin:.3rem 0">${starsHtml(avg,'0.9rem')}<span class="avg-label">${avg}/5</span></div>`:'';
+  const communityTag=w.community?`<span class="community-badge">Community</span>`:'';
+  return`<div class="item-card">
+    <div class="item-top">
+      <div>
+        <div class="item-name">${w.icon} ${w.name}${communityTag}</div>
+        <div class="item-tags">${w.tags.map(t=>`<span class="item-tag">${t}</span>`).join('')}<span class="item-distance-badge">📍 ${distStr}</span></div>
+        <div class="item-meta"><span>🗺️ ${w.distance}</span><span>⏱️ ${w.duration}</span><span>💪 ${w.difficulty}</span><span>🌿 ${w.terrain}</span></div>
+        ${avgLine}
+      </div>
+      <div class="item-badge">${w.icon}</div>
+    </div>
+    <div class="item-desc">${w.desc}</div>
+    ${showWeatherNote?`<div class="item-weather-note">🌤️ Today: ${showWeatherNote}</div>`:''}
+    ${renderReviewsBlock(w.id)}
+  </div>`;
+}
 
-    // Geocoding: try postcodes.io first for UK postcodes, then Nominatim for place names
-    function isPostcode(q){ return /^[a-z]{1,2}\d{1,2}[a-z]?\s*\d?[a-z]{0,2}$/i.test(q.trim()); }
+function renderWalks(){
+  const rain=[51,53,55,61,63,65,80,81,82,95,99].includes(weatherData.weatherCode);
+  const hot=weatherData.feelsLike>22;
+  const lat=currentLocation.lat,lon=currentLocation.lon;
+  const MAX_KM=3;
+  // Merge curated + community walks
+  const communityWalks=getCommunityWalks().map(w=>({...w,community:true}));
+  const allWalks=[...WALKS_DB,...communityWalks];
+  const nearby=allWalks.map(w=>({...w,dist:haversine(lat,lon,w.lat,w.lon)})).filter(w=>w.dist<=MAX_KM).sort((a,b)=>a.dist-b.dist);
+  const note=rain?`It's wet today — walks with good wet-weather notes shown first.`:hot?`It's warm today — look for shaded or riverside routes.`:`Conditions look great today!`;
 
-    async function geocodePostcode(pc){
-      const clean=pc.replace(/\s/g,'').toUpperCase();
-      // Use the outward code (e.g. KT2, SW11) via postcodes.io
-      const url=`https://api.postcodes.io/outcodes/${encodeURIComponent(clean)}`;
-      const j=await(await fetch(url)).json();
-      if(j.status!==200||!j.result) throw new Error('not found');
-      return { lat:j.result.latitude, lon:j.result.longitude, displayName: clean };
-    }
+  let walksHtml;
+  if(nearby.length===0){
+    const loc=encodeURIComponent('dog walks near '+currentLocation.displayName);
+    const parks=encodeURIComponent('dog friendly parks near '+currentLocation.displayName);
+    const trails=encodeURIComponent('walking trails near '+currentLocation.displayName);
+    walksHtml=`<div class="item-list">
+      <div class="item-card"><div class="item-top"><div><div class="item-name">🗺️ No curated walks within 3km yet</div><div class="item-tags"><span class="item-tag">Our database</span></div></div><div class="item-badge">🔍</div></div><div class="item-desc">We don't have walks in our database within 3km of ${currentLocation.displayName} yet. Browse options below or add one yourself using the form!</div></div>
+      <div class="item-card"><div class="item-top"><div><div class="item-name">🐕 Dog walks near ${currentLocation.displayName}</div><div class="item-tags"><span class="item-tag">Google Maps</span></div></div><div class="item-badge">🗺️</div></div><div class="item-desc">Search for dog-friendly walks and green spaces in this area.</div><a class="walk-map-link" href="https://www.google.com/maps/search/${loc}" target="_blank">Search on Google Maps →</a></div>
+      <div class="item-card"><div class="item-top"><div><div class="item-name">🌳 Parks & open spaces</div><div class="item-tags"><span class="item-tag">Google Maps</span></div></div><div class="item-badge">🏞️</div></div><div class="item-desc">Find the nearest parks, commons and off-lead areas for your dog.</div><a class="walk-map-link" href="https://www.google.com/maps/search/${parks}" target="_blank">Find parks on Google Maps →</a></div>
+      <div class="item-card"><div class="item-top"><div><div class="item-name">🥾 Walking trails nearby</div><div class="item-tags"><span class="item-tag">Google Maps</span></div></div><div class="item-badge">🧭</div></div><div class="item-desc">Explore walking routes and trails in the wider area.</div><a class="walk-map-link" href="https://www.google.com/maps/search/${trails}" target="_blank">Find trails on Google Maps →</a></div>
+    </div>`;
+  } else {
+    walksHtml=`<div class="item-list">${nearby.map(w=>{
+      const distStr=w.dist<1?`${Math.round(w.dist*1000)}m away`:`${w.dist.toFixed(1)}km away`;
+      const wn=rain?w.wetNote:hot?w.hotNote:null;
+      return renderWalkCard(w,distStr,wn);
+    }).join('')}</div>`;
+  }
 
-    async function geocodePlaceName(name){
-      // Nominatim - open geocoding, works from local files
-      const q=encodeURIComponent(name+', United Kingdom');
-      const url=`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&countrycodes=gb`;
-      const j=await(await fetch(url,{headers:{'Accept-Language':'en'}})).json();
-      if(!j||j.length===0) throw new Error('not found');
-      return { lat:parseFloat(j[0].lat), lon:parseFloat(j[0].lon), displayName: j[0].display_name.split(',').slice(0,2).join(',').trim() };
-    }
+  return`
+    <div class="section-intro"><h3>Walks near ${currentLocation.displayName}</h3><p>${note} Showing walks within 3km of your location. Rate and review walks you've done — or suggest a new one below!</p></div>
+    ${walksHtml}
+    ${renderSubmitWalkForm()}
+    <div class="footer" style="margin-top:1.5rem"><div>Curated walks + community submissions · Reviews saved on your device</div></div>`;
+}
 
-    async function geocode(query){
-      const q=query.trim();
-      if(isPostcode(q)){
-        try{ return await geocodePostcode(q); }catch(e){}
-      }
-      // Fall through to Nominatim for place names (and postcode fallback)
-      return await geocodePlaceName(q);
-    }
+function renderSubmitWalkForm(){
+  return`<div class="submit-walk-card">
+    <h4>🐾 Know a great walk nearby? Add it!</h4>
+    <div class="form-field"><label class="form-label">Walk name</label><input class="form-input" id="sw-name" placeholder="e.g. Riverside path through Molesey"/></div>
+    <div class="form-field"><label class="form-label">Description</label><input class="form-input" id="sw-desc" placeholder="What makes this walk special?"/></div>
+    <div class="form-row">
+      <div class="form-field"><label class="form-label">Distance</label><input class="form-input" id="sw-dist" placeholder="e.g. 4km"/></div>
+      <div class="form-field"><label class="form-label">Duration</label><input class="form-input" id="sw-dur" placeholder="e.g. 1h"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label class="form-label">Difficulty</label>
+        <select class="form-input" id="sw-diff"><option>Easy</option><option>Moderate</option><option>Challenging</option></select>
+      </div>
+      <div class="form-field"><label class="form-label">Terrain</label><input class="form-input" id="sw-terrain" placeholder="e.g. Riverside path"/></div>
+    </div>
+    <button class="primary-btn" onclick="submitWalk()">➕ Add this walk</button>
+    <div class="success-msg" id="sw-success">✅ Walk added! It'll appear in the list above for anyone searching this area.</div>
+  </div>`;
+}
 
-    async function fetchWeather(lat,lon){
-      const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day&hourly=precipitation_probability,precipitation,weather_code&daily=sunrise,sunset,uv_index_max&timezone=Europe%2FLondon&forecast_days=1`;
-      const j=await(await fetch(url)).json();
-      const c=j.current,d=j.daily,h=j.hourly;
-      return{temp:Math.round(c.temperature_2m),feelsLike:c.apparent_temperature,humidity:c.relative_humidity_2m,windSpeed:Math.round(c.wind_speed_10m),windDir:windDir(c.wind_direction_10m),windGust:c.wind_gusts_10m,weatherCode:c.weather_code,isDay:c.is_day,sunrise:d.sunrise[0],sunset:d.sunset[0],uvMax:d.uv_index_max[0],hourlyTimes:h.time,hourlyRainProb:h.precipitation_probability,hourlyPrecip:h.precipitation,hourlyWmo:h.weather_code,updatedAt:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})};
-    }
+function submitWalk(){
+  const name=document.getElementById('sw-name').value.trim();
+  const desc=document.getElementById('sw-desc').value.trim();
+  if(!name||!desc){alert('Please add at least a name and description!');return}
+  const walks=getCommunityWalks();
+  const id='community-'+Date.now();
+  walks.push({
+    id,name,desc,icon:'🐕',
+    area:currentLocation.displayName,
+    lat:currentLocation.lat,lon:currentLocation.lon,
+    distance:document.getElementById('sw-dist').value||'Unknown',
+    duration:document.getElementById('sw-dur').value||'Unknown',
+    difficulty:document.getElementById('sw-diff').value,
+    terrain:document.getElementById('sw-terrain').value||'Mixed',
+    tags:['Community walk'],
+    wetNote:'Added by a community member — check conditions before visiting.',
+    hotNote:'Added by a community member — check conditions before visiting.',
+  });
+  saveCommunityWalks(walks);
+  ['sw-name','sw-desc','sw-dist','sw-dur','sw-terrain'].forEach(id=>{document.getElementById(id).value=''});
+  document.getElementById('sw-success').style.display='block';
+  setTimeout(()=>showTab('walks'),1500);
+}
 
-    async function doSearch(){
-      const query=document.getElementById('searchInput').value.trim();
-      if(!query)return;
-      document.getElementById('searchError').style.display='none';
-      document.getElementById('locationName').textContent='Searching…';
-      renderShell();
-      try{
-        currentLocation=await geocode(query);
-        document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
-        weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
-        document.body.classList.toggle('night',!weatherData.isDay);
-        showTab(currentTab);
-      }catch(e){
-        document.getElementById('locationName').textContent='';
-        document.getElementById('searchError').style.display='block';
-        document.getElementById('app').innerHTML=`<div class="splash"><div class="splash-icon">🗺️</div><h2>Where are you walking today?</h2><p>Enter a UK postcode or place name above to get live weather, rain forecast and nearby walk suggestions.</p><div class="splash-examples"><div class="example-pill" onclick="useExample('KT2')">KT2</div><div class="example-pill" onclick="useExample('Battersea')">Battersea</div><div class="example-pill" onclick="useExample('Richmond')">Richmond</div><div class="example-pill" onclick="useExample('Hampstead Heath')">Hampstead Heath</div><div class="example-pill" onclick="useExample('SW11')">SW11</div><div class="example-pill" onclick="useExample('Hyde Park London')">Hyde Park</div></div></div>`;
-      }
-    }
+// ── PLACES RENDERING ──────────────────────────────────────────────────────────
+const CAT_CONFIG={
+  cafe:{label:'☕ Cafés',icon:'☕',query:`node["amenity"="cafe"]["dog"!="no"](BBOX);`,tag:'Café'},
+  pub:{label:'🍺 Pubs',icon:'🍺',query:`node["amenity"="pub"]["dog"!="no"](BBOX);node["amenity"="bar"]["dog"!="no"](BBOX);`,tag:'Pub'},
+  park:{label:'🌳 Parks',icon:'🌳',query:`node["leisure"="park"](BBOX);way["leisure"="park"](BBOX);node["leisure"="dog_park"](BBOX);`,tag:'Park'},
+};
+async function fetchPlaces(lat,lon,cat){
+  const delta=0.05;
+  const bbox=`${lat-delta},${lon-delta},${lat+delta},${lon+delta}`;
+  const cfg=CAT_CONFIG[cat];
+  const q=`[out:json][timeout:15];(${cfg.query.replace(/BBOX/g,bbox)});out body 20;`;
+  const j=await(await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`)).json();
+  return j.elements||[];
+}
+function renderPlacesPanel(){
+  const catBtns=Object.entries(CAT_CONFIG).map(([k,v])=>`<button class="cat-btn${activeCat===k?' active':''}" onclick="switchCat('${k}')">${v.label}</button>`).join('');
+  const content=placesData?renderPlacesList():`<div class="places-loading"><div class="spinner" style="display:inline-block"></div> Loading nearby places…</div>`;
+  return`<div class="section-intro"><h3>Dog-friendly places near ${currentLocation.displayName}</h3><p>Real venues from OpenStreetMap. Tap a category to switch.</p></div>
+    <div class="cat-filter">${catBtns}</div>
+    <div id="places-list">${content}</div>
+    <div class="footer" style="margin-top:1.5rem"><div>Places data from OpenStreetMap · Always call ahead to confirm dogs are welcome</div></div>`;
+}
+function renderPlacesList(){
+  if(!placesData||!placesData.length)return`<div class="no-results">No places found nearby — try a different area or category.</div>`;
+  const lat=currentLocation.lat,lon=currentLocation.lon,cfg=CAT_CONFIG[activeCat];
+  return`<div class="item-list">${placesData.slice(0,8).map(p=>{
+    const name=p.tags?.name||'Unnamed '+cfg.tag;
+    const addr=[p.tags?.['addr:housenumber'],p.tags?.['addr:street'],p.tags?.['addr:city']].filter(Boolean).join(' ');
+    const website=p.tags?.website||p.tags?.['contact:website']||'';
+    const phone=p.tags?.phone||p.tags?.['contact:phone']||'';
+    const plat=p.lat||p.center?.lat||lat,plon=p.lon||p.center?.lon||lon;
+    const dist=haversine(lat,lon,plat,plon);
+    const distStr=dist<1?`${Math.round(dist*1000)}m away`:`${dist.toFixed(1)}km away`;
+    const dogConfirmed=p.tags?.dog==='yes';
+    return`<div class="item-card">
+      <div class="item-top"><div>
+        <div class="item-name">${cfg.icon} ${name}</div>
+        <div class="item-tags"><span class="item-tag">${cfg.tag}</span><span class="item-distance-badge">📍 ${distStr}</span>${dogConfirmed?'<span class="item-tag">✅ Dog confirmed</span>':''}</div>
+        ${addr?`<div class="item-meta"><span>📍 ${addr}</span></div>`:''}
+      </div><div class="item-badge">${cfg.icon}</div></div>
+      ${phone?`<div class="item-desc" style="margin-top:.3rem">📞 ${phone}</div>`:''}
+      ${website?`<a class="walk-map-link" href="${website.startsWith('http')?website:'https://'+website}" target="_blank">Visit website →</a>`:''}
+    </div>`;
+  }).join('')}</div>`;
+}
+async function switchCat(cat){activeCat=cat;placesData=null;if(currentTab==='places'){document.getElementById('panel').innerHTML=renderPlacesPanel();loadPlaces()}}
+async function loadPlaces(){
+  try{placesData=await fetchPlaces(currentLocation.lat,currentLocation.lon,activeCat);const el=document.getElementById('places-list');if(el)el.innerHTML=renderPlacesList()}
+  catch(e){const el=document.getElementById('places-list');if(el)el.innerHTML=`<div class="no-results">Couldn't load places — check your connection and try again.</div>`}
+}
 
-    function useExample(val){
-      document.getElementById('searchInput').value=val;
-      doSearch();
-    }
+// ── TAB & NAVIGATION ──────────────────────────────────────────────────────────
+function showTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['weather','walks','places'][i]===tab));
+  if(!weatherData)return;
+  const p=document.getElementById('panel');
+  if(tab==='weather')p.innerHTML=renderWeather(weatherData);
+  if(tab==='walks')p.innerHTML=renderWalks();
+  if(tab==='places'){p.innerHTML=renderPlacesPanel();loadPlaces()}
+}
+function renderShell(){
+  document.getElementById('app').innerHTML=`
+    <div class="tabs">
+      <div class="tab ${currentTab==='weather'?'active':''}" onclick="showTab('weather')">🌤️ Weather</div>
+      <div class="tab ${currentTab==='walks'?'active':''}" onclick="showTab('walks')">🥾 Walks</div>
+      <div class="tab ${currentTab==='places'?'active':''}" onclick="showTab('places')">☕ Places</div>
+    </div>
+    <div id="panel"><div class="loading"><div class="spinner"></div><br>Fetching conditions…</div></div>`;
+}
 
-    async function refreshWeather(){
-      if(!currentLocation)return;
-      renderShell();
-      try{
-        weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
-        document.body.classList.toggle('night',!weatherData.isDay);
-        showTab(currentTab);
-      }catch(e){
-        document.getElementById('panel').innerHTML=`<div class="loading">Couldn't refresh. <button class="refresh-btn" onclick="refreshWeather()">Try again</button></div>`;
-      }
-    }
-
-    document.getElementById('searchInput').addEventListener('keydown',e=>{ if(e.key==='Enter') doSearch(); });
-  </script>
+// ── GEOCODING & WEATHER ───────────────────────────────────────────────────────
+function isPostcode(q){return /^[a-z]{1,2}\d{1,2}[a-z]?\s*\d?[a-z]{0,2}$/i.test(q.trim())}
+async function geocodePostcode(pc){const clean=pc.replace(/\s/g,'').toUpperCase();const j=await(await fetch(`https://api.postcodes.io/outcodes/${encodeURIComponent(clean)}`)).json();if(j.status!==200||!j.result)throw new Error('not found');return{lat:j.result.latitude,lon:j.result.longitude,displayName:clean}}
+async function geocodePlaceName(name){const q=encodeURIComponent(name+', United Kingdom');const j=await(await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&countrycodes=gb`,{headers:{'Accept-Language':'en'}})).json();if(!j||!j.length)throw new Error('not found');return{lat:parseFloat(j[0].lat),lon:parseFloat(j[0].lon),displayName:j[0].display_name.split(',').slice(0,2).join(',').trim()}}
+async function geocode(query){const q=query.trim();if(isPostcode(q)){try{return await geocodePostcode(q)}catch(e){}}return await geocodePlaceName(q)}
+async function fetchWeather(lat,lon){
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day&hourly=precipitation_probability,precipitation,weather_code&daily=sunrise,sunset,uv_index_max&timezone=Europe%2FLondon&forecast_days=1`;
+  const j=await(await fetch(url)).json();const c=j.current,d=j.daily,h=j.hourly;
+  return{temp:Math.round(c.temperature_2m),feelsLike:c.apparent_temperature,humidity:c.relative_humidity_2m,windSpeed:Math.round(c.wind_speed_10m),windDir:windDir(c.wind_direction_10m),windGust:c.wind_gusts_10m,weatherCode:c.weather_code,isDay:c.is_day,sunrise:d.sunrise[0],sunset:d.sunset[0],uvMax:d.uv_index_max[0],hourlyTimes:h.time,hourlyRainProb:h.precipitation_probability,hourlyPrecip:h.precipitation,hourlyWmo:h.weather_code,updatedAt:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}
+}
+function showSplash(){
+  document.getElementById('app').innerHTML=`<div class="splash"><div class="splash-icon">🗺️</div><h2>Where are you walking today?</h2><p>Enter a UK postcode or place name to get live weather, curated walks, dog-friendly spots and community reviews.</p><div class="splash-examples"><div class="example-pill" onclick="useExample('KT2')">KT2</div><div class="example-pill" onclick="useExample('Battersea')">Battersea</div><div class="example-pill" onclick="useExample('Richmond')">Richmond</div><div class="example-pill" onclick="useExample('Hampstead Heath')">Hampstead Heath</div><div class="example-pill" onclick="useExample('Edinburgh')">Edinburgh</div><div class="example-pill" onclick="useExample('Brighton')">Brighton</div></div></div>`;
+}
+async function doSearch(){
+  const query=document.getElementById('searchInput').value.trim();
+  if(!query)return;
+  document.getElementById('searchError').style.display='none';
+  document.getElementById('locationName').textContent='Searching…';
+  placesData=null;renderShell();
+  try{
+    currentLocation=await geocode(query);
+    document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
+    weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
+    document.body.classList.toggle('night',!weatherData.isDay);
+    showTab(currentTab);
+  }catch(e){
+    document.getElementById('locationName').textContent='';
+    document.getElementById('searchError').style.display='block';
+    showSplash();
+  }
+}
+function useExample(val){document.getElementById('searchInput').value=val;doSearch()}
+async function refreshWeather(){
+  if(!currentLocation)return;renderShell();
+  try{weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);document.body.classList.toggle('night',!weatherData.isDay);showTab(currentTab)}
+  catch(e){document.getElementById('panel').innerHTML=`<div class="loading">Couldn't refresh. <button class="refresh-btn" onclick="refreshWeather()">Try again</button></div>`}
+}
+document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch()});
+setInterval(()=>{if(weatherData)refreshWeather()},15*60*1000);
+</script>
 </body>
 </html>
