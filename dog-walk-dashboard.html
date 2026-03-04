@@ -50,6 +50,16 @@
     .nav-dot{width:4px;height:4px;border-radius:50%;background:var(--moss);margin:0 auto;opacity:0;transition:opacity .2s}
     body.night .nav-dot{background:#7ab87a}
     .nav-item.active .nav-dot{opacity:1}
+    .hazard-warning{border-radius:18px;padding:1.1rem 1.4rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:.9rem;animation:fadeUp .5s ease both;border:1.5px solid}
+    .hazard-warning.red{background:rgba(200,50,50,.1);border-color:rgba(200,50,50,.3)}
+    .hazard-warning.amber{background:rgba(220,140,30,.1);border-color:rgba(220,140,30,.3)}
+    body.night .hazard-warning.red{background:rgba(200,50,50,.15);border-color:rgba(200,80,80,.4)}
+    body.night .hazard-warning.amber{background:rgba(220,140,30,.15);border-color:rgba(220,140,30,.4)}
+    .hazard-icon{font-size:1.6rem;flex-shrink:0;margin-top:.1rem}
+    .hazard-title{font-family:'Fraunces',serif;font-size:.95rem;font-weight:400;color:var(--ink);margin-bottom:.2rem}
+    .hazard-tips{list-style:none;padding:0;margin:0}
+    .hazard-tips li{font-size:.78rem;color:var(--text-muted);line-height:1.5;padding:.1rem 0}
+    .hazard-tips li::before{content:'→ ';opacity:.5}
     .recommendation{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:20px;padding:1.5rem 1.8rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:1.2rem;animation:fadeUp .7s ease .1s both}
     .rec-icon{font-size:2.6rem;flex-shrink:0}
     .rec-text h2{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:400;color:var(--ink)}
@@ -290,7 +300,7 @@ function getAvgRating(walkId){
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
-let weatherData=null,currentTab='weather',currentLocation=null,placesData=null,activeCat='cafe';
+let weatherData=null,currentTab='weather',currentLocation=null,activeCat='cafe';
 function getWmo(c){return WMO[c]||['🌡️','Unknown']}
 function fmtTime(iso){return new Date(iso).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}
 function windDir(d){return['N','NE','E','SE','S','SW','W','NW'][Math.round(d/45)%8]}
@@ -313,6 +323,33 @@ function walkRec(d){
   return['🐕','Great day for a walk!',`${getWmo(d.weatherCode)[1]} with ${Math.round(d.feelsLike)}°C feels-like. Perfect conditions!`];
 }
 
+// ── HAZARD WARNINGS ──────────────────────────────────────────────────────────
+function getHazardWarnings(d){
+  const warnings=[];
+  if(d.feelsLike>=32)warnings.push({level:"red",icon:"🌡️",title:"Extreme heat — consider skipping the walk",tips:["Pavements can exceed 60°C and will burn paws instantly","Dogs can overheat within minutes in this temperature","If you must go out, walk before 8am or after 8pm","Bring plenty of fresh water and take frequent breaks","Watch for excessive panting, drooling or weakness"]});
+  else if(d.feelsLike>=25)warnings.push({level:"amber",icon:"☀️",title:"It's hot — take precautions",tips:["Check tarmac with your hand before letting your dog walk on it","Bring water for your dog — they need it more than you in heat","Walk in shade where possible, avoid open exposed areas","Keep walks shorter than usual","Best times to walk: early morning or evening"]});
+  if([82,95,99].includes(d.weatherCode))warnings.push({level:"red",icon:"⛈️",title:"Thunderstorm — stay indoors",tips:["Lightning poses a real danger to you and your dog","Many dogs are severely distressed by thunder","Wait until the storm has fully passed before going out","Keep your dog calm indoors with familiar toys or music"]});
+  if(d.windGust>=60)warnings.push({level:"red",icon:"💨",title:"Dangerous gusts — do not walk",tips:[`Gusts of ${Math.round(d.windGust)} km/h can knock dogs and people over`,"Falling branches are a serious risk in wooded areas","Stay away from trees, coastal paths and exposed hilltops","Wait for conditions to improve"]});
+  else if(d.windGust>=45)warnings.push({level:"amber",icon:"💨",title:"Very strong gusts — be careful",tips:[`Gusts reaching ${Math.round(d.windGust)} km/h today`,"Avoid exposed routes, coastal paths and woodland","Keep your dog on the lead — wind can disorientate them","Keep walks shorter and stay in sheltered areas"]});
+  if(d.feelsLike<=-5)warnings.push({level:"red",icon:"🧊",title:"Dangerous cold — keep it very short",tips:["Risk of ice on all surfaces — watch your own footing too","Gritting salt can irritate and burn paw pads","Small dogs and short-haired breeds are at risk of hypothermia","Rinse paws with warm water immediately after the walk","Consider dog boots and a coat for vulnerable dogs"]});
+  else if(d.feelsLike<2)warnings.push({level:"amber",icon:"❄️",title:"Freezing temperatures — paw care needed",tips:["Ice and gritting salt can irritate paw pads","Rinse paws with warm water after getting home","Watch for limping or paw-licking — signs of irritation","Keep walks shorter in severe cold"]});
+  if(d.uvMax>=8)warnings.push({level:"amber",icon:"🔆",title:"Very high UV — protect your dog",tips:["Light-coloured and short-haired dogs can get sunburned","Apply pet-safe sun cream to nose, ears and belly","Walk in shade wherever possible","Avoid peak UV hours: 11am–3pm"]});
+  return warnings;
+}
+
+function buildHazardWarnings(d){
+  const warnings=getHazardWarnings(d);
+  if(!warnings.length) return'';
+  return warnings.map(w=>`
+    <div class="hazard-warning ${w.level}">
+      <div class="hazard-icon">${w.icon}</div>
+      <div>
+        <div class="hazard-title">${w.title}</div>
+        <ul class="hazard-tips">${w.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+      </div>
+    </div>`).join('');
+}
+
 // ── RAIN & WEATHER RENDERING ─────────────────────────────────────────────────
 function buildRainSection(d){
   const now=new Date();
@@ -330,7 +367,9 @@ function buildRainSection(d){
 function renderWeather(d){
   const[wi,wd]=getWmo(d.weatherCode),[ri,rt,rp]=walkRec(d),[ud,ut]=uvLevel(d.uvMax);
   const dp=daylightPct(d.sunrise,d.sunset),up=Math.min((d.uvMax/11)*100,100);
+  const hazards=buildHazardWarnings(d);
   return`
+    ${hazards}
     <div class="recommendation"><div class="rec-icon">${ri}</div><div class="rec-text"><h2>${rt}</h2><p>${rp}</p></div></div>
     <div class="grid">
       <div class="card"><div class="card-label">Conditions</div><div class="card-icon">${wi}</div><div class="card-value" style="font-size:1rem;padding-top:.2rem">${wd}</div></div>
@@ -521,54 +560,37 @@ function submitWalk(){
 
 // ── PLACES RENDERING ──────────────────────────────────────────────────────────
 const CAT_CONFIG={
-  cafe:{label:'☕ Cafés',icon:'☕',query:`node["amenity"="cafe"]["dog"!="no"](BBOX);`,tag:'Café'},
-  pub:{label:'🍺 Pubs',icon:'🍺',query:`node["amenity"="pub"]["dog"!="no"](BBOX);node["amenity"="bar"]["dog"!="no"](BBOX);`,tag:'Pub'},
-  park:{label:'🌳 Parks',icon:'🌳',query:`node["leisure"="park"](BBOX);way["leisure"="park"](BBOX);node["leisure"="dog_park"](BBOX);`,tag:'Park'},
+  cafe:{label:'☕ Cafés',icon:'☕',emoji:'☕',search:'dog friendly cafes',tip:'Call ahead to confirm dogs are allowed inside — many welcome them on the terrace.'},
+  pub:{label:'🍺 Pubs',icon:'🍺',emoji:'🍺',search:'dog friendly pubs',tip:'Most UK pubs welcome dogs in the bar area. Look for a water bowl outside as a good sign!'},
+  park:{label:'🌳 Parks',icon:'🌳',emoji:'🌳',search:'dog friendly parks',tip:'Check local council websites for off-lead areas and any seasonal restrictions.'},
+  petshop:{label:'🐾 Pet Shops',icon:'🐾',emoji:'🐾',search:'pet shops',tip:'Great for stocking up on treats, leads, poo bags and anything else you need.'},
 };
-async function fetchPlaces(lat,lon,cat){
-  const delta=0.05;
-  const bbox=`${lat-delta},${lon-delta},${lat+delta},${lon+delta}`;
-  const cfg=CAT_CONFIG[cat];
-  const q=`[out:json][timeout:15];(${cfg.query.replace(/BBOX/g,bbox)});out body 20;`;
-  const j=await(await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`)).json();
-  return j.elements||[];
-}
 function renderPlacesPanel(){
+  const loc=encodeURIComponent(currentLocation.displayName);
   const catBtns=Object.entries(CAT_CONFIG).map(([k,v])=>`<button class="cat-btn${activeCat===k?' active':''}" onclick="switchCat('${k}')">${v.label}</button>`).join('');
-  const content=placesData?renderPlacesList():`<div class="places-loading"><div class="spinner" style="display:inline-block"></div> Loading nearby places…</div>`;
-  return`<div class="section-intro"><h3>Dog-friendly places near ${currentLocation.displayName}</h3><p>Real venues from OpenStreetMap. Tap a category to switch.</p></div>
+  const cfg=CAT_CONFIG[activeCat];
+  const searches=[
+    {label:`${cfg.emoji} ${cfg.search} near ${currentLocation.displayName}`,q:encodeURIComponent(`${cfg.search} near ${currentLocation.displayName}`)},
+    {label:`${cfg.emoji} ${cfg.search} near me`,q:encodeURIComponent(`${cfg.search} near me`)},
+  ];
+  const cards=searches.map(s=>`
+    <div class="item-card">
+      <div class="item-top">
+        <div>
+          <div class="item-name">${s.label}</div>
+          <div class="item-tags"><span class="item-tag">Google Maps</span><span class="item-tag">Opens in new tab</span></div>
+        </div>
+        <div class="item-badge">${cfg.emoji}</div>
+      </div>
+      <div class="item-desc" style="margin:.4rem 0">${cfg.tip}</div>
+      <a class="walk-map-link" href="https://www.google.com/maps/search/${s.q}" target="_blank">Search on Google Maps →</a>
+    </div>`).join('');
+  return`<div class="section-intro"><h3>Dog-friendly places near ${currentLocation.displayName}</h3><p>Search for real venues near you on Google Maps. Tap a category below.</p></div>
     <div class="cat-filter">${catBtns}</div>
-    <div id="places-list">${content}</div>
-    <div class="footer" style="margin-top:1.5rem"><div>Places data from OpenStreetMap · Always call ahead to confirm dogs are welcome</div></div>`;
+    <div class="item-list">${cards}</div>
+    <div class="footer" style="margin-top:1.5rem"><div>Opens Google Maps · Always call ahead to confirm dogs are welcome</div></div>`;
 }
-function renderPlacesList(){
-  if(!placesData||!placesData.length)return`<div class="no-results">No places found nearby — try a different area or category.</div>`;
-  const lat=currentLocation.lat,lon=currentLocation.lon,cfg=CAT_CONFIG[activeCat];
-  return`<div class="item-list">${placesData.slice(0,8).map(p=>{
-    const name=p.tags?.name||'Unnamed '+cfg.tag;
-    const addr=[p.tags?.['addr:housenumber'],p.tags?.['addr:street'],p.tags?.['addr:city']].filter(Boolean).join(' ');
-    const website=p.tags?.website||p.tags?.['contact:website']||'';
-    const phone=p.tags?.phone||p.tags?.['contact:phone']||'';
-    const plat=p.lat||p.center?.lat||lat,plon=p.lon||p.center?.lon||lon;
-    const dist=haversine(lat,lon,plat,plon);
-    const distStr=dist<1?`${Math.round(dist*1000)}m away`:`${dist.toFixed(1)}km away`;
-    const dogConfirmed=p.tags?.dog==='yes';
-    return`<div class="item-card">
-      <div class="item-top"><div>
-        <div class="item-name">${cfg.icon} ${name}</div>
-        <div class="item-tags"><span class="item-tag">${cfg.tag}</span><span class="item-distance-badge">📍 ${distStr}</span>${dogConfirmed?'<span class="item-tag">✅ Dog confirmed</span>':''}</div>
-        ${addr?`<div class="item-meta"><span>📍 ${addr}</span></div>`:''}
-      </div><div class="item-badge">${cfg.icon}</div></div>
-      ${phone?`<div class="item-desc" style="margin-top:.3rem">📞 ${phone}</div>`:''}
-      ${website?`<a class="walk-map-link" href="${website.startsWith('http')?website:'https://'+website}" target="_blank">Visit website →</a>`:''}
-    </div>`;
-  }).join('')}</div>`;
-}
-async function switchCat(cat){activeCat=cat;placesData=null;if(currentTab==='places'){document.getElementById('panel').innerHTML=renderPlacesPanel();loadPlaces()}}
-async function loadPlaces(){
-  try{placesData=await fetchPlaces(currentLocation.lat,currentLocation.lon,activeCat);const el=document.getElementById('places-list');if(el)el.innerHTML=renderPlacesList()}
-  catch(e){const el=document.getElementById('places-list');if(el)el.innerHTML=`<div class="no-results">Couldn't load places — check your connection and try again.</div>`}
-}
+function switchCat(cat){activeCat=cat;if(currentTab==='places'){document.getElementById('panel').innerHTML=renderPlacesPanel();}}
 
 // ── TAB & NAVIGATION ──────────────────────────────────────────────────────────
 function showTab(tab){
@@ -578,7 +600,7 @@ function showTab(tab){
   const p=document.getElementById('panel');
   if(tab==='weather')p.innerHTML=renderWeather(weatherData);
   if(tab==='walks')p.innerHTML=renderWalks();
-  if(tab==='places'){p.innerHTML=renderPlacesPanel();loadPlaces()}
+  if(tab==='places'){p.innerHTML=renderPlacesPanel()}
 }
 function renderShell(){
   document.getElementById('app').innerHTML=`
@@ -603,12 +625,11 @@ async function doSearch(){
   if(!query)return;
   document.getElementById('searchError').style.display='none';
   document.getElementById('locationName').textContent='Searching…';
-  placesData=null;renderShell();
+  renderShell();
   try{
     document.getElementById('bottomNav').style.display='none';
     currentLocation=await geocode(query);
-    document.getElementById('bottomNav').style.display='';
-    document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
+    document.getElementById('bottomNav').style.display='';    document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
     weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
     document.body.classList.toggle('night',!weatherData.isDay);
     showTab(currentTab);
