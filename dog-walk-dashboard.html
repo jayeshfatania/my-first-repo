@@ -244,7 +244,47 @@
     .submit-review-btn:hover{opacity:.8}
     body.night .submit-review-btn{background:#7ab87a;color:var(--ink)}
     .cancel-review-btn{background:none;border:none;font-size:.78rem;color:var(--text-muted);cursor:pointer;font-family:'DM Sans',sans-serif;padding:.4rem .5rem}
-    /* Community tab */
+    /* Places page */
+    .place-cat-bar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+    .place-cat-btn{display:flex;flex-direction:column;align-items:center;gap:.25rem;padding:.6rem .9rem;border-radius:14px;border:1px solid var(--card-border);background:var(--card-bg);backdrop-filter:blur(12px);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;min-width:64px}
+    .place-cat-btn:hover{background:rgba(255,255,255,.35);border-color:rgba(255,255,255,.6)}
+    .place-cat-btn.active{background:rgba(90,122,82,.12);border-color:rgba(90,122,82,.3)}
+    body.night .place-cat-btn.active{background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.25)}
+    .place-cat-icon{font-size:1.4rem;line-height:1}
+    .place-cat-label{font-size:.68rem;color:var(--text-muted);font-weight:500;white-space:nowrap}
+    .place-cat-btn.active .place-cat-label{color:var(--moss)}
+    body.night .place-cat-btn.active .place-cat-label{color:#7ab87a}
+    .place-tip-banner{display:flex;align-items:flex-start;gap:.7rem;background:rgba(232,168,56,.08);border:1px solid rgba(232,168,56,.2);border-radius:14px;padding:.85rem 1rem;margin-bottom:1rem}
+    body.night .place-tip-banner{background:rgba(232,168,56,.06);border-color:rgba(232,168,56,.15)}
+    .place-tip-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+    .place-tip-text{font-size:.8rem;color:var(--text-muted);line-height:1.55}
+    .place-coming-soon{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1.8rem;text-align:center;margin-bottom:1rem}
+    .place-coming-soon-icon{font-size:2.2rem;margin-bottom:.65rem}
+    .place-coming-soon-title{font-family:'Fraunces',serif;font-size:1rem;font-weight:400;color:var(--ink);margin-bottom:.4rem}
+    .place-coming-soon-sub{font-size:.8rem;color:var(--text-muted);line-height:1.6;max-width:480px;margin:0 auto}
+    .place-list{display:flex;flex-direction:column;gap:.7rem}
+    .place-card{display:flex;align-items:center;gap:1rem;background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:16px;padding:1rem 1.2rem;text-decoration:none;transition:all .2s}
+    .place-card:hover{background:rgba(255,255,255,.35);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+    .place-card-thumb{width:64px;height:64px;border-radius:12px;overflow:hidden;flex-shrink:0;background:rgba(255,255,255,.2);border:1px solid var(--card-border);display:flex;align-items:center;justify-content:center}
+    .place-card-photo{width:100%;height:100%;object-fit:cover}
+    .place-card-icon-fallback{font-size:1.8rem}
+    .place-card-body{flex:1;min-width:0}
+    .place-card-name{font-family:'Fraunces',serif;font-size:.95rem;font-weight:400;color:var(--ink);margin-bottom:.3rem;line-height:1.3}
+    .place-rating{display:flex;align-items:center;gap:.3rem;margin-bottom:.25rem}
+    .place-stars{color:#e8a838;font-size:.8rem;letter-spacing:.05em}
+    .place-rating-num{font-size:.78rem;font-weight:500;color:var(--ink)}
+    .place-rating-count{font-size:.72rem;color:var(--text-muted)}
+    .place-card-address{font-size:.75rem;color:var(--text-muted);margin-bottom:.3rem}
+    .place-card-footer{display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+    .place-open-badge{font-size:.68rem;font-weight:500;padding:.15rem .55rem;border-radius:20px}
+    .place-open-badge.open{background:rgba(90,122,82,.12);color:var(--moss);border:1px solid rgba(90,122,82,.2)}
+    .place-open-badge.closed{background:rgba(200,50,50,.08);color:#c03232;border:1px solid rgba(200,50,50,.15)}
+    body.night .place-open-badge.open{background:rgba(122,184,122,.12);color:#7ab87a}
+    body.night .place-open-badge.closed{color:#e07070;border-color:rgba(200,80,80,.2)}
+    .place-card-action{font-size:.75rem;color:var(--moss);font-weight:500}
+    body.night .place-card-action{color:#7ab87a}
+    .place-empty{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:2rem;text-align:center}
+    /* Keep old cat-filter for any legacy use */
     .cat-filter{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
     .cat-btn{padding:.35rem .85rem;border-radius:20px;border:1px solid var(--card-border);background:var(--card-bg);backdrop-filter:blur(12px);font-size:.78rem;color:var(--ink);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
     .cat-btn.active{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -863,37 +903,153 @@ function submitWalk(){
 
 // ── PLACES RENDERING ──────────────────────────────────────────────────────────
 const CAT_CONFIG={
-  cafe:{label:'☕ Cafés',icon:'☕',emoji:'☕',search:'dog friendly cafes',tip:'Call ahead to confirm dogs are allowed inside — many welcome them on the terrace.'},
-  pub:{label:'🍺 Pubs',icon:'🍺',emoji:'🍺',search:'dog friendly pubs',tip:'Most UK pubs welcome dogs in the bar area. Look for a water bowl outside as a good sign!'},
-  park:{label:'🌳 Parks',icon:'🌳',emoji:'🌳',search:'dog friendly parks',tip:'Check local council websites for off-lead areas and any seasonal restrictions.'},
-  petshop:{label:'🐾 Pet Shops',icon:'🐾',emoji:'🐾',search:'pet shops',tip:'Great for stocking up on treats, leads, poo bags and anything else you need.'},
+  cafe:{label:'☕ Cafés',emoji:'☕',search:'dog friendly cafes',tip:'Many UK cafés welcome dogs on terraces or in dedicated dog-friendly areas. Call ahead to be sure.',mapQuery:'dog friendly cafes'},
+  pub:{label:'🍺 Pubs',emoji:'🍺',search:'dog friendly pubs',tip:'Most UK pubs welcome dogs in the bar area. A water bowl outside is usually a good sign!',mapQuery:'dog friendly pubs'},
+  park:{label:'🌳 Parks',emoji:'🌳',search:'dog friendly parks and open spaces',tip:'Check for off-lead areas and any seasonal restrictions before you go.',mapQuery:'dog friendly parks'},
+  beach:{label:'🏖️ Beaches',emoji:'🏖️',search:'dog friendly beaches',tip:'Many UK beaches have seasonal restrictions — dogs often allowed Oct–Apr only. Always check local signs.',mapQuery:'dog friendly beaches'},
+  trail:{label:'🥾 Trails',emoji:'🥾',search:'dog friendly walking trails',tip:'Look for trails with good off-lead sections and access to water for your dog.',mapQuery:'dog friendly walking trails'},
+  petshop:{label:'🐾 Pet Shops',emoji:'🐾',search:'pet shops',tip:'Stock up on treats, leads, poo bags and anything else you need for the walk.',mapQuery:'pet shops near'},
+  vet:{label:'🏥 Vets',emoji:'🏥',search:'veterinary clinics',tip:'Good to know your nearest vet before heading out, especially on longer walks.',mapQuery:'veterinary clinic'},
 };
+const PLACES_API_KEY='AIzaSyBlQL8T7kYxKu8ub5cy7yp0CwCjifUnI9I';
+const placesCache={};
+
 function renderPlacesPanel(){
-  const loc=encodeURIComponent(currentLocation.displayName);
-  const catBtns=Object.entries(CAT_CONFIG).map(([k,v])=>`<button class="cat-btn${activeCat===k?' active':''}" onclick="switchCat('${k}')">${v.label}</button>`).join('');
   const cfg=CAT_CONFIG[activeCat];
-  const searches=[
-    {label:`${cfg.emoji} ${cfg.search} near ${currentLocation.displayName}`,q:encodeURIComponent(`${cfg.search} near ${currentLocation.displayName}`)},
-    {label:`${cfg.emoji} ${cfg.search} near me`,q:encodeURIComponent(`${cfg.search} near me`)},
-  ];
-  const cards=searches.map(s=>`
-    <div class="item-card">
-      <div class="item-top">
-        <div>
-          <div class="item-name">${s.label}</div>
-          <div class="item-tags"><span class="item-tag">Google Maps</span><span class="item-tag">Opens in new tab</span></div>
-        </div>
-        <div class="item-badge">${cfg.emoji}</div>
+  const catBtns=Object.entries(CAT_CONFIG).map(([k,v])=>`
+    <button class="place-cat-btn${activeCat===k?' active':''}" onclick="switchCat('${k}')">
+      <span class="place-cat-icon">${v.emoji}</span>
+      <span class="place-cat-label">${v.label.replace(v.emoji,'').trim()}</span>
+    </button>`).join('');
+
+  const tipBanner=`
+    <div class="place-tip-banner">
+      <span class="place-tip-icon">💡</span>
+      <span class="place-tip-text">${cfg.tip}</span>
+    </div>`;
+
+  return`
+    <div class="section-intro">
+      <div class="section-intro-top">
+        <h3>Dog-friendly places near ${currentLocation.displayName}</h3>
       </div>
-      <div class="item-desc" style="margin:.4rem 0">${cfg.tip}</div>
-      <a class="walk-map-link" href="https://www.google.com/maps/search/${s.q}" target="_blank">Search on Google Maps →</a>
-    </div>`).join('');
-  return`<div class="section-intro"><h3>Dog-friendly places near ${currentLocation.displayName}</h3><p>Search for real venues near you on Google Maps. Tap a category below.</p></div>
-    <div class="cat-filter">${catBtns}</div>
-    <div class="item-list">${cards}</div>
-    <div class="footer" style="margin-top:1.5rem"><div>Opens Google Maps · Always call ahead to confirm dogs are welcome</div></div>`;
+      <p>Real venues near you, powered by Google Places.</p>
+    </div>
+    <div class="place-cat-bar">${catBtns}</div>
+    ${tipBanner}
+    <div id="places-results"><div class="loading"><div class="spinner"></div><br>Finding places nearby…</div></div>
+    <div class="footer" style="margin-top:1.5rem"><div>Powered by Google Places · Always call ahead to confirm dogs are welcome</div></div>`;
 }
-function switchCat(cat){activeCat=cat;if(currentTab==='places'){document.getElementById('panel').innerHTML=renderPlacesPanel();}}
+
+async function fetchPlaces(cat){
+  const cfg=CAT_CONFIG[cat];
+  const cacheKey=`${cat}-${currentLocation.lat}-${currentLocation.lon}`;
+  if(placesCache[cacheKey])return placesCache[cacheKey];
+
+  const body={
+    textQuery:`${cfg.search} near ${currentLocation.displayName}`,
+    locationBias:{circle:{center:{latitude:currentLocation.lat,longitude:currentLocation.lon},radius:5000}},
+    maxResultCount:8,
+    languageCode:'en-GB',
+  };
+
+  const res=await fetch('https://places.googleapis.com/v1/places:searchText',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'X-Goog-Api-Key':PLACES_API_KEY,
+      'X-Goog-FieldMask':'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.websiteUri,places.googleMapsUri,places.photos,places.primaryTypeDisplayName',
+    },
+    body:JSON.stringify(body),
+  });
+  const data=await res.json();
+  const results=data.places||[];
+  placesCache[cacheKey]=results;
+  return results;
+}
+
+function renderStars(rating){
+  if(!rating)return'';
+  const full=Math.floor(rating);
+  const half=rating-full>=0.5;
+  let s='';
+  for(let i=0;i<5;i++){
+    if(i<full)s+='★';
+    else if(i===full&&half)s+='½';
+    else s+='☆';
+  }
+  return s;
+}
+
+function renderPlaceCard(place,cfg){
+  const name=place.displayName?.text||'Unknown venue';
+  const address=place.formattedAddress||'';
+  const shortAddress=address.split(',').slice(0,2).join(',').trim();
+  const rating=place.rating;
+  const ratingCount=place.userRatingCount;
+  const isOpen=place.regularOpeningHours?.openNow;
+  const mapsUrl=place.googleMapsUri||`https://www.google.com/maps/search/${encodeURIComponent(name+' '+address)}`;
+  const photoRef=place.photos?.[0]?.name;
+  const photoUrl=photoRef?`https://places.googleapis.com/v1/${photoRef}/media?maxHeightPx=120&maxWidthPx=120&key=${PLACES_API_KEY}`:'';
+
+  const openBadge=isOpen===true
+    ?`<span class="place-open-badge open">Open now</span>`
+    :isOpen===false
+    ?`<span class="place-open-badge closed">Closed</span>`
+    :'';
+
+  const ratingHtml=rating
+    ?`<div class="place-rating"><span class="place-stars">${renderStars(rating)}</span><span class="place-rating-num">${rating.toFixed(1)}</span><span class="place-rating-count">(${ratingCount})</span></div>`
+    :'';
+
+  const photoHtml=photoUrl?`<img class="place-card-photo" src="${photoUrl}" alt="${name}" onerror="this.style.display='none'"/>`:`<div class="place-card-icon-fallback">${cfg.emoji}</div>`;
+
+  return`
+    <a class="place-card" href="${mapsUrl}" target="_blank">
+      <div class="place-card-thumb">${photoHtml}</div>
+      <div class="place-card-body">
+        <div class="place-card-name">${name}</div>
+        ${ratingHtml}
+        <div class="place-card-address">📍 ${shortAddress}</div>
+        <div class="place-card-footer">${openBadge}<span class="place-card-action">View on Google Maps →</span></div>
+      </div>
+    </a>`;
+}
+
+async function loadPlaces(cat){
+  const el=document.getElementById('places-results');
+  if(!el)return;
+  try{
+    const places=await fetchPlaces(cat);
+    const cfg=CAT_CONFIG[cat];
+    if(!places.length){
+      const q=encodeURIComponent(`${cfg.search} near ${currentLocation.displayName}`);
+      el.innerHTML=`<div class="place-empty">
+        <div style="font-size:2rem;margin-bottom:.5rem">${cfg.emoji}</div>
+        <div class="place-coming-soon-title">No results found nearby</div>
+        <div class="place-coming-soon-sub">Try searching on Google Maps instead.</div>
+        <a class="walk-map-link" style="margin-top:.8rem;display:inline-block" href="https://www.google.com/maps/search/${q}" target="_blank">Search on Google Maps →</a>
+      </div>`;
+    } else {
+      el.innerHTML=`<div class="place-list">${places.map(p=>renderPlaceCard(p,cfg)).join('')}</div>`;
+    }
+  }catch(e){
+    const q=encodeURIComponent(`${cfg.search} near ${currentLocation.displayName}`);
+    el.innerHTML=`<div class="place-empty">
+      <div class="place-coming-soon-title">Couldn't load places</div>
+      <div class="place-coming-soon-sub">Check your connection and try again, or search on Google Maps.</div>
+      <a class="walk-map-link" style="margin-top:.8rem;display:inline-block" href="https://www.google.com/maps/search/${q}" target="_blank">Search on Google Maps →</a>
+    </div>`;
+  }
+}
+
+function switchCat(cat){
+  activeCat=cat;
+  if(currentTab==='places'){
+    document.getElementById('panel').innerHTML=renderPlacesPanel();
+    loadPlaces(cat);
+  }
+}
 
 // ── TAB & NAVIGATION ──────────────────────────────────────────────────────────
 function showTab(tab){
@@ -909,7 +1065,7 @@ function showTab(tab){
   const p=document.getElementById('panel');
   if(tab==='weather')p.innerHTML=renderWeather(weatherData);
   if(tab==='walks')p.innerHTML=renderWalks();
-  if(tab==='places'){p.innerHTML=renderPlacesPanel()}
+  if(tab==='places'){p.innerHTML=renderPlacesPanel();loadPlaces(activeCat);}
 }
 function renderShell(){
   document.getElementById('app').innerHTML=`
