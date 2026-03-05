@@ -284,6 +284,10 @@
     .place-card-action{font-size:.75rem;color:var(--moss);font-weight:500}
     body.night .place-card-action{color:#7ab87a}
     .place-empty{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:2rem;text-align:center}
+    .green-spaces-section{margin-top:1.5rem}
+    .green-spaces-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:.75rem}
+    .green-spaces-title{font-family:'Fraunces',serif;font-size:1rem;font-weight:400;color:var(--ink)}
+    .green-spaces-sub{font-size:.72rem;color:var(--text-muted)}
     /* Keep old cat-filter for any legacy use */
     .cat-filter{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
     .cat-btn{padding:.35rem .85rem;border-radius:20px;border:1px solid var(--card-border);background:var(--card-bg);backdrop-filter:blur(12px);font-size:.78rem;color:var(--ink);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
@@ -847,10 +851,51 @@ function renderWalks(activeFilter='all'){
     <div id="submit-walk-wrapper" style="display:none;margin-bottom:1rem">${renderSubmitWalkForm()}</div>
     ${nearby.length<=2?contribBanner:''}
     ${walksHtml}
+    <div class="green-spaces-section">
+      <div class="green-spaces-header">
+        <span class="green-spaces-title">🌳 More nearby green spaces</span>
+        <span class="green-spaces-sub">Powered by Google Places</span>
+      </div>
+      <div id="green-spaces-results"><div class="loading"><div class="spinner"></div><br>Finding green spaces…</div></div>
+    </div>
     <div class="footer" style="margin-top:1.5rem"><div>Curated walks + community submissions · Reviews saved on your device</div></div>`;
 }
 function renderWalksFiltered(filter){
   document.getElementById('panel').innerHTML=renderWalks(filter);
+  loadNearbyGreenSpaces();
+}
+
+async function loadNearbyGreenSpaces(){
+  const el=document.getElementById('green-spaces-results');
+  if(!el)return;
+  const cacheKey=`greenspaces-${currentLocation.lat}-${currentLocation.lon}`;
+  try{
+    let places=placesCache[cacheKey];
+    if(!places){
+      const body={
+        textQuery:`parks and nature reserves near ${currentLocation.displayName}`,
+        locationBias:{circle:{center:{latitude:currentLocation.lat,longitude:currentLocation.lon},radius:5000}},
+        maxResultCount:6,
+        languageCode:'en-GB',
+      };
+      const res=await fetch('https://places.googleapis.com/v1/places:searchText',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'X-Goog-Api-Key':PLACES_API_KEY,
+          'X-Goog-FieldMask':'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.googleMapsUri,places.photos',
+        },
+        body:JSON.stringify(body),
+      });
+      const data=await res.json();
+      places=data.places||[];
+      placesCache[cacheKey]=places;
+    }
+    if(!places.length){el.innerHTML='<p style="font-size:.8rem;color:var(--text-muted);padding:.5rem 0">No green spaces found nearby.</p>';return;}
+    el.innerHTML=`<div class="place-list">${places.map(p=>renderPlaceCard(p,{emoji:'🌳'})).join('')}</div>`;
+  }catch(e){
+    el.innerHTML='<p style="font-size:.8rem;color:var(--text-muted);padding:.5rem 0">Couldn\'t load green spaces right now.</p>';
+  }
 }
 function toggleSubmitWalkForm(){
   const el=document.getElementById('submit-walk-wrapper');
@@ -1064,7 +1109,7 @@ function showTab(tab){
   if(!weatherData)return;
   const p=document.getElementById('panel');
   if(tab==='weather')p.innerHTML=renderWeather(weatherData);
-  if(tab==='walks')p.innerHTML=renderWalks();
+  if(tab==='walks'){p.innerHTML=renderWalks();loadNearbyGreenSpaces();}
   if(tab==='places'){p.innerHTML=renderPlacesPanel();loadPlaces(activeCat);}
 }
 function renderShell(){
