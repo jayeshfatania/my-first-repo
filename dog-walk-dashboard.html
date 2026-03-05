@@ -950,9 +950,7 @@ function submitWalk(){
 const CAT_CONFIG={
   cafe:{label:'☕ Cafés',emoji:'☕',search:'dog friendly cafes',tip:'Many UK cafés welcome dogs on terraces or in dedicated dog-friendly areas. Call ahead to be sure.',mapQuery:'dog friendly cafes'},
   pub:{label:'🍺 Pubs',emoji:'🍺',search:'dog friendly pubs',tip:'Most UK pubs welcome dogs in the bar area. A water bowl outside is usually a good sign!',mapQuery:'dog friendly pubs'},
-  park:{label:'🌳 Parks',emoji:'🌳',search:'dog friendly parks and open spaces',tip:'Check for off-lead areas and any seasonal restrictions before you go.',mapQuery:'dog friendly parks'},
   beach:{label:'🏖️ Beaches',emoji:'🏖️',search:'dog friendly beaches',tip:'Many UK beaches have seasonal restrictions — dogs often allowed Oct–Apr only. Always check local signs.',mapQuery:'dog friendly beaches'},
-  trail:{label:'🥾 Trails',emoji:'🥾',search:'dog friendly walking trails',tip:'Look for trails with good off-lead sections and access to water for your dog.',mapQuery:'dog friendly walking trails'},
   petshop:{label:'🐾 Pet Shops',emoji:'🐾',search:'pet shops',tip:'Stock up on treats, leads, poo bags and anything else you need for the walk.',mapQuery:'pet shops near'},
   vet:{label:'🏥 Vets',emoji:'🏥',search:'veterinary clinics',tip:'Good to know your nearest vet before heading out, especially on longer walks.',mapQuery:'veterinary clinic'},
 };
@@ -978,7 +976,7 @@ function renderPlacesPanel(){
       <div class="section-intro-top">
         <h3>Dog-friendly places near ${currentLocation.displayName}</h3>
       </div>
-      <p>Real venues near you, powered by Google Places.</p>
+      <p>Dog-friendly amenities near you — places to stop before, during or after your walk.</p>
     </div>
     <div class="place-cat-bar">${catBtns}</div>
     ${tipBanner}
