@@ -183,21 +183,21 @@
     .item-card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:20px;overflow:hidden;transition:box-shadow .2s;animation:fadeUp .7s ease both;margin-bottom:.7rem;position:relative}
     .item-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.07)}
     /* Compact row - always visible */
-    .item-card-compact{display:flex;align-items:center;gap:1rem;padding:1rem 1.2rem;padding-right:2.5rem;cursor:pointer;user-select:none}
+    .item-card-compact{display:flex;align-items:flex-start;gap:.85rem;padding:1rem 1.2rem;padding-right:2.8rem;cursor:pointer;user-select:none}
     .item-card-compact:hover .item-name{color:var(--moss)}
     body.night .item-card-compact:hover .item-name{color:#7ab87a}
     .item-badge{flex-shrink:0;font-size:1.6rem;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.25);border:1px solid var(--card-border);border-radius:12px}
     .item-compact-body{flex:1;min-width:0}
-    .item-name{font-family:'Fraunces',serif;font-size:.92rem;font-weight:400;color:var(--ink);line-height:1.3;margin-bottom:.3rem;transition:color .2s;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    .item-compact-meta{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+    .item-name{font-family:'Fraunces',serif;font-size:.95rem;font-weight:400;color:var(--ink);line-height:1.3;margin-bottom:.35rem;transition:color .2s}
+    .item-compact-stats-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.35rem}
+    .item-compact-stat{font-size:.72rem;color:var(--text-muted)}
+    .item-compact-meta{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.35rem}
+    .item-compact-bottom{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+    .item-tap-hint{font-size:.7rem;color:var(--moss);margin-left:auto}
+    body.night .item-tap-hint{color:#7ab87a}
     .item-tag{font-size:.67rem;padding:.15rem .55rem;border-radius:20px;border:1px solid var(--card-border);color:var(--text-muted);background:rgba(255,255,255,.15)}
     .item-distance-badge{font-size:.67rem;padding:.15rem .55rem;border-radius:20px;background:rgba(90,122,82,.12);color:var(--moss);border:1px solid rgba(90,122,82,.2);font-weight:500}
     body.night .item-distance-badge{background:rgba(122,184,122,.12);color:#7ab87a;border-color:rgba(122,184,122,.2)}
-    .item-compact-right{display:flex;flex-direction:column;align-items:flex-end;gap:.35rem;flex-shrink:0}
-    .item-compact-stats{display:flex;gap:.35rem}
-    .item-compact-stat{font-size:.72rem;color:var(--text-muted)}
-    .item-expand-icon{font-size:.75rem;color:var(--text-muted);transition:transform .25s}
-    .item-card.expanded .item-expand-icon{transform:rotate(180deg)}
     .avg-stars-compact{display:flex;align-items:center;gap:.2rem}
     .avg-star-s{font-size:.75rem;opacity:.25}
     .avg-star-s.filled{opacity:1}
@@ -1055,20 +1055,20 @@ function renderWalkCard(w,distStr,showWeatherNote){
       <div class="item-badge">${w.icon}</div>
       <div class="item-compact-body">
         <div class="item-name">${w.name}${communityTag}</div>
-        <div class="item-compact-meta">
-          <span class="item-distance-badge">📍 ${distStr}</span>
-          ${w.tags.slice(0,2).map(t=>`<span class="item-tag">${t}</span>`).join('')}
-        </div>
-      </div>
-      <div class="item-compact-right">
-        <div class="item-compact-stats">
+        <div class="item-compact-stats-row">
           <span class="item-compact-stat">🗺️ ${w.distance}</span>
           <span class="item-compact-stat">⏱️ ${w.duration}</span>
           <span class="item-compact-stat">💪 ${w.difficulty}</span>
         </div>
-        ${avgCompact}
-        ${curatedTag}
-        <div class="item-tap-hint">Tap for more ▼</div>
+        <div class="item-compact-meta">
+          <span class="item-distance-badge">📍 ${distStr}</span>
+          ${w.tags.slice(0,2).map(t=>`<span class="item-tag">${t}</span>`).join('')}
+        </div>
+        <div class="item-compact-bottom">
+          ${avgCompact}
+          ${curatedTag}
+          <span class="item-tap-hint">Tap for more ▼</span>
+        </div>
       </div>
     </div>
     <div class="item-card-detail">
