@@ -239,6 +239,8 @@
     .review-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}
     .review-stars{font-size:.8rem}
     .review-date{font-size:.68rem;color:var(--text-muted)}
+    .review-username{font-size:.72rem;font-weight:600;color:var(--moss);margin-bottom:.2rem}
+    body.night .review-username{color:#7ab87a}
     .review-text{font-size:.8rem;color:var(--text-muted);line-height:1.55}
     .review-photo{margin-top:.5rem;width:100%;max-width:280px;border-radius:8px;object-fit:cover;max-height:180px}
     .no-reviews{font-size:.8rem;color:var(--text-muted);font-style:italic;margin-bottom:.6rem}
@@ -382,16 +384,16 @@
     .onboarding-feat-desc{font-size:.75rem;color:var(--text-muted);line-height:1.45}
     .onboarding-cta{width:100%;padding:.85rem;background:var(--moss);color:#fff;border:none;border-radius:14px;font-size:.9rem;font-weight:600;cursor:pointer;letter-spacing:.01em}
     .onboarding-cta:active{opacity:.85}
-    /* ── PWA INSTALL BANNER ─────────────────────────────────────── */
-    .install-banner{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 80px);left:50%;transform:translateX(-50%);width:calc(100% - 2rem);max-width:420px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;box-shadow:0 8px 32px rgba(0,0,0,.25);padding:.85rem 1rem;display:flex;align-items:center;gap:.75rem;z-index:800;animation:slideUp .4s ease both}
-    @media(min-width:768px){.install-banner{bottom:1.5rem}}
-    .install-banner-icon{font-size:1.6rem;flex-shrink:0}
-    .install-banner-body{flex:1;min-width:0}
-    .install-banner-title{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:.1rem}
-    .install-banner-sub{font-size:.72rem;color:var(--text-muted);line-height:1.35}
-    .install-banner-btn{background:var(--moss);color:#fff;border:none;border-radius:10px;padding:.45rem .85rem;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
-    .install-banner-close{background:none;border:none;font-size:1.1rem;color:var(--text-muted);cursor:pointer;flex-shrink:0;padding:.1rem .2rem;line-height:1}
-    @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+    /* ── PWA INSTALL CARD (inline in splash) ───────────────────── */
+    .splash-install-card{display:flex;align-items:center;justify-content:space-between;gap:.75rem;background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:.85rem 1rem;margin-top:1.4rem;text-align:left}
+    .splash-install-left{display:flex;align-items:center;gap:.65rem;flex:1;min-width:0}
+    .splash-install-icon{font-size:1.5rem;flex-shrink:0}
+    .splash-install-title{font-size:.82rem;font-weight:600;color:var(--ink)}
+    .splash-install-sub{font-size:.72rem;color:var(--text-muted);margin-top:.1rem}
+    .splash-install-btn{background:var(--moss);color:#fff;border:none;border-radius:10px;padding:.45rem .9rem;font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap}
+    .splash-install-btn:active{opacity:.85}
+    .splash-install-close{background:none;border:none;font-size:1rem;color:var(--text-muted);cursor:pointer;padding:.1rem .2rem;line-height:1;flex-shrink:0}
+
     .splash{text-align:center;padding:2.5rem 1rem 3rem;animation:fadeUp .7s ease both}
     .splash-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;font-weight:500;color:var(--moss);background:rgba(90,122,82,.1);border:1px solid rgba(90,122,82,.2);border-radius:20px;padding:.28rem .85rem;margin-bottom:1.1rem}
     body.night .splash-badge{color:#7ab87a;background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.25)}
@@ -736,38 +738,38 @@ function saveReviews(r){localStorage.setItem('walkReviews',JSON.stringify(r))}
 // ── SEEDED BETA REVIEWS ───────────────────────────────────────────────────────
 const SEEDED_REVIEWS={
   'thames-kt2':[
-    {stars:5,text:"Walked this on a sunny Sunday with Biscuit - he was straight in the river at Ham Lands. One of our all-time favourites.",date:"2 Mar 2025",seeded:true},
-    {stars:4,text:"Really lovely route, well signposted. Got a bit muddy near Teddington Lock after the rain but nothing serious.",date:"18 Feb 2025",seeded:true},
-    {stars:5,text:"Perfect for tired legs - completely flat and the views over the Thames never get old.",date:"5 Jan 2025",seeded:true},
+    {stars:5,text:"Walked this on a sunny Sunday with Biscuit - he was straight in the river at Ham Lands. One of our all-time favourites.",date:"2 Mar 2025",username:"SarahK",seeded:true},
+    {stars:4,text:"Really lovely route, well signposted. Got a bit muddy near Teddington Lock after the rain but nothing serious.",date:"18 Feb 2025",username:"OllieAndRex",seeded:true},
+    {stars:5,text:"Perfect for tired legs - completely flat and the views over the Thames never get old.",date:"5 Jan 2025",username:"TeddingtonMum",seeded:true},
   ],
   'richmond-park':[
-    {stars:5,text:"Magical place. Came face to face with a stag near Pembroke Lodge. Keep dogs on leads near the deer - it's signed clearly.",date:"28 Feb 2025",seeded:true},
-    {stars:4,text:"Our go-to for a long Sunday walk. The ponds are great for dogs to cool off in summer.",date:"10 Feb 2025",seeded:true},
+    {stars:5,text:"Magical place. Came face to face with a stag near Pembroke Lodge. Keep dogs on leads near the deer - it's signed clearly.",date:"28 Feb 2025",username:"ArchiesDad",seeded:true},
+    {stars:4,text:"Our go-to for a long Sunday walk. The ponds are great for dogs to cool off in summer.",date:"10 Feb 2025",username:"PoppyAndMe",seeded:true},
   ],
   'bushy-park':[
-    {stars:5,text:"The chestnut avenue in autumn is absolutely stunning. Dogs go mad in the big pond - bring a towel!",date:"1 Mar 2025",seeded:true},
-    {stars:4,text:"Less busy than Richmond Park. The River Crane section through the woodland is beautiful.",date:"14 Feb 2025",seeded:true},
+    {stars:5,text:"The chestnut avenue in autumn is absolutely stunning. Dogs go mad in the big pond - bring a towel!",date:"1 Mar 2025",username:"HamptonWalker",seeded:true},
+    {stars:4,text:"Less busy than Richmond Park. The River Crane section through the woodland is beautiful.",date:"14 Feb 2025",username:"MollyMuttMum",seeded:true},
   ],
   'hampstead-heath':[
-    {stars:5,text:"Luna absolutely loves it here. So much variety - heathland, woodland, ponds. Never gets boring.",date:"25 Feb 2025",seeded:true},
-    {stars:3,text:"Great walk but gets incredibly busy on weekends. Go early or on a weekday if you can.",date:"8 Feb 2025",seeded:true},
-    {stars:5,text:"The views from Parliament Hill on a clear day are worth the trek alone.",date:"20 Jan 2025",seeded:true},
+    {stars:5,text:"Luna absolutely loves it here. So much variety - heathland, woodland, ponds. Never gets boring.",date:"25 Feb 2025",username:"LunaAndLiv",seeded:true},
+    {stars:3,text:"Great walk but gets incredibly busy on weekends. Go early or on a weekday if you can.",date:"8 Feb 2025",username:"NorthLondonDogs",seeded:true},
+    {stars:5,text:"The views from Parliament Hill on a clear day are worth the trek alone.",date:"20 Jan 2025",username:"BrynAndBuddy",seeded:true},
   ],
   'wimbledon-common':[
-    {stars:4,text:"Excellent off-lead freedom. The windmill is a lovely landmark to navigate around.",date:"22 Feb 2025",seeded:true},
-    {stars:5,text:"Huge space, never feels crowded even on busy days. Dogs absolutely love it.",date:"3 Feb 2025",seeded:true},
+    {stars:4,text:"Excellent off-lead freedom. The windmill is a lovely landmark to navigate around.",date:"22 Feb 2025",username:"SW19DogMum",seeded:true},
+    {stars:5,text:"Huge space, never feels crowded even on busy days. Dogs absolutely love it.",date:"3 Feb 2025",username:"CooperTheLab",seeded:true},
   ],
   'box-hill':[
-    {stars:5,text:"The stepping stones are brilliant fun - dogs wade right through. The climb is worth it for the views.",date:"27 Feb 2025",seeded:true},
-    {stars:4,text:"Fantastic National Trust walk. Can get busy on weekends but the woodland section is magical.",date:"12 Jan 2025",seeded:true},
+    {stars:5,text:"The stepping stones are brilliant fun - dogs wade right through. The climb is worth it for the views.",date:"27 Feb 2025",username:"DorkingDogDad",seeded:true},
+    {stars:4,text:"Fantastic National Trust walk. Can get busy on weekends but the woodland section is magical.",date:"12 Jan 2025",username:"SurreyHiker",seeded:true},
   ],
   'ashdown-forest':[
-    {stars:5,text:"Playing Poohsticks with the kids while the dog splashes around underneath - perfect day out.",date:"16 Feb 2025",seeded:true},
-    {stars:5,text:"The real Hundred Acre Wood! Heathland is superb for off-lead running.",date:"9 Feb 2025",seeded:true},
+    {stars:5,text:"Playing Poohsticks with the kids while the dog splashes around underneath - perfect day out.",date:"16 Feb 2025",username:"RosieAndTheGang",seeded:true},
+    {stars:5,text:"The real Hundred Acre Wood! Heathland is superb for off-lead running.",date:"9 Feb 2025",username:"EastSussexPaws",seeded:true},
   ],
   'regents-canal':[
-    {stars:4,text:"Urban gem. Our dog loves sniffing along the towpath. Broadway Market is perfect for a coffee stop.",date:"26 Feb 2025",seeded:true},
-    {stars:3,text:"Lovely but the towpath gets very narrow in places with cyclists. Best on quieter weekday mornings.",date:"4 Feb 2025",seeded:true},
+    {stars:4,text:"Urban gem. Our dog loves sniffing along the towpath. Broadway Market is perfect for a coffee stop.",date:"26 Feb 2025",username:"HackneyDogLife",seeded:true},
+    {stars:3,text:"Lovely but the towpath gets very narrow in places with cyclists. Best on quieter weekday mornings.",date:"4 Feb 2025",username:"CanalPupMum",seeded:true},
   ],
 };
 
@@ -788,7 +790,8 @@ function saveCommunityWalks(w){localStorage.setItem('communityWalks',JSON.string
 function addReview(walkId,stars,text,photoDataUrl){
   const reviews=getReviews();
   if(!reviews[walkId])reviews[walkId]=[];
-  reviews[walkId].unshift({stars,text,photo:photoDataUrl||null,date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})});
+  const username=getUsername()||null;
+  reviews[walkId].unshift({stars,text,photo:photoDataUrl||null,date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),username});
   saveReviews(reviews);
 }
 function getAvgRating(walkId){
@@ -1037,6 +1040,7 @@ function renderReviewsBlock(walkId){
   const reviewItems=reviews.map(r=>`
     <div class="review-item">
       <div class="review-meta"><span class="review-stars">${[1,2,3,4,5].map(i=>i<=r.stars?'⭐':'☆').join('')}</span><span class="review-date">${r.date}</span></div>
+      ${r.username?`<div class="review-username">@${r.username}</div>`:''}
       ${r.text?`<div class="review-text">${r.text}</div>`:''}
       ${r.photo?`<img class="review-photo" src="${r.photo}" alt="Walk photo"/>`:''}
     </div>`).join('');
@@ -1260,7 +1264,7 @@ function renderWalks(activeFilter='all'){
         <div>
           <div class="contrib-banner-title">🐾 Join ${totalReviews} dog owners already sharing walks and reviews near you</div>
           <div class="contrib-banner-sub">Every rating and walk you add helps dog owners near ${currentLocation.displayName} discover great routes. It only takes a minute!</div>
-          <div class="contrib-banner-sub" style="margin-top:.5rem">🐾 Walks added by Sniffout users are marked with an <strong>Added by a Sniffout user</strong> badge - submit yours and it could be next!</div>
+          <div class="contrib-banner-sub" style="margin-top:.5rem">🐾 Know a great walk? Submit it and help other dog owners discover somewhere amazing.</div>
         </div>
         <div class="contrib-banner-emoji">🌿</div>
       </div>
@@ -1777,6 +1781,23 @@ function saveRecentSearch(query){try{let r=getRecentSearches().filter(s=>s.toLow
 function showSplash(){
   const recent=getRecentSearches();
   const pinned=getPinned();
+  const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+  const installDismissed=localStorage.getItem('sniffout_install_dismissed');
+  const showInstallCard=!isStandalone&&!installDismissed;
+  const installCardHTML=showInstallCard?`
+    <div class="splash-install-card" id="splashInstallCard">
+      <div class="splash-install-left">
+        <div class="splash-install-icon">🐾</div>
+        <div>
+          <div class="splash-install-title">Add to home screen</div>
+          <div class="splash-install-sub">Instant access, works offline</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <button class="splash-install-btn" onclick="triggerInstall()">Add</button>
+        <button class="splash-install-close" onclick="dismissSplashInstall()">✕</button>
+      </div>
+    </div>`:'';
   const pinnedHTML=pinned.length>0?`
     <div class="splash-recent">
       <div class="splash-recent-label">⭐ Favourite locations</div>
@@ -1804,7 +1825,13 @@ function showSplash(){
     <p>Curated routes, live weather and dog-friendly places - everything you need before you head out.</p>
     ${pinnedHTML}
     ${recentHTML}
+    ${installCardHTML}
   </div>`;
+}
+function dismissSplashInstall(){
+  try{localStorage.setItem('sniffout_install_dismissed','1');}catch(e){}
+  const el=document.getElementById('splashInstallCard');
+  if(el)el.remove();
 }
 function showProfile(){
   const p=document.getElementById('panel');
@@ -2122,41 +2149,21 @@ let deferredInstallPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{
   e.preventDefault();
   deferredInstallPrompt=e;
-  // Only show if not dismissed before and not already installed
-  if(!localStorage.getItem('sniffout_install_dismissed')){
-    setTimeout(showInstallBanner,3000); // slight delay so it doesn't compete with onboarding
-  }
 });
-function showInstallBanner(){
-  if(document.getElementById('installBanner'))return;
-  const banner=document.createElement('div');
-  banner.className='install-banner';
-  banner.id='installBanner';
-  banner.innerHTML=`
-    <div class="install-banner-icon">🐾</div>
-    <div class="install-banner-body">
-      <div class="install-banner-title">Add Sniffout to your home screen</div>
-      <div class="install-banner-sub">Instant access, works offline, no app store needed.</div>
-    </div>
-    <button class="install-banner-btn" onclick="triggerInstall()">Add</button>
-    <button class="install-banner-close" onclick="dismissInstallBanner()" title="Dismiss">✕</button>`;
-  document.body.appendChild(banner);
-  // Auto-dismiss after 8 seconds if user doesn't interact
-  setTimeout(()=>{if(document.getElementById('installBanner'))dismissInstallBanner();},8000);
-}
 async function triggerInstall(){
-  dismissInstallBanner();
   if(deferredInstallPrompt){
     deferredInstallPrompt.prompt();
     const {outcome}=await deferredInstallPrompt.userChoice;
     deferredInstallPrompt=null;
-    if(outcome==='accepted')try{localStorage.setItem('sniffout_install_dismissed','1');}catch(e){}
+    if(outcome==='accepted'){
+      try{localStorage.setItem('sniffout_install_dismissed','1');}catch(e){}
+      const el=document.getElementById('splashInstallCard');
+      if(el)el.remove();
+    }
+  } else {
+    // Fallback for browsers without beforeinstallprompt (Safari etc)
+    alert('To install: tap the Share button in your browser, then "Add to Home Screen".');
   }
-}
-function dismissInstallBanner(){
-  try{localStorage.setItem('sniffout_install_dismissed','1');}catch(e){}
-  const el=document.getElementById('installBanner');
-  if(el){el.style.animation='slideUp .2s ease reverse';setTimeout(()=>el.remove(),180);}
 }
 
 </script>
