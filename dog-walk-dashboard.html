@@ -383,7 +383,7 @@
     .onboarding-cta{width:100%;padding:.85rem;background:var(--moss);color:#fff;border:none;border-radius:14px;font-size:.9rem;font-weight:600;cursor:pointer;letter-spacing:.01em}
     .onboarding-cta:active{opacity:.85}
     /* ── PWA INSTALL BANNER ─────────────────────────────────────── */
-    .install-banner{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 72px);left:50%;transform:translateX(-50%);width:calc(100% - 2rem);max-width:400px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;box-shadow:0 8px 32px rgba(0,0,0,.18);padding:.85rem 1rem;display:flex;align-items:center;gap:.75rem;z-index:900;animation:slideUp .4s ease both}
+    .install-banner{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 80px);left:50%;transform:translateX(-50%);width:calc(100% - 2rem);max-width:420px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;box-shadow:0 8px 32px rgba(0,0,0,.25);padding:.85rem 1rem;display:flex;align-items:center;gap:.75rem;z-index:800;animation:slideUp .4s ease both}
     @media(min-width:768px){.install-banner{bottom:1.5rem}}
     .install-banner-icon{font-size:1.6rem;flex-shrink:0}
     .install-banner-body{flex:1;min-width:0}
@@ -2003,6 +2003,10 @@ initSeededReviews();
 restoreSession().then(restored=>{if(!restored)showSplash();});
 // Show onboarding after a short delay so the splash/search has rendered first
 setTimeout(maybeShowOnboarding, 400);
+// Register service worker for PWA install eligibility
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/my-first-repo/sw.js').catch(()=>{});
+}
 setInterval(()=>{if(weatherData)refreshWeather()},15*60*1000);
 
 // ── SHAREABLE CARD ────────────────────────────────────────────────────────────
@@ -2137,6 +2141,8 @@ function showInstallBanner(){
     <button class="install-banner-btn" onclick="triggerInstall()">Add</button>
     <button class="install-banner-close" onclick="dismissInstallBanner()" title="Dismiss">✕</button>`;
   document.body.appendChild(banner);
+  // Auto-dismiss after 8 seconds if user doesn't interact
+  setTimeout(()=>{if(document.getElementById('installBanner'))dismissInstallBanner();},8000);
 }
 async function triggerInstall(){
   dismissInstallBanner();
