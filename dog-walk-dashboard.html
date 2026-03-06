@@ -1344,6 +1344,7 @@ function switchCat(cat){
 // ── TAB & NAVIGATION ──────────────────────────────────────────────────────────
 function showTab(tab){
   currentTab=tab;
+  window.scrollTo(0,0);
   document.querySelectorAll('.nav-item').forEach((t,i)=>t.classList.toggle('active',['weather','walks','places'][i]===tab));
   ['weather','walks','places'].forEach(t=>{
     const tn=document.getElementById('tn'+t.charAt(0).toUpperCase()+t.slice(1));
@@ -1356,6 +1357,35 @@ function showTab(tab){
   if(tab==='weather')p.innerHTML=renderWeather(weatherData);
   if(tab==='walks'){p.innerHTML=renderWalks();loadNearbyGreenSpaces();}
   if(tab==='places'){p.innerHTML=renderPlacesPanel();loadPlaces(activeCat);}
+  saveSession();
+}
+
+function saveSession(){
+  if(!currentLocation||!weatherData)return;
+  try{localStorage.setItem('sniffout_session',JSON.stringify({location:currentLocation,weather:weatherData,tab:currentTab,savedAt:Date.now()}));}catch(e){}
+}
+
+async function restoreSession(){
+  try{
+    const raw=localStorage.getItem('sniffout_session');
+    if(!raw)return false;
+    const s=JSON.parse(raw);
+    // Only restore if saved within the last 30 minutes
+    if(Date.now()-s.savedAt>30*60*1000){localStorage.removeItem('sniffout_session');return false;}
+    currentLocation=s.location;
+    weatherData=s.weather;
+    // Refresh weather silently in background
+    fetchWeather(currentLocation.lat,currentLocation.lon).then(w=>{weatherData=w;saveSession();}).catch(()=>{});
+    const hdr=document.querySelector('header');
+    if(hdr)hdr.classList.add('collapsed');
+    document.getElementById('bottomNav').style.display='';
+    document.getElementById('searchInput').value=currentLocation.displayName;
+    document.getElementById('topNavSearchInput').value=currentLocation.displayName;
+    document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
+    if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
+    showTab(s.tab||'weather');
+    return true;
+  }catch(e){return false;}
 }
 function renderShell(){
   document.getElementById('app').innerHTML=`
@@ -1444,6 +1474,7 @@ async function doSearch(){
     weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
     if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
     showTab(currentTab);
+    saveSession();
   }catch(e){
     document.getElementById('locationName').textContent='';
     document.getElementById('searchError').style.display='block';
@@ -1522,7 +1553,7 @@ if(savedTheme){
   if(localHour<6||localHour>=20)document.body.classList.add('night');
 }
 initSeededReviews();
-showSplash();
+restoreSession().then(restored=>{if(!restored)showSplash();});
 setInterval(()=>{if(weatherData)refreshWeather()},15*60*1000);
 
 // ── SHAREABLE CARD ────────────────────────────────────────────────────────────
