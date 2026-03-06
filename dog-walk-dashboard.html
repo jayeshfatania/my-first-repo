@@ -425,6 +425,9 @@
     .walk-share-btn{background:none;border:1px solid var(--card-border);border-radius:20px;padding:.3rem .85rem;font-size:.75rem;color:var(--moss);font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;margin-bottom:.75rem}
     .walk-share-btn:hover{background:rgba(90,122,82,.08)}
     body.night .walk-share-btn{color:#7ab87a;border-color:rgba(122,184,122,.2)}
+    .fav-btn{background:none;border:none;font-size:1.1rem;cursor:pointer;padding:.1rem .2rem;line-height:1;opacity:.7;transition:opacity .2s,transform .2s}
+    .fav-btn:hover,.fav-btn-active{opacity:1}
+    .fav-btn-active{transform:scale(1.15)}
     /* Share overlay */
     .share-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(4px)}
     .share-modal{width:100%;max-width:360px;display:flex;flex-direction:column;gap:1rem}
@@ -450,6 +453,43 @@
     .feedback-btn:hover{background:rgba(255,255,255,.5);transform:translateY(-1px)}
     body.night .feedback-btn{color:var(--ink)}
     @media(min-width:768px){.feedback-btn{bottom:1.5rem;right:1.5rem}}
+    /* Profile page */
+    .profile-page{animation:fadeUp .4s ease both}
+    .profile-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem}
+    .profile-avatar{width:56px;height:56px;border-radius:50%;background:var(--card-bg);border:1px solid var(--card-border);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0}
+    .profile-name{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:400;color:var(--ink)}
+    .profile-sub{font-size:.75rem;color:var(--text-muted);margin-top:.2rem}
+    .profile-signin-banner{background:rgba(90,122,82,.08);border:1px solid rgba(90,122,82,.15);border-radius:14px;padding:.9rem 1rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;gap:.75rem}
+    .profile-signin-text{font-size:.8rem;color:var(--ink);line-height:1.6}
+    .profile-signin-text strong{color:var(--moss)}
+    .profile-signin-icon{font-size:1.5rem;flex-shrink:0}
+    body.night .profile-signin-banner{background:rgba(122,184,122,.07);border-color:rgba(122,184,122,.15)}
+    body.night .profile-signin-text strong{color:#7ab87a}
+    .profile-stats-row{display:flex;gap:1rem;margin-bottom:1.4rem;background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:.9rem 1rem}
+    .profile-stat{flex:1;text-align:center}
+    .profile-stat-num{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:300;color:var(--moss);display:block}
+    .profile-stat-label{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em}
+    body.night .profile-stat-num{color:#7ab87a}
+    .profile-section{margin-bottom:1.4rem}
+    .profile-section-title{font-family:'Fraunces',serif;font-size:1rem;font-weight:400;color:var(--ink);margin-bottom:.75rem}
+    .profile-fav-list{display:flex;flex-direction:column;gap:.6rem}
+    .profile-fav-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:.8rem 1rem;display:flex;align-items:center;gap:.75rem;cursor:pointer;transition:all .2s}
+    .profile-fav-card:hover{background:rgba(255,255,255,.35)}
+    .profile-fav-icon{font-size:1.5rem;flex-shrink:0}
+    .profile-fav-body{flex:1;min-width:0}
+    .profile-fav-name{font-size:.9rem;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .profile-fav-meta{font-size:.73rem;color:var(--text-muted);margin-top:.15rem}
+    .profile-fav-rating{color:var(--amber);margin-left:.3rem}
+    .profile-fav-remove{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.9rem;padding:.2rem .4rem;border-radius:50%;flex-shrink:0;transition:color .2s}
+    .profile-fav-remove:hover{color:#c03232}
+    .profile-empty{text-align:center;padding:2rem 1rem;background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px}
+    .profile-empty-title{font-family:'Fraunces',serif;font-size:1rem;color:var(--ink);margin-bottom:.4rem}
+    .profile-empty-sub{font-size:.8rem;color:var(--text-muted);line-height:1.6}
+    .profile-settings-list{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;overflow:hidden}
+    .profile-setting-row{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;border-bottom:1px solid var(--card-border);font-size:.85rem;color:var(--ink)}
+    .profile-setting-row:last-child{border-bottom:none}
+    .profile-setting-toggle{background:var(--moss);color:#fff;border:none;border-radius:20px;padding:.25rem .75rem;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif}
+    .profile-setting-btn-danger{background:none;border:1px solid rgba(192,50,50,.3);color:#c03232;border-radius:20px;padding:.25rem .75rem;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif}
     .footer{text-align:center;font-size:.73rem;color:var(--text-muted);margin-top:1rem}
     .refresh-btn{background:none;border:1px solid rgba(0,0,0,.15);border-radius:20px;padding:.3rem .8rem;font-size:.73rem;cursor:pointer;color:var(--ink);opacity:.5;font-family:'DM Sans',sans-serif;margin-top:.4rem;transition:opacity .2s}
     .refresh-btn:hover{opacity:1}
@@ -486,7 +526,7 @@
     </div>
     <div class="top-nav-right">
       <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark mode"></button>
-      <div class="top-nav-profile" title="Sign in coming soon">👤</div>
+      <div class="top-nav-profile" onclick="showProfile()" title="Profile & Favourites">👤</div>
     </div>
   </nav>
   <aside class="left-sidebar" id="leftSidebar">
@@ -976,6 +1016,25 @@ function submitReview(walkId){
 }
 
 // ── WALKS RENDERING ───────────────────────────────────────────────────────────
+// ── FAVOURITES ────────────────────────────────────────────────────────────────
+function getFavourites(){try{return JSON.parse(localStorage.getItem('sniffout_favs')||'[]');}catch(e){return[];}}
+function isFavourite(id){return getFavourites().includes(id);}
+function toggleFavourite(id,e){
+  e.stopPropagation();
+  const favs=getFavourites();
+  const idx=favs.indexOf(id);
+  if(idx===-1){favs.push(id);}else{favs.splice(idx,1);}
+  try{localStorage.setItem('sniffout_favs',JSON.stringify(favs));}catch(e){}
+  // Update heart button in place without re-rendering the whole list
+  const btn=document.querySelector(`#card-${id} .fav-btn`);
+  if(btn){
+    const saved=favs.includes(id);
+    btn.innerHTML=saved?'❤️':'🤍';
+    btn.title=saved?'Remove from favourites':'Save to favourites';
+    btn.classList.toggle('fav-btn-active',saved);
+  }
+}
+
 function renderWalkCard(w,distStr,showWeatherNote){
   const avg=getAvgRating(w.id);
   const communityTag=w.community?`<span class="community-badge">Community</span>`:'';
@@ -984,6 +1043,7 @@ function renderWalkCard(w,distStr,showWeatherNote){
   const avgCompact=avg
     ?`<div class="avg-stars-compact">${[1,2,3,4,5].map(i=>`<span class="avg-star-s${i<=Math.round(avg)?' filled':''}">★</span>`).join('')}<span class="avg-label-s">${avg}/5</span></div>`
     :'';
+  const faved=isFavourite(w.id);
   return`<div class="item-card" id="card-${w.id}">
     <div class="item-card-compact" onclick="toggleWalkCard('${w.id}')">
       <div class="item-badge">${w.icon}</div>
@@ -995,6 +1055,7 @@ function renderWalkCard(w,distStr,showWeatherNote){
         </div>
       </div>
       <div class="item-compact-right">
+        <button class="fav-btn${faved?' fav-btn-active':''}" onclick="toggleFavourite('${w.id}',event)" title="${faved?'Remove from favourites':'Save to favourites'}">${faved?'❤️':'🤍'}</button>
         <div class="item-compact-stats">
           <span class="item-compact-stat">🗺️ ${w.distance}</span>
           <span class="item-compact-stat">⏱️ ${w.duration}</span>
@@ -1014,7 +1075,10 @@ function renderWalkCard(w,distStr,showWeatherNote){
       </div>
       <div class="item-desc">${w.desc}</div>
       ${weatherNote}
-      <button class="walk-share-btn" onclick="event.stopPropagation();showShareCard(${JSON.stringify(w).replace(/"/g,'&quot;')})">🐾 Share this walk</button>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.75rem">
+        <button class="walk-share-btn" onclick="event.stopPropagation();showShareCard(${JSON.stringify(w).replace(/"/g,'&quot;')})">🐾 Share this walk</button>
+        <button class="walk-share-btn" onclick="event.stopPropagation();toggleFavourite('${w.id}',event)">${faved?'❤️ Saved to favourites':'🤍 Save to favourites'}</button>
+      </div>
       ${renderReviewsBlock(w.id)}
     </div>
   </div>`;
@@ -1053,6 +1117,7 @@ function renderWalks(activeFilter='all'){
     {id:'woodland',label:'🌳 Woodland'},
   ];
 
+  const favIds=getFavourites();
   const filtered=nearby.filter(w=>{
     if(activeFilter==='all')return true;
     if(activeFilter==='easy')return w.difficulty==='Easy';
@@ -1539,6 +1604,83 @@ function showSplash(){
     ${recentHTML}
   </div>`;
 }
+function showProfile(){
+  const p=document.getElementById('panel');
+  // Deactivate all nav items
+  document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));
+  window.scrollTo(0,0);
+  p.innerHTML=renderProfilePage();
+}
+
+function renderProfilePage(){
+  const favIds=getFavourites();
+  const allWalks=[...WALKS_DB,...getCommunityWalks().map(w=>({...w,community:true}))];
+  const favWalks=allWalks.filter(w=>favIds.includes(w.id));
+  const reviews=getReviews();
+  const totalReviews=Object.values(reviews).reduce((sum,r)=>sum+r.length,0);
+
+  const favSection=favWalks.length
+    ?`<div class="profile-fav-list">${favWalks.map(w=>{
+        const avg=getAvgRating(w.id);
+        const avgHtml=avg?`<span class="profile-fav-rating">★ ${avg}</span>`:'';
+        return`<div class="profile-fav-card" onclick="showTab('walks')">
+          <div class="profile-fav-icon">${w.icon}</div>
+          <div class="profile-fav-body">
+            <div class="profile-fav-name">${w.name}</div>
+            <div class="profile-fav-meta">${w.distance} · ${w.difficulty} ${avgHtml}</div>
+          </div>
+          <button class="profile-fav-remove" onclick="event.stopPropagation();toggleFavourite('${w.id}',event);document.getElementById('panel').innerHTML=renderProfilePage()" title="Remove">✕</button>
+        </div>`;
+      }).join('')}</div>`
+    :`<div class="profile-empty">
+        <div style="font-size:2.5rem;margin-bottom:.5rem">🤍</div>
+        <div class="profile-empty-title">No favourites yet</div>
+        <p class="profile-empty-sub">Tap the 🤍 on any walk to save it here.</p>
+        <button class="contrib-btn-primary" style="margin-top:.75rem" onclick="showTab('walks')">Browse walks</button>
+      </div>`;
+
+  return`
+    <div class="profile-page">
+      <div class="profile-header">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-header-body">
+          <div class="profile-name">Guest</div>
+          <div class="profile-sub">Walks saved on this device</div>
+        </div>
+      </div>
+      <div class="profile-signin-banner">
+        <div class="profile-signin-text">
+          <strong>Sign in coming soon</strong><br>
+          <span>Create an account to sync your favourites and reviews across devices.</span>
+        </div>
+        <div class="profile-signin-icon">🔐</div>
+      </div>
+      <div class="profile-stats-row">
+        <div class="profile-stat"><span class="profile-stat-num">${favWalks.length}</span><span class="profile-stat-label">Favourites</span></div>
+        <div class="profile-stat"><span class="profile-stat-num">${totalReviews}</span><span class="profile-stat-label">Reviews left</span></div>
+        <div class="profile-stat"><span class="profile-stat-num">${Object.keys(reviews).length}</span><span class="profile-stat-label">Walks rated</span></div>
+      </div>
+      <div class="profile-section">
+        <div class="profile-section-title">❤️ Favourite walks</div>
+        ${favSection}
+      </div>
+      <div class="profile-section">
+        <div class="profile-section-title">⚙️ Settings</div>
+        <div class="profile-settings-list">
+          <div class="profile-setting-row">
+            <span>Dark mode</span>
+            <button class="profile-setting-toggle" onclick="toggleTheme()">${document.body.classList.contains('night')?'On':'Off'}</button>
+          </div>
+          <div class="profile-setting-row">
+            <span>Clear all favourites</span>
+            <button class="profile-setting-btn-danger" onclick="if(confirm('Clear all favourites?')){localStorage.removeItem('sniffout_favs');document.getElementById('panel').innerHTML=renderProfilePage()}">Clear</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer" style="margin-top:1.5rem"><div>Sniffout Beta · <a href="https://tally.so/r/MeO1yM" target="_blank" style="color:var(--moss)">Share feedback</a></div></div>
+    </div>`;
+}
+
 function goHome(){
   weatherData=null;currentLocation=null;
   localStorage.removeItem('sniffout_session');
