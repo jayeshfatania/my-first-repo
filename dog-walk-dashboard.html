@@ -537,8 +537,8 @@
   <aside class="left-sidebar" id="leftSidebar">
     <div class="sidebar-section">
       <div class="sidebar-label">Explore</div>
-      <button class="sidebar-link active" id="sbWeather" onclick="showTab('weather')"><span class="sidebar-link-icon">🌤️</span> Weather</button>
-      <button class="sidebar-link" id="sbWalks" onclick="showTab('walks')"><span class="sidebar-link-icon">🥾</span> Walks</button>
+      <button class="sidebar-link active" id="sbWeather" onclick="showTab('weather')"><span class="sidebar-link-icon">⛅</span> Weather</button>
+      <button class="sidebar-link" id="sbWalks" onclick="showTab('walks')"><span class="sidebar-link-icon">🥾</span> Walkies</button>
       <button class="sidebar-link" id="sbPlaces" onclick="showTab('places')"><span class="sidebar-link-icon">☕</span> Places</button>
     </div>
     <div class="sidebar-divider"></div>
@@ -569,13 +569,13 @@
   </div>
   <nav class="bottom-nav" id="bottomNav" style="display:none">
     <div class="nav-item active" onclick="showTab('weather')">
-      <div class="nav-item-icon">🌤️</div>
+      <div class="nav-item-icon">⛅</div>
       <div class="nav-item-label">Weather</div>
       <div class="nav-dot"></div>
     </div>
     <div class="nav-item" onclick="showTab('walks')">
       <div class="nav-item-icon">🥾</div>
-      <div class="nav-item-label">Walks</div>
+      <div class="nav-item-label">Walkies</div>
       <div class="nav-dot"></div>
     </div>
     <div class="nav-item" onclick="showTab('places')">
@@ -662,7 +662,7 @@ const WALKS_DB=[
   {id:'brecon-waterfall-country',name:"Waterfall Country - Sgwd yr Eira",area:"Brecon Beacons",lat:51.8167,lon:-3.5833,icon:"🌊",distance:"8km",duration:"2h",difficulty:"Moderate",terrain:"Wooded gorge & waterfalls",tags:["Wales","Waterfalls","Woodland"],desc:"Walk behind a thundering waterfall in a spectacular wooded limestone gorge. Four major waterfalls on this route including the famous Sgwd yr Eira where you walk behind the falls.",wetNote:"Gorge paths can be very slippery when wet - take care on rock sections.",hotNote:"Shaded gorge walk - cool even in hot weather. Perfect summer route."},
 ];
 
-const WMO={0:['☀️','Clear sky'],1:['🌤️','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],45:['🌫️','Foggy'],48:['🌫️','Icy fog'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Heavy drizzle'],61:['🌧️','Slight rain'],63:['🌧️','Moderate rain'],65:['🌧️','Heavy rain'],71:['🌨️','Light snow'],73:['🌨️','Moderate snow'],75:['❄️','Heavy snow'],80:['🌦️','Rain showers'],81:['🌧️','Heavy showers'],82:['⛈️','Violent showers'],95:['⛈️','Thunderstorm'],99:['⛈️','Thunderstorm+hail']};
+const WMO={0:['☀️','Clear sky'],1:['⛅','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],45:['🌁','Foggy'],48:['🌁','Icy fog'],51:['🌂','Light drizzle'],53:['🌂','Drizzle'],55:['☔','Heavy drizzle'],61:['☔','Slight rain'],63:['☔','Moderate rain'],65:['☔','Heavy rain'],71:['❄️','Light snow'],73:['❄️','Moderate snow'],75:['❄️','Heavy snow'],80:['🌂','Rain showers'],81:['☔','Heavy showers'],82:['⛈️','Violent showers'],95:['⛈️','Thunderstorm'],99:['⛈️','Thunderstorm+hail']};
 
 // ── STORAGE (localStorage) ────────────────────────────────────────────────────
 function getReviews(){try{return JSON.parse(localStorage.getItem('walkReviews')||'{}')}catch{return{}}}
@@ -760,8 +760,8 @@ function walkRec(d){
   if(storm)return['⛈️','⚠️ Stay in today','Thunderstorms make this a bad day for walks. Wait it out!'];
   if(d.windGust>=50)return['💨','⚠️ Very windy',`Gusts of ${Math.round(d.windGust)} km/h are too strong. Try later.`];
   if(actuallyRaining&&d.feelsLike<5)return['🥶','It\'s raining and cold - keep it short','Wet and cold out there. A quick walk with a good coat is fine but don\'t linger.'];
-  if(actuallyRaining)return['🌧️','It\'s raining - grab the lead & a raincoat','Wet out there but walkable. Stick to shorter paved routes and dry off when you\'re back.'];
-  if(fog)return['🌫️','Foggy - stay visible','Low visibility. Stick to familiar routes.'];
+  if(actuallyRaining)return['☔','It\'s raining - grab the lead & a raincoat','Wet out there but walkable. Stick to shorter paved routes and dry off when you\'re back.'];
+  if(fog)return['🌁','Foggy - stay visible','Low visibility. Stick to familiar routes.'];
   if(d.feelsLike<2)return['🥶','Brisk walk day',`Feels like ${Math.round(d.feelsLike)}°C - keep it short, watch for ice.`];
   if(d.feelsLike>28)return['🌡️','Stay cool on your walk','Quite warm. Walk early or evening and bring water for your dog.'];
   if(d.uvMax>=6)return['☀️','Great walk - watch the UV',`Lovely day but UV is ${d.uvMax}. Walk in shade, check paw temps on tarmac.`];
@@ -771,8 +771,8 @@ function walkRec(d){
     const upcoming=d.hourlyTimes.map((t,i)=>({time:new Date(t),prob:d.hourlyRainProb[i]}))
       .filter(h=>h.time>=now&&h.time<=new Date(now.getTime()+3*60*60*1000));
     const maxUpcoming=Math.max(...upcoming.map(h=>h.prob),0);
-    if(maxUpcoming>=70)return['🌧️','Rain arriving soon - head out now','It\'s dry now but heavy rain is forecast within 3 hours. Get your walk in soon!'];
-    if(maxUpcoming>=40)return['🌦️','Rain likely soon - worth a jacket','Dry at the moment but showers are on the way. A good time for a shorter walk.'];
+    if(maxUpcoming>=70)return['☔','Rain arriving soon - head out now','It\'s dry now but heavy rain is forecast within 3 hours. Get your walk in soon!'];
+    if(maxUpcoming>=40)return['🌂','Rain likely soon - worth a jacket','Dry at the moment but showers are on the way. A good time for a shorter walk.'];
   }
 
   return['🐕','Great day for a walk!',`${getWmo(d.weatherCode)[1]} with ${Math.round(d.feelsLike)}°C feels-like. Perfect conditions!`];
@@ -809,6 +809,10 @@ function buildHazardWarnings(d){
 function getBestWalkWindow(d){
   const now=new Date();
   const nowPlus1=new Date(now.getTime()+60*60*1000);
+  // End of today - midnight tonight
+  const endOfDay=new Date(now);
+  endOfDay.setHours(23,59,59,999);
+
   const hours=d.hourlyTimes.map((t,i)=>({
     time:new Date(t),label:fmtTime(t),
     temp:Math.round(d.hourlyTemp[i]),
@@ -817,8 +821,11 @@ function getBestWalkWindow(d){
     wmo:d.hourlyWmo[i],
   })).filter(h=>{
     const hr=h.time.getHours();
-    return h.time>=nowPlus1&&h.time<=new Date(now.getTime()+24*60*60*1000)&&hr>=6&&hr<=22;
+    // Must be at least 1 hour from now, still today, and between 6am-10pm
+    return h.time>=nowPlus1 && h.time<=endOfDay && hr>=6 && hr<=22;
   });
+
+  if(!hours.length)return null;
 
   // Score each hour (lower = better)
   const scored=hours.map(h=>{
@@ -834,16 +841,16 @@ function getBestWalkWindow(d){
     return{...h,score};
   });
 
+  if(scored.length<2)return null;
+
   // Find best consecutive 2-hour window
   let bestIdx=0,bestScore=Infinity;
   for(let i=0;i<scored.length-1;i++){
     const s=(scored[i].score+scored[i+1].score)/2;
     if(s<bestScore){bestScore=s;bestIdx=i;}
   }
-  if(!scored.length)return null;
-  const best=scored[bestIdx];
   if(bestScore>40)return null;
-  return{label:`${best.label}–${scored[Math.min(bestIdx+2,scored.length-1)].label}`,feels:best.feels,rain:best.rain,wmo:best.wmo,poor:bestScore>20};
+  return{label:`${scored[bestIdx].label}–${scored[Math.min(bestIdx+2,scored.length-1)].label}`,feels:scored[bestIdx].feels,rain:scored[bestIdx].rain,wmo:scored[bestIdx].wmo,poor:bestScore>20};
 }
 
 function buildHourlyStrip(d){
@@ -859,9 +866,9 @@ function buildHourlyStrip(d){
   const best=getBestWalkWindow(d);
   const bestLabel=best
     ?best.poor
-      ?`<div class="best-walk-window">🌧️ Best available window today: <strong>${best.label}</strong> · ${best.feels}°C feels-like · still ${best.rain}% rain chance - bring a raincoat</div>`
+      ?`<div class="best-walk-window">☔ Best available window today: <strong>${best.label}</strong> · ${best.feels}°C feels-like · still ${best.rain}% rain chance - bring a raincoat</div>`
       :`<div class="best-walk-window">🐾 Best time to walk today: <strong>${best.label}</strong> · ${best.feels}°C feels-like · ${best.rain}% rain chance</div>`
-    :`<div class="best-walk-window">⚠️ Conditions are challenging today - keep walks short and be prepared.</div>`;
+    :'';
 
   const items=hours.map(h=>{
     const isNow=Math.abs(h.time-now)<30*60*1000;
@@ -1049,7 +1056,7 @@ function renderWalkCard(w,distStr,showWeatherNote){
   const avg=getAvgRating(w.id);
   const communityTag=w.community?`<span class="community-badge">Community</span>`:'';
   const curatedTag=!w.community?`<span class="curated-badge">🐾 Added by a Sniffout user</span>`:'';
-  const weatherNote=showWeatherNote?`<div class="item-weather-note">🌤️ Today: ${showWeatherNote}</div>`:'';
+  const weatherNote=showWeatherNote?`<div class="item-weather-note">⛅ Today: ${showWeatherNote}</div>`:'';
   const avgCompact=avg
     ?`<div class="avg-stars-compact">${[1,2,3,4,5].map(i=>`<span class="avg-star-s${i<=Math.round(avg)?' filled':''}">★</span>`).join('')}<span class="avg-label-s">${avg}/5</span></div>`
     :'';
