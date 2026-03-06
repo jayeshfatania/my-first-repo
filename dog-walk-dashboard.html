@@ -685,18 +685,28 @@ function starsHtml(avg,size=''){const full=Math.round(avg||0);return[1,2,3,4,5].
 
 function walkRec(d){
   const rain=[51,53,55,61,63,65,80,81,82,95,99].includes(d.weatherCode),storm=[82,95,99].includes(d.weatherCode),fog=[45,48].includes(d.weatherCode);
+
+  // Also check current hourly rain probability as a fallback - weather code can lag behind reality
+  const now=new Date();
+  const currentHourProb=d.hourlyTimes
+    ?d.hourlyTimes.reduce((best,t,i)=>{
+        const diff=Math.abs(new Date(t)-now);
+        return diff<best.diff?{diff,prob:d.hourlyRainProb[i]}:best;
+      },{diff:Infinity,prob:0}).prob
+    :0;
+  const actuallyRaining=rain||currentHourProb>=60;
+
   if(storm)return['⛈️','⚠️ Stay in today','Thunderstorms make this a bad day for walks. Wait it out!'];
   if(d.windGust>=50)return['💨','⚠️ Very windy',`Gusts of ${Math.round(d.windGust)} km/h are too strong. Try later.`];
-  if(rain&&d.feelsLike<5)return['🥶','Bundle up & make it quick','Cold and rainy - a short walk with a good coat is fine.'];
-  if(rain)return['🌧️','Grab the lead & a raincoat','A bit wet but walkable. Stick to shorter paved routes.'];
+  if(actuallyRaining&&d.feelsLike<5)return['🥶','It\'s raining and cold - keep it short','Wet and cold out there. A quick walk with a good coat is fine but don\'t linger.'];
+  if(actuallyRaining)return['🌧️','It\'s raining - grab the lead & a raincoat','Wet out there but walkable. Stick to shorter paved routes and dry off when you\'re back.'];
   if(fog)return['🌫️','Foggy - stay visible','Low visibility. Stick to familiar routes.'];
   if(d.feelsLike<2)return['🥶','Brisk walk day',`Feels like ${Math.round(d.feelsLike)}°C - keep it short, watch for ice.`];
   if(d.feelsLike>28)return['🌡️','Stay cool on your walk','Quite warm. Walk early or evening and bring water for your dog.'];
   if(d.uvMax>=6)return['☀️','Great walk - watch the UV',`Lovely day but UV is ${d.uvMax}. Walk in shade, check paw temps on tarmac.`];
 
-  // Check upcoming rain in next 3 hours even if currently dry
+  // Check upcoming rain in next 3 hours only if it's actually dry right now
   if(d.hourlyTimes&&d.hourlyRainProb){
-    const now=new Date();
     const upcoming=d.hourlyTimes.map((t,i)=>({time:new Date(t),prob:d.hourlyRainProb[i]}))
       .filter(h=>h.time>=now&&h.time<=new Date(now.getTime()+3*60*60*1000));
     const maxUpcoming=Math.max(...upcoming.map(h=>h.prob),0);
