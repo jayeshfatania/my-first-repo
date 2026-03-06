@@ -4,6 +4,11 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🐾 Sniffout</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#5a7a52">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Sniffout">
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -401,6 +406,28 @@
     .day-walk.poor{color:#c03232}
     body.night .day-walk.good{color:#7ab87a}
     body.night .day-walk.poor{color:#e07070}
+    /* Share button on walk card */
+    .walk-share-btn{background:none;border:1px solid var(--card-border);border-radius:20px;padding:.3rem .85rem;font-size:.75rem;color:var(--moss);font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;margin-bottom:.75rem}
+    .walk-share-btn:hover{background:rgba(90,122,82,.08)}
+    body.night .walk-share-btn{color:#7ab87a;border-color:rgba(122,184,122,.2)}
+    /* Share overlay */
+    .share-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(4px)}
+    .share-modal{width:100%;max-width:360px;display:flex;flex-direction:column;gap:1rem}
+    .share-card{background:linear-gradient(135deg,#3a5c34 0%,#5a7a52 60%,#7a9a72 100%);border-radius:20px;padding:1.8rem;color:white;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+    .share-card-brand{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;opacity:.7;margin-bottom:1rem}
+    .share-card-walk{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:400;line-height:1.25;margin-bottom:.35rem}
+    .share-card-area{font-size:.82rem;opacity:.8;margin-bottom:.9rem}
+    .share-card-stats{display:flex;gap:.75rem;font-size:.78rem;opacity:.9;margin-bottom:.75rem;flex-wrap:wrap}
+    .share-card-rating{font-size:.9rem;margin-bottom:.5rem;letter-spacing:.05em}
+    .share-card-weather{font-size:.78rem;opacity:.75;margin-bottom:.9rem}
+    .share-card-tag{font-size:.65rem;opacity:.5;text-transform:uppercase;letter-spacing:.1em;margin-top:.5rem;border-top:1px solid rgba(255,255,255,.15);padding-top:.75rem}
+    .share-actions{display:flex;gap:.6rem;flex-wrap:wrap}
+    .share-action-btn{flex:1;padding:.6rem .9rem;border-radius:12px;border:none;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;background:rgba(255,255,255,.9);color:#2c3a28;transition:all .2s}
+    .share-action-btn:hover{background:white}
+    .share-action-btn.primary{background:#5a7a52;color:white}
+    .share-action-btn.primary:hover{background:#4a6a42}
+    .share-close-btn{width:100%;padding:.55rem;border-radius:12px;border:none;background:rgba(255,255,255,.15);color:white;font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;transition:opacity .2s}
+    .share-close-btn:hover{opacity:.7}
     .beta-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;background:rgba(232,168,56,.15);color:#a0680a;border:1px solid rgba(232,168,56,.3);border-radius:20px;padding:.18rem .55rem;margin-left:.4rem;vertical-align:middle}
     body.night .beta-badge{background:rgba(232,168,56,.1);color:var(--amber);border-color:rgba(232,168,56,.2)}
     /* Feedback button */
@@ -575,6 +602,56 @@ const WMO={0:['☀️','Clear sky'],1:['🌤️','Mainly clear'],2:['⛅','Partl
 // ── STORAGE (localStorage) ────────────────────────────────────────────────────
 function getReviews(){try{return JSON.parse(localStorage.getItem('walkReviews')||'{}')}catch{return{}}}
 function saveReviews(r){localStorage.setItem('walkReviews',JSON.stringify(r))}
+
+// ── SEEDED BETA REVIEWS ───────────────────────────────────────────────────────
+const SEEDED_REVIEWS={
+  'thames-kt2':[
+    {stars:5,text:"Walked this on a sunny Sunday with Biscuit — he was straight in the river at Ham Lands. One of our all-time favourites.",date:"2 Mar 2025",seeded:true},
+    {stars:4,text:"Really lovely route, well signposted. Got a bit muddy near Teddington Lock after the rain but nothing serious.",date:"18 Feb 2025",seeded:true},
+    {stars:5,text:"Perfect for tired legs — completely flat and the views over the Thames never get old.",date:"5 Jan 2025",seeded:true},
+  ],
+  'richmond-park':[
+    {stars:5,text:"Magical place. Came face to face with a stag near Pembroke Lodge. Keep dogs on leads near the deer — it's signed clearly.",date:"28 Feb 2025",seeded:true},
+    {stars:4,text:"Our go-to for a long Sunday walk. The ponds are great for dogs to cool off in summer.",date:"10 Feb 2025",seeded:true},
+  ],
+  'bushy-park':[
+    {stars:5,text:"The chestnut avenue in autumn is absolutely stunning. Dogs go mad in the big pond — bring a towel!",date:"1 Mar 2025",seeded:true},
+    {stars:4,text:"Less busy than Richmond Park. The River Crane section through the woodland is beautiful.",date:"14 Feb 2025",seeded:true},
+  ],
+  'hampstead-heath':[
+    {stars:5,text:"Luna absolutely loves it here. So much variety — heathland, woodland, ponds. Never gets boring.",date:"25 Feb 2025",seeded:true},
+    {stars:3,text:"Great walk but gets incredibly busy on weekends. Go early or on a weekday if you can.",date:"8 Feb 2025",seeded:true},
+    {stars:5,text:"The views from Parliament Hill on a clear day are worth the trek alone.",date:"20 Jan 2025",seeded:true},
+  ],
+  'wimbledon-common':[
+    {stars:4,text:"Excellent off-lead freedom. The windmill is a lovely landmark to navigate around.",date:"22 Feb 2025",seeded:true},
+    {stars:5,text:"Huge space, never feels crowded even on busy days. Dogs absolutely love it.",date:"3 Feb 2025",seeded:true},
+  ],
+  'box-hill':[
+    {stars:5,text:"The stepping stones are brilliant fun — dogs wade right through. The climb is worth it for the views.",date:"27 Feb 2025",seeded:true},
+    {stars:4,text:"Fantastic National Trust walk. Can get busy on weekends but the woodland section is magical.",date:"12 Jan 2025",seeded:true},
+  ],
+  'ashdown-forest':[
+    {stars:5,text:"Playing Poohsticks with the kids while the dog splashes around underneath — perfect day out.",date:"16 Feb 2025",seeded:true},
+    {stars:5,text:"The real Hundred Acre Wood! Heathland is superb for off-lead running.",date:"9 Feb 2025",seeded:true},
+  ],
+  'regents-canal':[
+    {stars:4,text:"Urban gem. Our dog loves sniffing along the towpath. Broadway Market is perfect for a coffee stop.",date:"26 Feb 2025",seeded:true},
+    {stars:3,text:"Lovely but the towpath gets very narrow in places with cyclists. Best on quieter weekday mornings.",date:"4 Feb 2025",seeded:true},
+  ],
+};
+
+function initSeededReviews(){
+  const existing=getReviews();
+  let changed=false;
+  Object.entries(SEEDED_REVIEWS).forEach(([walkId,reviews])=>{
+    if(!existing[walkId]){
+      existing[walkId]=reviews;
+      changed=true;
+    }
+  });
+  if(changed)saveReviews(existing);
+}
 function getCommunityWalks(){try{return JSON.parse(localStorage.getItem('communityWalks')||'[]')}catch{return[]}}
 function saveCommunityWalks(w){localStorage.setItem('communityWalks',JSON.stringify(w))}
 
@@ -903,6 +980,7 @@ function renderWalkCard(w,distStr,showWeatherNote){
       </div>
       <div class="item-desc">${w.desc}</div>
       ${weatherNote}
+      <button class="walk-share-btn" onclick="event.stopPropagation();showShareCard(${JSON.stringify(w).replace(/"/g,'&quot;')})">🐾 Share this walk</button>
       ${renderReviewsBlock(w.id)}
     </div>
   </div>`;
@@ -1321,7 +1399,7 @@ function showSplash(){
         </div>`).join('')}
       </div>
     </div>`
-    :pinned.length===0?`<p class="splash-first-visit">Try searching for Richmond, SW11, Hampstead Heath or Edinburgh</p>`:'';
+    :pinned.length===0?`<p class="splash-first-visit">Search any UK location — postcode, town, city or landmark. Try Richmond, SW11 or Hampstead Heath to get started.</p>`:'';
   document.getElementById('app').innerHTML=`<div class="splash">
     <h2>Discover great walks<br><em>Explore more. Together.</em></h2>
     <p>Curated routes, live weather and dog-friendly places — everything you need before you head out.</p>
@@ -1443,8 +1521,67 @@ if(savedTheme){
   const localHour=new Date().getHours();
   if(localHour<6||localHour>=20)document.body.classList.add('night');
 }
+initSeededReviews();
 showSplash();
 setInterval(()=>{if(weatherData)refreshWeather()},15*60*1000);
+
+// ── SHAREABLE CARD ────────────────────────────────────────────────────────────
+function showShareCard(walk){
+  const avg=getAvgRating(walk.id);
+  const stars=avg?'★'.repeat(Math.round(avg))+'☆'.repeat(5-Math.round(avg)):'No ratings yet';
+  const weatherLine=weatherData?`${getWmo(weatherData.weatherCode)[0]} ${Math.round(weatherData.temp)}°C · ${getWmo(weatherData.weatherCode)[1]}`:'';
+
+  const overlay=document.createElement('div');
+  overlay.className='share-overlay';
+  overlay.innerHTML=`
+    <div class="share-modal">
+      <div class="share-card" id="shareCardInner">
+        <div class="share-card-brand">🐾 Sniffout</div>
+        <div class="share-card-walk">${walk.icon} ${walk.name}</div>
+        <div class="share-card-area">📍 ${walk.area}</div>
+        <div class="share-card-stats">
+          <span>🗺️ ${walk.distance}</span>
+          <span>⏱️ ${walk.duration}</span>
+          <span>💪 ${walk.difficulty}</span>
+        </div>
+        ${avg?`<div class="share-card-rating">${stars} ${avg}/5</div>`:''}
+        ${weatherLine?`<div class="share-card-weather">${weatherLine}</div>`:''}
+        <div class="share-card-tag">Found via Sniffout · sniffout.app</div>
+      </div>
+      <div class="share-actions">
+        <button class="share-action-btn" onclick="copyShareLink('${walk.name}','${walk.area}')">🔗 Copy link</button>
+        <button class="share-action-btn primary" onclick="screenshotCard()">📸 Save image</button>
+        <button class="share-close-btn" onclick="this.closest('.share-overlay').remove()">Close</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function copyShareLink(name,area){
+  const text=`🐾 Check out ${name} in ${area} — found on Sniffout! ${window.location.href}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.querySelector('.share-action-btn');
+    if(btn){btn.textContent='✅ Copied!';setTimeout(()=>{btn.textContent='🔗 Copy link'},2000);}
+  });
+}
+
+function screenshotCard(){
+  const card=document.getElementById('shareCardInner');
+  if(!card)return;
+  // Native share if available (mobile)
+  if(navigator.share){
+    const name=card.querySelector('.share-card-walk').textContent;
+    const area=card.querySelector('.share-card-area').textContent;
+    navigator.share({title:'Sniffout',text:`${name} ${area} — found on Sniffout 🐾`,url:window.location.href})
+      .catch(()=>{});
+  } else {
+    // Fallback — copy text to clipboard
+    copyShareLink(
+      card.querySelector('.share-card-walk').textContent,
+      card.querySelector('.share-card-area').textContent
+    );
+  }
+}
 </script>
 </body>
 </html>
