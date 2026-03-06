@@ -307,6 +307,9 @@
     /* Submit walk form */
     .submit-walk-card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1.2rem 1.4rem;margin-top:1rem}
     .submit-walk-card h4{font-family:'Fraunces',serif;font-size:1rem;font-weight:400;color:var(--ink);margin-bottom:.8rem}
+    .sniffout-pick-explainer{font-size:.78rem;color:var(--text-muted);background:rgba(90,122,82,.08);border:1px solid rgba(90,122,82,.15);border-radius:10px;padding:.6rem .8rem;margin-bottom:.9rem;line-height:1.5}
+    .sniffout-pick-explainer strong{color:var(--moss)}
+    body.night .sniffout-pick-explainer strong{color:#7ab87a}
     .form-field{margin-bottom:.7rem}
     .form-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:500;display:block;margin-bottom:.3rem}
     .form-input{width:100%;background:rgba(255,255,255,.2);border:1px solid var(--card-border);border-radius:8px;padding:.55rem .8rem;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--ink);outline:none}
@@ -963,7 +966,7 @@ function submitReview(walkId){
 function renderWalkCard(w,distStr,showWeatherNote){
   const avg=getAvgRating(w.id);
   const communityTag=w.community?`<span class="community-badge">Community</span>`:'';
-  const curatedTag=!w.community?`<span class="curated-badge">⭐ Sniffout Curated</span>`:'';
+  const curatedTag=!w.community?`<span class="curated-badge">⭐ Sniffout Pick</span>`:'';
   const weatherNote=showWeatherNote?`<div class="item-weather-note">🌤️ Today: ${showWeatherNote}</div>`:'';
   const avgCompact=avg
     ?`<div class="avg-stars-compact">${[1,2,3,4,5].map(i=>`<span class="avg-star-s${i<=Math.round(avg)?' filled':''}">★</span>`).join('')}<span class="avg-label-s">${avg}/5</span></div>`
@@ -1061,6 +1064,7 @@ function renderWalks(activeFilter='all'){
         <div>
           <div class="contrib-banner-title">🐾 Join ${totalReviews} dog owners already sharing walks and reviews near you</div>
           <div class="contrib-banner-sub">Every rating and walk you add helps dog owners near ${currentLocation.displayName} discover great routes. It only takes a minute!</div>
+          <div class="contrib-banner-sub" style="margin-top:.5rem">⭐ Walks hand-picked by our team are marked as <strong>Sniffout Picks</strong> - the best community walks may earn one too.</div>
         </div>
         <div class="contrib-banner-emoji">🌿</div>
       </div>
@@ -1170,6 +1174,7 @@ function toggleSubmitWalkForm(){
 function renderSubmitWalkForm(){
   return`<div class="submit-walk-card">
     <h4>🐾 Know a great walk nearby? Add it!</h4>
+    <div class="sniffout-pick-explainer">⭐ <strong>What is a Sniffout Pick?</strong> Walks marked with this badge have been hand-picked by the Sniffout team. The best community-submitted walks may earn a Sniffout Pick badge too!</div>
     <div class="form-field"><label class="form-label">Walk name</label><input class="form-input" id="sw-name" placeholder="e.g. Riverside path through Molesey"/></div>
     <div class="form-field"><label class="form-label">Description</label><input class="form-input" id="sw-desc" placeholder="What makes this walk special?"/></div>
     <div class="form-row">
