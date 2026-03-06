@@ -1,43 +1,45 @@
-# 🐾 Walk Planner
+# 🐾 Sniffout
 
-A real-time dog walking weather dashboard for the UK. Search any postcode or place name to get live weather conditions, a rain forecast and nearby walk suggestions — all in one place.
+**Explore more. Together.**
 
-**[🌤️ Open the dashboard](https://jayeshfatania.github.io/my-first-repo/dog-walk-dashboard.html)**
+A community-driven UK dog walk discovery app. Find great walks near you, check live weather conditions, and discover dog-friendly places - all in one place.
 
----
-
-## What it does
-
-- 🌡️ **Live weather** — temperature, feels-like, humidity, wind speed and gusts
-- 🌧️ **Hourly rain forecast** — 12-hour rain probability chart so you can plan around showers
-- ☀️ **Sunrise & sunset times** — with a live daylight progress bar
-- 🟢 **UV index** — with a visual indicator and plain-English rating
-- 🐾 **Paw safety check** — warns you about hot pavements or icy conditions
-- 🗺️ **Local walk suggestions** — links to dog-friendly walks, parks and cafés near your location
-- 📍 **Search any UK location** — type a postcode (KT2, SW11) or place name (Battersea, Richmond)
-- 🌙 **Day/night theme** — automatically switches based on the time of day
-
-## How to use it
-
-1. Open the [dashboard](https://jayeshfatania.github.io/my-first-repo/dog-walk-dashboard.html)
-2. Type a UK postcode or place name into the search bar
-3. Press Enter or tap Search
-4. Check the weather, rain forecast and walk recommendations for that area
-
-Works on mobile and desktop. Add it to your phone's home screen for quick access!
-
-## Built with
-
-- HTML, CSS and JavaScript — no frameworks, just a single file
-- [Open-Meteo](https://open-meteo.com/) — free weather API, no sign-up needed
-- [Postcodes.io](https://postcodes.io/) — UK postcode lookup
-- [OpenStreetMap Nominatim](https://nominatim.openstreetmap.org/) — place name geocoding
-- [Google Maps](https://maps.google.com) — local walk and café suggestions
-
-## About this project
-
-This was my first ever coding project, built while learning Git and GitHub from scratch. I wanted something genuinely useful for planning walks with my dog — so I built it! 🐕
+🌐 **Live app:** [jayeshfatania.github.io/my-first-repo/dog-walk-dashboard.html](https://jayeshfatania.github.io/my-first-repo/dog-walk-dashboard.html)
 
 ---
 
-*Weather data updates automatically every 15 minutes.*
+## Features
+
+- **Walks** - 50+ curated UK dog walks with difficulty, terrain, distance and duration. Filtered by proximity to your location.
+- **Weather** - Live conditions from Open-Meteo including hourly forecast, 7-day outlook, best walk window, paw check and hazard warnings.
+- **Places** - Dog-friendly cafes, pubs, beaches, pet shops and vets near you, powered by Google Places.
+- **Community** - Add walks, leave reviews, rate routes. All saved locally to your device.
+- **Share** - Share any walk via a branded Sniffout card.
+- **Green spaces** - Nearby parks and nature reserves surfaced automatically on the walks tab.
+
+---
+
+## Status
+
+Currently in **beta**. Have feedback? [Share it here](https://tally.so/r/MeO1yM)
+
+---
+
+## Tech
+
+- Single HTML file - no framework, no build step
+- [Open-Meteo](https://open-meteo.com/) for weather data
+- [Google Places API (New)](https://developers.google.com/maps/documentation/places/web-service) for venue listings
+- [Nominatim](https://nominatim.org/) for reverse geocoding
+- localStorage for community data (Firebase integration coming soon)
+- Deployable to any static host - currently on GitHub Pages
+
+---
+
+## Roadmap
+
+- Firebase integration - persistent reviews, check-ins, user accounts
+- PWA push notifications - best walk time alerts
+- Friends and group walk planning
+- Walk diary and dog health log
+- Business verified listings
