@@ -481,7 +481,7 @@
     .beta-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;background:rgba(232,168,56,.15);color:#a0680a;border:1px solid rgba(232,168,56,.3);border-radius:20px;padding:.18rem .55rem;margin-left:.4rem;vertical-align:middle}
     body.night .beta-badge{background:rgba(232,168,56,.1);color:var(--amber);border-color:rgba(232,168,56,.2)}
     /* Feedback button */
-    .feedback-btn{position:fixed;bottom:5.5rem;right:1rem;z-index:150;display:flex;align-items:center;gap:.35rem;padding:.45rem .9rem;background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:20px;font-size:.75rem;color:var(--ink);font-family:'DM Sans',sans-serif;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.08);transition:all .2s;font-weight:500}
+    .feedback-btn{position:fixed;bottom:4rem;right:1rem;z-index:150;display:flex;align-items:center;gap:.35rem;padding:.45rem .9rem;background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:20px;font-size:.75rem;color:var(--ink);font-family:'DM Sans',sans-serif;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.08);transition:all .2s;font-weight:500}
     .feedback-btn:hover{background:rgba(255,255,255,.5);transform:translateY(-1px)}
     body.night .feedback-btn{color:var(--ink)}
     @media(min-width:768px){.feedback-btn{bottom:1.5rem;right:1.5rem}}
@@ -773,16 +773,18 @@ const SEEDED_REVIEWS={
   ],
 };
 
+const SEEDED_REVIEWS_VERSION='v2'; // bump this whenever seeded reviews are updated
 function initSeededReviews(){
   const existing=getReviews();
-  let changed=false;
-  Object.entries(SEEDED_REVIEWS).forEach(([walkId,reviews])=>{
-    if(!existing[walkId]){
-      existing[walkId]=reviews;
-      changed=true;
-    }
+  const storedVersion=localStorage.getItem('sniffout_seeded_v');
+  if(storedVersion===SEEDED_REVIEWS_VERSION)return; // already up to date
+  // Re-seed: merge seeded reviews in, preserving any real user reviews on top
+  Object.entries(SEEDED_REVIEWS).forEach(([walkId,seededList])=>{
+    const userReviews=(existing[walkId]||[]).filter(r=>!r.seeded);
+    existing[walkId]=[...userReviews,...seededList];
   });
-  if(changed)saveReviews(existing);
+  saveReviews(existing);
+  try{localStorage.setItem('sniffout_seeded_v',SEEDED_REVIEWS_VERSION);}catch(e){}
 }
 function getCommunityWalks(){try{return JSON.parse(localStorage.getItem('communityWalks')||'[]')}catch{return[]}}
 function saveCommunityWalks(w){localStorage.setItem('communityWalks',JSON.stringify(w))}
