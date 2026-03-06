@@ -758,6 +758,7 @@ function buildHazardWarnings(d){
 // ── RAIN & WEATHER RENDERING ─────────────────────────────────────────────────
 function getBestWalkWindow(d){
   const now=new Date();
+  const nowPlus1=new Date(now.getTime()+60*60*1000);
   const hours=d.hourlyTimes.map((t,i)=>({
     time:new Date(t),label:fmtTime(t),
     temp:Math.round(d.hourlyTemp[i]),
@@ -766,7 +767,7 @@ function getBestWalkWindow(d){
     wmo:d.hourlyWmo[i],
   })).filter(h=>{
     const hr=h.time.getHours();
-    return h.time>=now&&h.time<=new Date(now.getTime()+24*60*60*1000)&&hr>=6&&hr<=22;
+    return h.time>=nowPlus1&&h.time<=new Date(now.getTime()+24*60*60*1000)&&hr>=6&&hr<=22;
   });
 
   // Score each hour (lower = better)
@@ -791,8 +792,8 @@ function getBestWalkWindow(d){
   }
   if(!scored.length)return null;
   const best=scored[bestIdx];
-  if(bestScore>40)return null; // conditions too bad to recommend any window
-  return{label:`${best.label}–${scored[Math.min(bestIdx+2,scored.length-1)].label}`,feels:best.feels,rain:best.rain,wmo:best.wmo};
+  if(bestScore>40)return null;
+  return{label:`${best.label}–${scored[Math.min(bestIdx+2,scored.length-1)].label}`,feels:best.feels,rain:best.rain,wmo:best.wmo,poor:bestScore>20};
 }
 
 function buildHourlyStrip(d){
@@ -807,7 +808,9 @@ function buildHourlyStrip(d){
 
   const best=getBestWalkWindow(d);
   const bestLabel=best
-    ?`<div class="best-walk-window">🐾 Best time to walk today: <strong>${best.label}</strong> · ${best.feels}°C feels-like · ${best.rain}% rain chance</div>`
+    ?best.poor
+      ?`<div class="best-walk-window">🌧️ Best available window today: <strong>${best.label}</strong> · ${best.feels}°C feels-like · still ${best.rain}% rain chance - bring a raincoat</div>`
+      :`<div class="best-walk-window">🐾 Best time to walk today: <strong>${best.label}</strong> · ${best.feels}°C feels-like · ${best.rain}% rain chance</div>`
     :`<div class="best-walk-window">⚠️ Conditions are challenging today - keep walks short and be prepared.</div>`;
 
   const items=hours.map(h=>{
