@@ -366,7 +366,41 @@
     .pin-star.pinned{opacity:1}
     .pinned-pill{background:rgba(90,122,82,.1);border-color:rgba(90,122,82,.25)}
     body.night .pinned-pill{background:rgba(122,184,122,.08);border-color:rgba(122,184,122,.2)}
-    /* Beta badge */
+    /* Best walk window */
+    .best-walk-window{background:rgba(90,122,82,.1);border:1px solid rgba(90,122,82,.2);border-radius:14px;padding:.75rem 1rem;font-size:.82rem;color:var(--ink);margin-bottom:.75rem;line-height:1.5}
+    .best-walk-window strong{color:var(--moss)}
+    body.night .best-walk-window{background:rgba(122,184,122,.08);border-color:rgba(122,184,122,.2)}
+    body.night .best-walk-window strong{color:#7ab87a}
+    /* Hourly strip */
+    .hourly-card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1rem 1.2rem;margin-bottom:.75rem}
+    .hourly-strip{display:flex;gap:.3rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:.2rem}
+    .hourly-strip::-webkit-scrollbar{display:none}
+    .hf-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;min-width:44px;padding:.4rem .3rem;border-radius:10px;flex-shrink:0;transition:background .15s}
+    .hf-item:hover{background:rgba(255,255,255,.3)}
+    .hf-now{background:rgba(90,122,82,.12);border:1px solid rgba(90,122,82,.2)}
+    body.night .hf-now{background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.2)}
+    .hf-time{font-size:.62rem;color:var(--text-muted);font-weight:500}
+    .hf-icon{font-size:1.1rem;line-height:1}
+    .hf-temp{font-size:.78rem;font-weight:500;color:var(--ink)}
+    .hf-rain-bar{width:24px;border-radius:2px;background:#6aabde;transition:height .3s}
+    .hf-rain{font-size:.6rem;color:var(--text-muted)}
+    /* 7-day forecast */
+    .seven-day-card{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1rem 1.2rem;margin-bottom:.75rem}
+    .day-row{display:grid;grid-template-columns:2.5rem 1.8rem 3rem 1fr 1.4rem;align-items:center;gap:.5rem;padding:.45rem 0;border-bottom:1px solid var(--card-border)}
+    .day-row:last-child{border-bottom:none}
+    .day-label{font-size:.78rem;font-weight:500;color:var(--ink)}
+    .day-icon{font-size:1.1rem;text-align:center}
+    .day-temps{display:flex;gap:.3rem;font-size:.75rem}
+    .day-max{color:var(--ink);font-weight:500}
+    .day-min{color:var(--text-muted)}
+    .day-rain-wrap{display:flex;align-items:center;gap:.4rem}
+    .day-rain-bar{height:5px;border-radius:3px;min-width:2px;max-width:100%}
+    .day-rain-pct{font-size:.65rem;color:var(--text-muted);white-space:nowrap}
+    .day-walk{font-size:.75rem;font-weight:600;text-align:center}
+    .day-walk.good{color:var(--moss)}
+    .day-walk.poor{color:#c03232}
+    body.night .day-walk.good{color:#7ab87a}
+    body.night .day-walk.poor{color:#e07070}
     .beta-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;background:rgba(232,168,56,.15);color:#a0680a;border:1px solid rgba(232,168,56,.3);border-radius:20px;padding:.18rem .55rem;margin-left:.4rem;vertical-align:middle}
     body.night .beta-badge{background:rgba(232,168,56,.1);color:var(--amber);border-color:rgba(232,168,56,.2)}
     /* Feedback button */
@@ -393,7 +427,7 @@
   <div class="stars"></div>
   <div class="clouds"><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div></div>
   <button class="theme-toggle-float" onclick="toggleTheme()" title="Toggle dark mode"></button>
-  <a class="feedback-btn" href="https://tally.so/r/sniffout" target="_blank">💬 Share feedback</a>
+  <a class="feedback-btn" href="https://tally.so/r/MeO1yM" target="_blank">💬 Share feedback</a>
   <nav class="top-nav" id="topNav">
     <div class="top-nav-brand" onclick="goHome()">
       <span class="top-nav-brand-icon">🐾</span>
@@ -578,6 +612,17 @@ function walkRec(d){
   if(d.feelsLike<2)return['🥶','Brisk walk day',`Feels like ${Math.round(d.feelsLike)}°C — keep it short, watch for ice.`];
   if(d.feelsLike>28)return['🌡️','Stay cool on your walk','Quite warm. Walk early or evening and bring water for your dog.'];
   if(d.uvMax>=6)return['☀️','Great walk — watch the UV',`Lovely day but UV is ${d.uvMax}. Walk in shade, check paw temps on tarmac.`];
+
+  // Check upcoming rain in next 3 hours even if currently dry
+  if(d.hourlyTimes&&d.hourlyRainProb){
+    const now=new Date();
+    const upcoming=d.hourlyTimes.map((t,i)=>({time:new Date(t),prob:d.hourlyRainProb[i]}))
+      .filter(h=>h.time>=now&&h.time<=new Date(now.getTime()+3*60*60*1000));
+    const maxUpcoming=Math.max(...upcoming.map(h=>h.prob),0);
+    if(maxUpcoming>=70)return['🌧️','Rain arriving soon — head out now','It\'s dry now but heavy rain is forecast within 3 hours. Get your walk in soon!'];
+    if(maxUpcoming>=40)return['🌦️','Rain likely soon — worth a jacket','Dry at the moment but showers are on the way. A good time for a shorter walk.'];
+  }
+
   return['🐕','Great day for a walk!',`${getWmo(d.weatherCode)[1]} with ${Math.round(d.feelsLike)}°C feels-like. Perfect conditions!`];
 }
 
@@ -609,6 +654,96 @@ function buildHazardWarnings(d){
 }
 
 // ── RAIN & WEATHER RENDERING ─────────────────────────────────────────────────
+function getBestWalkWindow(d){
+  const now=new Date();
+  const hours=d.hourlyTimes.map((t,i)=>({
+    time:new Date(t),label:fmtTime(t),
+    temp:Math.round(d.hourlyTemp[i]),
+    feels:Math.round(d.hourlyFeels[i]),
+    rain:d.hourlyRainProb[i],
+    wmo:d.hourlyWmo[i],
+  })).filter(h=>h.time>=now&&h.time<=new Date(now.getTime()+24*60*60*1000));
+
+  // Score each hour (lower = better)
+  const scored=hours.map(h=>{
+    let score=0;
+    if(h.rain>=70)score+=50;
+    else if(h.rain>=40)score+=20;
+    else if(h.rain>=20)score+=5;
+    if(h.feels<2)score+=30;
+    else if(h.feels<5)score+=10;
+    if(h.feels>28)score+=25;
+    else if(h.feels>24)score+=10;
+    if([82,95,99].includes(h.wmo))score+=60;
+    return{...h,score};
+  });
+
+  // Find best consecutive 2-hour window
+  let bestIdx=0,bestScore=Infinity;
+  for(let i=0;i<scored.length-1;i++){
+    const s=(scored[i].score+scored[i+1].score)/2;
+    if(s<bestScore){bestScore=s;bestIdx=i;}
+  }
+  if(!scored.length)return null;
+  const best=scored[bestIdx];
+  if(bestScore>40)return null; // conditions too bad to recommend any window
+  return{label:`${best.label}–${scored[Math.min(bestIdx+2,scored.length-1)].label}`,feels:best.feels,rain:best.rain,wmo:best.wmo};
+}
+
+function buildHourlyStrip(d){
+  const now=new Date();
+  const hours=d.hourlyTimes.map((t,i)=>({
+    time:new Date(t),label:fmtTime(t),
+    temp:Math.round(d.hourlyTemp[i]),
+    feels:Math.round(d.hourlyFeels[i]),
+    rain:d.hourlyRainProb[i],
+    wmo:d.hourlyWmo[i],
+  })).filter(h=>h.time>=now).slice(0,24);
+
+  const best=getBestWalkWindow(d);
+  const bestLabel=best
+    ?`<div class="best-walk-window">🐾 Best time to walk today: <strong>${best.label}</strong> · ${best.feels}°C feels-like · ${best.rain}% rain chance</div>`
+    :`<div class="best-walk-window">⚠️ Conditions are challenging today — keep walks short and be prepared.</div>`;
+
+  const items=hours.map(h=>{
+    const isNow=Math.abs(h.time-now)<30*60*1000;
+    const rainBar=h.rain>0?`<div class="hf-rain-bar" style="height:${Math.round(h.rain*0.4)+2}px;opacity:${0.3+h.rain/140}"></div>`:'<div style="height:2px"></div>';
+    return`<div class="hf-item${isNow?' hf-now':''}">
+      <div class="hf-time">${isNow?'Now':h.label}</div>
+      <div class="hf-icon">${getWmo(h.wmo)[0]}</div>
+      <div class="hf-temp">${h.temp}°</div>
+      ${rainBar}
+      <div class="hf-rain">${h.rain}%</div>
+    </div>`;
+  }).join('');
+
+  return`
+    ${bestLabel}
+    <div class="hourly-card">
+      <div class="card-label" style="margin-bottom:.6rem">Hourly forecast</div>
+      <div class="hourly-strip">${items}</div>
+    </div>`;
+}
+
+function buildSevenDay(d){
+  const days=d.dailyTimes.map((t,i)=>{
+    const date=new Date(t+'T12:00:00');
+    const isToday=i===0;
+    const label=isToday?'Today':date.toLocaleDateString('en-GB',{weekday:'short'});
+    const[wi]=getWmo(d.dailyWmo[i]);
+    const rain=d.dailyRainProb[i];
+    const walkable=rain<50&&d.dailyGusts[i]<50&&![82,95,99].includes(d.dailyWmo[i]);
+    return`<div class="day-row">
+      <div class="day-label">${label}</div>
+      <div class="day-icon">${wi}</div>
+      <div class="day-temps"><span class="day-max">${Math.round(d.dailyMax[i])}°</span><span class="day-min">${Math.round(d.dailyMin[i])}°</span></div>
+      <div class="day-rain-wrap"><div class="day-rain-bar" style="width:${rain}%;background:${rainColor(rain)}"></div><span class="day-rain-pct">${rain}%</span></div>
+      <div class="day-walk ${walkable?'good':'poor'}">${walkable?'✓':'✗'}</div>
+    </div>`;
+  }).join('');
+  return`<div class="seven-day-card"><div class="card-label" style="margin-bottom:.75rem">7-day forecast</div>${days}</div>`;
+}
+
 function buildRainSection(d){
   const now=new Date();
   const hours=d.hourlyTimes.map((t,i)=>({time:fmtTime(t),fullTime:new Date(t),prob:d.hourlyRainProb[i],precip:d.hourlyPrecip[i],wmo:d.hourlyWmo[i]})).filter(h=>h.fullTime>=now).slice(0,12);
@@ -626,18 +761,31 @@ function renderWeather(d){
   const[wi,wd]=getWmo(d.weatherCode),[ri,rt,rp]=walkRec(d),[ud,ut]=uvLevel(d.uvMax);
   const dp=daylightPct(d.sunrise,d.sunset),up=Math.min((d.uvMax/11)*100,100);
   const hazards=buildHazardWarnings(d);
+
+  // Reactive card states
+  const windLevel=d.windGust>=50?'danger':d.windGust>=35?'warn':'ok';
+  const windCardStyle=windLevel==='danger'?'border-color:rgba(200,50,50,.3);background:rgba(200,50,50,.05)':windLevel==='warn'?'border-color:rgba(232,168,56,.3);background:rgba(232,168,56,.05)':'';
+  const humidityLevel=d.humidity>=80?'warn':d.humidity<35?'warn':'ok';
+  const humidityCardStyle=humidityLevel==='warn'?'border-color:rgba(232,168,56,.3);background:rgba(232,168,56,.05)':'';
+  const tempLevel=d.feelsLike>=28||d.feelsLike<2?'warn':'ok';
+  const tempCardStyle=tempLevel==='warn'?'border-color:rgba(232,168,56,.3);background:rgba(232,168,56,.05)':'';
+  const pawLevel=d.temp>25?'danger':d.temp<0?'warn':'ok';
+  const pawCardStyle=pawLevel==='danger'?'border-color:rgba(200,50,50,.3);background:rgba(200,50,50,.05)':pawLevel==='warn'?'border-color:rgba(232,168,56,.3);background:rgba(232,168,56,.05)':'';
+
   return`
     ${hazards}
     <div class="recommendation"><div class="rec-icon">${ri}</div><div class="rec-text"><h2>${rt}</h2><p>${rp}</p></div></div>
+    ${buildHourlyStrip(d)}
     <div class="grid">
+      <div class="card" style="${tempCardStyle}"><div class="card-label">Temperature</div><div class="card-icon">🌡️</div><div class="card-value">${d.temp}<span class="card-unit">°C</span></div><div class="card-sub">Feels like ${Math.round(d.feelsLike)}°C${tempLevel==='warn'?' ⚠️':''}</div></div>
       <div class="card"><div class="card-label">Conditions</div><div class="card-icon">${wi}</div><div class="card-value" style="font-size:1rem;padding-top:.2rem">${wd}</div></div>
-      <div class="card"><div class="card-label">Temperature</div><div class="card-icon">🌡️</div><div class="card-value">${d.temp}<span class="card-unit">°C</span></div><div class="card-sub">Feels like ${Math.round(d.feelsLike)}°C</div></div>
-      <div class="card"><div class="card-label">Humidity</div><div class="card-icon">💧</div><div class="card-value">${d.humidity}<span class="card-unit">%</span></div><div class="card-sub">${d.humidity<40?'Dry air':d.humidity<70?'Comfortable':'Quite humid'}</div></div>
-      <div class="card"><div class="card-label">Wind</div><div class="card-icon">💨</div><div class="card-value">${d.windSpeed}<span class="card-unit">km/h</span></div><div class="card-sub">${d.windDir} · Gusts ${Math.round(d.windGust)} km/h</div></div>
+      <div class="card" style="${windCardStyle}"><div class="card-label">Wind</div><div class="card-icon">💨</div><div class="card-value">${d.windSpeed}<span class="card-unit">km/h</span></div><div class="card-sub">${d.windDir} · Gusts ${Math.round(d.windGust)} km/h${windLevel!=='ok'?' ⚠️':''}</div></div>
+      <div class="card" style="${humidityCardStyle}"><div class="card-label">Humidity</div><div class="card-icon">💧</div><div class="card-value">${d.humidity}<span class="card-unit">%</span></div><div class="card-sub">${d.humidity<40?'Dry air':d.humidity<70?'Comfortable':'Quite humid'}${humidityLevel==='warn'?' ⚠️':''}</div></div>
       <div class="card"><div class="card-label">UV Index</div><div class="card-icon">${ud}</div><div class="card-value">${d.uvMax.toFixed(1)}</div><div class="card-sub">${ut}</div><div class="uv-bar-wrap"><div class="uv-bar"><div class="uv-marker" style="left:${up}%"></div></div></div></div>
-      <div class="card"><div class="card-label">Paw Check</div><div class="card-icon">${d.temp>25?'🔥':d.temp<0?'🧊':'✅'}</div><div class="card-value" style="font-size:.95rem;padding-top:.2rem">${d.temp>25?'Hot pavements':d.temp<0?'Ice risk':'Paws safe'}</div><div class="card-sub">${d.temp>25?'Check tarmac before walking':d.temp<0?'Watch for gritting salt':'Ground temp is fine'}</div></div>
+      <div class="card" style="${pawCardStyle}"><div class="card-label">Paw Check</div><div class="card-icon">${d.temp>25?'🔥':d.temp<0?'🧊':'✅'}</div><div class="card-value" style="font-size:.95rem;padding-top:.2rem">${d.temp>25?'Hot pavements':d.temp<0?'Ice risk':'Paws safe'}</div><div class="card-sub">${d.temp>25?'Check tarmac before walking':d.temp<0?'Watch for gritting salt':'Ground temp is fine'}</div></div>
     </div>
     ${buildRainSection(d)}
+    ${buildSevenDay(d)}
     <div class="sun-card">
       <div class="sun-header"><span class="card-label">Daylight · ${fmtTime(d.sunrise)} – ${fmtTime(d.sunset)}</span><span style="font-size:.74rem;color:var(--text-muted)">${dp}% through the day</span></div>
       <div class="sun-times">
@@ -1142,9 +1290,9 @@ async function geocodePostcode(pc){const clean=pc.replace(/\s/g,'').toUpperCase(
 async function geocodePlaceName(name){const q=encodeURIComponent(name+', United Kingdom');const j=await(await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&countrycodes=gb`,{headers:{'Accept-Language':'en'}})).json();if(!j||!j.length)throw new Error('not found');return{lat:parseFloat(j[0].lat),lon:parseFloat(j[0].lon),displayName:j[0].display_name.split(',').slice(0,2).join(',').trim()}}
 async function geocode(query){const q=query.trim();if(isPostcode(q)){try{return await geocodePostcode(q)}catch(e){}}return await geocodePlaceName(q)}
 async function fetchWeather(lat,lon){
-  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day&hourly=precipitation_probability,precipitation,weather_code&daily=sunrise,sunset,uv_index_max&timezone=Europe%2FLondon&forecast_days=1`;
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day&hourly=temperature_2m,apparent_temperature,precipitation_probability,precipitation,weather_code&daily=sunrise,sunset,uv_index_max,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_gusts_10m_max&timezone=Europe%2FLondon&forecast_days=7`;
   const j=await(await fetch(url)).json();const c=j.current,d=j.daily,h=j.hourly;
-  return{temp:Math.round(c.temperature_2m),feelsLike:c.apparent_temperature,humidity:c.relative_humidity_2m,windSpeed:Math.round(c.wind_speed_10m),windDir:windDir(c.wind_direction_10m),windGust:c.wind_gusts_10m,weatherCode:c.weather_code,isDay:c.is_day,sunrise:d.sunrise[0],sunset:d.sunset[0],uvMax:d.uv_index_max[0],hourlyTimes:h.time,hourlyRainProb:h.precipitation_probability,hourlyPrecip:h.precipitation,hourlyWmo:h.weather_code,updatedAt:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}
+  return{temp:Math.round(c.temperature_2m),feelsLike:c.apparent_temperature,humidity:c.relative_humidity_2m,windSpeed:Math.round(c.wind_speed_10m),windDir:windDir(c.wind_direction_10m),windGust:c.wind_gusts_10m,weatherCode:c.weather_code,isDay:c.is_day,sunrise:d.sunrise[0],sunset:d.sunset[0],uvMax:d.uv_index_max[0],hourlyTimes:h.time,hourlyRainProb:h.precipitation_probability,hourlyPrecip:h.precipitation,hourlyWmo:h.weather_code,hourlyTemp:h.temperature_2m,hourlyFeels:h.apparent_temperature,dailyTimes:d.time,dailyWmo:d.weather_code,dailyMax:d.temperature_2m_max,dailyMin:d.temperature_2m_min,dailyRainProb:d.precipitation_probability_max,dailyGusts:d.wind_gusts_10m_max,updatedAt:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}
 }
 // ── RECENT SEARCHES ──────────────────────────────────────────────────────────
 function getRecentSearches(){try{return JSON.parse(localStorage.getItem('recentSearches')||'[]')}catch(e){return[]}}
