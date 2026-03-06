@@ -284,6 +284,7 @@
     .place-rating-num{font-size:.78rem;font-weight:500;color:var(--ink)}
     .place-rating-count{font-size:.72rem;color:var(--text-muted)}
     .place-card-address{font-size:.75rem;color:var(--text-muted);margin-bottom:.3rem}
+    .place-dist-badge{display:inline-block;background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;padding:.1rem .5rem;font-size:.7rem;color:var(--ink);margin-right:.3rem}
     .place-card-footer{display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
     .place-open-badge{font-size:.68rem;font-weight:500;padding:.15rem .55rem;border-radius:20px}
     .place-open-badge.open{background:rgba(90,122,82,.12);color:var(--moss);border:1px solid rgba(90,122,82,.2)}
@@ -601,7 +602,7 @@ const WALKS_DB=[
   {id:'brecon-waterfall-country',name:"Waterfall Country - Sgwd yr Eira",area:"Brecon Beacons",lat:51.8167,lon:-3.5833,icon:"🌊",distance:"8km",duration:"2h",difficulty:"Moderate",terrain:"Wooded gorge & waterfalls",tags:["Wales","Waterfalls","Woodland"],desc:"Walk behind a thundering waterfall in a spectacular wooded limestone gorge. Four major waterfalls on this route including the famous Sgwd yr Eira where you walk behind the falls.",wetNote:"Gorge paths can be very slippery when wet - take care on rock sections.",hotNote:"Shaded gorge walk - cool even in hot weather. Perfect summer route."},
 ];
 
-const WMO={0:['☀️','Clear sky'],1:['🌤️','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],45:['🌫️','Foggy'],48:['🌫️','Icy fog'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Heavy drizzle'],61:['🌧️','Slight rain'],63:['🌧️','Moderate rain'],65:['🌧️','Heavy rain'],71:['🌨️','Light snow'],73:['🌨️','Moderate snow'],75:['❄️','Heavy snow'],80:['🌦️','Rain showers'],81:['🌧️','Heavy showers'],82:['⛈️','Violent showers'],95:['⛈️','Thunderstorm'],99:['⛈️','Thunderstorm+hail']};
+const WMO={0:['🌣','Clear sky'],1:['🌤','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],45:['🌁','Foggy'],48:['🌁','Icy fog'],51:['🌂','Light drizzle'],53:['🌂','Drizzle'],55:['🌧','Heavy drizzle'],61:['🌧','Slight rain'],63:['🌧','Moderate rain'],65:['🌧','Heavy rain'],71:['🌨','Light snow'],73:['🌨','Moderate snow'],75:['❄️','Heavy snow'],80:['🌦','Rain showers'],81:['🌧','Heavy showers'],82:['⛈','Violent showers'],95:['⛈','Thunderstorm'],99:['⛈','Thunderstorm+hail']};
 
 // ── STORAGE (localStorage) ────────────────────────────────────────────────────
 function getReviews(){try{return JSON.parse(localStorage.getItem('walkReviews')||'{}')}catch{return{}}}
@@ -823,13 +824,14 @@ function buildSevenDay(d){
     const label=isToday?'Today':date.toLocaleDateString('en-GB',{weekday:'short'});
     const[wi]=getWmo(d.dailyWmo[i]);
     const rain=d.dailyRainProb[i];
-    const walkable=rain<50&&d.dailyGusts[i]<50&&![82,95,99].includes(d.dailyWmo[i]);
+    const tooHot=d.dailyMax[i]>=25;
+    const walkIndicator=tooHot?`<div class="day-walk poor">🚫</div>`:'';
     return`<div class="day-row">
       <div class="day-label">${label}</div>
       <div class="day-icon">${wi}</div>
       <div class="day-temps"><span class="day-max">${Math.round(d.dailyMax[i])}°</span><span class="day-min">${Math.round(d.dailyMin[i])}°</span></div>
       <div class="day-rain-wrap"><div class="day-rain-bar" style="width:${rain}%;background:${rainColor(rain)}"></div><span class="day-rain-pct">${rain}%</span></div>
-      <div class="day-walk ${walkable?'good':'poor'}">${walkable?'✓':'✗'}</div>
+      ${walkIndicator}
     </div>`;
   }).join('');
   return`<div class="seven-day-card"><div class="card-label" style="margin-bottom:.75rem">7-day forecast</div>${days}</div>`;
@@ -856,8 +858,8 @@ function renderWeather(d){
   // Reactive card states
   const windLevel=d.windGust>=50?'danger':d.windGust>=35?'warn':'ok';
   const windCardStyle=windLevel==='danger'?'border-color:rgba(200,50,50,.3);background:rgba(200,50,50,.05)':windLevel==='warn'?'border-color:rgba(232,168,56,.3);background:rgba(232,168,56,.05)':'';
-  const humidityLevel=d.humidity>=80?'warn':d.humidity<35?'warn':'ok';
-  const humidityCardStyle=humidityLevel==='warn'?'border-color:rgba(232,168,56,.3);background:rgba(232,168,56,.05)':'';
+  const humidityLevel='ok';
+  const humidityCardStyle='';
   const tempLevel=d.feelsLike>=28||d.feelsLike<2?'warn':'ok';
   const tempCardStyle=tempLevel==='warn'?'border-color:rgba(232,168,56,.3);background:rgba(232,168,56,.05)':'';
   const pawLevel=d.temp>25?'danger':d.temp<0?'warn':'ok';
@@ -871,7 +873,7 @@ function renderWeather(d){
       <div class="card" style="${tempCardStyle}"><div class="card-label">Temperature</div><div class="card-icon">🌡️</div><div class="card-value">${d.temp}<span class="card-unit">°C</span></div><div class="card-sub">Feels like ${Math.round(d.feelsLike)}°C${tempLevel==='warn'?' ⚠️':''}</div></div>
       <div class="card"><div class="card-label">Conditions</div><div class="card-icon">${wi}</div><div class="card-value" style="font-size:1rem;padding-top:.2rem">${wd}</div></div>
       <div class="card" style="${windCardStyle}"><div class="card-label">Wind</div><div class="card-icon">💨</div><div class="card-value">${d.windSpeed}<span class="card-unit">km/h</span></div><div class="card-sub">${d.windDir} · Gusts ${Math.round(d.windGust)} km/h${windLevel!=='ok'?' ⚠️':''}</div></div>
-      <div class="card" style="${humidityCardStyle}"><div class="card-label">Humidity</div><div class="card-icon">💧</div><div class="card-value">${d.humidity}<span class="card-unit">%</span></div><div class="card-sub">${d.humidity<40?'Dry air':d.humidity<70?'Comfortable':'Quite humid'}${humidityLevel==='warn'?' ⚠️':''}</div></div>
+      <div class="card"><div class="card-label">Humidity</div><div class="card-icon">💧</div><div class="card-value">${d.humidity}<span class="card-unit">%</span></div><div class="card-sub">${d.humidity<40?'Dry air':d.humidity<70?'Comfortable':'Quite humid'}</div></div>
       <div class="card"><div class="card-label">UV Index</div><div class="card-icon">${ud}</div><div class="card-value">${d.uvMax.toFixed(1)}</div><div class="card-sub">${ut}</div><div class="uv-bar-wrap"><div class="uv-bar"><div class="uv-marker" style="left:${up}%"></div></div></div></div>
       <div class="card" style="${pawCardStyle}"><div class="card-label">Paw Check</div><div class="card-icon">${d.temp>25?'🔥':d.temp<0?'🧊':'✅'}</div><div class="card-value" style="font-size:.95rem;padding-top:.2rem">${d.temp>25?'Hot pavements':d.temp<0?'Ice risk':'Paws safe'}</div><div class="card-sub">${d.temp>25?'Check tarmac before walking':d.temp<0?'Watch for gritting salt':'Ground temp is fine'}</div></div>
     </div>
@@ -1141,7 +1143,7 @@ async function loadNearbyGreenSpaces(){
         headers:{
           'Content-Type':'application/json',
           'X-Goog-Api-Key':PLACES_API_KEY,
-          'X-Goog-FieldMask':'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.googleMapsUri,places.photos',
+          'X-Goog-FieldMask':'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.googleMapsUri,places.photos,places.location',
         },
         body:JSON.stringify(body),
       });
@@ -1150,7 +1152,11 @@ async function loadNearbyGreenSpaces(){
       placesCache[cacheKey]=places;
     }
     if(!places.length){el.innerHTML='<p style="font-size:.8rem;color:var(--text-muted);padding:.5rem 0">No green spaces found nearby.</p>';return;}
-    el.innerHTML=`<div class="place-list">${places.map(p=>renderPlaceCard(p,{emoji:'🌳'})).join('')}</div>`;
+    el.innerHTML=`<div class="place-list">${places.map(p=>{
+      const distKm=p.location?haversine(currentLocation.lat,currentLocation.lon,p.location.latitude,p.location.longitude):null;
+      const distStr=distKm?`${distKm<1?(distKm*1000).toFixed(0)+'m':distKm.toFixed(1)+'km'} away`:null;
+      return renderPlaceCard(p,{emoji:'🌳',distStr});
+    }).join('')}</div>`;
   }catch(e){
     el.innerHTML='<p style="font-size:.8rem;color:var(--text-muted);padding:.5rem 0">Couldn\'t load green spaces right now.</p>';
   }
@@ -1259,7 +1265,7 @@ async function fetchPlaces(cat){
     headers:{
       'Content-Type':'application/json',
       'X-Goog-Api-Key':PLACES_API_KEY,
-      'X-Goog-FieldMask':'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.websiteUri,places.googleMapsUri,places.photos,places.primaryTypeDisplayName',
+      'X-Goog-FieldMask':'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.websiteUri,places.googleMapsUri,places.photos,places.primaryTypeDisplayName,places.location',
     },
     body:JSON.stringify(body),
   });
@@ -1305,13 +1311,15 @@ function renderPlaceCard(place,cfg){
 
   const photoHtml=photoUrl?`<img class="place-card-photo" src="${photoUrl}" alt="${name}" onerror="this.style.display='none'"/>`:`<div class="place-card-icon-fallback">${cfg.emoji}</div>`;
 
+  const distBadge=cfg.distStr?`<span class="place-dist-badge">📍 ${cfg.distStr}</span>`:'';
+
   return`
     <a class="place-card" href="${mapsUrl}" target="_blank">
       <div class="place-card-thumb">${photoHtml}</div>
       <div class="place-card-body">
         <div class="place-card-name">${name}</div>
         ${ratingHtml}
-        <div class="place-card-address">📍 ${shortAddress}</div>
+        <div class="place-card-address">${distBadge} ${shortAddress}</div>
         <div class="place-card-footer">${openBadge}<span class="place-card-action">View on Google Maps →</span></div>
       </div>
     </a>`;
@@ -1332,7 +1340,11 @@ async function loadPlaces(cat){
         <a class="walk-map-link" style="margin-top:.8rem;display:inline-block" href="https://www.google.com/maps/search/${q}" target="_blank">Search on Google Maps →</a>
       </div>`;
     } else {
-      el.innerHTML=`<div class="place-list">${places.map(p=>renderPlaceCard(p,cfg)).join('')}</div>`;
+      el.innerHTML=`<div class="place-list">${places.map(p=>{
+        const distKm=p.location?haversine(currentLocation.lat,currentLocation.lon,p.location.latitude,p.location.longitude):null;
+        const distStr=distKm?`${distKm<1?(distKm*1000).toFixed(0)+'m':distKm.toFixed(1)+'km'} away`:null;
+        return renderPlaceCard(p,{...cfg,distStr});
+      }).join('')}</div>`;
     }
   }catch(e){
     const q=encodeURIComponent(`${cfg.search} near ${currentLocation.displayName}`);
