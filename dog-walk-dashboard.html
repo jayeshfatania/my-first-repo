@@ -40,6 +40,9 @@
     .search-btn{background:var(--ink);color:#fff;border:none;border-radius:10px;padding:.45rem 1rem;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:opacity .2s;flex-shrink:0}
     .search-btn:hover{opacity:.8}
     body.night .search-btn{background:rgba(255,255,255,.18);color:var(--ink)}
+    .locate-btn{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--moss);padding:.2rem .4rem;flex-shrink:0;transition:opacity .2s;line-height:1}
+    .locate-btn:hover{opacity:.6}
+    body.night .locate-btn{color:#7ab87a}
     .location-name{text-align:center;font-size:.8rem;color:var(--text-muted);margin-top:.5rem;min-height:1.2em}
     .search-error{text-align:center;font-size:.8rem;color:#c0392b;margin-top:.5rem;display:none}
     body.night .search-error{color:#e07070}
@@ -245,13 +248,14 @@
     body.night .submit-review-btn{background:#7ab87a;color:var(--ink)}
     .cancel-review-btn{background:none;border:none;font-size:.78rem;color:var(--text-muted);cursor:pointer;font-family:'DM Sans',sans-serif;padding:.4rem .5rem}
     /* Places page */
-    .place-cat-bar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
-    .place-cat-btn{display:flex;flex-direction:column;align-items:center;gap:.25rem;padding:.6rem .9rem;border-radius:14px;border:1px solid var(--card-border);background:var(--card-bg);backdrop-filter:blur(12px);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;min-width:64px}
+    .place-cat-bar{display:flex;gap:.5rem;margin-bottom:1rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:.2rem}
+    .place-cat-bar::-webkit-scrollbar{display:none}
+    .place-cat-btn{display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.5rem .7rem;border-radius:12px;border:1px solid var(--card-border);background:var(--card-bg);backdrop-filter:blur(12px);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;flex-shrink:0;min-width:58px}
     .place-cat-btn:hover{background:rgba(255,255,255,.35);border-color:rgba(255,255,255,.6)}
     .place-cat-btn.active{background:rgba(90,122,82,.12);border-color:rgba(90,122,82,.3)}
     body.night .place-cat-btn.active{background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.25)}
-    .place-cat-icon{font-size:1.4rem;line-height:1}
-    .place-cat-label{font-size:.68rem;color:var(--text-muted);font-weight:500;white-space:nowrap}
+    .place-cat-icon{font-size:1.2rem;line-height:1}
+    .place-cat-label{font-size:.65rem;color:var(--text-muted);font-weight:500;white-space:nowrap}
     .place-cat-btn.active .place-cat-label{color:var(--moss)}
     body.night .place-cat-btn.active .place-cat-label{color:#7ab87a}
     .place-tip-banner{display:flex;align-items:flex-start;gap:.7rem;background:rgba(232,168,56,.08);border:1px solid rgba(232,168,56,.2);border-radius:14px;padding:.85rem 1rem;margin-bottom:1rem}
@@ -357,6 +361,19 @@
     .example-pill{background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:20px;padding:.35rem .9rem;font-size:.78rem;color:var(--ink);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.3rem}
     .example-pill:hover{background:var(--ink);color:#fff}
     .splash-first-visit{font-size:.78rem;color:var(--text-muted);margin-top:1.2rem;font-style:italic}
+    .pin-star{font-size:.8rem;cursor:pointer;opacity:.4;transition:opacity .15s;padding:.1rem .2rem;flex-shrink:0}
+    .pin-star:hover{opacity:1}
+    .pin-star.pinned{opacity:1}
+    .pinned-pill{background:rgba(90,122,82,.1);border-color:rgba(90,122,82,.25)}
+    body.night .pinned-pill{background:rgba(122,184,122,.08);border-color:rgba(122,184,122,.2)}
+    /* Beta badge */
+    .beta-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;background:rgba(232,168,56,.15);color:#a0680a;border:1px solid rgba(232,168,56,.3);border-radius:20px;padding:.18rem .55rem;margin-left:.4rem;vertical-align:middle}
+    body.night .beta-badge{background:rgba(232,168,56,.1);color:var(--amber);border-color:rgba(232,168,56,.2)}
+    /* Feedback button */
+    .feedback-btn{position:fixed;bottom:5.5rem;right:1rem;z-index:150;display:flex;align-items:center;gap:.35rem;padding:.45rem .9rem;background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:20px;font-size:.75rem;color:var(--ink);font-family:'DM Sans',sans-serif;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.08);transition:all .2s;font-weight:500}
+    .feedback-btn:hover{background:rgba(255,255,255,.5);transform:translateY(-1px)}
+    body.night .feedback-btn{color:var(--ink)}
+    @media(min-width:768px){.feedback-btn{bottom:1.5rem;right:1.5rem}}
     .footer{text-align:center;font-size:.73rem;color:var(--text-muted);margin-top:1rem}
     .refresh-btn{background:none;border:1px solid rgba(0,0,0,.15);border-radius:20px;padding:.3rem .8rem;font-size:.73rem;cursor:pointer;color:var(--ink);opacity:.5;font-family:'DM Sans',sans-serif;margin-top:.4rem;transition:opacity .2s}
     .refresh-btn:hover{opacity:1}
@@ -376,15 +393,18 @@
   <div class="stars"></div>
   <div class="clouds"><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div></div>
   <button class="theme-toggle-float" onclick="toggleTheme()" title="Toggle dark mode"></button>
+  <a class="feedback-btn" href="https://tally.so/r/sniffout" target="_blank">💬 Share feedback</a>
   <nav class="top-nav" id="topNav">
     <div class="top-nav-brand" onclick="goHome()">
       <span class="top-nav-brand-icon">🐾</span>
       <span class="top-nav-brand-name">Sniffout</span>
+      <span class="beta-badge">Beta</span>
     </div>
     <div class="top-nav-centre">
       <div class="top-nav-search" id="topNavSearch">
         <span style="font-size:.9rem;opacity:.5">📍</span>
         <input class="top-nav-search-input" id="topNavSearchInput" type="text" placeholder="Postcode or place…" autocomplete="off"/>
+        <button class="locate-btn" onclick="useCurrentLocation()" title="Use my location">⌖</button>
         <button class="top-nav-search-btn" onclick="doDesktopSearch()">Search</button>
       </div>
     </div>
@@ -416,6 +436,7 @@
       <div class="search-box">
         <span class="search-icon">📍</span>
         <input class="search-input" id="searchInput" type="text" placeholder="Postcode or place… e.g. KT2, Battersea, Edinburgh" autocomplete="off"/>
+        <button class="locate-btn" onclick="useCurrentLocation()" title="Use my location">⌖</button>
         <button class="search-btn" onclick="doSearch()">Search</button>
       </div>
       <div class="location-name" id="locationName"></div>
@@ -1129,28 +1150,37 @@ async function fetchWeather(lat,lon){
 function getRecentSearches(){try{return JSON.parse(localStorage.getItem('recentSearches')||'[]')}catch(e){return[]}}
 function saveRecentSearch(query){try{let r=getRecentSearches().filter(s=>s.toLowerCase()!==query.toLowerCase());r.unshift(query);r=r.slice(0,5);localStorage.setItem('recentSearches',JSON.stringify(r))}catch(e){}}
 function showSplash(){
-  const totalWalks=WALKS_DB.length;
   const recent=getRecentSearches();
-  const recentHTML=recent.length>0
-    ?`<div class="splash-recent"><div class="splash-recent-label">Recent searches</div><div class="splash-examples">${recent.map(r=>`<div class="example-pill" onclick="useExample('${r}')">🕐 ${r}</div>`).join('')}</div></div>`
-    :`<p class="splash-first-visit">Try searching for Richmond, SW11, Hampstead Heath or Edinburgh</p>`;
+  const pinned=getPinned();
+  const pinnedHTML=pinned.length>0?`
+    <div class="splash-recent">
+      <div class="splash-recent-label">⭐ Favourite locations</div>
+      <div class="splash-examples">${pinned.map(r=>`
+        <div class="example-pill pinned-pill">
+          <span onclick="useExample('${r}')">${r}</span>
+          <span class="pin-star pinned" onclick="togglePin('${r}')" title="Unpin">⭐</span>
+        </div>`).join('')}
+      </div>
+    </div>`:'';
+  const unpinned=recent.filter(r=>!pinned.includes(r));
+  const recentHTML=unpinned.length>0?`
+    <div class="splash-recent">
+      <div class="splash-recent-label">Recent searches</div>
+      <div class="splash-examples">${unpinned.map(r=>`
+        <div class="example-pill">
+          <span onclick="useExample('${r}')">🕐 ${r}</span>
+          <span class="pin-star" onclick="togglePin('${r}')" title="Pin as favourite">☆</span>
+        </div>`).join('')}
+      </div>
+    </div>`
+    :pinned.length===0?`<p class="splash-first-visit">Try searching for Richmond, SW11, Hampstead Heath or Edinburgh</p>`:'';
   document.getElementById('app').innerHTML=`<div class="splash">
-    <div class="splash-badge">🐾 Sniffout — UK Dog Walks</div>
     <h2>Discover great walks<br><em>Explore more. Together.</em></h2>
-    <p>Curated routes, live weather conditions and dog-friendly places — everything you need before you head out.</p>
-    <div class="splash-stats">
-      <div class="splash-stat"><span class="splash-stat-num">${totalWalks}+</span><span class="splash-stat-label">Curated walks</span></div>
-      <div class="splash-stat"><span class="splash-stat-num">Live</span><span class="splash-stat-label">Weather data</span></div>
-      <div class="splash-stat"><span class="splash-stat-num">Free</span><span class="splash-stat-label">No login needed</span></div>
-    </div>
-    <div class="splash-features">
-      <div class="splash-feat">🌤️ Hazard warnings</div>
-      <div class="splash-feat">🥾 Walks near you</div>
-      <div class="splash-feat">☕ Dog-friendly places</div>
-      <div class="splash-feat">⭐ Community reviews</div>
-    </div>
+    <p>Curated routes, live weather and dog-friendly places — everything you need before you head out.</p>
+    ${pinnedHTML}
     ${recentHTML}
-  </div>`;};
+  </div>`;
+}
 function goHome(){
   weatherData=null;currentLocation=null;
   document.getElementById('searchInput').value='';
@@ -1195,6 +1225,57 @@ async function doSearch(){
   }
 }
 function useExample(val){document.getElementById('searchInput').value=val;doSearch()}
+
+async function useCurrentLocation(){
+  if(!navigator.geolocation){alert('Geolocation is not supported by your browser.');return;}
+  const btn=document.querySelector('.locate-btn');
+  if(btn){btn.textContent='⏳';btn.style.opacity='.5';}
+  navigator.geolocation.getCurrentPosition(
+    async pos=>{
+      if(btn){btn.textContent='⌖';btn.style.opacity='';}
+      const {latitude:lat,longitude:lon}=pos.coords;
+      document.getElementById('searchError').style.display='none';
+      document.getElementById('locationName').textContent='Finding your location…';
+      renderShell();
+      try{
+        // Reverse geocode using Open-Meteo's geocoding isn't available, use nominatim
+        const res=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+        const data=await res.json();
+        const displayName=data.address?.town||data.address?.city||data.address?.suburb||data.address?.county||'Your location';
+        currentLocation={lat,lon,displayName};
+        saveRecentSearch(displayName);
+        const hdr=document.querySelector('header');
+        if(hdr)hdr.classList.add('collapsed');
+        document.getElementById('bottomNav').style.display='';
+        document.getElementById('searchInput').value=displayName;
+        document.getElementById('topNavSearchInput').value=displayName;
+        document.getElementById('locationName').textContent=`📍 ${displayName}`;
+        weatherData=await fetchWeather(lat,lon);
+        if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
+        showTab(currentTab);
+      }catch(e){
+        document.getElementById('locationName').textContent='';
+        document.getElementById('searchError').style.display='block';
+        showSplash();
+      }
+    },
+    err=>{
+      if(btn){btn.textContent='⌖';btn.style.opacity='';}
+      alert('Could not get your location. Please check your browser permissions.');
+    }
+  );
+}
+
+// ── PINNED FAVOURITES ──────────────────────────────────────────────────────────
+function getPinned(){try{return JSON.parse(localStorage.getItem('sniffout_pinned')||'[]')}catch{return[]}}
+function savePinned(pins){localStorage.setItem('sniffout_pinned',JSON.stringify(pins))}
+function togglePin(location){
+  const pins=getPinned();
+  const idx=pins.indexOf(location);
+  if(idx>-1){pins.splice(idx,1);}else{pins.unshift(location);}
+  savePinned(pins);
+  showSplash();
+}
 async function refreshWeather(){
   if(!currentLocation)return;renderShell();
   try{weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);document.body.classList.toggle('night',!weatherData.isDay);showTab(currentTab)}
