@@ -1099,6 +1099,7 @@ function toggleWalkCard(id){
 }
 
 let activeWalksSort='distance';
+let walksDistDir='asc'; // asc = nearest first, desc = furthest first
 
 function renderWalks(activeFilter='all'){
   const rain=[51,53,55,61,63,65,80,81,82,95,99].includes(weatherData.weatherCode);
@@ -1139,17 +1140,18 @@ function renderWalks(activeFilter='all'){
   });
 
   const sortedFiltered=activeWalksSort==='distance'
-    ?[...filtered].sort((a,b)=>a.dist-b.dist)
+    ?[...filtered].sort((a,b)=>walksDistDir==='asc'?a.dist-b.dist:b.dist-a.dist)
     :activeWalksSort==='rating'
     ?[...filtered].sort((a,b)=>(getAvgRating(b.id)||0)-(getAvgRating(a.id)||0))
     :[...filtered].sort((a,b)=>parseFloat(a.distance)-parseFloat(b.distance));
 
   const walkSortBar='';// merged into filterBar below
 
+  const nearestArrow=walksDistDir==='asc'?' ↑':' ↓';
   const filterBar=`<div class="filter-scroll-row">
     ${filters.map(f=>`<button class="filter-chip${activeFilter===f.id?' active':''}" onclick="renderWalksFiltered('${f.id}')">${f.label}</button>`).join('')}
     <span class="filter-divider"></span>
-    <button class="sort-btn${activeWalksSort==='distance'?' active':''}" onclick="setWalksSort('distance','${activeFilter}')">📍 Nearest</button>
+    <button class="sort-btn${activeWalksSort==='distance'?' active':''}" onclick="setWalksSort('distance','${activeFilter}')">📍 Nearest${activeWalksSort==='distance'?nearestArrow:''}</button>
     <button class="sort-btn${activeWalksSort==='rating'?' active':''}" onclick="setWalksSort('rating','${activeFilter}')">⭐ Rating</button>
     <button class="sort-btn${activeWalksSort==='length'?' active':''}" onclick="setWalksSort('length','${activeFilter}')">🗺️ Shortest</button>
   </div>`;
@@ -1243,6 +1245,7 @@ function renderWalksFiltered(filter){
 
 let greenSpacesData=[];
 let activeGreenSort='distance';
+let greenDistDir='asc';
 let activeGreenFilter='all';
 
 async function loadNearbyGreenSpaces(){
@@ -1306,7 +1309,7 @@ function renderGreenSpaces(){
   const sorted=[...filtered].sort((a,b)=>
     activeGreenSort==='rating'
       ?(b.p.rating||0)-(a.p.rating||0)
-      :a.distKm-b.distKm
+      :greenDistDir==='asc'?a.distKm-b.distKm:b.distKm-a.distKm
   );
   if(!sorted.length){
     el.innerHTML='<p style="font-size:.8rem;color:var(--text-muted);padding:.5rem 0">No results for this filter.</p>';
@@ -1318,14 +1321,25 @@ function renderGreenSpaces(){
     const txt=btn.textContent.toLowerCase();
     const isSortBtn=txt.includes('nearest')||txt.includes('rating');
     const isFilterBtn=txt.includes('all')||txt.includes('parks')||txt.includes('nature');
-    if(isSortBtn)btn.classList.toggle('active',
-      (activeGreenSort==='distance'&&txt.includes('nearest'))||(activeGreenSort==='rating'&&txt.includes('rating')));
+    if(isSortBtn){
+      const isNearest=txt.includes('nearest');
+      const isRating=txt.includes('rating');
+      const nearestActive=activeGreenSort==='distance';
+      const ratingActive=activeGreenSort==='rating';
+      btn.classList.toggle('active',(isNearest&&nearestActive)||(isRating&&ratingActive));
+      if(isNearest){btn.textContent=`📍 Nearest${nearestActive?(greenDistDir==='asc'?' ↑':' ↓'):''}`;} 
+    }
     if(isFilterBtn)btn.classList.toggle('active',
       (activeGreenFilter==='all'&&txt.includes('all'))||(activeGreenFilter==='park'&&txt.includes('parks'))||(activeGreenFilter==='nature'&&txt.includes('nature')));
   });
 }
 
 function setGreenSort(sort){
+  if(sort==='distance'&&activeGreenSort==='distance'){
+    greenDistDir=greenDistDir==='asc'?'desc':'asc';
+  } else {
+    greenDistDir='asc';
+  }
   activeGreenSort=sort;
   renderGreenSpaces();
 }
@@ -1396,6 +1410,7 @@ const PLACES_API_KEY='AIzaSyCXKhkeAN3HdhmCc7_czGo3QzVIT34caT4';
 const placesCache={};
 
 let activePlacesSort='distance';
+let placesDistDir='asc';
 
 function renderPlacesPanel(){
   const cfg=CAT_CONFIG[activeCat];
@@ -1414,7 +1429,7 @@ function renderPlacesPanel(){
   const sortBar=`
     <div class="sort-bar">
       <span class="sort-label">Sort by</span>
-      <button class="sort-btn${activePlacesSort==='distance'?' active':''}" onclick="setPlacesSort('distance')">📍 Nearest</button>
+      <button class="sort-btn${activePlacesSort==='distance'?' active':''}" onclick="setPlacesSort('distance')">📍 Nearest${activePlacesSort==='distance'?(placesDistDir==='asc'?' ↑':' ↓'):''}</button>
       <button class="sort-btn${activePlacesSort==='rating'?' active':''}" onclick="setPlacesSort('rating')">⭐ Rating</button>
     </div>`;
 
@@ -1433,14 +1448,32 @@ function renderPlacesPanel(){
 }
 
 function setWalksSort(sort,filter){
+  if(sort==='distance'&&activeWalksSort==='distance'){
+    walksDistDir=walksDistDir==='asc'?'desc':'asc';
+  } else {
+    walksDistDir='asc';
+  }
   activeWalksSort=sort;
   document.getElementById('panel').innerHTML=renderWalks(filter||'all');
   loadNearbyGreenSpaces();
 }
 
 function setPlacesSort(sort){
+  if(sort==='distance'&&activePlacesSort==='distance'){
+    placesDistDir=placesDistDir==='asc'?'desc':'asc';
+  } else {
+    placesDistDir='asc';
+  }
   activePlacesSort=sort;
-  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase().includes(sort==='distance'?'nearest':'rating')));
+  // Update button text and active state
+  document.querySelectorAll('.sort-btn').forEach(b=>{
+    const txt=b.textContent.toLowerCase();
+    if(txt.includes('nearest')){
+      b.classList.toggle('active',sort==='distance');
+      b.textContent=`📍 Nearest${sort==='distance'?(placesDistDir==='asc'?' ↑':' ↓'):''}`;
+    }
+    if(txt.includes('rating'))b.classList.toggle('active',sort==='rating');
+  });
   applyPlacesSort();
 }
 
@@ -1453,7 +1486,7 @@ function applyPlacesSort(){
     if(activePlacesSort==='distance'){
       const da=parseFloat(a.dataset.dist||'9999');
       const db=parseFloat(b.dataset.dist||'9999');
-      return da-db;
+      return placesDistDir==='asc'?da-db:db-da;
     } else {
       const ra=parseFloat(a.dataset.rating||'0');
       const rb=parseFloat(b.dataset.rating||'0');
@@ -1595,8 +1628,8 @@ function showTab(tab){
   if(!weatherData)return;
   const p=document.getElementById('panel');
   if(tab==='weather')p.innerHTML=renderWeather(weatherData);
-  if(tab==='walks'){p.innerHTML=renderWalks();greenSpacesData=[];activeGreenSort='distance';activeGreenFilter='all';loadNearbyGreenSpaces();}
-  if(tab==='places'){p.innerHTML=renderPlacesPanel();loadPlaces(activeCat);}
+  if(tab==='walks'){p.innerHTML=renderWalks();greenSpacesData=[];activeGreenSort='distance';greenDistDir='asc';activeGreenFilter='all';loadNearbyGreenSpaces();}
+  if(tab==='places'){p.innerHTML=renderPlacesPanel();placesDistDir='asc';loadPlaces(activeCat);}
   saveSession();
 }
 
