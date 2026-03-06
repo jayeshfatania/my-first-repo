@@ -602,7 +602,7 @@ const WALKS_DB=[
   {id:'brecon-waterfall-country',name:"Waterfall Country - Sgwd yr Eira",area:"Brecon Beacons",lat:51.8167,lon:-3.5833,icon:"🌊",distance:"8km",duration:"2h",difficulty:"Moderate",terrain:"Wooded gorge & waterfalls",tags:["Wales","Waterfalls","Woodland"],desc:"Walk behind a thundering waterfall in a spectacular wooded limestone gorge. Four major waterfalls on this route including the famous Sgwd yr Eira where you walk behind the falls.",wetNote:"Gorge paths can be very slippery when wet - take care on rock sections.",hotNote:"Shaded gorge walk - cool even in hot weather. Perfect summer route."},
 ];
 
-const WMO={0:['🌣','Clear sky'],1:['🌤','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],45:['🌁','Foggy'],48:['🌁','Icy fog'],51:['🌂','Light drizzle'],53:['🌂','Drizzle'],55:['🌧','Heavy drizzle'],61:['🌧','Slight rain'],63:['🌧','Moderate rain'],65:['🌧','Heavy rain'],71:['🌨','Light snow'],73:['🌨','Moderate snow'],75:['❄️','Heavy snow'],80:['🌦','Rain showers'],81:['🌧','Heavy showers'],82:['⛈','Violent showers'],95:['⛈','Thunderstorm'],99:['⛈','Thunderstorm+hail']};
+const WMO={0:['☀️','Clear sky'],1:['🌤️','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],45:['🌫️','Foggy'],48:['🌫️','Icy fog'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Heavy drizzle'],61:['🌧️','Slight rain'],63:['🌧️','Moderate rain'],65:['🌧️','Heavy rain'],71:['🌨️','Light snow'],73:['🌨️','Moderate snow'],75:['❄️','Heavy snow'],80:['🌦️','Rain showers'],81:['🌧️','Heavy showers'],82:['⛈️','Violent showers'],95:['⛈️','Thunderstorm'],99:['⛈️','Thunderstorm+hail']};
 
 // ── STORAGE (localStorage) ────────────────────────────────────────────────────
 function getReviews(){try{return JSON.parse(localStorage.getItem('walkReviews')||'{}')}catch{return{}}}
@@ -1152,11 +1152,12 @@ async function loadNearbyGreenSpaces(){
       placesCache[cacheKey]=places;
     }
     if(!places.length){el.innerHTML='<p style="font-size:.8rem;color:var(--text-muted);padding:.5rem 0">No green spaces found nearby.</p>';return;}
-    el.innerHTML=`<div class="place-list">${places.map(p=>{
+    const placesWithDist=places.map(p=>{
       const distKm=p.location?haversine(currentLocation.lat,currentLocation.lon,p.location.latitude,p.location.longitude):null;
       const distStr=distKm?`${distKm<1?(distKm*1000).toFixed(0)+'m':distKm.toFixed(1)+'km'} away`:null;
-      return renderPlaceCard(p,{emoji:'🌳',distStr});
-    }).join('')}</div>`;
+      return{p,distKm:distKm??Infinity,distStr};
+    }).sort((a,b)=>a.distKm-b.distKm);
+    el.innerHTML=`<div class="place-list">${placesWithDist.map(({p,distStr})=>renderPlaceCard(p,{emoji:'🌳',distStr})).join('')}</div>`;
   }catch(e){
     el.innerHTML='<p style="font-size:.8rem;color:var(--text-muted);padding:.5rem 0">Couldn\'t load green spaces right now.</p>';
   }
