@@ -1370,8 +1370,8 @@ async function restoreSession(){
     const raw=localStorage.getItem('sniffout_session');
     if(!raw)return false;
     const s=JSON.parse(raw);
-    // Only restore if saved within the last 30 minutes
-    if(Date.now()-s.savedAt>30*60*1000){localStorage.removeItem('sniffout_session');return false;}
+    // Only restore if saved within the last 8 hours
+    if(Date.now()-s.savedAt>8*60*60*1000){localStorage.removeItem('sniffout_session');return false;}
     currentLocation=s.location;
     weatherData=s.weather;
     // Refresh weather silently in background
@@ -1439,6 +1439,7 @@ function showSplash(){
 }
 function goHome(){
   weatherData=null;currentLocation=null;
+  localStorage.removeItem('sniffout_session');
   document.getElementById('searchInput').value='';
   document.getElementById('topNavSearchInput').value='';
   document.getElementById('locationName').textContent='';
