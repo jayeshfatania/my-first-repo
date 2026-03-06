@@ -487,6 +487,7 @@
     @media(min-width:768px){.feedback-btn{bottom:1.5rem;right:1.5rem}}
     body.on-splash .feedback-btn{display:none}
     body.on-splash{overflow:hidden;height:100vh}
+    body.on-splash .search-wrap{visibility:hidden;height:0;margin:0;overflow:hidden}
     /* Profile page */
     .profile-page{animation:fadeUp .4s ease both}
     .profile-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem}
@@ -1828,6 +1829,15 @@ function showSplash(){
   document.getElementById('app').innerHTML=`<div class="splash">
     <h2>Discover great walks<br><em>Explore more. Together.</em></h2>
     <p>Curated routes, live weather and dog-friendly places - everything you need before you head out.</p>
+    <div class="search-wrap" style="margin:1.2rem 0 .5rem;animation:none">
+      <div class="search-box">
+        <span class="search-icon">📍</span>
+        <input class="search-input" id="splashSearchInput" type="text" placeholder="Postcode or place… e.g. KT2, Battersea, Edinburgh" autocomplete="off"/>
+        <button class="locate-btn" onclick="useCurrentLocation()" title="Use my location">⌖</button>
+        <button class="search-btn" onclick="doSplashSearch()">Search</button>
+      </div>
+      <div class="search-error" id="splashSearchError">Couldn't find that location - try a postcode like SW11 or a place name.</div>
+    </div>
     ${pinnedHTML}
     ${recentHTML}
     ${installCardHTML}
@@ -1961,7 +1971,41 @@ async function doSearch(){
     showSplash();
   }
 }
-function useExample(val){document.getElementById('searchInput').value=val;doSearch()}
+async function doSplashSearch(){
+  const input=document.getElementById('splashSearchInput');
+  if(!input)return;
+  const query=input.value.trim();
+  if(!query)return;
+  // sync value to the main hidden input so doSearch works normally
+  document.getElementById('searchInput').value=query;
+  const errEl=document.getElementById('splashSearchError');
+  if(errEl)errEl.style.display='none';
+  renderShell();
+  try{
+    document.getElementById('bottomNav').style.display='none';
+    currentLocation=await geocode(query);
+    saveRecentSearch(query);
+    const hdr=document.querySelector('header');
+    if(hdr)hdr.classList.add('collapsed');
+    document.getElementById('bottomNav').style.display='';
+    document.getElementById('searchInput').value=query;
+    document.getElementById('topNavSearchInput').value=query;
+    document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
+    weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
+    if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
+    showTab(currentTab);
+    saveSession();
+  }catch(e){
+    if(errEl)errEl.style.display='block';
+    showSplash();
+  }
+}
+function useExample(val){
+  // try splash input first, fall back to main input
+  const splash=document.getElementById('splashSearchInput');
+  if(splash){splash.value=val;doSplashSearch();}
+  else{document.getElementById('searchInput').value=val;doSearch();}
+}
 
 async function useCurrentLocation(){
   if(!navigator.geolocation){alert('Geolocation is not supported by your browser.');return;}
@@ -2023,6 +2067,7 @@ function toggleTheme(){
   localStorage.setItem('theme',isNight?'night':'day');
 }
 document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch()});
+document.getElementById('app').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='splashSearchInput')doSplashSearch()});
 document.getElementById('topNavSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doDesktopSearch()});
 // Apply saved theme preference, or fall back to time-of-day
 const savedTheme=localStorage.getItem('theme');
