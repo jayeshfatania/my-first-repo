@@ -487,14 +487,18 @@
     @media(min-width:768px){.feedback-btn{bottom:1.5rem;right:1.5rem}}
     body.on-splash .feedback-btn{display:none}
     body.on-splash{overflow:hidden;height:100vh}
+    body.on-splash .bottom-nav .nav-item{opacity:.4;pointer-events:none}
+    body.on-profile .search-wrap{display:none}
     @media(max-width:767px){
       body.on-splash .search-wrap{visibility:hidden;height:0;margin:0;overflow:hidden}
       body.on-splash h1{font-size:3rem}
       body.on-splash .subtitle{display:none}
       body.on-splash .logo{display:none}
       body.on-splash header{margin-bottom:.5rem}
+      body.on-splash .wrapper{display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 64px);padding-top:0;padding-bottom:0}
+      body.on-splash .splash{padding:0 0 1rem}
     }
-    .splash-search-wrap{margin:1.2rem 0 .5rem}
+    .splash-search-wrap{margin:1.2rem 0 .5rem;width:100%}
     @media(min-width:768px){.splash-search-wrap{display:none}.splash-install-card{display:none}}
     /* Profile page */
     .profile-page{animation:fadeUp .4s ease both}
@@ -1729,8 +1733,15 @@ function switchCat(cat){
 
 // ── TAB & NAVIGATION ──────────────────────────────────────────────────────────
 function showTab(tab){
+  if(!currentLocation){
+    // No location yet - nudge the search input and bail
+    const input=document.getElementById('splashSearchInput')||document.getElementById('searchInput');
+    if(input){input.focus();input.placeholder='Enter a location to get started…';}
+    return;
+  }
   currentTab=tab;
   document.body.classList.remove('on-splash');
+  document.body.classList.remove('on-profile');
   window.scrollTo(0,0);
   document.querySelectorAll('.nav-item').forEach((t,i)=>t.classList.toggle('active',['weather','walks','places','profile'][i]===tab));
   ['weather','walks','places'].forEach(t=>{
@@ -1838,9 +1849,9 @@ function showSplash(){
     <h2>Discover great walks<br><em>Explore more. Together.</em></h2>
     <p>Curated routes, live weather and dog-friendly places - everything you need before you head out.</p>
     <div class="splash-search-wrap" style="animation:none">
-      <div class="search-box">
+      <div class="search-box" style="width:100%;box-sizing:border-box">
         <span class="search-icon">📍</span>
-        <input class="search-input" id="splashSearchInput" type="text" placeholder="Postcode or place… e.g. KT2, Battersea, Edinburgh" autocomplete="off"/>
+        <input class="search-input" id="splashSearchInput" type="text" placeholder="Postcode or place name…" autocomplete="off"/>
         <button class="locate-btn" onclick="useCurrentLocation()" title="Use my location">⌖</button>
         <button class="search-btn" onclick="doSplashSearch()">Search</button>
       </div>
@@ -1860,6 +1871,8 @@ function dismissSplashInstall(){
 function showProfile(){
   const p=document.getElementById('panel');
   window.scrollTo(0,0);
+  document.body.classList.remove('on-splash');
+  document.body.classList.add('on-profile');
   document.querySelectorAll('.nav-item').forEach((t,i)=>t.classList.toggle('active',['weather','walks','places','profile'][i]==='profile'));
   p.innerHTML=renderProfilePage();
 }
