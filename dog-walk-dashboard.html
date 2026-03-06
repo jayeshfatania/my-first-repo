@@ -285,6 +285,13 @@
     .place-rating-count{font-size:.72rem;color:var(--text-muted)}
     .place-card-address{font-size:.75rem;color:var(--text-muted);margin-bottom:.3rem}
     .place-dist-badge{display:inline-block;background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;padding:.1rem .5rem;font-size:.7rem;color:var(--ink);margin-right:.3rem}
+    /* Sort bar */
+    .sort-bar{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap}
+    .sort-label{font-size:.72rem;color:var(--text-muted);font-weight:500}
+    .sort-btn{background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;padding:.25rem .75rem;font-size:.75rem;color:var(--ink);font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s}
+    .sort-btn.active{background:rgba(90,122,82,.12);border-color:rgba(90,122,82,.3);color:var(--moss);font-weight:500}
+    .sort-btn:hover{background:rgba(255,255,255,.35)}
+    body.night .sort-btn.active{background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.25);color:#7ab87a}
     .place-card-footer{display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
     .place-open-badge{font-size:.68rem;font-weight:500;padding:.15rem .55rem;border-radius:20px}
     .place-open-badge.open{background:rgba(90,122,82,.12);color:var(--moss);border:1px solid rgba(90,122,82,.2)}
@@ -1011,6 +1018,8 @@ function toggleWalkCard(id){
   card.classList.toggle('expanded');
 }
 
+let activeWalksSort='distance';
+
 function renderWalks(activeFilter='all'){
   const rain=[51,53,55,61,63,65,80,81,82,95,99].includes(weatherData.weatherCode);
   const hot=weatherData.feelsLike>22;
@@ -1047,6 +1056,20 @@ function renderWalks(activeFilter='all'){
     if(activeFilter==='woodland')return w.tags.some(t=>t.toLowerCase().includes('wood')||t.toLowerCase().includes('forest')||w.terrain.toLowerCase().includes('wood'));
     return true;
   });
+
+  const sortedFiltered=activeWalksSort==='distance'
+    ?[...filtered].sort((a,b)=>a.dist-b.dist)
+    :activeWalksSort==='rating'
+    ?[...filtered].sort((a,b)=>(getAvgRating(b.id)||0)-(getAvgRating(a.id)||0))
+    :[...filtered].sort((a,b)=>parseFloat(a.distance)-parseFloat(b.distance));
+
+  const walkSortBar=`
+    <div class="sort-bar">
+      <span class="sort-label">Sort by</span>
+      <button class="sort-btn${activeWalksSort==='distance'?' active':''}" onclick="setWalksSort('distance','${activeFilter}')">📍 Nearest</button>
+      <button class="sort-btn${activeWalksSort==='rating'?' active':''}" onclick="setWalksSort('rating','${activeFilter}')">⭐ Rating</button>
+      <button class="sort-btn${activeWalksSort==='length'?' active':''}" onclick="setWalksSort('length','${activeFilter}')">🗺️ Shortest</button>
+    </div>`;
 
   const filterBar=`<div class="filter-bar">${filters.map(f=>`<button class="filter-chip${activeFilter===f.id?' active':''}" onclick="renderWalksFiltered('${f.id}')">${f.label}</button>`).join('')}</div>`;
 
@@ -1093,7 +1116,7 @@ function renderWalks(activeFilter='all'){
     </div>`;
   } else {
     // Inject contribution banner after 2nd walk card
-    const cards=filtered.map((w,i)=>{
+    const cards=sortedFiltered.map((w,i)=>{
       const distStr=w.dist<1?`${Math.round(w.dist*1000)}m away`:`${w.dist.toFixed(1)}km away`;
       const wn=rain?w.wetNote:hot?w.hotNote:null;
       return renderWalkCard(w,distStr,wn);
@@ -1109,6 +1132,7 @@ function renderWalks(activeFilter='all'){
       </div>
       <p>${note} ${nearby.length} walk${nearby.length!==1?'s':''} within 3km of your location.</p>
       ${filterBar}
+      ${walkSortBar}
       ${filtered.length!==nearby.length?`<div class="walks-count">Showing ${filtered.length} of ${nearby.length} walks</div>`:''}
       ${progressBar}
     </div>
@@ -1227,6 +1251,8 @@ const CAT_CONFIG={
 const PLACES_API_KEY='AIzaSyCXKhkeAN3HdhmCc7_czGo3QzVIT34caT4';
 const placesCache={};
 
+let activePlacesSort='distance';
+
 function renderPlacesPanel(){
   const cfg=CAT_CONFIG[activeCat];
   const catBtns=Object.entries(CAT_CONFIG).map(([k,v])=>`
@@ -1241,6 +1267,13 @@ function renderPlacesPanel(){
       <span class="place-tip-text">${cfg.tip}</span>
     </div>`;
 
+  const sortBar=`
+    <div class="sort-bar">
+      <span class="sort-label">Sort by</span>
+      <button class="sort-btn${activePlacesSort==='distance'?' active':''}" onclick="setPlacesSort('distance')">📍 Nearest</button>
+      <button class="sort-btn${activePlacesSort==='rating'?' active':''}" onclick="setPlacesSort('rating')">⭐ Rating</button>
+    </div>`;
+
   return`
     <div class="section-intro">
       <div class="section-intro-top">
@@ -1249,9 +1282,42 @@ function renderPlacesPanel(){
       <p>Dog-friendly amenities near you - places to stop before, during or after your walk.</p>
     </div>
     <div class="place-cat-bar">${catBtns}</div>
+    ${sortBar}
     ${tipBanner}
     <div id="places-results"><div class="loading"><div class="spinner"></div><br>Finding places nearby…</div></div>
     <div class="footer" style="margin-top:1.5rem"><div>Powered by Google Places · Always call ahead to confirm dogs are welcome</div></div>`;
+}
+
+function setWalksSort(sort,filter){
+  activeWalksSort=sort;
+  document.getElementById('panel').innerHTML=renderWalks(filter||'all');
+  loadNearbyGreenSpaces();
+}
+
+function setPlacesSort(sort){
+  activePlacesSort=sort;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase().includes(sort==='distance'?'nearest':'rating')));
+  applyPlacesSort();
+}
+
+function applyPlacesSort(){
+  const el=document.getElementById('places-results');
+  if(!el)return;
+  const cards=[...el.querySelectorAll('.place-card')];
+  if(!cards.length)return;
+  const sorted=cards.sort((a,b)=>{
+    if(activePlacesSort==='distance'){
+      const da=parseFloat(a.dataset.dist||'9999');
+      const db=parseFloat(b.dataset.dist||'9999');
+      return da-db;
+    } else {
+      const ra=parseFloat(a.dataset.rating||'0');
+      const rb=parseFloat(b.dataset.rating||'0');
+      return rb-ra;
+    }
+  });
+  const list=el.querySelector('.place-list');
+  if(list)sorted.forEach(c=>list.appendChild(c));
 }
 
 async function fetchPlaces(cat){
@@ -1320,7 +1386,7 @@ function renderPlaceCard(place,cfg){
   const distBadge=cfg.distStr?`<span class="place-dist-badge">📍 ${cfg.distStr}</span>`:'';
 
   return`
-    <a class="place-card" href="${mapsUrl}" target="_blank">
+    <a class="place-card" href="${mapsUrl}" target="_blank" data-dist="${place.location?haversine(currentLocation.lat,currentLocation.lon,place.location.latitude,place.location.longitude).toFixed(2):'9999'}" data-rating="${rating||0}">
       <div class="place-card-thumb">${photoHtml}</div>
       <div class="place-card-body">
         <div class="place-card-name">${name}</div>
@@ -1351,6 +1417,7 @@ async function loadPlaces(cat){
         const distStr=distKm?`${distKm<1?(distKm*1000).toFixed(0)+'m':distKm.toFixed(1)+'km'} away`:null;
         return renderPlaceCard(p,{...cfg,distStr});
       }).join('')}</div>`;
+      applyPlacesSort();
     }
   }catch(e){
     const q=encodeURIComponent(`${cfg.search} near ${currentLocation.displayName}`);
