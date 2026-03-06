@@ -457,7 +457,9 @@
     .walk-share-btn{background:none;border:1px solid var(--card-border);border-radius:20px;padding:.3rem .85rem;font-size:.75rem;color:var(--moss);font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;margin-bottom:.75rem}
     .walk-share-btn:hover{background:rgba(90,122,82,.08)}
     body.night .walk-share-btn{color:#7ab87a;border-color:rgba(122,184,122,.2)}
-    .fav-btn{position:absolute;top:.6rem;right:.7rem;background:none;border:none;font-size:1.15rem;cursor:pointer;padding:.2rem;line-height:1;opacity:.5;transition:opacity .2s,transform .15s;z-index:2}
+    .fav-btn{position:absolute;top:.6rem;right:.7rem;background:rgba(0,0,0,.18);border:none;font-size:1rem;cursor:pointer;padding:.25rem .3rem;line-height:1;border-radius:20px;transition:background .2s,transform .15s;z-index:2}
+    .fav-btn.fav-btn-active{background:none}
+    body.night .fav-btn{background:rgba(255,255,255,.12)}
     .fav-btn:hover,.fav-btn-active{opacity:1}
     .fav-btn-active{transform:scale(1.2)}
     /* Share overlay */
