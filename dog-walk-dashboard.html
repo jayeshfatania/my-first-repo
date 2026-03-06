@@ -488,6 +488,10 @@
     body.on-splash .feedback-btn{display:none}
     body.on-splash{overflow:hidden;height:100vh}
     body.on-splash .search-wrap{visibility:hidden;height:0;margin:0;overflow:hidden}
+    @media(max-width:767px){body.on-splash .search-wrap{visibility:visible;height:auto;margin:0 0 .5rem}}
+    .splash-search-wrap{margin:1.2rem 0 .5rem}
+    @media(max-width:767px){.splash-search-wrap{display:none}}
+    @media(min-width:768px){.splash-install-card{display:none}}
     /* Profile page */
     .profile-page{animation:fadeUp .4s ease both}
     .profile-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem}
@@ -1829,7 +1833,7 @@ function showSplash(){
   document.getElementById('app').innerHTML=`<div class="splash">
     <h2>Discover great walks<br><em>Explore more. Together.</em></h2>
     <p>Curated routes, live weather and dog-friendly places - everything you need before you head out.</p>
-    <div class="search-wrap" style="margin:1.2rem 0 .5rem;animation:none">
+    <div class="search-wrap splash-search-wrap" style="animation:none">
       <div class="search-box">
         <span class="search-icon">📍</span>
         <input class="search-input" id="splashSearchInput" type="text" placeholder="Postcode or place… e.g. KT2, Battersea, Edinburgh" autocomplete="off"/>
