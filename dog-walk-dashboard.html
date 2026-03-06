@@ -367,6 +367,31 @@
     /* first to review nudge */
     .first-review-nudge{font-size:.78rem;color:var(--moss);font-style:italic;margin-bottom:.5rem;font-weight:500}
     body.night .first-review-nudge{color:#7ab87a}
+    /* ── ONBOARDING OVERLAY ─────────────────────────────────────── */
+    .onboarding-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .3s ease}
+    .onboarding-modal{background:var(--card-bg);border:1px solid var(--card-border);border-radius:24px;padding:2rem 1.75rem 1.75rem;max-width:360px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.25);animation:fadeUp .4s ease both}
+    .onboarding-logo{font-size:2.2rem;margin-bottom:.5rem}
+    .onboarding-title{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:var(--ink);margin-bottom:.3rem}
+    .onboarding-sub{font-size:.82rem;color:var(--text-muted);margin-bottom:1.5rem;line-height:1.5}
+    .onboarding-features{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1.6rem;text-align:left}
+    .onboarding-feat{display:flex;align-items:flex-start;gap:.75rem;background:rgba(90,122,82,.07);border:1px solid rgba(90,122,82,.15);border-radius:14px;padding:.75rem .9rem}
+    body.night .onboarding-feat{background:rgba(122,184,122,.06);border-color:rgba(122,184,122,.15)}
+    .onboarding-feat-icon{font-size:1.3rem;flex-shrink:0;line-height:1.3}
+    .onboarding-feat-body{}
+    .onboarding-feat-title{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:.15rem}
+    .onboarding-feat-desc{font-size:.75rem;color:var(--text-muted);line-height:1.45}
+    .onboarding-cta{width:100%;padding:.85rem;background:var(--moss);color:#fff;border:none;border-radius:14px;font-size:.9rem;font-weight:600;cursor:pointer;letter-spacing:.01em}
+    .onboarding-cta:active{opacity:.85}
+    /* ── PWA INSTALL BANNER ─────────────────────────────────────── */
+    .install-banner{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 72px);left:50%;transform:translateX(-50%);width:calc(100% - 2rem);max-width:400px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;box-shadow:0 8px 32px rgba(0,0,0,.18);padding:.85rem 1rem;display:flex;align-items:center;gap:.75rem;z-index:900;animation:slideUp .4s ease both}
+    @media(min-width:768px){.install-banner{bottom:1.5rem}}
+    .install-banner-icon{font-size:1.6rem;flex-shrink:0}
+    .install-banner-body{flex:1;min-width:0}
+    .install-banner-title{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:.1rem}
+    .install-banner-sub{font-size:.72rem;color:var(--text-muted);line-height:1.35}
+    .install-banner-btn{background:var(--moss);color:#fff;border:none;border-radius:10px;padding:.45rem .85rem;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
+    .install-banner-close{background:none;border:none;font-size:1.1rem;color:var(--text-muted);cursor:pointer;flex-shrink:0;padding:.1rem .2rem;line-height:1}
+    @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
     .splash{text-align:center;padding:2.5rem 1rem 3rem;animation:fadeUp .7s ease both}
     .splash-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;font-weight:500;color:var(--moss);background:rgba(90,122,82,.1);border:1px solid rgba(90,122,82,.2);border-radius:20px;padding:.28rem .85rem;margin-bottom:1.1rem}
     body.night .splash-badge{color:#7ab87a;background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.25)}
@@ -660,6 +685,46 @@ const WALKS_DB=[
   {id:'snowdonia-rhyd-ddu',name:"Snowdon - Rhyd Ddu Path",area:"Snowdonia",lat:53.0678,lon:-4.0783,icon:"🏔️",distance:"13km",duration:"4h",difficulty:"Challenging",terrain:"Mountain",tags:["Wales","Snowdon","Mountain"],desc:"The quietest and most scenic route up Wales's highest mountain. Dramatic ridge walking with stunning views over the Nantlle Valley and out to sea.",wetNote:"Mountain paths dangerous in poor visibility - check weather carefully.",hotNote:"Exposed mountain - layers essential at the summit year round."},
   {id:'gower-three-cliffs',name:"Three Cliffs Bay - Gower Peninsula",area:"Gower",lat:51.5667,lon:-4.1167,icon:"🏖️",distance:"7km",duration:"2h",difficulty:"Moderate",terrain:"Coastal & beach",tags:["Wales","Coastal","Beach"],desc:"Walk to one of Wales's most beautiful beaches - dramatic limestone arches, a ruined castle and a beautiful estuary. Often voted the UK's finest bay.",wetNote:"Beach access depends on tides - check before going. Coastal paths exposed in wind.",hotNote:"Sea breezes. Dogs allowed on Three Cliffs beach year round."},
   {id:'brecon-waterfall-country',name:"Waterfall Country - Sgwd yr Eira",area:"Brecon Beacons",lat:51.8167,lon:-3.5833,icon:"🌊",distance:"8km",duration:"2h",difficulty:"Moderate",terrain:"Wooded gorge & waterfalls",tags:["Wales","Waterfalls","Woodland"],desc:"Walk behind a thundering waterfall in a spectacular wooded limestone gorge. Four major waterfalls on this route including the famous Sgwd yr Eira where you walk behind the falls.",wetNote:"Gorge paths can be very slippery when wet - take care on rock sections.",hotNote:"Shaded gorge walk - cool even in hot weather. Perfect summer route."},
+
+  // ── MANCHESTER ──
+  {id:'manchester-heaton-park',name:"Heaton Park Loop",area:"Manchester",lat:53.5369,lon:-2.2729,icon:"🌳",distance:"5km",duration:"1.25h",difficulty:"Easy",terrain:"Parkland & woodland",tags:["Flat","Off-lead","Urban park"],desc:"One of the largest municipal parks in Europe. Rolling parkland, a boating lake and woodland trails make this a fantastic off-lead run for dogs of all sizes.",wetNote:"Paths are mostly paved or well-drained. Fine in light rain.",hotNote:"Plenty of shade from mature trees. Lake access for a splash."},
+  {id:'manchester-worsley-woods',name:"Worsley Woods & Bridgewater Canal",area:"Manchester",lat:53.5033,lon:-2.3833,icon:"🌿",distance:"6km",duration:"1.5h",difficulty:"Easy",terrain:"Woodland & canal towpath",tags:["Woodland","Canal","Flat"],desc:"Ancient woodland combined with the famous Bridgewater Canal towpath. Dogs love the woodland trails and can safely walk the flat canal path for miles.",wetNote:"Woodland paths can get muddy but the canal towpath is always walkable.",hotNote:"Shaded woodland keeps things cool. Canal dipping points for dogs."},
+
+  // ── BIRMINGHAM ──
+  {id:'birmingham-cannon-hill',name:"Cannon Hill Park & River Rea",area:"Birmingham",lat:52.4489,lon:-1.8983,icon:"🦆",distance:"4km",duration:"1h",difficulty:"Easy",terrain:"Parkland & riverside",tags:["Flat","Urban park","Riverside"],desc:"Birmingham's most popular park combines open grassland, ornamental lakes and a lovely riverside path along the River Rea. Dogs welcome throughout.",wetNote:"Mostly hard paths, fine in wet weather. Avoid the grass sections after heavy rain.",hotNote:"Lake and river access for dogs to cool off. Plenty of shade trees."},
+  {id:'birmingham-sutton-park',name:"Sutton Park - Powell Pool Loop",area:"Birmingham",lat:52.5683,lon:-1.8397,icon:"🌾",distance:"8km",duration:"2h",difficulty:"Easy",terrain:"Heathland, woodland & lakes",tags:["Heathland","Lakes","Off-lead"],desc:"One of the largest urban nature reserves in Europe. Ancient heathland, seven pools and extensive woodland - feels nothing like a city park. Dogs can swim in several of the pools.",wetNote:"Heathland and woodland drain well. The pools add to the atmosphere after rain.",hotNote:"Open heathland can be exposed - early morning or evening walks best. Dogs love the pools."},
+
+  // ── BRISTOL ──
+  {id:'bristol-ashton-court',name:"Ashton Court Estate Loop",area:"Bristol",lat:51.4489,lon:-2.6372,icon:"🦌",distance:"6km",duration:"1.5h",difficulty:"Easy",terrain:"Parkland & woodland",tags:["Deer park","Woodland","Views"],desc:"A stunning 850-acre deer park on the edge of Bristol with panoramic views over the city and Clifton Suspension Bridge. Deer roam freely - keep dogs on leads near them.",wetNote:"Grass sections can be muddy after rain but woodland tracks are firm.",hotNote:"Elevated and exposed in parts - good breeze. Woodland shade available."},
+  {id:'bristol-blaise-castle',name:"Blaise Castle Estate",area:"Bristol",lat:51.5117,lon:-2.6411,icon:"🏰",distance:"5km",duration:"1.25h",difficulty:"Moderate",terrain:"Wooded gorge & hillside",tags:["Woodland","Historic","Gorge"],desc:"A magical wooded estate with a fairy-tale mock castle, deep gorge and ancient woodland. One of Bristol's best-kept secrets for dog walking - varied terrain and loads of interest.",wetNote:"Gorge paths can be very slippery - stick to higher paths in wet conditions.",hotNote:"Dense woodland canopy provides good shade throughout."},
+
+  // ── LEEDS ──
+  {id:'leeds-roundhay-park',name:"Roundhay Park & Waterloo Lake",area:"Leeds",lat:53.8281,lon:-1.4933,icon:"🌊",distance:"5km",duration:"1.25h",difficulty:"Easy",terrain:"Parkland & lakeside",tags:["Lake","Flat","Urban park"],desc:"One of the largest city parks in Europe. Two lakes, open parkland and woodland make this a brilliant all-year dog walk. The lakeside path is flat and scenic.",wetNote:"Hard paths throughout - excellent in all weather.",hotNote:"Lake access for dogs. Tree-lined paths provide shade."},
+  {id:'leeds-golden-acre',name:"Golden Acre Park & Breary Marsh",area:"Leeds",lat:53.8817,lon:-1.5700,icon:"🌿",distance:"4km",duration:"1h",difficulty:"Easy",terrain:"Parkland, lake & nature reserve",tags:["Lake","Nature reserve","Quiet"],desc:"A peaceful lakeside park on the northern edge of Leeds with an adjoining nature reserve. Far less busy than Roundhay, brilliant for dogs who love water and wildlife.",wetNote:"Marsh boardwalk can be slippery - take care.",hotNote:"Lakeside breezes keep it cool. Dogs can paddle at the lake edge."},
+
+  // ── LIVERPOOL ──
+  {id:'liverpool-sefton-park',name:"Sefton Park Loop",area:"Liverpool",lat:53.3808,lon:-2.9378,icon:"🌸",distance:"4km",duration:"1h",difficulty:"Easy",terrain:"Victorian parkland & lake",tags:["Flat","Urban park","Lake"],desc:"Liverpool's most beloved park - a grand Victorian landscape with a large boating lake, palm house and open meadows. Fantastic for dogs to roam freely.",wetNote:"Hard paths and well-drained grass. Fine year-round.",hotNote:"Open parkland can be warm - lake access for dogs to cool off."},
+  {id:'liverpool-otterspool-promenade',name:"Otterspool Promenade & Mersey",area:"Liverpool",lat:53.3633,lon:-2.9539,icon:"🌊",distance:"6km",duration:"1.5h",difficulty:"Easy",terrain:"Riverside promenade",tags:["Riverside","Flat","Scenic"],desc:"A flat riverside walk along the Mersey with stunning views across to the Wirral. Completely flat, open and great for dogs. Continue into Sefton Park for a longer route.",wetNote:"Exposed riverside path - manageable in light rain but windy in storms.",hotNote:"Open with river breezes. Dogs can access the riverbank at points."},
+
+  // ── CARDIFF ──
+  {id:'cardiff-bute-park',name:"Bute Park & River Taff",area:"Cardiff",lat:51.4878,lon:-3.1867,icon:"🏰",distance:"4km",duration:"1h",difficulty:"Easy",terrain:"Parkland & riverside",tags:["Riverside","Flat","Castle views"],desc:"A stunning arboretum and parkland in the heart of Cardiff, bordering the River Taff with views of Cardiff Castle. Dogs welcome throughout and can access the river in places.",wetNote:"Hard paths throughout - perfectly walkable in rain.",hotNote:"River access for dogs. Tree canopy provides shade."},
+
+  // ── GLASGOW ──
+  {id:'glasgow-pollok-country-park',name:"Pollok Country Park",area:"Glasgow",lat:55.8214,lon:-4.3108,icon:"🌿",distance:"6km",duration:"1.5h",difficulty:"Easy",terrain:"Woodland & parkland",tags:["Woodland","Highland cattle","Off-lead"],desc:"Glasgow's finest country park - ancient woodland, the River Cart and famous Highland cattle. Dogs can roam freely in the woodland and along the riverside paths.",wetNote:"Woodland paths hold up well in wet weather.",hotNote:"Shaded woodland keeps it cool. River access for dogs."},
+  {id:'glasgow-mugdock-country-park',name:"Mugdock Country Park",area:"Glasgow",lat:55.9736,lon:-4.3131,icon:"🏔️",distance:"7km",duration:"1.75h",difficulty:"Easy",terrain:"Moorland, woodland & loch",tags:["Loch","Moorland","Off-lead"],desc:"On the edge of the Campsie Fells, Mugdock offers moorland, ancient woodland and a beautiful loch. Stunning views towards the Highlands. Dogs can swim in Mugdock Loch.",wetNote:"Moorland paths can be boggy after prolonged rain - good boots recommended.",hotNote:"Elevated and open - cooler than the city. Loch swimming for dogs."},
+  // ── SOUTH LONDON, EPSOM, STONELEIGH & TOLWORTH ──
+  {id:'epsom-common',name:"Epsom Common & Stew Ponds",area:"Epsom",lat:51.3408,lon:-0.2694,icon:"🌿",distance:"5km",duration:"1.25h",difficulty:"Easy",terrain:"Woodland & common",tags:["Off-lead","Woodland","Ponds"],desc:"One of Surrey's finest commons - ancient woodland, open glades and beautiful stew ponds. Dogs can splash in the ponds and run freely through the heathland. A local favourite that never feels overcrowded.",wetNote:"Well-drained woodland paths throughout. Perfectly walkable in light rain.",hotNote:"Dense woodland canopy provides shade. Ponds for dogs to cool off."},
+  {id:'epsom-downs',name:"Epsom Downs & The Gallops",area:"Epsom",lat:51.3167,lon:-0.2478,icon:"🏇",distance:"6km",duration:"1.5h",difficulty:"Easy",terrain:"Downland & open grassland",tags:["Views","Open","Dog-friendly"],desc:"Sweeping chalk downland above Epsom with panoramic views across Surrey. The famous racecourse perimeter is a brilliant open walk - wide skies, big views and fresh air. Dogs love the space.",wetNote:"Open and exposed - rain gear advised. Turf paths handle wet well.",hotNote:"Elevated and breezy - cooler than the town below. Bring water."},
+  {id:'nonsuch-park',name:"Nonsuch Park Loop",area:"Epsom",lat:51.3594,lon:-0.2394,icon:"🏰",distance:"4.5km",duration:"1h",difficulty:"Easy",terrain:"Historic parkland",tags:["Historic","Flat","Dog-friendly"],desc:"A beautiful 60-acre historic park on the site of Henry VIII's lost Nonsuch Palace. Open grassland, mature tree avenues and a walled garden. Dogs welcome throughout - popular with local dog walkers.",wetNote:"Hard paths and well-drained grass. Fine in most weather.",hotNote:"Open parkland - some shade from mature trees. Water tap near the mansion."},
+  {id:'tolworth-court-farm',name:"Tolworth Court Farm Fields",area:"Tolworth",lat:51.3769,lon:-0.2797,icon:"🌾",distance:"3.5km",duration:"45min",difficulty:"Easy",terrain:"Farmland & meadow",tags:["Local gem","Flat","Off-lead"],desc:"A hidden gem just minutes from Tolworth - open meadows and former farmland with a lovely informal feel. Great for an easy morning walk or quick lunchtime run with the dog. Far less known than nearby parks.",wetNote:"Grass paths can be muddy in winter - wellies helpful.",hotNote:"Open meadow - limited shade. Best for early morning walks in summer."},
+  {id:'hogsmill-stoneleigh',name:"Hogsmill River Walk - Stoneleigh",area:"Stoneleigh",lat:51.3714,lon:-0.2583,icon:"🌊",distance:"4km",duration:"1h",difficulty:"Easy",terrain:"Riverside path",tags:["Riverside","Flat","Local"],desc:"Follow the peaceful Hogsmill River from Stoneleigh through the valley to Ewell. A lovely flat riverside path through a hidden green corridor in the suburbs. Dogs can dip in the river at multiple access points.",wetNote:"Riverside path can flood after heavy rain - check before going.",hotNote:"Tree-lined river corridor provides good shade throughout."},
+  {id:'stone-court-farm-walk',name:"Stoneleigh to Epsom Common",area:"Stoneleigh",lat:51.3650,lon:-0.2650,icon:"🌳",distance:"6km",duration:"1.5h",difficulty:"Easy",terrain:"Suburban paths & common",tags:["Local loop","Woodland","Quiet"],desc:"A satisfying circular walk from Stoneleigh connecting the residential paths to Epsom Common. A proper local dog walk - quiet, green and a great way to access the common without driving.",wetNote:"Mix of paved and woodland paths - good year round.",hotNote:"Shaded woodland in the common section. Good for hot days."},
+  {id:'surbiton-thames-ditton',name:"Thames Ditton & Surbiton Riverbank",area:"Surbiton",lat:51.3908,lon:-0.3150,icon:"⛵",distance:"5km",duration:"1.25h",difficulty:"Easy",terrain:"Riverside & village",tags:["Thames","Flat","Village"],desc:"A wonderful Thames-side walk linking Surbiton to the charming village of Thames Ditton. River views, moored boats and a lovely village pub at the end. Dogs can access the Thames bank at several points.",wetNote:"Well-surfaced riverside path - perfectly walkable in rain.",hotNote:"Open riverside - great breeze. Dogs can splash at river access points."},
+  {id:'berrylands-nature-reserve',name:"Berrylands Nature Reserve",area:"Surbiton",lat:51.3847,lon:-0.2786,icon:"🦋",distance:"3km",duration:"45min",difficulty:"Easy",terrain:"Nature reserve & meadow",tags:["Nature reserve","Wildlife","Local"],desc:"A peaceful nature reserve tucked between suburban streets - wildflower meadows, scrubland and a seasonal pond. Brilliant for an easy evening stroll with the dog and surprisingly wild feeling for the location.",wetNote:"Grass paths can be wet - but short enough to be manageable.",hotNote:"Open meadow - limited shade. The wildflower sections are beautiful in summer."},
+  {id:'dulwich-park',name:"Dulwich Park & Belair Park",area:"Dulwich",lat:51.4478,lon:-0.0881,icon:"🌸",distance:"5km",duration:"1.25h",difficulty:"Easy",terrain:"Victorian parkland",tags:["Flat","Dog-friendly","South London"],desc:"Two gorgeous Victorian parks connected by a short walk. Dulwich Park has a boating lake and American garden, while Belair Park is quieter with more off-lead freedom. A classic south London dog walk.",wetNote:"Hard paths throughout - perfectly walkable in rain.",hotNote:"Lake access for dogs. Mature tree canopy provides excellent shade."},
+  {id:'streatham-common',name:"Streatham Common & The Rookery",area:"Streatham",lat:51.4194,lon:-0.1272,icon:"🌿",distance:"4km",duration:"1h",difficulty:"Easy",terrain:"Common & formal gardens",tags:["Common land","Views","Off-lead"],desc:"Wide open common with sweeping views north towards the city, plus the beautiful Rookery formal gardens. Great for off-lead running and the elevated position gives lovely breezes on warm days.",wetNote:"Common grass can be muddy but paths drain well.",hotNote:"Elevated with good breeze. Formal garden area has a cafe with outdoor seating."},
+  {id:'crystal-palace-park',name:"Crystal Palace Park",area:"Crystal Palace",lat:51.4214,lon:-0.0733,icon:"🦕",distance:"4.5km",duration:"1h",difficulty:"Easy-Moderate",terrain:"Victorian parkland",tags:["Historic","Dinosaurs","South London"],desc:"One of south London's most distinctive parks - Victorian terraces, a boating lake and the famous life-size dinosaur sculptures. Hilly in parts but a fantastic dog walk with loads of interesting features.",wetNote:"Mix of hard paths and grass. Fine in most weather.",hotNote:"Elevated and open in parts. Lake area and trees provide shade."},
+
 ];
 
 const WMO={0:['☀️','Clear sky'],1:['⛅','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],45:['🌁','Foggy'],48:['🌁','Icy fog'],51:['🌂','Light drizzle'],53:['🌂','Drizzle'],55:['☔','Heavy drizzle'],61:['☔','Slight rain'],63:['☔','Moderate rain'],65:['☔','Heavy rain'],71:['❄️','Light snow'],73:['❄️','Moderate snow'],75:['❄️','Heavy snow'],80:['🌂','Rain showers'],81:['☔','Heavy showers'],82:['⛈️','Violent showers'],95:['⛈️','Thunderstorm'],99:['⛈️','Thunderstorm+hail']};
@@ -1052,10 +1117,28 @@ function toggleFavourite(id,e){
   }
 }
 
+// ── USERNAME ──────────────────────────────────────────────────────────────────
+function getUsername(){return localStorage.getItem('sniffout_username')||''}
+function saveUsername(name){try{localStorage.setItem('sniffout_username',name.trim());}catch(e){}}
+function editProfileName(){
+  const current=getUsername();
+  const val=prompt('Enter your name or username:',current);
+  if(val===null)return; // cancelled
+  const trimmed=val.trim();
+  if(trimmed){
+    saveUsername(trimmed);
+  } else {
+    try{localStorage.removeItem('sniffout_username');}catch(e){}
+  }
+  // Re-render profile page to reflect change
+  showProfile();
+}
+
 function renderWalkCard(w,distStr,showWeatherNote){
   const avg=getAvgRating(w.id);
   const communityTag=w.community?`<span class="community-badge">Community</span>`:'';
-  const curatedTag=!w.community?`<span class="curated-badge">🐾 Added by a Sniffout user</span>`:'';
+  const submitter=w.submittedBy?`@${w.submittedBy}`:'a Sniffout user';
+  const curatedTag=!w.community?`<span class="curated-badge">🐾 Added by ${submitter}</span>`:'';
   const weatherNote=showWeatherNote?`<div class="item-weather-note">⛅ Today: ${showWeatherNote}</div>`:'';
   const avgCompact=avg
     ?`<div class="avg-stars-compact">${[1,2,3,4,5].map(i=>`<span class="avg-star-s${i<=Math.round(avg)?' filled':''}">★</span>`).join('')}<span class="avg-label-s">${avg}/5</span></div>`
@@ -1361,9 +1444,11 @@ function toggleSubmitWalkForm(){
 }
 
 function renderSubmitWalkForm(){
+  const savedUsername=getUsername();
   return`<div class="submit-walk-card">
     <h4>🐾 Know a great walk nearby? Add it!</h4>
     <div class="sniffout-pick-explainer">🐾 <strong>Added by a Sniffout user</strong> - walks with this badge have been submitted by fellow dog owners in the Sniffout community. Submit yours below!</div>
+    <div class="form-field"><label class="form-label">Your name or username <span style="color:var(--text-muted);font-weight:400">(optional)</span></label><input class="form-input" id="sw-username" placeholder="e.g. DogDad_Kingston" value="${savedUsername}" oninput="if(this.value.trim())saveUsername(this.value.trim())"/></div>
     <div class="form-field"><label class="form-label">Walk name</label><input class="form-input" id="sw-name" placeholder="e.g. Riverside path through Molesey"/></div>
     <div class="form-field"><label class="form-label">Description</label><input class="form-input" id="sw-desc" placeholder="What makes this walk special?"/></div>
     <div class="form-row">
@@ -1385,6 +1470,9 @@ function submitWalk(){
   const name=document.getElementById('sw-name').value.trim();
   const desc=document.getElementById('sw-desc').value.trim();
   if(!name||!desc){alert('Please add at least a name and description!');return}
+  const usernameField=document.getElementById('sw-username');
+  const username=(usernameField&&usernameField.value.trim())||getUsername()||null;
+  if(username)saveUsername(username);
   const walks=getCommunityWalks();
   const id='community-'+Date.now();
   walks.push({
@@ -1398,6 +1486,7 @@ function submitWalk(){
     tags:['Community walk'],
     wetNote:'Added by a community member - check conditions before visiting.',
     hotNote:'Added by a community member - check conditions before visiting.',
+    submittedBy:username,
   });
   saveCommunityWalks(walks);
   ['sw-name','sw-desc','sw-dist','sw-dur','sw-terrain'].forEach(id=>{document.getElementById(id).value=''});
@@ -1751,13 +1840,14 @@ function renderProfilePage(){
         <button class="contrib-btn-primary" style="margin-top:.75rem" onclick="showTab('walks')">Browse walks</button>
       </div>`;
 
+  const savedName=getUsername();
   return`
     <div class="profile-page">
       <div class="profile-header">
         <div class="profile-avatar">👤</div>
         <div class="profile-header-body">
-          <div class="profile-name">Guest</div>
-          <div class="profile-sub">Walks saved on this device</div>
+          <div class="profile-name" id="profileDisplayName" onclick="editProfileName()" title="Tap to edit your name" style="cursor:pointer">${savedName||'Guest'} <span style="font-size:.7rem;color:var(--text-muted);font-family:sans-serif;font-weight:400">✏️</span></div>
+          <div class="profile-sub">${savedName?`@${savedName} · `:''}Walks saved on this device</div>
         </div>
       </div>
       <div class="profile-signin-banner">
@@ -1911,6 +2001,8 @@ if(savedTheme){
 }
 initSeededReviews();
 restoreSession().then(restored=>{if(!restored)showSplash();});
+// Show onboarding after a short delay so the splash/search has rendered first
+setTimeout(maybeShowOnboarding, 400);
 setInterval(()=>{if(weatherData)refreshWeather()},15*60*1000);
 
 // ── SHAREABLE CARD ────────────────────────────────────────────────────────────
@@ -1970,6 +2062,97 @@ function screenshotCard(){
     );
   }
 }
+// ── ONBOARDING OVERLAY ────────────────────────────────────────────────────────
+function maybeShowOnboarding(){
+  if(localStorage.getItem('sniffout_onboarded'))return;
+  const overlay=document.createElement('div');
+  overlay.className='onboarding-overlay';
+  overlay.id='onboardingOverlay';
+  overlay.innerHTML=`
+    <div class="onboarding-modal">
+      <div class="onboarding-logo">🐾</div>
+      <div class="onboarding-title">Welcome to Sniffout</div>
+      <div class="onboarding-sub">Shared, discovered and rated by the community.</div>
+      <div class="onboarding-features">
+        <div class="onboarding-feat">
+          <div class="onboarding-feat-icon">🌤️</div>
+          <div class="onboarding-feat-body">
+            <div class="onboarding-feat-title">Dog-safe weather</div>
+            <div class="onboarding-feat-desc">Real-time forecasts with paw heat, humidity and UV warnings built in.</div>
+          </div>
+        </div>
+        <div class="onboarding-feat">
+          <div class="onboarding-feat-icon">🥾</div>
+          <div class="onboarding-feat-body">
+            <div class="onboarding-feat-title">Curated walks</div>
+            <div class="onboarding-feat-desc">Tap any walk card for full details, community reviews and the best time to go today.</div>
+          </div>
+        </div>
+        <div class="onboarding-feat">
+          <div class="onboarding-feat-icon">❤️</div>
+          <div class="onboarding-feat-body">
+            <div class="onboarding-feat-title">Save favourites</div>
+            <div class="onboarding-feat-desc">Tap the heart on any walk to save it. Find them all in your Profile tab.</div>
+          </div>
+        </div>
+        <div class="onboarding-feat">
+          <div class="onboarding-feat-icon">☕</div>
+          <div class="onboarding-feat-body">
+            <div class="onboarding-feat-title">Dog-friendly spots</div>
+            <div class="onboarding-feat-desc">Find cafes, pubs and parks near you that welcome dogs.</div>
+          </div>
+        </div>
+      </div>
+      <button class="onboarding-cta" onclick="dismissOnboarding()">Let's go 🐶</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+function dismissOnboarding(){
+  try{localStorage.setItem('sniffout_onboarded','1');}catch(e){}
+  const el=document.getElementById('onboardingOverlay');
+  if(el){el.style.animation='fadeIn .25s ease reverse';setTimeout(()=>el.remove(),220);}
+}
+
+// ── PWA INSTALL PROMPT ────────────────────────────────────────────────────────
+let deferredInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  deferredInstallPrompt=e;
+  // Only show if not dismissed before and not already installed
+  if(!localStorage.getItem('sniffout_install_dismissed')){
+    setTimeout(showInstallBanner,3000); // slight delay so it doesn't compete with onboarding
+  }
+});
+function showInstallBanner(){
+  if(document.getElementById('installBanner'))return;
+  const banner=document.createElement('div');
+  banner.className='install-banner';
+  banner.id='installBanner';
+  banner.innerHTML=`
+    <div class="install-banner-icon">🐾</div>
+    <div class="install-banner-body">
+      <div class="install-banner-title">Add Sniffout to your home screen</div>
+      <div class="install-banner-sub">Instant access, works offline, no app store needed.</div>
+    </div>
+    <button class="install-banner-btn" onclick="triggerInstall()">Add</button>
+    <button class="install-banner-close" onclick="dismissInstallBanner()" title="Dismiss">✕</button>`;
+  document.body.appendChild(banner);
+}
+async function triggerInstall(){
+  dismissInstallBanner();
+  if(deferredInstallPrompt){
+    deferredInstallPrompt.prompt();
+    const {outcome}=await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt=null;
+    if(outcome==='accepted')try{localStorage.setItem('sniffout_install_dismissed','1');}catch(e){}
+  }
+}
+function dismissInstallBanner(){
+  try{localStorage.setItem('sniffout_install_dismissed','1');}catch(e){}
+  const el=document.getElementById('installBanner');
+  if(el){el.style.animation='slideUp .2s ease reverse';setTimeout(()=>el.remove(),180);}
+}
+
 </script>
 </body>
 </html>
