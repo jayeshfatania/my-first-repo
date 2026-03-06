@@ -1224,6 +1224,14 @@ function renderWalks(activeFilter='all'){
         <span class="green-spaces-title">🌳 More nearby green spaces</span>
         <span class="green-spaces-sub">Powered by Google Places</span>
       </div>
+      <div class="filter-scroll-row" id="green-spaces-controls" style="display:none">
+        <button class="filter-chip active" onclick="setGreenSort('distance')">📍 Nearest</button>
+        <button class="filter-chip" onclick="setGreenSort('rating')">⭐ Rating</button>
+        <span class="filter-divider"></span>
+        <button class="filter-chip active" onclick="setGreenFilter('all')">All</button>
+        <button class="filter-chip" onclick="setGreenFilter('park')">🌳 Parks</button>
+        <button class="filter-chip" onclick="setGreenFilter('nature')">🌿 Nature</button>
+      </div>
       <div id="green-spaces-results"><div class="loading"><div class="spinner"></div><br>Finding green spaces…</div></div>
     </div>
     <div class="footer" style="margin-top:1.5rem"><div>Curated walks + community submissions · Reviews saved on your device</div></div>`;
@@ -1232,6 +1240,10 @@ function renderWalksFiltered(filter){
   document.getElementById('panel').innerHTML=renderWalks(filter);
   loadNearbyGreenSpaces();
 }
+
+let greenSpacesData=[];
+let activeGreenSort='distance';
+let activeGreenFilter='all';
 
 async function loadNearbyGreenSpaces(){
   const el=document.getElementById('green-spaces-results');
@@ -1243,7 +1255,7 @@ async function loadNearbyGreenSpaces(){
       const body={
         textQuery:`parks and nature reserves near ${currentLocation.displayName}`,
         locationBias:{circle:{center:{latitude:currentLocation.lat,longitude:currentLocation.lon},radius:5000}},
-        maxResultCount:6,
+        maxResultCount:8,
         languageCode:'en-GB',
       };
       const res=await fetch('https://places.googleapis.com/v1/places:searchText',{
@@ -1251,7 +1263,7 @@ async function loadNearbyGreenSpaces(){
         headers:{
           'Content-Type':'application/json',
           'X-Goog-Api-Key':PLACES_API_KEY,
-          'X-Goog-FieldMask':'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.googleMapsUri,places.photos,places.location',
+          'X-Goog-FieldMask':'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.googleMapsUri,places.photos,places.location,places.types',
         },
         body:JSON.stringify(body),
       });
@@ -1260,15 +1272,67 @@ async function loadNearbyGreenSpaces(){
       placesCache[cacheKey]=places;
     }
     if(!places.length){el.innerHTML='<p style="font-size:.8rem;color:var(--text-muted);padding:.5rem 0">No green spaces found nearby.</p>';return;}
-    const placesWithDist=places.map(p=>{
+    greenSpacesData=places.map(p=>{
       const distKm=p.location?haversine(currentLocation.lat,currentLocation.lon,p.location.latitude,p.location.longitude):null;
       const distStr=distKm?`${distKm<1?(distKm*1000).toFixed(0)+'m':distKm.toFixed(1)+'km'} away`:null;
       return{p,distKm:distKm??Infinity,distStr};
-    }).sort((a,b)=>a.distKm-b.distKm);
-    el.innerHTML=`<div class="place-list">${placesWithDist.map(({p,distStr})=>renderPlaceCard(p,{emoji:'🌳',distStr})).join('')}</div>`;
+    });
+    // Show controls
+    const ctrl=document.getElementById('green-spaces-controls');
+    if(ctrl)ctrl.style.display='flex';
+    renderGreenSpaces();
   }catch(e){
     el.innerHTML='<p style="font-size:.8rem;color:var(--text-muted);padding:.5rem 0">Couldn\'t load green spaces right now.</p>';
   }
+}
+
+function renderGreenSpaces(){
+  const el=document.getElementById('green-spaces-results');
+  if(!el||!greenSpacesData.length)return;
+  let filtered=greenSpacesData;
+  if(activeGreenFilter==='park'){
+    filtered=greenSpacesData.filter(({p})=>{
+      const types=(p.types||[]).join(' ').toLowerCase();
+      const name=(p.displayName?.text||'').toLowerCase();
+      return types.includes('park')||name.includes('park')||name.includes('garden');
+    });
+  } else if(activeGreenFilter==='nature'){
+    filtered=greenSpacesData.filter(({p})=>{
+      const types=(p.types||[]).join(' ').toLowerCase();
+      const name=(p.displayName?.text||'').toLowerCase();
+      return types.includes('nature')||types.includes('forest')||types.includes('reserve')||name.includes('nature')||name.includes('reserve')||name.includes('wood')||name.includes('common');
+    });
+  }
+  const sorted=[...filtered].sort((a,b)=>
+    activeGreenSort==='rating'
+      ?(b.p.rating||0)-(a.p.rating||0)
+      :a.distKm-b.distKm
+  );
+  if(!sorted.length){
+    el.innerHTML='<p style="font-size:.8rem;color:var(--text-muted);padding:.5rem 0">No results for this filter.</p>';
+    return;
+  }
+  el.innerHTML=`<div class="place-list">${sorted.map(({p,distStr})=>renderPlaceCard(p,{emoji:'🌳',distStr})).join('')}</div>`;
+  // Update control active states
+  document.querySelectorAll('#green-spaces-controls .filter-chip').forEach(btn=>{
+    const txt=btn.textContent.toLowerCase();
+    const isSortBtn=txt.includes('nearest')||txt.includes('rating');
+    const isFilterBtn=txt.includes('all')||txt.includes('parks')||txt.includes('nature');
+    if(isSortBtn)btn.classList.toggle('active',
+      (activeGreenSort==='distance'&&txt.includes('nearest'))||(activeGreenSort==='rating'&&txt.includes('rating')));
+    if(isFilterBtn)btn.classList.toggle('active',
+      (activeGreenFilter==='all'&&txt.includes('all'))||(activeGreenFilter==='park'&&txt.includes('parks'))||(activeGreenFilter==='nature'&&txt.includes('nature')));
+  });
+}
+
+function setGreenSort(sort){
+  activeGreenSort=sort;
+  renderGreenSpaces();
+}
+
+function setGreenFilter(filter){
+  activeGreenFilter=filter;
+  renderGreenSpaces();
 }
 function toggleSubmitWalkForm(){
   const el=document.getElementById('submit-walk-wrapper');
@@ -1531,7 +1595,7 @@ function showTab(tab){
   if(!weatherData)return;
   const p=document.getElementById('panel');
   if(tab==='weather')p.innerHTML=renderWeather(weatherData);
-  if(tab==='walks'){p.innerHTML=renderWalks();loadNearbyGreenSpaces();}
+  if(tab==='walks'){p.innerHTML=renderWalks();greenSpacesData=[];activeGreenSort='distance';activeGreenFilter='all';loadNearbyGreenSpaces();}
   if(tab==='places'){p.innerHTML=renderPlacesPanel();loadPlaces(activeCat);}
   saveSession();
 }
