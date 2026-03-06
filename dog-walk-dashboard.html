@@ -337,7 +337,7 @@
     .contrib-stat{text-align:center}
     .contrib-stat-num{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:300;color:var(--moss);display:block}
     body.night .contrib-stat-num{color:#7ab87a}
-    .contrib-stat-label{font-size:.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em}
+    .contrib-stat-label{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em}
     /* Progress bar */
     .progress-bar-wrap{margin-top:.6rem}
     .progress-bar-label{font-size:.75rem;color:var(--text-muted);margin-bottom:.3rem}
@@ -1051,9 +1051,9 @@ function renderWalks(activeFilter='all'){
         <button class="contrib-btn-secondary" onclick="document.querySelector('.item-card').classList.add('expanded');document.querySelector('.add-review-btn').click()">⭐ Rate a walk</button>
       </div>
       <div class="contrib-stats">
-        <div class="contrib-stat"><span class="contrib-stat-num">${nearby.length}</span><span class="contrib-stat-label">Walks nearby</span></div>
-        <div class="contrib-stat"><span class="contrib-stat-num">${communityWalks.length}</span><span class="contrib-stat-label">Added by users</span></div>
-        <div class="contrib-stat"><span class="contrib-stat-num">${totalReviews}</span><span class="contrib-stat-label">Reviews by users</span></div>
+        <div class="contrib-stat"><span class="contrib-stat-num">${nearby.length}</span><span class="contrib-stat-label">Curated walks nearby</span></div>
+        <div class="contrib-stat"><span class="contrib-stat-num">${communityWalks.length}</span><span class="contrib-stat-label">Walks added by users</span></div>
+        <div class="contrib-stat"><span class="contrib-stat-num">${totalReviews}</span><span class="contrib-stat-label">Walks reviewed by users</span></div>
       </div>
     </div>`;
 
