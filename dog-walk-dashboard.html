@@ -166,7 +166,10 @@
     .uv-bar-wrap{margin-top:.5rem}
     .uv-bar{height:5px;border-radius:10px;background:linear-gradient(90deg,#5cb85c,#f0ad4e,#d9534f);position:relative}
     .uv-marker{position:absolute;top:-4px;width:13px;height:13px;background:white;border:2px solid #555;border-radius:50%;transform:translateX(-50%)}
-    .section-intro{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1.2rem 1.5rem;margin-bottom:1rem;animation:fadeUp .7s ease .05s both}
+    .section-intro{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1.2rem 1.5rem;margin-bottom:1rem;animation:fadeUp .7s ease .05s both;overflow:hidden}
+    .filter-scroll-row{display:flex;gap:.4rem;overflow-x:auto;margin:0 -1.5rem;padding:.5rem 1.5rem;scrollbar-width:none;-ms-overflow-style:none}
+    .filter-scroll-row::-webkit-scrollbar{display:none}
+    .filter-divider{width:1px;background:var(--card-border);flex-shrink:0;margin:0 .2rem;align-self:stretch}
     .section-intro-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.25rem}
     .section-intro h3{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:400;color:var(--ink)}
     .section-intro p{font-size:.8rem;color:var(--text-muted);line-height:1.5;margin-bottom:.9rem}
@@ -1141,15 +1144,15 @@ function renderWalks(activeFilter='all'){
     ?[...filtered].sort((a,b)=>(getAvgRating(b.id)||0)-(getAvgRating(a.id)||0))
     :[...filtered].sort((a,b)=>parseFloat(a.distance)-parseFloat(b.distance));
 
-  const walkSortBar=`
-    <div class="sort-bar">
-      <span class="sort-label">Sort by</span>
-      <button class="sort-btn${activeWalksSort==='distance'?' active':''}" onclick="setWalksSort('distance','${activeFilter}')">📍 Nearest</button>
-      <button class="sort-btn${activeWalksSort==='rating'?' active':''}" onclick="setWalksSort('rating','${activeFilter}')">⭐ Rating</button>
-      <button class="sort-btn${activeWalksSort==='length'?' active':''}" onclick="setWalksSort('length','${activeFilter}')">🗺️ Shortest</button>
-    </div>`;
+  const walkSortBar='';// merged into filterBar below
 
-  const filterBar=`<div class="filter-bar">${filters.map(f=>`<button class="filter-chip${activeFilter===f.id?' active':''}" onclick="renderWalksFiltered('${f.id}')">${f.label}</button>`).join('')}</div>`;
+  const filterBar=`<div class="filter-scroll-row">
+    ${filters.map(f=>`<button class="filter-chip${activeFilter===f.id?' active':''}" onclick="renderWalksFiltered('${f.id}')">${f.label}</button>`).join('')}
+    <span class="filter-divider"></span>
+    <button class="sort-btn${activeWalksSort==='distance'?' active':''}" onclick="setWalksSort('distance','${activeFilter}')">📍 Nearest</button>
+    <button class="sort-btn${activeWalksSort==='rating'?' active':''}" onclick="setWalksSort('rating','${activeFilter}')">⭐ Rating</button>
+    <button class="sort-btn${activeWalksSort==='length'?' active':''}" onclick="setWalksSort('length','${activeFilter}')">🗺️ Shortest</button>
+  </div>`;
 
   // Progress framing
   const progressBar=nearby.length>0?`
@@ -1210,7 +1213,6 @@ function renderWalks(activeFilter='all'){
       </div>
       <p>${note} ${nearby.length} walk${nearby.length!==1?'s':''} within 3km of your location.</p>
       ${filterBar}
-      ${walkSortBar}
       ${filtered.length!==nearby.length?`<div class="walks-count">Showing ${filtered.length} of ${nearby.length} walks</div>`:''}
       ${progressBar}
     </div>
