@@ -764,7 +764,10 @@ function getBestWalkWindow(d){
     feels:Math.round(d.hourlyFeels[i]),
     rain:d.hourlyRainProb[i],
     wmo:d.hourlyWmo[i],
-  })).filter(h=>h.time>=now&&h.time<=new Date(now.getTime()+24*60*60*1000));
+  })).filter(h=>{
+    const hr=h.time.getHours();
+    return h.time>=now&&h.time<=new Date(now.getTime()+24*60*60*1000)&&hr>=6&&hr<=22;
+  });
 
   // Score each hour (lower = better)
   const scored=hours.map(h=>{
