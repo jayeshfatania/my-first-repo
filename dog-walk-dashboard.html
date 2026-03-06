@@ -578,6 +578,11 @@
       <div class="nav-item-label">Places</div>
       <div class="nav-dot"></div>
     </div>
+    <div class="nav-item" id="navProfile" onclick="showProfile()">
+      <div class="nav-item-icon">👤</div>
+      <div class="nav-item-label">Profile</div>
+      <div class="nav-dot"></div>
+    </div>
   </nav>
 <script>
 // ── WALKS DATABASE ────────────────────────────────────────────────────────────
@@ -1512,7 +1517,7 @@ function switchCat(cat){
 function showTab(tab){
   currentTab=tab;
   window.scrollTo(0,0);
-  document.querySelectorAll('.nav-item').forEach((t,i)=>t.classList.toggle('active',['weather','walks','places'][i]===tab));
+  document.querySelectorAll('.nav-item').forEach((t,i)=>t.classList.toggle('active',['weather','walks','places','profile'][i]===tab));
   ['weather','walks','places'].forEach(t=>{
     const tn=document.getElementById('tn'+t.charAt(0).toUpperCase()+t.slice(1));
     const sb=document.getElementById('sb'+t.charAt(0).toUpperCase()+t.slice(1));
@@ -1606,9 +1611,8 @@ function showSplash(){
 }
 function showProfile(){
   const p=document.getElementById('panel');
-  // Deactivate all nav items
-  document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));
   window.scrollTo(0,0);
+  document.querySelectorAll('.nav-item').forEach((t,i)=>t.classList.toggle('active',['weather','walks','places','profile'][i]==='profile'));
   p.innerHTML=renderProfilePage();
 }
 
@@ -1657,7 +1661,7 @@ function renderProfilePage(){
       </div>
       <div class="profile-stats-row">
         <div class="profile-stat"><span class="profile-stat-num">${favWalks.length}</span><span class="profile-stat-label">Favourites</span></div>
-        <div class="profile-stat"><span class="profile-stat-num">${totalReviews}</span><span class="profile-stat-label">Reviews left</span></div>
+        <div class="profile-stat"><span class="profile-stat-num">${totalReviews}</span><span class="profile-stat-label">Reviews added</span></div>
         <div class="profile-stat"><span class="profile-stat-num">${Object.keys(reviews).length}</span><span class="profile-stat-label">Walks rated</span></div>
       </div>
       <div class="profile-section">
