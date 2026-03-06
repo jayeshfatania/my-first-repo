@@ -319,9 +319,10 @@
     body.night .success-msg{color:#7ab87a}
     .community-badge{display:inline-block;font-size:.68rem;padding:.12rem .5rem;border-radius:20px;background:rgba(232,168,56,.2);color:#a0680a;font-weight:500;margin-left:.4rem}
     body.night .community-badge{background:rgba(232,168,56,.15);color:var(--amber)}
-    .curated-badge{display:inline-block;font-size:.62rem;padding:.12rem .5rem;border-radius:20px;background:rgba(90,122,82,.12);color:var(--moss);font-weight:500;white-space:nowrap;margin-top:.3rem}
-    body.night .curated-badge{background:rgba(122,184,122,.1);color:#7ab87a}
-    .item-tap-hint{font-size:.68rem;color:var(--text-muted);margin-top:.25rem;font-style:italic}
+    .curated-badge{display:inline-block;font-size:.68rem;padding:.18rem .6rem;border-radius:20px;background:rgba(90,122,82,.18);color:var(--moss);font-weight:600;white-space:nowrap;margin-top:.3rem;border:1px solid rgba(90,122,82,.25)}
+    body.night .curated-badge{background:rgba(122,184,122,.15);color:#7ab87a;border-color:rgba(122,184,122,.25)}
+    .item-tap-hint{font-size:.68rem;color:var(--moss);margin-top:.3rem;font-weight:500;text-align:right}
+    body.night .item-tap-hint{color:#7ab87a}
     /* Contribution banner */
     .contrib-banner{background:linear-gradient(135deg,rgba(90,122,82,.15),rgba(90,122,82,.05));border:1px solid rgba(90,122,82,.25);border-radius:20px;padding:1.4rem 1.6rem;margin:1rem 0;animation:fadeUp .7s ease both}
     body.night .contrib-banner{background:linear-gradient(135deg,rgba(122,184,122,.1),rgba(122,184,122,.03));border-color:rgba(122,184,122,.2)}
@@ -964,7 +965,6 @@ function renderWalkCard(w,distStr,showWeatherNote){
           <span class="item-distance-badge">📍 ${distStr}</span>
           ${w.tags.slice(0,2).map(t=>`<span class="item-tag">${t}</span>`).join('')}
         </div>
-        <div class="item-tap-hint">Tap for more info</div>
       </div>
       <div class="item-compact-right">
         <div class="item-compact-stats">
@@ -974,7 +974,7 @@ function renderWalkCard(w,distStr,showWeatherNote){
         </div>
         ${avgCompact}
         ${curatedTag}
-        <span class="item-expand-icon">▼</span>
+        <div class="item-tap-hint">Tap for more ▼</div>
       </div>
     </div>
     <div class="item-card-detail">
