@@ -385,17 +385,17 @@
     .map-popup-btn{background:#5a7a52;color:#fff;border:none;border-radius:8px;padding:.3rem .7rem;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
     .section-intro-top{display:flex;align-items:center;gap:.5rem}
     .onboarding-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .3s ease}
-    .onboarding-modal{background:var(--card-bg);border:1px solid var(--card-border);border-radius:24px;padding:2rem 1.75rem 1.75rem;max-width:360px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.25);animation:fadeUp .4s ease both}
+    .onboarding-modal{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:24px;padding:2rem 1.75rem 1.75rem;max-width:360px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35);animation:fadeUp .4s ease both}
     .onboarding-logo{font-size:2.2rem;margin-bottom:.5rem}
-    .onboarding-title{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:var(--ink);margin-bottom:.3rem}
-    .onboarding-sub{font-size:.82rem;color:var(--text-muted);margin-bottom:1.5rem;line-height:1.5}
+    .onboarding-title{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:#1a2a1a;margin-bottom:.3rem}
+    .onboarding-sub{font-size:.82rem;color:#4a5a4a;margin-bottom:1.5rem;line-height:1.5}
     .onboarding-features{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1.6rem;text-align:left}
     .onboarding-feat{display:flex;align-items:flex-start;gap:.75rem;background:rgba(90,122,82,.07);border:1px solid rgba(90,122,82,.15);border-radius:14px;padding:.75rem .9rem}
     body.night .onboarding-feat{background:rgba(122,184,122,.06);border-color:rgba(122,184,122,.15)}
     .onboarding-feat-icon{font-size:1.3rem;flex-shrink:0;line-height:1.3}
     .onboarding-feat-body{}
-    .onboarding-feat-title{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:.15rem}
-    .onboarding-feat-desc{font-size:.75rem;color:var(--text-muted);line-height:1.45}
+    .onboarding-feat-title{font-size:.82rem;font-weight:600;color:#1a2a1a;margin-bottom:.15rem}
+    .onboarding-feat-desc{font-size:.75rem;color:#4a5a4a;line-height:1.45}
     .onboarding-cta{width:100%;padding:.85rem;background:var(--moss);color:#fff;border:none;border-radius:14px;font-size:.9rem;font-weight:600;cursor:pointer;letter-spacing:.01em}
     .onboarding-cta:active{opacity:.85}
     /* ── PWA INSTALL CARD (inline in splash) ───────────────────── */
@@ -2416,7 +2416,7 @@ function maybeShowOnboarding(){
           <div class="onboarding-feat-icon">🌤️</div>
           <div class="onboarding-feat-body">
             <div class="onboarding-feat-title">Dog-safe weather</div>
-            <div class="onboarding-feat-desc">Real-time forecasts with paw heat, humidity and UV warnings built in.</div>
+            <div class="onboarding-feat-desc">Checks rain, paw heat and humidity - then recommends the best time to head out today.</div>
           </div>
         </div>
         <div class="onboarding-feat">
