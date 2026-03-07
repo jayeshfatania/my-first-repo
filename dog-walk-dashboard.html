@@ -1359,7 +1359,14 @@ function renderWalks(activeFilter='all'){
       <button class="view-toggle-btn${walksView==='map'?' active':''}" onclick="toggleWalksView('map')">🗺 Map</button>
     </div>`;
 
-  const mapView=`<div class="map-container" id="walksMap"></div>`;
+  const mapLayerBar=`
+    <div id="walksMapLayerBar" style="display:flex;gap:.4rem;margin-bottom:.6rem;flex-wrap:wrap">
+      <button class="wml-btn filter-chip${walksMapLayer==='both'?' active':''}" data-layer="both" onclick="setWalksMapLayer('both')">🗺 All</button>
+      <button class="wml-btn filter-chip${walksMapLayer==='walks'?' active':''}" data-layer="walks" onclick="setWalksMapLayer('walks')">🐾 Walks only</button>
+      <button class="wml-btn filter-chip${walksMapLayer==='green'?' active':''}" data-layer="green" onclick="setWalksMapLayer('green')">🌳 Green spaces only</button>
+    </div>`;
+
+  const mapView=`${mapLayerBar}<div class="map-container" id="walksMap"></div>`;
 
   return`
     <div class="section-intro">
@@ -1636,11 +1643,11 @@ function renderPlacesPanel(){
     <div class="place-cat-bar">${catBtns}</div>
     ${placesView==='list'?sortBar:''}
     ${placesView==='list'?tipBanner:''}
-    ${placesView==='map'?`<div class="map-container" id="placesMap"></div>`:`<div id="places-results"><div class="loading"><div class="spinner"></div><br>Finding places nearby…</div></div>`}
+    ${placesView==='map'?`<div class="map-container" id="placesMap"></div><p style="font-size:.72rem;color:var(--text-muted);text-align:center;margin-bottom:.5rem">Tap a pin to see details · Switch category above to change pins</p>`:`<div id="places-results"><div class="loading"><div class="spinner"></div><br>Finding places nearby…</div></div>`}
     <div class="footer" style="margin-top:1.5rem"><div>Powered by Google Places · Always call ahead to confirm dogs are welcome</div></div>`;
 }
 
-function initWalksMap(){
+async function initWalksMap(){
   const el=document.getElementById('walksMap');
   if(!el)return;
   if(walksMapInstance){walksMapInstance.remove();walksMapInstance=null;}
@@ -1649,37 +1656,84 @@ function initWalksMap(){
   walksMapInstance=map;
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(map);
 
-  // Current location marker
+  // Layer toggle bar
+  const layerBar=document.getElementById('walksMapLayerBar');
+  if(layerBar){
+    layerBar.querySelectorAll('.wml-btn').forEach(b=>b.classList.toggle('active',b.dataset.layer===walksMapLayer));
+  }
+
+  // You are here
   const youIcon=L.divIcon({html:'<div style="width:14px;height:14px;background:#5a7a52;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>',iconSize:[14,14],iconAnchor:[7,7],className:''});
   L.marker([lat,lon],{icon:youIcon}).addTo(map).bindPopup('<div class="map-popup-name">📍 You are here</div>');
 
-  // Walk markers
-  const communityWalks=getCommunityWalks().map(w=>({...w,community:true}));
-  const allWalks=[...WALKS_DB,...communityWalks];
-  const nearby=allWalks.map(w=>({...w,dist:haversine(lat,lon,w.lat,w.lon)})).filter(w=>w.dist<=3);
+  const bounds=[[lat,lon]];
 
-  nearby.forEach(w=>{
-    const avg=getAvgRating(w.id);
-    const distStr=w.dist<1?`${Math.round(w.dist*1000)}m away`:`${w.dist.toFixed(1)}km away`;
-    const icon=L.divIcon({
-      html:`<div style="background:#5a7a52;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:1rem;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25)">${w.icon}</div>`,
-      iconSize:[32,32],iconAnchor:[16,16],className:''
+  // Walk pins
+  if(walksMapLayer==='walks'||walksMapLayer==='both'){
+    const communityWalks=getCommunityWalks().map(w=>({...w,community:true}));
+    const allWalks=[...WALKS_DB,...communityWalks];
+    const nearby=allWalks.map(w=>({...w,dist:haversine(lat,lon,w.lat,w.lon)})).filter(w=>w.dist<=3);
+    nearby.forEach(w=>{
+      const avg=getAvgRating(w.id);
+      const distStr=w.dist<1?`${Math.round(w.dist*1000)}m away`:`${w.dist.toFixed(1)}km away`;
+      const icon=L.divIcon({
+        html:`<div style="background:#5a7a52;color:#fff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25)">${w.icon}</div>`,
+        iconSize:[34,34],iconAnchor:[17,17],className:''
+      });
+      bounds.push([w.lat,w.lon]);
+      L.marker([w.lat,w.lon],{icon})
+        .addTo(map)
+        .bindPopup(`
+          <div class="map-popup-name">${w.icon} ${w.name}</div>
+          <div class="map-popup-meta">${distStr} · ${w.distance} · ${w.difficulty}</div>
+          ${avg?`<div class="map-popup-meta">★ ${avg}/5</div>`:''}
+          <button class="map-popup-btn" onclick="toggleWalksView('list');setTimeout(()=>{const el=document.getElementById('card-${w.id}');if(el){el.scrollIntoView({behavior:'smooth'});el.classList.add('expanded');}},300)">View details</button>
+        `);
     });
-    L.marker([w.lat,w.lon],{icon})
-      .addTo(map)
-      .bindPopup(`
-        <div class="map-popup-name">${w.icon} ${w.name}</div>
-        <div class="map-popup-meta">${distStr} · ${w.distance} · ${w.difficulty}</div>
-        ${avg?`<div class="map-popup-meta">★ ${avg}/5</div>`:''}
-        <button class="map-popup-btn" onclick="toggleWalksView('list');setTimeout(()=>{const el=document.getElementById('card-${w.id}');if(el){el.scrollIntoView({behavior:'smooth'});el.classList.add('expanded');}},300)">View details</button>
-      `);
-  });
-
-  // Fit map to show all markers
-  if(nearby.length>0){
-    const bounds=L.latLngBounds([[lat,lon],...nearby.map(w=>[w.lat,w.lon])]);
-    map.fitBounds(bounds,{padding:[30,30]});
   }
+
+  // Green spaces pins
+  if(walksMapLayer==='green'||walksMapLayer==='both'){
+    const cacheKey=`greenspaces-${lat}-${lon}`;
+    let greenPlaces=placesCache[cacheKey];
+    if(!greenPlaces){
+      try{
+        const body={
+          textQuery:`parks and nature reserves near ${currentLocation.displayName}`,
+          locationBias:{circle:{center:{latitude:lat,longitude:lon},radius:5000}},
+          maxResultCount:8,languageCode:'en-GB',
+        };
+        const res=await fetch('https://places.googleapis.com/v1/places:searchText',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','X-Goog-Api-Key':PLACES_API_KEY,'X-Goog-FieldMask':'places.displayName,places.formattedAddress,places.rating,places.googleMapsUri,places.location'},
+          body:JSON.stringify(body),
+        });
+        const data=await res.json();
+        greenPlaces=data.places||[];
+        placesCache[cacheKey]=greenPlaces;
+      }catch(e){greenPlaces=[];}
+    }
+    greenPlaces.forEach(p=>{
+      if(!p.location)return;
+      const plat=p.location.latitude,plon=p.location.longitude;
+      bounds.push([plat,plon]);
+      const icon=L.divIcon({
+        html:`<div style="background:#3a7a3a;color:#fff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25)">🌳</div>`,
+        iconSize:[34,34],iconAnchor:[17,17],className:''
+      });
+      const rating=p.rating?`★ ${p.rating}`:'';
+      const addr=p.formattedAddress?p.formattedAddress.split(',')[0]:'';
+      L.marker([plat,plon],{icon})
+        .addTo(map)
+        .bindPopup(`
+          <div class="map-popup-name">🌳 ${p.displayName?.text||'Green space'}</div>
+          <div class="map-popup-meta">${[addr,rating].filter(Boolean).join(' · ')}</div>
+          <a href="${p.googleMapsUri||`https://www.google.com/maps/search/${encodeURIComponent(p.displayName?.text||'')}`}" target="_blank" style="display:inline-block;margin-top:.3rem;font-size:.75rem;color:#5a7a52;font-weight:600">Open in Maps →</a>
+        `);
+    });
+  }
+
+  if(bounds.length>1)map.fitBounds(L.latLngBounds(bounds),{padding:[30,30]});
 }
 
 function setWalksSort(sort,filter){
@@ -1859,15 +1913,11 @@ function initPlacesMap(){
   placesMapInstance=map;
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(map);
 
-  // Current location marker
   const youIcon=L.divIcon({html:'<div style="width:14px;height:14px;background:#5a7a52;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>',iconSize:[14,14],iconAnchor:[7,7],className:''});
   L.marker([lat,lon],{icon:youIcon}).addTo(map).bindPopup('<div class="map-popup-name">📍 You are here</div>');
 
-  // Fetch places for current category and plot them
   const cfg=CAT_CONFIG[activeCat];
-  const cacheKey=`${activeCat}_${lat.toFixed(3)}_${lon.toFixed(3)}`;
-  const cached=placesCache[cacheKey];
-  const catColors={'cafe':'#e8a838','pub':'#8b5e3c','beach':'#4a90d9','petshop':'#7b5ea7','vet':'#d94a4a'};
+  const catColors={cafe:'#e8a838',pub:'#8b5e3c',beach:'#4a90d9',petshop:'#7b5ea7',vet:'#d94a4a'};
   const color=catColors[activeCat]||'#5a7a52';
 
   function plotPlaces(places){
@@ -1877,15 +1927,15 @@ function initPlacesMap(){
       const plat=p.location.latitude,plon=p.location.longitude;
       bounds.push([plat,plon]);
       const icon=L.divIcon({
-        html:`<div style="background:${color};color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:1rem;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25)">${cfg.emoji}</div>`,
-        iconSize:[32,32],iconAnchor:[16,16],className:''
+        html:`<div style="background:${color};color:#fff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)">${cfg.emoji}</div>`,
+        iconSize:[34,34],iconAnchor:[17,17],className:''
       });
-      const rating=p.rating?`★ ${p.rating}`:'' ;
+      const rating=p.rating?`★ ${p.rating}`:'';
       const addr=p.formattedAddress?p.formattedAddress.split(',')[0]:'';
       L.marker([plat,plon],{icon})
         .addTo(map)
         .bindPopup(`
-          <div class="map-popup-name">${cfg.emoji} ${p.displayName?.text||p.name||'Place'}</div>
+          <div class="map-popup-name">${cfg.emoji} ${p.displayName?.text||'Place'}</div>
           <div class="map-popup-meta">${[addr,rating].filter(Boolean).join(' · ')}</div>
           <a href="${p.googleMapsUri||`https://www.google.com/maps/search/${encodeURIComponent(p.displayName?.text||'')}`}" target="_blank" style="display:inline-block;margin-top:.3rem;font-size:.75rem;color:#5a7a52;font-weight:600">Open in Maps →</a>
         `);
@@ -1893,14 +1943,27 @@ function initPlacesMap(){
     if(bounds.length>1)map.fitBounds(L.latLngBounds(bounds),{padding:[30,30]});
   }
 
-  if(cached){
-    plotPlaces(cached);
+  // Use same cache key format as fetchPlaces
+  const cacheKey=`${activeCat}-${lat}-${lon}`;
+  if(placesCache[cacheKey]){
+    plotPlaces(placesCache[cacheKey]);
   } else {
-    loadPlaces(activeCat).then(()=>{
-      const fresh=placesCache[cacheKey];
-      if(fresh)plotPlaces(fresh);
-    });
+    fetchPlaces(activeCat).then(places=>{
+      if(places&&places.length)plotPlaces(places);
+    }).catch(()=>{});
   }
+}
+
+let walksMapLayer='both'; // 'walks', 'green', 'both'
+
+function setWalksMapLayer(layer){
+  walksMapLayer=layer;
+  // Re-render the toggle UI and reinit the map
+  const bar=document.getElementById('walksMapLayerBar');
+  if(bar){
+    bar.querySelectorAll('.wml-btn').forEach(b=>b.classList.toggle('active',b.dataset.layer===layer));
+  }
+  initWalksMap();
 }
 
 // ── TAB & NAVIGATION ──────────────────────────────────────────────────────────
