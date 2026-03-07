@@ -10,6 +10,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Sniffout">
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--amber:#e8a838;--moss:#5a7a52;--ink:#1a2a1a;--card-bg:rgba(255,255,255,0.22);--card-border:rgba(255,255,255,0.4);--text-muted:rgba(26,42,26,0.55)}
@@ -369,7 +371,19 @@
     /* first to review nudge */
     .first-review-nudge{font-size:.78rem;color:var(--moss);font-style:italic;margin-bottom:.5rem;font-weight:500}
     body.night .first-review-nudge{color:#7ab87a}
-    /* ── ONBOARDING OVERLAY ─────────────────────────────────────── */
+    /* ── MAP VIEW ───────────────────────────────────────────────── */
+    .view-toggle{display:flex;gap:.4rem;background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:.25rem;margin-left:auto;flex-shrink:0}
+    .view-toggle-btn{background:none;border:none;padding:.3rem .7rem;border-radius:9px;font-size:.78rem;font-weight:500;color:var(--text-muted);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+    .view-toggle-btn.active{background:var(--moss);color:#fff}
+    .map-container{width:100%;height:420px;border-radius:16px;overflow:hidden;margin-bottom:1rem;border:1px solid var(--card-border);position:relative}
+    @media(max-width:767px){.map-container{height:360px}}
+    .map-container .leaflet-container{border-radius:16px}
+    .leaflet-popup-content-wrapper{border-radius:12px;font-family:'DM Sans',sans-serif;font-size:.82rem;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+    .leaflet-popup-content{margin:.6rem .8rem;line-height:1.5}
+    .map-popup-name{font-weight:600;color:#1a2a1a;margin-bottom:.2rem}
+    .map-popup-meta{color:#666;font-size:.75rem;margin-bottom:.4rem}
+    .map-popup-btn{background:#5a7a52;color:#fff;border:none;border-radius:8px;padding:.3rem .7rem;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
+    .section-intro-top{display:flex;align-items:center;gap:.5rem}
     .onboarding-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .3s ease}
     .onboarding-modal{background:var(--card-bg);border:1px solid var(--card-border);border-radius:24px;padding:2rem 1.75rem 1.75rem;max-width:360px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.25);animation:fadeUp .4s ease both}
     .onboarding-logo{font-size:2.2rem;margin-bottom:.5rem}
@@ -1212,7 +1226,25 @@ function toggleWalkCard(id){
 }
 
 let activeWalksSort='distance';
-let walksDistDir='asc'; // asc = nearest first, desc = furthest first
+let walksDistDir='asc';
+let walksView='list'; // 'list' or 'map'
+let placesView='list';
+let walksMapInstance=null;
+let placesMapInstance=null;
+
+function toggleWalksView(view){
+  walksView=view;
+  document.getElementById('panel').innerHTML=renderWalks(currentWalksFilter||'all');
+  if(view==='map')initWalksMap();
+  else loadNearbyGreenSpaces();
+}
+function togglePlacesView(view){
+  placesView=view;
+  document.getElementById('panel').innerHTML=renderPlacesPanel();
+  if(view==='map')initPlacesMap();
+  else loadPlaces(activeCat);
+}
+let currentWalksFilter='all'; // asc = nearest first, desc = furthest first
 
 function renderWalks(activeFilter='all'){
   const rain=[51,53,55,61,63,65,80,81,82,95,99].includes(weatherData.weatherCode);
@@ -1321,10 +1353,19 @@ function renderWalks(activeFilter='all'){
     walksHtml=`<div class="item-list">${cards.join('')}</div>`;
   }
 
+  const viewToggle=`
+    <div class="view-toggle">
+      <button class="view-toggle-btn${walksView==='list'?' active':''}" onclick="toggleWalksView('list')">≡ List</button>
+      <button class="view-toggle-btn${walksView==='map'?' active':''}" onclick="toggleWalksView('map')">🗺 Map</button>
+    </div>`;
+
+  const mapView=`<div class="map-container" id="walksMap"></div>`;
+
   return`
     <div class="section-intro">
       <div class="section-intro-top">
         <h3>Walks near ${currentLocation.displayName}</h3>
+        ${viewToggle}
       </div>
       <p>${note} ${nearby.length} walk${nearby.length!==1?'s':''} within 3km of your location.</p>
       ${filterBar}
@@ -1332,9 +1373,8 @@ function renderWalks(activeFilter='all'){
       ${progressBar}
     </div>
     <div id="submit-walk-wrapper" style="display:none;margin-bottom:1rem">${renderSubmitWalkForm()}</div>
-    ${nearby.length<=2?contribBanner:''}
-    ${walksHtml}
-    <div class="green-spaces-section">
+    ${walksView==='map'?mapView:`${nearby.length<=2?contribBanner:''}${walksHtml}`}
+    ${walksView==='list'?`<div class="green-spaces-section">
       <div class="green-spaces-header">
         <span class="green-spaces-title">🌳 More nearby green spaces</span>
         <span class="green-spaces-sub">Powered by Google Places</span>
@@ -1348,12 +1388,14 @@ function renderWalks(activeFilter='all'){
         <button class="filter-chip" onclick="setGreenFilter('nature')">🌿 Nature</button>
       </div>
       <div id="green-spaces-results"><div class="loading"><div class="spinner"></div><br>Finding green spaces…</div></div>
-    </div>
+    </div>`:''}
     <div class="footer" style="margin-top:1.5rem"><div>Curated walks + community submissions · Reviews saved on your device</div></div>`;
 }
 function renderWalksFiltered(filter){
+  currentWalksFilter=filter;
   document.getElementById('panel').innerHTML=renderWalks(filter);
-  loadNearbyGreenSpaces();
+  if(walksView==='map')initWalksMap();
+  else loadNearbyGreenSpaces();
 }
 
 let greenSpacesData=[];
@@ -1473,6 +1515,14 @@ function renderSubmitWalkForm(){
     <div class="sniffout-pick-explainer">🐾 <strong>Added by a Sniffout user</strong> - walks with this badge have been submitted by fellow dog owners in the Sniffout community. Submit yours below!</div>
     <div class="form-field"><label class="form-label">Your name or username <span style="color:var(--text-muted);font-weight:400">(optional)</span></label><input class="form-input" id="sw-username" placeholder="e.g. DogDad_Kingston" value="${savedUsername}" oninput="if(this.value.trim())saveUsername(this.value.trim())"/></div>
     <div class="form-field"><label class="form-label">Walk name</label><input class="form-input" id="sw-name" placeholder="e.g. Riverside path through Molesey"/></div>
+    <div class="form-field">
+      <label class="form-label">Starting point <span style="color:var(--text-muted);font-weight:400">(postcode or place name)</span></label>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <input class="form-input" id="sw-location" placeholder="e.g. KT2 5FU or Canbury Gardens" style="flex:1"/>
+        <button type="button" onclick="useCurrentLocationForWalk()" style="background:var(--moss);color:#fff;border:none;border-radius:10px;padding:.45rem .7rem;font-size:.78rem;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif">📍 Use mine</button>
+      </div>
+      <div style="font-size:.72rem;color:var(--text-muted);margin-top:.3rem">This helps pin your walk on the map</div>
+    </div>
     <div class="form-field"><label class="form-label">Description</label><input class="form-input" id="sw-desc" placeholder="What makes this walk special?"/></div>
     <div class="form-row">
       <div class="form-field"><label class="form-label">Distance</label><input class="form-input" id="sw-dist" placeholder="e.g. 4km"/></div>
@@ -1489,19 +1539,36 @@ function renderSubmitWalkForm(){
   </div>`;
 }
 
-function submitWalk(){
+function useCurrentLocationForWalk(){
+  const el=document.getElementById('sw-location');
+  if(el)el.value=currentLocation.displayName;
+}
+
+async function submitWalk(){
   const name=document.getElementById('sw-name').value.trim();
   const desc=document.getElementById('sw-desc').value.trim();
   if(!name||!desc){alert('Please add at least a name and description!');return}
   const usernameField=document.getElementById('sw-username');
   const username=(usernameField&&usernameField.value.trim())||getUsername()||null;
   if(username)saveUsername(username);
+
+  const locationInput=(document.getElementById('sw-location').value||'').trim();
+  let walkLat=currentLocation.lat,walkLon=currentLocation.lon;
+
+  if(locationInput){
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(locationInput)}`);
+      const data=await r.json();
+      if(data&&data.length>0){walkLat=parseFloat(data[0].lat);walkLon=parseFloat(data[0].lon);}
+    }catch(e){console.warn('Geocode failed, using search location',e);}
+  }
+
   const walks=getCommunityWalks();
   const id='community-'+Date.now();
   walks.push({
     id,name,desc,icon:'🐕',
     area:currentLocation.displayName,
-    lat:currentLocation.lat,lon:currentLocation.lon,
+    lat:walkLat,lon:walkLon,
     distance:document.getElementById('sw-dist').value||'Unknown',
     duration:document.getElementById('sw-dur').value||'Unknown',
     difficulty:document.getElementById('sw-diff').value,
@@ -1512,7 +1579,7 @@ function submitWalk(){
     submittedBy:username,
   });
   saveCommunityWalks(walks);
-  ['sw-name','sw-desc','sw-dist','sw-dur','sw-terrain'].forEach(id=>{document.getElementById(id).value=''});
+  ['sw-name','sw-desc','sw-dist','sw-dur','sw-terrain','sw-location'].forEach(id=>{document.getElementById(id).value=''});
   document.getElementById('sw-success').style.display='block';
   setTimeout(()=>showTab('walks'),1500);
 }
@@ -1552,18 +1619,67 @@ function renderPlacesPanel(){
       <button class="sort-btn${activePlacesSort==='rating'?' active':''}" onclick="setPlacesSort('rating')">⭐ Rating</button>
     </div>`;
 
+  const placesViewToggle=`
+    <div class="view-toggle">
+      <button class="view-toggle-btn${placesView==='list'?' active':''}" onclick="togglePlacesView('list')">≡ List</button>
+      <button class="view-toggle-btn${placesView==='map'?' active':''}" onclick="togglePlacesView('map')">🗺 Map</button>
+    </div>`;
+
   return`
     <div class="section-intro">
       <div class="section-intro-top">
         <h3>Dog-friendly places near ${currentLocation.displayName}</h3>
+        ${placesViewToggle}
       </div>
       <p>Dog-friendly amenities near you - places to stop before, during or after your walk.</p>
     </div>
     <div class="place-cat-bar">${catBtns}</div>
-    ${sortBar}
-    ${tipBanner}
-    <div id="places-results"><div class="loading"><div class="spinner"></div><br>Finding places nearby…</div></div>
+    ${placesView==='list'?sortBar:''}
+    ${placesView==='list'?tipBanner:''}
+    ${placesView==='map'?`<div class="map-container" id="placesMap"></div>`:`<div id="places-results"><div class="loading"><div class="spinner"></div><br>Finding places nearby…</div></div>`}
     <div class="footer" style="margin-top:1.5rem"><div>Powered by Google Places · Always call ahead to confirm dogs are welcome</div></div>`;
+}
+
+function initWalksMap(){
+  const el=document.getElementById('walksMap');
+  if(!el)return;
+  if(walksMapInstance){walksMapInstance.remove();walksMapInstance=null;}
+  const lat=currentLocation.lat,lon=currentLocation.lon;
+  const map=L.map('walksMap').setView([lat,lon],14);
+  walksMapInstance=map;
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(map);
+
+  // Current location marker
+  const youIcon=L.divIcon({html:'<div style="width:14px;height:14px;background:#5a7a52;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>',iconSize:[14,14],iconAnchor:[7,7],className:''});
+  L.marker([lat,lon],{icon:youIcon}).addTo(map).bindPopup('<div class="map-popup-name">📍 You are here</div>');
+
+  // Walk markers
+  const communityWalks=getCommunityWalks().map(w=>({...w,community:true}));
+  const allWalks=[...WALKS_DB,...communityWalks];
+  const nearby=allWalks.map(w=>({...w,dist:haversine(lat,lon,w.lat,w.lon)})).filter(w=>w.dist<=3);
+
+  nearby.forEach(w=>{
+    const avg=getAvgRating(w.id);
+    const distStr=w.dist<1?`${Math.round(w.dist*1000)}m away`:`${w.dist.toFixed(1)}km away`;
+    const icon=L.divIcon({
+      html:`<div style="background:#5a7a52;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:1rem;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25)">${w.icon}</div>`,
+      iconSize:[32,32],iconAnchor:[16,16],className:''
+    });
+    L.marker([w.lat,w.lon],{icon})
+      .addTo(map)
+      .bindPopup(`
+        <div class="map-popup-name">${w.icon} ${w.name}</div>
+        <div class="map-popup-meta">${distStr} · ${w.distance} · ${w.difficulty}</div>
+        ${avg?`<div class="map-popup-meta">★ ${avg}/5</div>`:''}
+        <button class="map-popup-btn" onclick="toggleWalksView('list');setTimeout(()=>{const el=document.getElementById('card-${w.id}');if(el){el.scrollIntoView({behavior:'smooth'});el.classList.add('expanded');}},300)">View details</button>
+      `);
+  });
+
+  // Fit map to show all markers
+  if(nearby.length>0){
+    const bounds=L.latLngBounds([[lat,lon],...nearby.map(w=>[w.lat,w.lon])]);
+    map.fitBounds(bounds,{padding:[30,30]});
+  }
 }
 
 function setWalksSort(sort,filter){
@@ -1729,7 +1845,61 @@ function switchCat(cat){
   activeCat=cat;
   if(currentTab==='places'){
     document.getElementById('panel').innerHTML=renderPlacesPanel();
-    loadPlaces(cat);
+    if(placesView==='list')loadPlaces(cat);
+    else initPlacesMap();
+  }
+}
+
+function initPlacesMap(){
+  const el=document.getElementById('placesMap');
+  if(!el)return;
+  if(placesMapInstance){placesMapInstance.remove();placesMapInstance=null;}
+  const lat=currentLocation.lat,lon=currentLocation.lon;
+  const map=L.map('placesMap').setView([lat,lon],15);
+  placesMapInstance=map;
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(map);
+
+  // Current location marker
+  const youIcon=L.divIcon({html:'<div style="width:14px;height:14px;background:#5a7a52;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>',iconSize:[14,14],iconAnchor:[7,7],className:''});
+  L.marker([lat,lon],{icon:youIcon}).addTo(map).bindPopup('<div class="map-popup-name">📍 You are here</div>');
+
+  // Fetch places for current category and plot them
+  const cfg=CAT_CONFIG[activeCat];
+  const cacheKey=`${activeCat}_${lat.toFixed(3)}_${lon.toFixed(3)}`;
+  const cached=placesCache[cacheKey];
+  const catColors={'cafe':'#e8a838','pub':'#8b5e3c','beach':'#4a90d9','petshop':'#7b5ea7','vet':'#d94a4a'};
+  const color=catColors[activeCat]||'#5a7a52';
+
+  function plotPlaces(places){
+    const bounds=[[lat,lon]];
+    places.slice(0,12).forEach(p=>{
+      if(!p.location)return;
+      const plat=p.location.latitude,plon=p.location.longitude;
+      bounds.push([plat,plon]);
+      const icon=L.divIcon({
+        html:`<div style="background:${color};color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:1rem;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25)">${cfg.emoji}</div>`,
+        iconSize:[32,32],iconAnchor:[16,16],className:''
+      });
+      const rating=p.rating?`★ ${p.rating}`:'' ;
+      const addr=p.formattedAddress?p.formattedAddress.split(',')[0]:'';
+      L.marker([plat,plon],{icon})
+        .addTo(map)
+        .bindPopup(`
+          <div class="map-popup-name">${cfg.emoji} ${p.displayName?.text||p.name||'Place'}</div>
+          <div class="map-popup-meta">${[addr,rating].filter(Boolean).join(' · ')}</div>
+          <a href="${p.googleMapsUri||`https://www.google.com/maps/search/${encodeURIComponent(p.displayName?.text||'')}`}" target="_blank" style="display:inline-block;margin-top:.3rem;font-size:.75rem;color:#5a7a52;font-weight:600">Open in Maps →</a>
+        `);
+    });
+    if(bounds.length>1)map.fitBounds(L.latLngBounds(bounds),{padding:[30,30]});
+  }
+
+  if(cached){
+    plotPlaces(cached);
+  } else {
+    loadPlaces(activeCat).then(()=>{
+      const fresh=placesCache[cacheKey];
+      if(fresh)plotPlaces(fresh);
+    });
   }
 }
 
@@ -1755,8 +1925,8 @@ function showTab(tab){
   if(!weatherData)return;
   const p=document.getElementById('panel');
   if(tab==='weather')p.innerHTML=renderWeather(weatherData);
-  if(tab==='walks'){p.innerHTML=renderWalks();greenSpacesData=[];activeGreenSort='distance';greenDistDir='asc';activeGreenFilter='all';loadNearbyGreenSpaces();}
-  if(tab==='places'){p.innerHTML=renderPlacesPanel();placesDistDir='asc';loadPlaces(activeCat);}
+  if(tab==='walks'){currentWalksFilter='all';p.innerHTML=renderWalks();if(walksView==='map')initWalksMap();else{greenSpacesData=[];activeGreenSort='distance';greenDistDir='asc';activeGreenFilter='all';loadNearbyGreenSpaces();}}
+  if(tab==='places'){p.innerHTML=renderPlacesPanel();placesDistDir='asc';if(placesView==='map')initPlacesMap();else loadPlaces(activeCat);}
   saveSession();
 }
 
