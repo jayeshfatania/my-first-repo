@@ -34,7 +34,7 @@
     .wrapper{position:relative;z-index:10;max-width:920px;margin:0 auto;padding:2rem 1.5rem 6rem}
     header{text-align:center;margin-bottom:1.8rem;animation:fadeUp .7s ease both;transition:all .4s ease}
     header.collapsed{margin-bottom:.8rem}
-    header.collapsed .logo{display:block;width:1.8rem;height:1.8rem}
+    header.collapsed .logo{display:none}
     header.collapsed h1{font-size:1.9rem;margin-bottom:0}
     header.collapsed .subtitle{display:none}
     .logo{width:3.4rem;height:3.4rem;display:block;border-radius:12px;object-fit:contain}
@@ -93,6 +93,7 @@
     .nav-item.active .nav-item-label{color:var(--moss)}
     body.night .nav-item.active .nav-item-label{color:#7ab87a}
     .nav-item.active .nav-item-icon{transform:scale(1.15)}
+    .nav-item:not(.active){opacity:.45}
     .nav-dot{width:4px;height:4px;border-radius:50%;background:var(--moss);margin:0 auto;opacity:0;transition:opacity .2s}
     body.night .nav-dot{background:#7ab87a}
     .nav-item.active .nav-dot{opacity:1}
@@ -637,6 +638,11 @@
     </div>
   </div>
   <nav class="bottom-nav" id="bottomNav" style="display:none">
+    <div class="nav-item" id="navHome" onclick="goHome()">
+      <div class="nav-item-icon">🏠</div>
+      <div class="nav-item-label">Home</div>
+      <div class="nav-dot"></div>
+    </div>
     <div class="nav-item active" onclick="showTab('weather')">
       <div class="nav-item-icon">⛅</div>
       <div class="nav-item-label">Weather</div>
@@ -1998,7 +2004,12 @@ function showTab(tab){
   document.body.classList.remove('on-splash');
   document.body.classList.remove('on-profile');
   window.scrollTo(0,0);
-  document.querySelectorAll('.nav-item').forEach((t,i)=>t.classList.toggle('active',['weather','walks','places','profile'][i]===tab));
+  // Update h1 to show page name
+  const pageTitles={'weather':'Weather','walks':'Walkies','places':'Places'};
+  const h1=document.querySelector('header h1');
+  if(h1)h1.textContent=pageTitles[tab]||'Sniffout';
+  // Update nav active states (home is never active when on a tab)
+  document.querySelectorAll('.nav-item').forEach((t,i)=>t.classList.toggle('active',['home','weather','walks','places','profile'][i]===tab));
   ['weather','walks','places'].forEach(t=>{
     const tn=document.getElementById('tn'+t.charAt(0).toUpperCase()+t.slice(1));
     const sb=document.getElementById('sb'+t.charAt(0).toUpperCase()+t.slice(1));
@@ -2128,7 +2139,10 @@ function showProfile(){
   window.scrollTo(0,0);
   document.body.classList.remove('on-splash');
   document.body.classList.add('on-profile');
-  document.querySelectorAll('.nav-item').forEach((t,i)=>t.classList.toggle('active',['weather','walks','places','profile'][i]==='profile'));
+  // Update h1 to show page name
+  const h1=document.querySelector('header h1');
+  if(h1)h1.textContent='Profile';
+  document.querySelectorAll('.nav-item').forEach((t,i)=>t.classList.toggle('active',['home','weather','walks','places','profile'][i]==='profile'));
   p.innerHTML=renderProfilePage();
 }
 
@@ -2221,6 +2235,8 @@ function goHome(){
   ['weather','walks','places'].forEach(t=>{const sb=document.getElementById('sb'+t.charAt(0).toUpperCase()+t.slice(1));if(sb)sb.classList.toggle('active',t==='weather')});
   const hdr=document.querySelector('header');
   if(hdr)hdr.classList.remove('collapsed');
+  const h1=document.querySelector('header h1');
+  if(h1)h1.textContent='Sniffout';
   showSplash();
 }
 function doDesktopSearch(){
