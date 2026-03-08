@@ -38,7 +38,7 @@
     header.collapsed h1{font-size:1.1rem;margin-bottom:0}
     header.collapsed .subtitle{display:none}
     .logo{width:2.8rem;height:2.8rem;margin-bottom:.2rem;display:block}
-    h1{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:300;color:var(--ink);letter-spacing:-.02em}
+    h1{font-family:'Fraunces',serif;font-size:2.8rem;font-weight:300;color:var(--ink);letter-spacing:-.02em}
     .subtitle{font-size:.85rem;color:var(--text-muted);margin-top:.3rem}
     .search-wrap{animation:fadeUp .7s ease .05s both;margin-bottom:1.5rem}
     .search-box{display:flex;gap:.6rem;align-items:center;background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:16px;padding:.7rem 1rem;transition:border-color .2s}
@@ -373,6 +373,11 @@
     /* first to review nudge */
     .first-review-nudge{font-size:.78rem;color:var(--moss);font-style:italic;margin-bottom:.5rem;font-weight:500}
     body.night .first-review-nudge{color:#7ab87a}
+    /* ── RADIUS SLIDER ──────────────────────────────────────────────── */
+    .radius-slider-row{display:flex;align-items:center;gap:.6rem;margin:.5rem 0 .2rem;padding:.5rem .75rem;background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px}
+    .radius-label{font-size:.78rem;color:var(--text-muted);white-space:nowrap}
+    .radius-input{flex:1;accent-color:var(--moss);height:4px;cursor:pointer}
+    .radius-val{font-size:.78rem;font-weight:600;color:var(--moss);white-space:nowrap;min-width:2.5rem;text-align:right}
     /* ── MAP VIEW ───────────────────────────────────────────────── */
     .view-toggle{display:flex;gap:.4rem;background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:.25rem;margin-left:auto;flex-shrink:0}
     .view-toggle-btn{background:none;border:none;padding:.3rem .7rem;border-radius:9px;font-size:.78rem;font-weight:500;color:var(--text-muted);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
@@ -553,7 +558,8 @@
     .profile-settings-list{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;overflow:hidden}
     .profile-setting-row{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;border-bottom:1px solid var(--card-border);font-size:.85rem;color:var(--ink)}
     .profile-setting-row:last-child{border-bottom:none}
-    .profile-setting-toggle{background:var(--moss);color:#fff;border:none;border-radius:20px;padding:.25rem .75rem;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif}
+    .profile-setting-toggle{background:rgba(90,122,82,.15);color:var(--moss);border:1px solid rgba(90,122,82,.3);border-radius:20px;padding:.25rem .75rem;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+    .profile-setting-toggle.active{background:var(--moss);color:#fff;border-color:var(--moss)}
     .profile-setting-btn-danger{background:none;border:1px solid rgba(192,50,50,.3);color:#c03232;border-radius:20px;padding:.25rem .75rem;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif}
     .footer{text-align:center;font-size:.73rem;color:var(--text-muted);margin-top:1rem}
     .refresh-btn{background:none;border:1px solid rgba(0,0,0,.15);border-radius:20px;padding:.3rem .8rem;font-size:.73rem;cursor:pointer;color:var(--ink);opacity:.5;font-family:'DM Sans',sans-serif;margin-top:.4rem;transition:opacity .2s}
@@ -609,7 +615,7 @@
   </aside>
   <div class="wrapper">
     <header>
-      <svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="22" fill="#2abfad"/><!-- left floppy ear --><ellipse cx="24" cy="56" rx="13" ry="19" fill="none" stroke="white" stroke-width="5.5"/><!-- right floppy ear --><ellipse cx="76" cy="56" rx="13" ry="19" fill="none" stroke="white" stroke-width="5.5"/><!-- face/snout oval --><ellipse cx="50" cy="54" rx="28" ry="22" fill="#2abfad" stroke="white" stroke-width="5.5"/><!-- left nostril --><circle cx="42" cy="54" r="4" fill="white"/><!-- right nostril --><circle cx="58" cy="54" r="4" fill="white"/></svg>
+      <img src="sniffout-logo.png" class="logo" alt="Sniffout logo" onerror="this.style.display='none'">
       <h1>Sniffout</h1>
       <p class="subtitle">Your dog walking companion</p>
     </header>
@@ -878,7 +884,7 @@ function walkRec(d){
     if(maxUpcoming>=40)return['🌂','Rain likely soon - worth a jacket','Dry at the moment but showers are on the way. A good time for a shorter walk.'];
   }
 
-  return['🐕','Great day for a walk!',`${getWmo(d.weatherCode)[1]} with ${Math.round(d.feelsLike)}°C feels-like. Perfect conditions!`];
+  return['🌤️','Great day for a walk!',`${getWmo(d.weatherCode)[1]} with ${Math.round(d.feelsLike)}°C feels-like. Perfect conditions!`];
 }
 
 // ── HAZARD WARNINGS ──────────────────────────────────────────────────────────
@@ -911,8 +917,6 @@ function buildHazardWarnings(d){
 // ── RAIN & WEATHER RENDERING ─────────────────────────────────────────────────
 function getBestWalkWindow(d){
   const now=new Date();
-  const nowPlus1=new Date(now.getTime()+60*60*1000);
-  // End of today - midnight tonight
   const endOfDay=new Date(now);
   endOfDay.setHours(23,59,59,999);
 
@@ -924,8 +928,8 @@ function getBestWalkWindow(d){
     wmo:d.hourlyWmo[i],
   })).filter(h=>{
     const hr=h.time.getHours();
-    // Must be at least 1 hour from now, still today, and between 6am-10pm
-    return h.time>=nowPlus1 && h.time<=endOfDay && hr>=6 && hr<=22;
+    // Start from now (not +1hr), still today, between 6am-10pm
+    return h.time>=now && h.time<=endOfDay && hr>=6 && hr<=22;
   });
 
   if(!hours.length)return null;
@@ -944,16 +948,18 @@ function getBestWalkWindow(d){
     return{...h,score};
   });
 
-  if(scored.length<2)return null;
+  if(!scored.length)return null;
 
-  // Find best consecutive 2-hour window
+  // Find best consecutive 3-hour window
+  const windowSize=Math.min(3,scored.length);
   let bestIdx=0,bestScore=Infinity;
-  for(let i=0;i<scored.length-1;i++){
-    const s=(scored[i].score+scored[i+1].score)/2;
+  for(let i=0;i<=scored.length-windowSize;i++){
+    const s=scored.slice(i,i+windowSize).reduce((a,b)=>a+b.score,0)/windowSize;
     if(s<bestScore){bestScore=s;bestIdx=i;}
   }
   if(bestScore>40)return null;
-  return{label:`${scored[bestIdx].label}–${scored[Math.min(bestIdx+2,scored.length-1)].label}`,feels:scored[bestIdx].feels,rain:scored[bestIdx].rain,wmo:scored[bestIdx].wmo,poor:bestScore>20};
+  const endIdx=Math.min(bestIdx+windowSize,scored.length-1);
+  return{label:`${scored[bestIdx].label}–${scored[endIdx].label}`,feels:scored[bestIdx].feels,rain:scored[bestIdx].rain,wmo:scored[bestIdx].wmo,poor:bestScore>20};
 }
 
 function buildHourlyStrip(d){
@@ -1229,6 +1235,7 @@ function toggleWalkCard(id){
 
 let activeWalksSort='distance';
 let walksDistDir='asc';
+let searchRadiusKm=3; // user-adjustable 1-10km
 let walksView='list'; // 'list' or 'map'
 let placesView='list';
 let walksMapInstance=null;
@@ -1252,7 +1259,7 @@ function renderWalks(activeFilter='all'){
   const rain=[51,53,55,61,63,65,80,81,82,95,99].includes(weatherData.weatherCode);
   const hot=weatherData.feelsLike>22;
   const lat=currentLocation.lat,lon=currentLocation.lon;
-  const MAX_KM=3;
+  const MAX_KM=searchRadiusKm;
   const communityWalks=getCommunityWalks().map(w=>({...w,community:true}));
   const allWalks=[...WALKS_DB,...communityWalks];
   const nearby=allWalks.map(w=>({...w,dist:haversine(lat,lon,w.lat,w.lon)})).filter(w=>w.dist<=MAX_KM).sort((a,b)=>a.dist-b.dist);
@@ -1274,6 +1281,13 @@ function renderWalks(activeFilter='all'){
     {id:'riverside',label:'🌊 Riverside'},
     {id:'woodland',label:'🌳 Woodland'},
   ];
+
+  const radiusSlider=`
+    <div class="radius-slider-row">
+      <span class="radius-label">📍 Radius</span>
+      <input type="range" min="1" max="10" value="${searchRadiusKm}" class="radius-input" oninput="searchRadiusKm=parseInt(this.value);document.getElementById('radius-val').textContent=this.value+'km';renderWalksFiltered('${activeFilter}')">
+      <span class="radius-val" id="radius-val">${searchRadiusKm}km</span>
+    </div>`;
 
   const favIds=getFavourites();
   const filtered=nearby.filter(w=>{
@@ -1376,7 +1390,8 @@ function renderWalks(activeFilter='all'){
         <h3>Walks near ${currentLocation.displayName}</h3>
         ${viewToggle}
       </div>
-      <p>${note} ${nearby.length} walk${nearby.length!==1?'s':''} within 3km of your location.</p>
+      <p>${note} ${nearby.length} walk${nearby.length!==1?'s':''} within ${searchRadiusKm}km of your location.</p>
+      ${radiusSlider}
       ${filterBar}
       ${filtered.length!==nearby.length?`<div class="walks-count">Showing ${filtered.length} of ${nearby.length} walks</div>`:''}
       ${progressBar}
@@ -2172,7 +2187,15 @@ function renderProfilePage(){
         <div class="profile-settings-list">
           <div class="profile-setting-row">
             <span>Dark mode</span>
-            <button class="profile-setting-toggle" onclick="toggleTheme()">${document.body.classList.contains('night')?'On':'Off'}</button>
+            <button class="profile-setting-toggle${document.body.classList.contains('night')?' active':''}" onclick="toggleTheme();document.getElementById('panel').innerHTML=renderProfilePage()">${document.body.classList.contains('night')?'On':'Off'}</button>
+          </div>
+          <div class="profile-setting-row">
+            <span>Text size</span>
+            <div style="display:flex;gap:.4rem">
+              <button class="profile-setting-toggle${textScale===1?' active':''}" onclick="setTextScale(1)">A</button>
+              <button class="profile-setting-toggle${textScale===1.15?' active':''}" onclick="setTextScale(1.15)" style="font-size:1rem">A+</button>
+              <button class="profile-setting-toggle${textScale===1.3?' active':''}" onclick="setTextScale(1.3)" style="font-size:1.1rem">A++</button>
+            </div>
           </div>
           <div class="profile-setting-row">
             <span>Clear all favourites</span>
@@ -2272,15 +2295,16 @@ async function useCurrentLocation(){
   navigator.geolocation.getCurrentPosition(
     async pos=>{
       if(btn){btn.textContent='⌖';btn.style.opacity='';}
-      const {latitude:lat,longitude:lon}=pos.coords;
+      const {latitude:lat,longitude:lon,accuracy}=pos.coords;
       document.getElementById('searchError').style.display='none';
       document.getElementById('locationName').textContent='Finding your location…';
       renderShell();
       try{
-        // Reverse geocode using Open-Meteo's geocoding isn't available, use nominatim
-        const res=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+        const res=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=16`);
         const data=await res.json();
-        const displayName=data.address?.town||data.address?.city||data.address?.suburb||data.address?.county||'Your location';
+        const a=data.address||{};
+        // Use most specific available address component
+        const displayName=a.road||a.neighbourhood||a.suburb||a.quarter||a.village||a.town||a.city||a.county||'Your location';
         currentLocation={lat,lon,displayName};
         saveRecentSearch(displayName);
         const hdr=document.querySelector('header');
@@ -2289,6 +2313,21 @@ async function useCurrentLocation(){
         document.getElementById('searchInput').value=displayName;
         document.getElementById('topNavSearchInput').value=displayName;
         document.getElementById('locationName').textContent=`📍 ${displayName}`;
+        weatherData=await fetchWeather(lat,lon);
+        if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
+        showTab(currentTab);
+      }catch(e){
+        document.getElementById('locationName').textContent='';
+        document.getElementById('searchError').style.display='block';
+        showSplash();
+      }
+    },
+    err=>{
+      if(btn){btn.textContent='⌖';btn.style.opacity='';}
+      alert('Could not get your location. Please check your browser permissions.');
+    },
+    {enableHighAccuracy:true,timeout:10000,maximumAge:0}
+  );
         weatherData=await fetchWeather(lat,lon);
         if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
         showTab(currentTab);
@@ -2324,6 +2363,16 @@ function toggleTheme(){
   const isNight=document.body.classList.toggle('night');
   localStorage.setItem('theme',isNight?'night':'day');
 }
+
+let textScale=parseFloat(localStorage.getItem('sniffout_textscale')||'1');
+function setTextScale(scale){
+  textScale=scale;
+  localStorage.setItem('sniffout_textscale',scale);
+  document.documentElement.style.fontSize=`${scale*100}%`;
+  document.getElementById('panel').innerHTML=renderProfilePage();
+}
+// Apply saved text scale on load
+if(textScale!==1)document.documentElement.style.fontSize=`${textScale*100}%`;
 document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch()});
 document.getElementById('app').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='splashSearchInput')doSplashSearch()});
 document.getElementById('topNavSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doDesktopSearch()});
@@ -2410,7 +2459,7 @@ function maybeShowOnboarding(){
   overlay.id='onboardingOverlay';
   overlay.innerHTML=`
     <div class="onboarding-modal">
-      <svg class="onboarding-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="22" fill="#2abfad"/><ellipse cx="24" cy="56" rx="13" ry="19" fill="none" stroke="white" stroke-width="5.5"/><ellipse cx="76" cy="56" rx="13" ry="19" fill="none" stroke="white" stroke-width="5.5"/><ellipse cx="50" cy="54" rx="28" ry="22" fill="#2abfad" stroke="white" stroke-width="5.5"/><circle cx="42" cy="54" r="4" fill="white"/><circle cx="58" cy="54" r="4" fill="white"/></svg>
+      <img class="onboarding-logo" src="sniffout-logo.png" alt="Sniffout" onerror="this.style.display='none'">
       <div class="onboarding-title">Welcome to Sniffout</div>
       <div class="onboarding-sub">Shared, discovered and rated by the community.</div>
       <div class="onboarding-features">
