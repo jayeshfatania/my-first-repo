@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>🐾 Sniffout</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -17,7 +17,7 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--amber:#e8a838;--moss:#5a7a52;--ink:#1a2a1a;--card-bg:rgba(255,255,255,0.22);--card-border:rgba(255,255,255,0.4);--text-muted:rgba(26,42,26,0.55)}
-    body{font-family:'DM Sans',sans-serif;min-height:100vh;background:#c8dfc8;transition:background 1.5s ease;overflow-x:hidden}
+    body{font-family:'DM Sans',sans-serif;min-height:100vh;min-height:-webkit-fill-available;background:#c8dfc8;transition:background 1.5s ease;overflow-x:hidden}
     body.night{background:#0d1a0d;--card-bg:rgba(255,255,255,0.07);--card-border:rgba(255,255,255,0.12);--ink:#d8ead8;--text-muted:rgba(216,234,216,0.5)}
     .sky{position:fixed;inset:0;z-index:0;background:linear-gradient(160deg,#7fb8a0 0%,#a8d4b8 35%,#c8dfc8 70%,#dde8cc 100%);transition:background 1.5s ease}
     body.night .sky{background:linear-gradient(160deg,#050f05 0%,#0a160a 40%,#0d1a10 100%)}
@@ -85,7 +85,7 @@
     .top-nav-profile{width:32px;height:32px;border-radius:50%;background:var(--card-bg);border:1px solid var(--card-border);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:all .2s;flex-shrink:0}
     .top-nav-profile:hover{background:rgba(255,255,255,.4)}
     /* ── BOTTOM NAV (mobile only) ── */
-    .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:1000;display:flex;background:rgba(255,255,255,0.55);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.5);padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));transform:translateZ(0);will-change:transform}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:1000;display:flex;background:rgba(255,255,255,0.55);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.5);padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));transform:translate3d(0,0,0);backface-visibility:hidden;-webkit-backface-visibility:hidden}
     body.night .bottom-nav{background:rgba(10,20,10,0.75);border-top-color:rgba(255,255,255,0.08)}
     .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;cursor:pointer;padding:.3rem .5rem;transition:opacity .2s}
     .nav-item-icon{font-size:1.3rem;transition:transform .2s}
