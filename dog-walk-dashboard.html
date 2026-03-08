@@ -41,7 +41,7 @@
     .header-brand{display:flex;align-items:center;gap:.75rem;justify-content:center;margin-bottom:.2rem}
     h1{font-family:'Fraunces',serif;font-size:3.4rem;font-weight:300;color:var(--ink);letter-spacing:-.02em}
     .subtitle{font-size:.85rem;color:var(--text-muted);margin-top:.3rem}
-    .search-wrap{animation:fadeUp .7s ease .05s both;margin-bottom:1.5rem}
+    .search-wrap{animation:fadeUp .7s ease .05s both;margin-bottom:.6rem}
     .search-box{display:flex;gap:.6rem;align-items:center;background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:16px;padding:.7rem 1rem;transition:border-color .2s}
     .search-box:focus-within{border-color:rgba(255,255,255,.7)}
     .search-icon{font-size:1.1rem;flex-shrink:0;opacity:.6}
@@ -394,7 +394,6 @@
     .map-popup-name{font-weight:600;color:#1a2a1a;margin-bottom:.2rem}
     .map-popup-meta{color:#666;font-size:.75rem;margin-bottom:.4rem}
     .map-popup-btn{background:#5a7a52;color:#fff;border:none;border-radius:8px;padding:.3rem .7rem;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
-    .section-intro-top{display:flex;align-items:center;gap:.5rem}
     .onboarding-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .3s ease}
     .onboarding-modal{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:24px;padding:2rem 1.75rem 1.75rem;max-width:360px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35);animation:fadeUp .4s ease both}
     .onboarding-logo{width:3rem;height:3rem;margin:0 auto .6rem;display:block}
@@ -1335,11 +1334,11 @@ function renderWalks(activeFilter='all'){
 
   const nearestArrow=walksDistDir==='asc'?' ↑':' ↓';
   const filterBar=`<div class="filter-scroll-row">
-    ${filters.map(f=>`<button class="filter-chip${activeFilter===f.id?' active':''}" onclick="renderWalksFiltered('${f.id}')">${f.label}</button>`).join('')}
-    <span class="filter-divider"></span>
     <button class="sort-btn${activeWalksSort==='distance'?' active':''}" onclick="setWalksSort('distance','${activeFilter}')">📍 Nearest${activeWalksSort==='distance'?nearestArrow:''}</button>
     <button class="sort-btn${activeWalksSort==='rating'?' active':''}" onclick="setWalksSort('rating','${activeFilter}')">⭐ Rating</button>
     <button class="sort-btn${activeWalksSort==='length'?' active':''}" onclick="setWalksSort('length','${activeFilter}')">🗺️ Shortest</button>
+    <span class="filter-divider"></span>
+    ${filters.map(f=>`<button class="filter-chip${activeFilter===f.id?' active':''}" onclick="renderWalksFiltered('${f.id}')">${f.label}</button>`).join('')}
   </div>`;
 
   // Progress framing
@@ -1647,24 +1646,21 @@ let activePlacesSort='distance';
 let placesDistDir='asc';
 
 function renderPlacesPanel(){
-  const cfg=CAT_CONFIG[activeCat];
-  const catBtns=Object.entries(CAT_CONFIG).map(([k,v])=>`
+  const catBtnsWithSort=`
+    <button class="sort-btn${activePlacesSort==='distance'?' active':''}" onclick="setPlacesSort('distance')">📍 Nearest${activePlacesSort==='distance'?(placesDistDir==='asc'?' ↑':' ↓'):''}</button>
+    <button class="sort-btn${activePlacesSort==='rating'?' active':''}" onclick="setPlacesSort('rating')">⭐ Rating</button>
+    <span class="filter-divider"></span>
+    ${Object.entries(CAT_CONFIG).map(([k,v])=>`
     <button class="place-cat-btn${activeCat===k?' active':''}" onclick="switchCat('${k}')">
       <span class="place-cat-icon">${v.emoji}</span>
       <span class="place-cat-label">${v.label.replace(v.emoji,'').trim()}</span>
-    </button>`).join('');
+    </button>`).join('')}`;
 
+  const cfg=CAT_CONFIG[activeCat];
   const tipBanner=`
     <div class="place-tip-banner">
       <span class="place-tip-icon">💡</span>
       <span class="place-tip-text">${cfg.tip}</span>
-    </div>`;
-
-  const sortBar=`
-    <div class="sort-bar">
-      <span class="sort-label">Sort by</span>
-      <button class="sort-btn${activePlacesSort==='distance'?' active':''}" onclick="setPlacesSort('distance')">📍 Nearest${activePlacesSort==='distance'?(placesDistDir==='asc'?' ↑':' ↓'):''}</button>
-      <button class="sort-btn${activePlacesSort==='rating'?' active':''}" onclick="setPlacesSort('rating')">⭐ Rating</button>
     </div>`;
 
   const placesViewToggle=`
@@ -1679,9 +1675,8 @@ function renderPlacesPanel(){
         <h3>Dog-friendly places near ${currentLocation.displayName}</h3>
         ${placesViewToggle}
       </div>
-      ${placesView==='list'?sortBar:''}
     </div>
-    <div class="place-cat-bar">${catBtns}</div>
+    <div class="place-cat-bar">${catBtnsWithSort}</div>
     ${placesView==='list'?tipBanner:''}
     ${placesView==='map'?`<div class="map-container" id="placesMap"></div><p style="font-size:.72rem;color:var(--text-muted);text-align:center;margin-bottom:.5rem">Tap a pin to see details · Switch category above to change pins</p>`:`<div id="places-results"><div class="loading"><div class="spinner"></div><br>Finding places nearby…</div></div>`}
     <div class="footer" style="margin-top:1.5rem"><div>Powered by Google Places · Always call ahead to confirm dogs are welcome</div></div>`;
@@ -1938,16 +1933,11 @@ async function loadPlaces(cat){
 function switchCat(cat){
   activeCat=cat;
   if(currentTab==='places'){
-    // Update chip highlight without rebuilding whole panel
-    document.querySelectorAll('.place-cat-btn').forEach(b=>{
-      const k=b.getAttribute('onclick').match(/'([^']+)'/)?.[1];
-      b.classList.toggle('active',k===cat);
-    });
     if(placesView==='list'){
       document.getElementById('panel').innerHTML=renderPlacesPanel();
       loadPlaces(cat);
     } else {
-      // In map view, just re-init map with new category
+      document.getElementById('panel').innerHTML=renderPlacesPanel();
       initPlacesMap();
     }
   }
