@@ -172,7 +172,7 @@
     .uv-bar-wrap{margin-top:.5rem}
     .uv-bar{height:5px;border-radius:10px;background:linear-gradient(90deg,#5cb85c,#f0ad4e,#d9534f);position:relative}
     .uv-marker{position:absolute;top:-4px;width:13px;height:13px;background:white;border:2px solid #555;border-radius:50%;transform:translateX(-50%)}
-    .section-intro{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1.2rem 1.5rem;margin-bottom:1rem;animation:fadeUp .7s ease .05s both;overflow:hidden}
+    .section-intro{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1rem 1.2rem;margin-bottom:.6rem;animation:fadeUp .7s ease .05s both;overflow:hidden}
     .filter-scroll-row{display:flex;gap:.4rem;overflow-x:auto;margin:0 -1.5rem;padding:.5rem 1.5rem;scrollbar-width:none;-ms-overflow-style:none}
     .filter-scroll-row::-webkit-scrollbar{display:none}
     .filter-divider{width:1px;background:var(--card-border);flex-shrink:0;margin:0 .2rem;align-self:stretch}
@@ -1232,7 +1232,7 @@ function renderWalkCard(w,distStr,showWeatherNote){
         <div class="item-compact-bottom">
           ${avgCompact}
           ${curatedTag}
-          <span class="item-tap-hint">Tap for more ▼</span>
+          <span class="item-tap-hint">View details ›</span>
         </div>
       </div>
     </div>
@@ -1310,7 +1310,7 @@ function renderWalks(activeFilter='all'){
   const radiusSlider=`
     <div class="radius-slider-row">
       <span class="radius-label">📍 Radius</span>
-      <input type="range" min="1" max="10" value="${searchRadiusKm}" class="radius-input" oninput="searchRadiusKm=parseInt(this.value);document.getElementById('radius-val').textContent=this.value+'km';renderWalksFiltered('${activeFilter}')">
+      <input type="range" min="1" max="10" value="${searchRadiusKm}" class="radius-input" oninput="searchRadiusKm=parseInt(this.value);document.getElementById('radius-val').textContent=this.value+'km'" onchange="renderWalksFiltered('${activeFilter}')">
       <span class="radius-val" id="radius-val">${searchRadiusKm}km</span>
     </div>`;
 
@@ -1415,7 +1415,6 @@ function renderWalks(activeFilter='all'){
         <h3>Walks near ${currentLocation.displayName}</h3>
         ${viewToggle}
       </div>
-      <p>${note} ${nearby.length} walk${nearby.length!==1?'s':''} within ${searchRadiusKm}km of your location.</p>
       ${radiusSlider}
       ${filterBar}
       ${filtered.length!==nearby.length?`<div class="walks-count">Showing ${filtered.length} of ${nearby.length} walks</div>`:''}
@@ -1680,10 +1679,9 @@ function renderPlacesPanel(){
         <h3>Dog-friendly places near ${currentLocation.displayName}</h3>
         ${placesViewToggle}
       </div>
-      <p>Dog-friendly amenities near you - places to stop before, during or after your walk.</p>
+      ${placesView==='list'?sortBar:''}
     </div>
     <div class="place-cat-bar">${catBtns}</div>
-    ${placesView==='list'?sortBar:''}
     ${placesView==='list'?tipBanner:''}
     ${placesView==='map'?`<div class="map-container" id="placesMap"></div><p style="font-size:.72rem;color:var(--text-muted);text-align:center;margin-bottom:.5rem">Tap a pin to see details · Switch category above to change pins</p>`:`<div id="places-results"><div class="loading"><div class="spinner"></div><br>Finding places nearby…</div></div>`}
     <div class="footer" style="margin-top:1.5rem"><div>Powered by Google Places · Always call ahead to confirm dogs are welcome</div></div>`;
