@@ -4,7 +4,7 @@
   "description": "UK dog walk discovery — curated routes, live weather and dog-friendly places",
   "start_url": "/my-first-repo/dog-walk-dashboard.html",
   "display": "standalone",
-  "background_color": "#2abfad",
+  "background_color": "#A0CEB3",
   "theme_color": "#5a7a52",
   "orientation": "portrait",
   "icons": [
