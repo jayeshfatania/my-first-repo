@@ -265,12 +265,14 @@
     body.night .submit-review-btn{background:#7ab87a;color:var(--ink)}
     .cancel-review-btn{background:none;border:none;font-size:.78rem;color:var(--text-muted);cursor:pointer;font-family:'DM Sans',sans-serif;padding:.4rem .5rem}
     /* Places page */
-    .place-cat-bar{display:flex;gap:.5rem;margin-bottom:1rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:.2rem}
+    .place-cat-bar{display:flex;gap:.5rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:.6rem 1rem;position:sticky;top:0;z-index:50;background:rgba(200,223,200,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin:0 -1rem .75rem;border-bottom:1px solid rgba(255,255,255,.3)}
+    body.night .place-cat-bar{background:rgba(10,20,10,0.85)}
     .place-cat-bar::-webkit-scrollbar{display:none}
     .place-cat-btn{display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.5rem .7rem;border-radius:12px;border:1px solid var(--card-border);background:var(--card-bg);backdrop-filter:blur(12px);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;flex-shrink:0;min-width:58px}
     .place-cat-btn:hover{background:rgba(255,255,255,.35);border-color:rgba(255,255,255,.6)}
-    .place-cat-btn.active{background:rgba(90,122,82,.12);border-color:rgba(90,122,82,.3)}
-    body.night .place-cat-btn.active{background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.25)}
+    .place-cat-btn.active{background:var(--moss);border-color:var(--moss)}
+    body.night .place-cat-btn.active{background:#5a9a5a;border-color:#5a9a5a}
+    .place-cat-btn.active .place-cat-icon,.place-cat-btn.active .place-cat-label{color:#fff!important}
     .place-cat-icon{font-size:1.2rem;line-height:1}
     .place-cat-label{font-size:.65rem;color:var(--text-muted);font-weight:500;white-space:nowrap}
     .place-cat-btn.active .place-cat-label{color:var(--moss)}
@@ -542,7 +544,21 @@
     .profile-stat-num{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:300;color:var(--moss);display:block}
     .profile-stat-label{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em}
     body.night .profile-stat-num{color:#7ab87a}
-    .profile-section{margin-bottom:1.4rem}
+    .profile-section{margin-bottom:.75rem;border:1px solid var(--card-border);border-radius:16px;overflow:hidden;background:var(--card-bg);backdrop-filter:blur(12px)}
+    .profile-accordion-btn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.1rem;background:none;border:none;cursor:pointer;font-family:'Fraunces',serif;font-size:1rem;font-weight:400;color:var(--ink);text-align:left;gap:.5rem}
+    .profile-accordion-btn:hover{background:rgba(90,122,82,.05)}
+    .profile-accordion-arrow{font-size:.75rem;transition:transform .25s ease;color:var(--text-muted);flex-shrink:0}
+    .profile-accordion-btn.open .profile-accordion-arrow{transform:rotate(180deg)}
+    .profile-accordion-body{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;padding:0 1.1rem}
+    .profile-accordion-body.open{max-height:1000px;padding:.25rem 1.1rem 1rem}
+    .profile-accordion-badge{font-family:'DM Sans',sans-serif;font-size:.7rem;background:rgba(90,122,82,.12);color:var(--moss);border-radius:20px;padding:.1rem .5rem;font-weight:600}
+    .profile-review-item{padding:.6rem 0;border-bottom:1px solid rgba(90,122,82,.1)}
+    .profile-review-item:last-child{border-bottom:none}
+    .profile-review-walk{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:.2rem}
+    .profile-review-text{font-size:.78rem;color:var(--text-muted);line-height:1.5}
+    .profile-review-meta{font-size:.7rem;color:var(--text-muted);margin-top:.2rem}
+    .profile-view-all{display:block;text-align:center;font-size:.75rem;color:var(--moss);padding:.6rem 0 .2rem;cursor:pointer;font-weight:500}
+    .profile-empty-inline{text-align:center;padding:1rem 0;color:var(--text-muted);font-size:.82rem}
     .profile-section-title{font-family:'Fraunces',serif;font-size:1rem;font-weight:400;color:var(--ink);margin-bottom:.75rem}
     .profile-fav-list{display:flex;flex-direction:column;gap:.6rem}
     .profile-fav-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:.8rem 1rem;display:flex;align-items:center;gap:.75rem;cursor:pointer;transition:all .2s}
@@ -1924,9 +1940,18 @@ async function loadPlaces(cat){
 function switchCat(cat){
   activeCat=cat;
   if(currentTab==='places'){
-    document.getElementById('panel').innerHTML=renderPlacesPanel();
-    if(placesView==='list')loadPlaces(cat);
-    else initPlacesMap();
+    // Update chip highlight without rebuilding whole panel
+    document.querySelectorAll('.place-cat-btn').forEach(b=>{
+      const k=b.getAttribute('onclick').match(/'([^']+)'/)?.[1];
+      b.classList.toggle('active',k===cat);
+    });
+    if(placesView==='list'){
+      document.getElementById('panel').innerHTML=renderPlacesPanel();
+      loadPlaces(cat);
+    } else {
+      // In map view, just re-init map with new category
+      initPlacesMap();
+    }
   }
 }
 
@@ -2128,6 +2153,8 @@ function showSplash(){
     ${installCardHTML}
   </div>`;
   document.body.classList.add('on-splash');
+  const h1=document.querySelector('header h1');
+  if(h1)h1.textContent='Sniffout';
 }
 function dismissSplashInstall(){
   try{localStorage.setItem('sniffout_install_dismissed','1');}catch(e){}
@@ -2146,32 +2173,68 @@ function showProfile(){
   p.innerHTML=renderProfilePage();
 }
 
+function toggleAccordion(id){
+  const btn=document.getElementById('acc-btn-'+id);
+  const body=document.getElementById('acc-body-'+id);
+  if(!btn||!body)return;
+  const isOpen=body.classList.contains('open');
+  btn.classList.toggle('open',!isOpen);
+  body.classList.toggle('open',!isOpen);
+}
+
 function renderProfilePage(){
   const favIds=getFavourites();
   const allWalks=[...WALKS_DB,...getCommunityWalks().map(w=>({...w,community:true}))];
   const favWalks=allWalks.filter(w=>favIds.includes(w.id));
   const reviews=getReviews();
   const totalReviews=Object.values(reviews).reduce((sum,r)=>sum+r.length,0);
+  const communityWalks=getCommunityWalks();
 
-  const favSection=favWalks.length
+  // Build flat list of all user reviews with walk name
+  const allReviews=[];
+  Object.entries(reviews).forEach(([walkId,rList])=>{
+    const walk=allWalks.find(w=>w.id===walkId||w.id===parseInt(walkId));
+    rList.forEach(r=>allReviews.push({walkName:walk?walk.name:walkId,rating:r.rating,text:r.text,date:r.date}));
+  });
+  allReviews.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  const MAX_SHOWN=5;
+  const shownReviews=allReviews.slice(0,MAX_SHOWN);
+
+  // Favourites accordion body
+  const favBody=favWalks.length
     ?`<div class="profile-fav-list">${favWalks.map(w=>{
         const avg=getAvgRating(w.id);
-        const avgHtml=avg?`<span class="profile-fav-rating">★ ${avg}</span>`:'';
         return`<div class="profile-fav-card" onclick="showTab('walks')">
           <div class="profile-fav-icon">${w.icon}</div>
           <div class="profile-fav-body">
             <div class="profile-fav-name">${w.name}</div>
-            <div class="profile-fav-meta">${w.distance} · ${w.difficulty} ${avgHtml}</div>
+            <div class="profile-fav-meta">${w.distance} · ${w.difficulty}${avg?` · ★ ${avg}`:''}</div>
           </div>
           <button class="profile-fav-remove" onclick="event.stopPropagation();toggleFavourite('${w.id}',event);document.getElementById('panel').innerHTML=renderProfilePage()" title="Remove">✕</button>
         </div>`;
       }).join('')}</div>`
-    :`<div class="profile-empty">
-        <div style="font-size:2.5rem;margin-bottom:.5rem">🤍</div>
-        <div class="profile-empty-title">No favourites yet</div>
-        <p class="profile-empty-sub">Tap the 🤍 on any walk to save it here.</p>
-        <button class="contrib-btn-primary" style="margin-top:.75rem" onclick="showTab('walks')">Browse walks</button>
-      </div>`;
+    :`<div class="profile-empty-inline">🤍 No favourites yet - tap the heart on any walk to save it here.</div>`;
+
+  // Reviews accordion body
+  const reviewsBody=shownReviews.length
+    ?`${shownReviews.map(r=>`<div class="profile-review-item">
+        <div class="profile-review-walk">${r.walkName}</div>
+        <div class="profile-review-meta">${'⭐'.repeat(r.rating||0)} ${r.date?new Date(r.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):''}</div>
+        ${r.text?`<div class="profile-review-text">"${r.text}"</div>`:''}
+      </div>`).join('')}
+      ${allReviews.length>MAX_SHOWN?`<div class="profile-view-all" onclick="alert('Full history coming soon!')">View all ${allReviews.length} reviews →</div>`:''}`
+    :`<div class="profile-empty-inline">📝 No reviews yet - rate a walk to see it here.</div>`;
+
+  // Recommendations (community walks) accordion body
+  const recsBody=communityWalks.length
+    ?`<div class="profile-fav-list">${communityWalks.map(w=>`<div class="profile-fav-card" onclick="showTab('walks')">
+        <div class="profile-fav-icon">${w.icon}</div>
+        <div class="profile-fav-body">
+          <div class="profile-fav-name">${w.name}</div>
+          <div class="profile-fav-meta">${w.distance} · ${w.difficulty}</div>
+        </div>
+      </div>`).join('')}</div>`
+    :`<div class="profile-empty-inline">🗺 No recommendations yet - submit a walk to see it here.</div>`;
 
   const savedName=getUsername();
   return`
@@ -2192,34 +2255,61 @@ function renderProfilePage(){
       </div>
       <div class="profile-stats-row">
         <div class="profile-stat"><span class="profile-stat-num">${favWalks.length}</span><span class="profile-stat-label">Favourites</span></div>
-        <div class="profile-stat"><span class="profile-stat-num">${totalReviews}</span><span class="profile-stat-label">Reviews added</span></div>
-        <div class="profile-stat"><span class="profile-stat-num">${Object.keys(reviews).length}</span><span class="profile-stat-label">Walks rated</span></div>
+        <div class="profile-stat"><span class="profile-stat-num">${totalReviews}</span><span class="profile-stat-label">Reviews</span></div>
+        <div class="profile-stat"><span class="profile-stat-num">${communityWalks.length}</span><span class="profile-stat-label">Walks added</span></div>
       </div>
+
       <div class="profile-section">
-        <div class="profile-section-title">❤️ Favourite walks</div>
-        ${favSection}
+        <button class="profile-accordion-btn" id="acc-btn-favs" onclick="toggleAccordion('favs')">
+          <span>❤️ Favourite walks <span class="profile-accordion-badge">${favWalks.length}</span></span>
+          <span class="profile-accordion-arrow">▼</span>
+        </button>
+        <div class="profile-accordion-body" id="acc-body-favs">${favBody}</div>
       </div>
+
       <div class="profile-section">
-        <div class="profile-section-title">⚙️ Settings</div>
-        <div class="profile-settings-list">
-          <div class="profile-setting-row">
-            <span>Dark mode</span>
-            <button class="profile-setting-toggle${document.body.classList.contains('night')?' active':''}" onclick="toggleTheme();document.getElementById('panel').innerHTML=renderProfilePage()">${document.body.classList.contains('night')?'On':'Off'}</button>
-          </div>
-          <div class="profile-setting-row">
-            <span>Text size</span>
-            <div style="display:flex;gap:.4rem">
-              <button class="profile-setting-toggle${textScale===1?' active':''}" onclick="setTextScale(1)">A</button>
-              <button class="profile-setting-toggle${textScale===1.15?' active':''}" onclick="setTextScale(1.15)" style="font-size:1rem">A+</button>
-              <button class="profile-setting-toggle${textScale===1.3?' active':''}" onclick="setTextScale(1.3)" style="font-size:1.1rem">A++</button>
+        <button class="profile-accordion-btn" id="acc-btn-reviews" onclick="toggleAccordion('reviews')">
+          <span>📝 My reviews <span class="profile-accordion-badge">${totalReviews}</span></span>
+          <span class="profile-accordion-arrow">▼</span>
+        </button>
+        <div class="profile-accordion-body" id="acc-body-reviews">${reviewsBody}</div>
+      </div>
+
+      <div class="profile-section">
+        <button class="profile-accordion-btn" id="acc-btn-recs" onclick="toggleAccordion('recs')">
+          <span>🗺 My recommendations <span class="profile-accordion-badge">${communityWalks.length}</span></span>
+          <span class="profile-accordion-arrow">▼</span>
+        </button>
+        <div class="profile-accordion-body" id="acc-body-recs">${recsBody}</div>
+      </div>
+
+      <div class="profile-section">
+        <button class="profile-accordion-btn" id="acc-btn-settings" onclick="toggleAccordion('settings')">
+          <span>⚙️ Settings</span>
+          <span class="profile-accordion-arrow">▼</span>
+        </button>
+        <div class="profile-accordion-body" id="acc-body-settings">
+          <div class="profile-settings-list">
+            <div class="profile-setting-row">
+              <span>Dark mode</span>
+              <button class="profile-setting-toggle${document.body.classList.contains('night')?' active':''}" onclick="toggleTheme();document.getElementById('panel').innerHTML=renderProfilePage();toggleAccordion('settings')">${document.body.classList.contains('night')?'On':'Off'}</button>
             </div>
-          </div>
-          <div class="profile-setting-row">
-            <span>Clear all favourites</span>
-            <button class="profile-setting-btn-danger" onclick="if(confirm('Clear all favourites?')){localStorage.removeItem('sniffout_favs');document.getElementById('panel').innerHTML=renderProfilePage()}">Clear</button>
+            <div class="profile-setting-row">
+              <span>Text size</span>
+              <div style="display:flex;gap:.4rem">
+                <button class="profile-setting-toggle${textScale===1?' active':''}" onclick="setTextScale(1)">A</button>
+                <button class="profile-setting-toggle${textScale===1.15?' active':''}" onclick="setTextScale(1.15)" style="font-size:1rem">A+</button>
+                <button class="profile-setting-toggle${textScale===1.3?' active':''}" onclick="setTextScale(1.3)" style="font-size:1.1rem">A++</button>
+              </div>
+            </div>
+            <div class="profile-setting-row">
+              <span>Clear all favourites</span>
+              <button class="profile-setting-btn-danger" onclick="if(confirm('Clear all favourites?')){localStorage.removeItem('sniffout_favs');document.getElementById('panel').innerHTML=renderProfilePage()}">Clear</button>
+            </div>
           </div>
         </div>
       </div>
+
       <div class="footer" style="margin-top:1.5rem"><div>Sniffout Beta · <a href="https://tally.so/r/MeO1yM" target="_blank" style="color:var(--moss)">Share feedback</a></div></div>
     </div>`;
 }
