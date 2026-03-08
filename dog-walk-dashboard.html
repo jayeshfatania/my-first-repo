@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🐾 Sniffout</title>
   <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" href="icon-192.png">
   <meta name="theme-color" content="#5a7a52">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -35,7 +37,7 @@
     header.collapsed .logo{display:none}
     header.collapsed h1{font-size:1.1rem;margin-bottom:0}
     header.collapsed .subtitle{display:none}
-    .logo{font-size:2.6rem;margin-bottom:.2rem}
+    .logo{width:2.8rem;height:2.8rem;margin-bottom:.2rem;display:block}
     h1{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:300;color:var(--ink);letter-spacing:-.02em}
     .subtitle{font-size:.85rem;color:var(--text-muted);margin-top:.3rem}
     .search-wrap{animation:fadeUp .7s ease .05s both;margin-bottom:1.5rem}
@@ -386,7 +388,7 @@
     .section-intro-top{display:flex;align-items:center;gap:.5rem}
     .onboarding-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .3s ease}
     .onboarding-modal{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:24px;padding:2rem 1.75rem 1.75rem;max-width:360px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35);animation:fadeUp .4s ease both}
-    .onboarding-logo{font-size:2.2rem;margin-bottom:.5rem}
+    .onboarding-logo{width:3rem;height:3rem;margin:0 auto .6rem;display:block}
     .onboarding-title{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;color:#1a2a1a;margin-bottom:.3rem}
     .onboarding-sub{font-size:.82rem;color:#4a5a4a;margin-bottom:1.5rem;line-height:1.5}
     .onboarding-features{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1.6rem;text-align:left}
@@ -607,7 +609,7 @@
   </aside>
   <div class="wrapper">
     <header>
-      <div class="logo">🐾</div>
+      <svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="22" fill="#2abfad"/><!-- left floppy ear --><ellipse cx="24" cy="56" rx="13" ry="19" fill="none" stroke="white" stroke-width="5.5"/><!-- right floppy ear --><ellipse cx="76" cy="56" rx="13" ry="19" fill="none" stroke="white" stroke-width="5.5"/><!-- face/snout oval --><ellipse cx="50" cy="54" rx="28" ry="22" fill="#2abfad" stroke="white" stroke-width="5.5"/><!-- left nostril --><circle cx="42" cy="54" r="4" fill="white"/><!-- right nostril --><circle cx="58" cy="54" r="4" fill="white"/></svg>
       <h1>Sniffout</h1>
       <p class="subtitle">Your dog walking companion</p>
     </header>
@@ -2408,7 +2410,7 @@ function maybeShowOnboarding(){
   overlay.id='onboardingOverlay';
   overlay.innerHTML=`
     <div class="onboarding-modal">
-      <div class="onboarding-logo">🐾</div>
+      <svg class="onboarding-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="22" fill="#2abfad"/><ellipse cx="24" cy="56" rx="13" ry="19" fill="none" stroke="white" stroke-width="5.5"/><ellipse cx="76" cy="56" rx="13" ry="19" fill="none" stroke="white" stroke-width="5.5"/><ellipse cx="50" cy="54" rx="28" ry="22" fill="#2abfad" stroke="white" stroke-width="5.5"/><circle cx="42" cy="54" r="4" fill="white"/><circle cx="58" cy="54" r="4" fill="white"/></svg>
       <div class="onboarding-title">Welcome to Sniffout</div>
       <div class="onboarding-sub">Shared, discovered and rated by the community.</div>
       <div class="onboarding-features">
