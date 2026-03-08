@@ -2328,20 +2328,6 @@ async function useCurrentLocation(){
     },
     {enableHighAccuracy:true,timeout:10000,maximumAge:0}
   );
-        weatherData=await fetchWeather(lat,lon);
-        if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
-        showTab(currentTab);
-      }catch(e){
-        document.getElementById('locationName').textContent='';
-        document.getElementById('searchError').style.display='block';
-        showSplash();
-      }
-    },
-    err=>{
-      if(btn){btn.textContent='⌖';btn.style.opacity='';}
-      alert('Could not get your location. Please check your browser permissions.');
-    }
-  );
 }
 
 // ── PINNED FAVOURITES ──────────────────────────────────────────────────────────
