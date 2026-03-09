@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-  <title>🐾 Sniffout</title>
+  <title>🐾 Sniffout - Dog Walk Finder</title>
+  <link rel="canonical" href="https://sniffout.app/"/>
+  <meta name="description" content="Discover the best dog walks near you. Live weather, curated routes and dog-friendly places - all in one free app."/>
+  <meta property="og:title" content="Sniffout - Dog Walk Finder"/>
+  <meta property="og:description" content="Discover the best dog walks near you. Live weather, curated routes and dog-friendly places."/>
+  <meta property="og:url" content="https://sniffout.app/"/>
+  <meta property="og:type" content="website"/>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="icon" type="image/png" href="icon-192.png">
@@ -2019,6 +2025,7 @@ function showTab(tab){
     return;
   }
   currentTab=tab;
+  try{localStorage.setItem('sniffout_active_tab',tab);}catch(e){}
   document.body.classList.remove('on-splash');
   document.body.classList.remove('on-profile');
   window.scrollTo(0,0);
@@ -2045,7 +2052,7 @@ function showTab(tab){
 function saveSession(){
   if(!currentLocation||!weatherData)return;
   try{
-    sessionStorage.setItem('sniffout_tab',currentTab);
+    localStorage.setItem('sniffout_active_tab',currentTab);
     localStorage.setItem('sniffout_session',JSON.stringify({location:currentLocation,weather:weatherData,tab:currentTab,savedAt:Date.now()}));
   }catch(e){}
 }
@@ -2068,8 +2075,8 @@ async function restoreSession(){
     document.getElementById('topNavSearchInput').value=currentLocation.displayName;
     document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
     if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
-    const sessionTab=sessionStorage.getItem('sniffout_tab');
-    const tabToRestore=sessionTab||s.tab||'weather';
+    const activeTab=localStorage.getItem('sniffout_active_tab');
+    const tabToRestore=activeTab||s.tab||'weather';
     if(tabToRestore==='profile'){showProfile();}
     else{showTab(tabToRestore);}
     return true;
@@ -2165,7 +2172,7 @@ function showProfile(){
   window.scrollTo(0,0);
   document.body.classList.remove('on-splash');
   document.body.classList.add('on-profile');
-  try{sessionStorage.setItem('sniffout_tab','profile');}catch(e){}
+  try{localStorage.setItem('sniffout_active_tab','profile');}catch(e){}
   // Update h1 to show page name
   const h1=document.querySelector('header h1');
   if(h1)h1.textContent='Profile';
@@ -2317,6 +2324,7 @@ function renderProfilePage(){
 function goHome(){
   weatherData=null;currentLocation=null;
   localStorage.removeItem('sniffout_session');
+  localStorage.removeItem('sniffout_active_tab');
   document.getElementById('searchInput').value='';
   document.getElementById('topNavSearchInput').value='';
   document.getElementById('locationName').textContent='';
