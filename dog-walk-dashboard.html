@@ -175,6 +175,8 @@
     .section-intro{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:18px;padding:1rem 1.2rem;margin-bottom:.6rem;animation:fadeUp .7s ease .05s both;overflow:hidden}
     .filter-scroll-row{display:flex;gap:.4rem;overflow-x:auto;margin:0 -1.5rem;padding:.5rem 1.5rem;scrollbar-width:none;-ms-overflow-style:none}
     .filter-scroll-row::-webkit-scrollbar{display:none}
+    .page-controls{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;padding:.1rem 0}
+    .page-controls::-webkit-scrollbar{display:none}
     .filter-divider{width:1px;background:var(--card-border);flex-shrink:0;margin:0 .2rem;align-self:stretch}
     .section-intro-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.25rem}
     .section-intro h3{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:400;color:var(--ink)}
@@ -1330,16 +1332,21 @@ function renderWalks(activeFilter='all'){
     ?[...filtered].sort((a,b)=>(getAvgRating(b.id)||0)-(getAvgRating(a.id)||0))
     :[...filtered].sort((a,b)=>parseFloat(a.distance)-parseFloat(b.distance));
 
-  const walkSortBar='';// merged into filterBar below
-
   const nearestArrow=walksDistDir==='asc'?' ↑':' ↓';
-  const filterBar=`<div class="filter-scroll-row">
-    <button class="sort-btn${activeWalksSort==='distance'?' active':''}" onclick="setWalksSort('distance','${activeFilter}')">📍 Nearest${activeWalksSort==='distance'?nearestArrow:''}</button>
-    <button class="sort-btn${activeWalksSort==='rating'?' active':''}" onclick="setWalksSort('rating','${activeFilter}')">⭐ Rating</button>
-    <button class="sort-btn${activeWalksSort==='length'?' active':''}" onclick="setWalksSort('length','${activeFilter}')">🗺️ Shortest</button>
-    <span class="filter-divider"></span>
-    ${filters.map(f=>`<button class="filter-chip${activeFilter===f.id?' active':''}" onclick="renderWalksFiltered('${f.id}')">${f.label}</button>`).join('')}
-  </div>`;
+
+  const controlsBar=`
+    <div class="page-controls">
+      ${viewToggle}
+      <div class="filter-divider" style="height:28px"></div>
+      <button class="sort-btn${activeWalksSort==='distance'?' active':''}" onclick="setWalksSort('distance','${activeFilter}')">📍 Nearest${activeWalksSort==='distance'?nearestArrow:''}</button>
+      <button class="sort-btn${activeWalksSort==='rating'?' active':''}" onclick="setWalksSort('rating','${activeFilter}')">⭐ Rating</button>
+      <button class="sort-btn${activeWalksSort==='length'?' active':''}" onclick="setWalksSort('length','${activeFilter}')">🗺️ Shortest</button>
+    </div>`;
+
+  const filterBar=`
+    <div class="filter-scroll-row">
+      ${filters.map(f=>`<button class="filter-chip${activeFilter===f.id?' active':''}" onclick="renderWalksFiltered('${f.id}')">${f.label}</button>`).join('')}
+    </div>`;
 
   // Progress framing
   const progressBar=nearby.length>0?`
@@ -1409,16 +1416,11 @@ function renderWalks(activeFilter='all'){
   const mapView=`${mapLayerBar}<div class="map-container" id="walksMap"></div>`;
 
   return`
-    <div class="section-intro">
-      <div class="section-intro-top">
-        <h3>Walks near ${currentLocation.displayName}</h3>
-        ${viewToggle}
-      </div>
-      ${radiusSlider}
-      ${filterBar}
-      ${filtered.length!==nearby.length?`<div class="walks-count">Showing ${filtered.length} of ${nearby.length} walks</div>`:''}
-      ${progressBar}
-    </div>
+    ${controlsBar}
+    ${radiusSlider}
+    ${filterBar}
+    ${filtered.length!==nearby.length?`<div class="walks-count" style="font-size:.75rem;color:var(--text-muted);margin-bottom:.4rem">Showing ${filtered.length} of ${nearby.length} walks</div>`:''}
+    ${progressBar}
     <div id="submit-walk-wrapper" style="display:none;margin-bottom:1rem">${renderSubmitWalkForm()}</div>
     ${walksView==='map'?mapView:`${nearby.length<=2?contribBanner:''}${walksHtml}`}
     ${walksView==='list'?`<div class="green-spaces-section">
@@ -1646,15 +1648,11 @@ let activePlacesSort='distance';
 let placesDistDir='asc';
 
 function renderPlacesPanel(){
-  const catBtnsWithSort=`
-    <button class="sort-btn${activePlacesSort==='distance'?' active':''}" onclick="setPlacesSort('distance')">📍 Nearest${activePlacesSort==='distance'?(placesDistDir==='asc'?' ↑':' ↓'):''}</button>
-    <button class="sort-btn${activePlacesSort==='rating'?' active':''}" onclick="setPlacesSort('rating')">⭐ Rating</button>
-    <span class="filter-divider"></span>
-    ${Object.entries(CAT_CONFIG).map(([k,v])=>`
+  const catBtns=Object.entries(CAT_CONFIG).map(([k,v])=>`
     <button class="place-cat-btn${activeCat===k?' active':''}" onclick="switchCat('${k}')">
       <span class="place-cat-icon">${v.emoji}</span>
       <span class="place-cat-label">${v.label.replace(v.emoji,'').trim()}</span>
-    </button>`).join('')}`;
+    </button>`).join('');
 
   const cfg=CAT_CONFIG[activeCat];
   const tipBanner=`
@@ -1669,14 +1667,26 @@ function renderPlacesPanel(){
       <button class="view-toggle-btn${placesView==='map'?' active':''}" onclick="togglePlacesView('map')">🗺 Map</button>
     </div>`;
 
+  const nearestArrow=placesDistDir==='asc'?' ↑':' ↓';
+  const controlsBar=`
+    <div class="page-controls">
+      ${placesViewToggle}
+      <div class="filter-divider" style="height:28px"></div>
+      <button class="sort-btn${activePlacesSort==='distance'?' active':''}" onclick="setPlacesSort('distance')">📍 Nearest${activePlacesSort==='distance'?nearestArrow:''}</button>
+      <button class="sort-btn${activePlacesSort==='rating'?' active':''}" onclick="setPlacesSort('rating')">⭐ Rating</button>
+    </div>`;
+
+  const radiusSlider=`
+    <div class="radius-slider-row">
+      <span class="radius-label">📍 Radius</span>
+      <input type="range" min="1" max="10" value="${searchRadiusKm}" class="radius-input" oninput="searchRadiusKm=parseInt(this.value);document.getElementById('places-radius-val').textContent=this.value+'km'" onchange="document.getElementById('panel').innerHTML=renderPlacesPanel();if(placesView==='map')initPlacesMap();else loadPlaces(activeCat)">
+      <span class="radius-val" id="places-radius-val">${searchRadiusKm}km</span>
+    </div>`;
+
   return`
-    <div class="section-intro">
-      <div class="section-intro-top">
-        <h3>Dog-friendly places near ${currentLocation.displayName}</h3>
-        ${placesViewToggle}
-      </div>
-    </div>
-    <div class="place-cat-bar">${catBtnsWithSort}</div>
+    ${controlsBar}
+    ${radiusSlider}
+    <div class="place-cat-bar">${catBtns}</div>
     ${placesView==='list'?tipBanner:''}
     ${placesView==='map'?`<div class="map-container" id="placesMap"></div><p style="font-size:.72rem;color:var(--text-muted);text-align:center;margin-bottom:.5rem">Tap a pin to see details · Switch category above to change pins</p>`:`<div id="places-results"><div class="loading"><div class="spinner"></div><br>Finding places nearby…</div></div>`}
     <div class="footer" style="margin-top:1.5rem"><div>Powered by Google Places · Always call ahead to confirm dogs are welcome</div></div>`;
@@ -1933,13 +1943,9 @@ async function loadPlaces(cat){
 function switchCat(cat){
   activeCat=cat;
   if(currentTab==='places'){
-    if(placesView==='list'){
-      document.getElementById('panel').innerHTML=renderPlacesPanel();
-      loadPlaces(cat);
-    } else {
-      document.getElementById('panel').innerHTML=renderPlacesPanel();
-      initPlacesMap();
-    }
+    document.getElementById('panel').innerHTML=renderPlacesPanel();
+    if(placesView==='map')initPlacesMap();
+    else loadPlaces(cat);
   }
 }
 
