@@ -1334,6 +1334,12 @@ function renderWalks(activeFilter='all'){
 
   const nearestArrow=walksDistDir==='asc'?' ↑':' ↓';
 
+  const viewToggle=`
+    <div class="view-toggle">
+      <button class="view-toggle-btn${walksView==='list'?' active':''}" onclick="toggleWalksView('list')">≡ List</button>
+      <button class="view-toggle-btn${walksView==='map'?' active':''}" onclick="toggleWalksView('map')">🗺 Map</button>
+    </div>`;
+
   const controlsBar=`
     <div class="page-controls">
       ${viewToggle}
@@ -1399,12 +1405,6 @@ function renderWalks(activeFilter='all'){
     if(cards.length>2){cards.splice(2,0,contribBanner)}
     walksHtml=`<div class="item-list">${cards.join('')}</div>`;
   }
-
-  const viewToggle=`
-    <div class="view-toggle">
-      <button class="view-toggle-btn${walksView==='list'?' active':''}" onclick="toggleWalksView('list')">≡ List</button>
-      <button class="view-toggle-btn${walksView==='map'?' active':''}" onclick="toggleWalksView('map')">🗺 Map</button>
-    </div>`;
 
   const mapLayerBar=`
     <div id="walksMapLayerBar" style="display:flex;gap:.4rem;margin-bottom:.6rem;flex-wrap:wrap">
