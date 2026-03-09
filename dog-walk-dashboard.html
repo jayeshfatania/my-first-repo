@@ -424,7 +424,7 @@
     .splash-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;font-weight:500;color:var(--moss);background:rgba(90,122,82,.1);border:1px solid rgba(90,122,82,.2);border-radius:20px;padding:.28rem .85rem;margin-bottom:1.1rem}
     body.night .splash-badge{color:#7ab87a;background:rgba(122,184,122,.1);border-color:rgba(122,184,122,.25)}
     .splash h2{font-family:'Fraunces',serif;font-size:1.9rem;font-weight:300;color:var(--ink);margin-bottom:.65rem;line-height:1.2;max-width:400px;margin-left:auto;margin-right:auto}
-    .splash h2 em{font-style:italic;color:var(--moss)}
+    .splash h2 em{font-style:normal;color:var(--moss)}
     .splash p{font-size:.85rem;color:var(--text-muted);line-height:1.65;max-width:340px;margin:0 auto}
     .splash-stats{display:flex;gap:0;justify-content:center;margin:1.5rem auto 0;max-width:380px;background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:16px;overflow:hidden}
     .splash-stat{flex:1;padding:.85rem .5rem;position:relative}
@@ -438,12 +438,12 @@
     .splash-examples{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center}
     .example-pill{background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:20px;padding:.35rem .9rem;font-size:.78rem;color:var(--ink);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.3rem}
     .example-pill:hover{background:var(--ink);color:#fff}
-    .splash-first-visit{font-size:.78rem;color:var(--text-muted);margin-top:1.2rem;font-style:italic}
+    .splash-first-visit{font-size:.78rem;color:var(--text-muted);margin-top:1.2rem}
     .pin-star{font-size:.8rem;cursor:pointer;opacity:.4;transition:opacity .15s;padding:.1rem .2rem;flex-shrink:0}
     .pin-star:hover{opacity:1}
     .pin-star.pinned{opacity:1}
-    .pinned-pill{background:rgba(90,122,82,.1);border-color:rgba(90,122,82,.25)}
-    body.night .pinned-pill{background:rgba(122,184,122,.08);border-color:rgba(122,184,122,.2)}
+    .pinned-pill{background:var(--card-bg);border-color:var(--card-border)}
+    body.night .pinned-pill{background:var(--card-bg);border-color:var(--card-border)}
     /* Best walk window */
     .best-walk-window{background:rgba(90,122,82,.1);border:1px solid rgba(90,122,82,.2);border-radius:14px;padding:.75rem 1rem;font-size:.82rem;color:var(--ink);margin-bottom:.75rem;line-height:1.5}
     .best-walk-window strong{color:var(--moss)}
@@ -1366,9 +1366,8 @@ function renderWalks(activeFilter='all'){
     <div class="contrib-banner">
       <div class="contrib-banner-top">
         <div>
-          <div class="contrib-banner-title">🐾 Join ${totalReviews} dog owners already sharing walks and reviews near you</div>
-          <div class="contrib-banner-sub">Every rating and walk you add helps dog owners near ${currentLocation.displayName} discover great routes. It only takes a minute!</div>
-          <div class="contrib-banner-sub" style="margin-top:.5rem">🐾 Know a great walk? Submit it and help other dog owners discover somewhere amazing.</div>
+          <div class="contrib-banner-title">🐾 Join ${totalReviews} dog owners sharing walks near you!</div>
+          <div class="contrib-banner-sub">Every rating helps the community discover great routes. It only takes a minute!</div>
         </div>
         <div class="contrib-banner-emoji">🌿</div>
       </div>
@@ -2045,7 +2044,10 @@ function showTab(tab){
 
 function saveSession(){
   if(!currentLocation||!weatherData)return;
-  try{localStorage.setItem('sniffout_session',JSON.stringify({location:currentLocation,weather:weatherData,tab:currentTab,savedAt:Date.now()}));}catch(e){}
+  try{
+    sessionStorage.setItem('sniffout_tab',currentTab);
+    localStorage.setItem('sniffout_session',JSON.stringify({location:currentLocation,weather:weatherData,tab:currentTab,savedAt:Date.now()}));
+  }catch(e){}
 }
 
 async function restoreSession(){
@@ -2066,7 +2068,10 @@ async function restoreSession(){
     document.getElementById('topNavSearchInput').value=currentLocation.displayName;
     document.getElementById('locationName').textContent=`📍 ${currentLocation.displayName}`;
     if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
-    showTab(s.tab||'weather');
+    const sessionTab=sessionStorage.getItem('sniffout_tab');
+    const tabToRestore=sessionTab||s.tab||'weather';
+    if(tabToRestore==='profile'){showProfile();}
+    else{showTab(tabToRestore);}
     return true;
   }catch(e){return false;}
 }
@@ -2113,8 +2118,8 @@ function showSplash(){
       <div class="splash-recent-label">⭐ Favourite locations</div>
       <div class="splash-examples">${pinned.map(r=>`
         <div class="example-pill pinned-pill">
-          <span onclick="useExample('${r}')">${r}</span>
-          <span class="pin-star pinned" onclick="togglePin('${r}')" title="Unpin">⭐</span>
+          <span onclick="useExample('${r}')">⭐ ${r}</span>
+          <span class="pin-star pinned" onclick="togglePin('${r}')" title="Unpin">✕</span>
         </div>`).join('')}
       </div>
     </div>`:'';
@@ -2160,6 +2165,7 @@ function showProfile(){
   window.scrollTo(0,0);
   document.body.classList.remove('on-splash');
   document.body.classList.add('on-profile');
+  try{sessionStorage.setItem('sniffout_tab','profile');}catch(e){}
   // Update h1 to show page name
   const h1=document.querySelector('header h1');
   if(h1)h1.textContent='Profile';
