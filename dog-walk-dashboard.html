@@ -125,9 +125,19 @@
       .top-nav-links{display:none!important}
       .bottom-nav{display:none!important}
       .left-sidebar{display:block}
-      .wrapper{padding-top:5rem;padding-bottom:2rem;padding-left:240px;max-width:none;margin:0;padding-right:2rem}
+      .wrapper{padding-top:5rem;padding-bottom:2rem;padding-left:260px;max-width:none;margin:0;padding-right:2rem}
       header{display:none}
       .search-wrap{display:none}
+      /* Cap content width on large screens */
+      #panel{max-width:860px}
+      /* Controls bar sits inline, no need to scroll on desktop */
+      .page-controls{flex-wrap:wrap;overflow-x:visible;background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:.5rem .75rem;margin-bottom:.6rem}
+      /* Radius slider max width on desktop */
+      .radius-slider-row{max-width:560px}
+      /* Filter row - no negative margins on desktop */
+      .filter-scroll-row{margin:0;padding:.4rem 0;overflow-x:auto}
+      /* Place cat bar - not sticky on desktop, no negative margin */
+      .place-cat-bar{position:static;margin:0 0 .75rem;border-radius:14px;border:1px solid rgba(255,255,255,.4)}
     }
     .hazard-warning{border-radius:18px;padding:1.1rem 1.4rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:.9rem;animation:fadeUp .5s ease both;border:1.5px solid}
     .hazard-warning.red{background:rgba(200,50,50,.1);border-color:rgba(200,50,50,.3)}
