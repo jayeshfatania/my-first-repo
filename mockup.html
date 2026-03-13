@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Sniffout — Design Mockup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --bg:        #F7F5F0;
+      --surface:   #FFFFFF;
+      --brand:     #1E4D3A;
+      --brand-mid: #2E7D5E;
+      --amber:     #D97706;
+      --red:       #DC2626;
+      --ink:       #111827;
+      --ink-2:     #6B7280;
+      --border:    #E5E7EB;
+      --chip-off:  #D1D5DB;
+      --nav-h:     64px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #DDD9D3;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 48px;
+      gap: 20px;
+    }
+
+    .mockup-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #888;
+      text-align: center;
+    }
+    .mockup-label span { color: #555; }
+
+    /* ─── Phone Frame ─── */
+    .device {
+      width: 390px;
+      max-width: 100%;
+      height: 844px;
+      background: var(--bg);
+      border-radius: 44px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.10),
+        0 4px 16px rgba(0,0,0,0.08),
+        0 24px 80px rgba(0,0,0,0.20);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Status bar ─── */
+    .status-bar {
+      height: 44px;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px 0;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 50;
+    }
+    .status-bar .time { font-size: 15px; font-weight: 600; color: var(--ink); }
+    .status-bar .icons { display: flex; gap: 6px; align-items: center; }
+    .status-bar .icons svg { color: var(--ink); }
+
+    /* ─── App header ─── */
+    .app-header {
+      background: var(--bg);
+      padding: 8px 16px 10px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 40;
+    }
+    .app-header .wordmark {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--brand);
+      letter-spacing: -0.3px;
+    }
+    .app-header .location-line {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 1px;
+      font-size: 13px;
+      color: var(--ink-2);
+      font-weight: 400;
+    }
+    .app-header .location-line svg { color: var(--brand); flex-shrink: 0; }
+
+    /* ─── Tab panels ─── */
+    .screen-area {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+    .tab-panel {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--bg);
+      display: none;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .tab-panel::-webkit-scrollbar { display: none; }
+    .tab-panel.active { display: block; }
+    .tab-panel-content { padding-bottom: 24px; }
+
+    /* ─── Bottom nav ─── */
+    nav {
+      height: var(--nav-h);
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: stretch;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 100;
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      cursor: pointer;
+      padding-bottom: 4px;
+      transition: opacity 120ms;
+      border: none;
+      background: none;
+    }
+    .nav-item:active { opacity: 0.7; transform: scale(0.95); }
+    .nav-item .nav-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+    .nav-item .nav-label { font-size: 10px; font-weight: 500; }
+    .nav-item.active .nav-label { color: var(--brand); }
+    .nav-item:not(.active) .nav-label { color: var(--ink-2); }
+    .nav-item.active svg { color: var(--brand); }
+    .nav-item:not(.active) svg { color: var(--ink-2); }
+
+    /* ─── Section headers ─── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      margin-bottom: 12px;
+    }
+    .section-title { font-size: 18px; font-weight: 600; color: var(--ink); }
+    .section-link { font-size: 14px; font-weight: 500; color: var(--brand); text-decoration: none; }
+
+    /* ─── Cards base ─── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    /* ─── TODAY TAB ─── */
+    .today-content { padding-top: 0; }
+
+    .weather-hero {
+      margin: 0 16px 12px;
+      background: var(--brand);
+      border-radius: 16px;
+      padding: 20px;
+      color: #fff;
+      cursor: pointer;
+      transition: transform 150ms ease-out;
+    }
+    .weather-hero:active { transform: scale(0.98); }
+    .weather-hero-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .weather-hero-icon { opacity: 0.9; }
+    .weather-hero-temp { font-size: 36px; font-weight: 700; letter-spacing: -1px; }
+    .weather-hero-feels { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+    .weather-verdict {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .weather-verdict svg { flex-shrink: 0; }
+    .weather-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .weather-pill {
+      background: rgba(255,255,255,0.18);
+      border-radius: 99px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    .hazard-card {
+      margin: 0 16px 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--amber);
+      background: rgba(217,119,6,0.07);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .hazard-card .hazard-icon { flex-shrink: 0; margin-top: 1px; color: var(--amber); }
+    .hazard-card .hazard-title { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+    .hazard-card .hazard-body { font-size: 13px; color: var(--ink); line-height: 1.5; }
+
+    .seasonal-tip {
+      margin: 0 16px 24px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(30,77,58,0.2);
+      background: rgba(30,77,58,0.06);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .seasonal-tip .tip-emoji { font-size: 20px; flex-shrink: 0; }
+    .seasonal-tip .tip-title { font-size: 14px; font-weight: 600; color: var(--brand); margin-bottom: 3px; }
+    .seasonal-tip .tip-body { font-size: 13px; color: var(--ink); line-height: 1.5; }
+
+    /* Horizontal scroll walk cards */
+    .hscroll-row {
+      display: flex;
+      gap: 12px;
+      padding: 0 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .hscroll-row::-webkit-scrollbar { display: none; }
+    .hscroll-section { margin-bottom: 24px; }
+
+    .portrait-card {
+      width: 160px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 150ms ease-out;
+    }
+    .portrait-card:active { transform: scale(0.97); }
+    .portrait-photo {
+      width: 160px;
+      height: 130px;
+      position: relative;
+      overflow: hidden;
+    }
+    .portrait-photo img,
+    .portrait-photo .photo-placeholder {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .portrait-photo .photo-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .portrait-badge {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 500;
+      border-radius: 99px;
+      padding: 3px 8px;
+    }
+    .portrait-heart {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    }
+    .portrait-body { padding: 10px 10px 12px; }
+    .portrait-name { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.3; margin-bottom: 3px; }
+    .portrait-meta { font-size: 11px; color: var(--ink-2); }
+
+    /* ─── WEATHER TAB ─── */
+    .tab-title-bar {
+      padding: 12px 16px 8px;
+    }
+    .tab-title { font-size: 22px; font-weight: 700; color: var(--ink); }
+    .tab-subtitle {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      color: var(--ink-2);
+      margin-top: 2px;
+    }
+    .tab-subtitle svg { color: var(--brand); }
+
+    .conditions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 0 16px 16px;
+    }
+    .condition-cell {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 12px;
+    }
+    .condition-icon { color: var(--brand); margin-bottom: 6px; }
+    .condition-value { font-size: 18px; font-weight: 600; color: var(--ink); }
+    .condition-label { font-size: 11px; color: var(--ink-2); margin-top: 2px; }
+
+    .paw-safety {
+      margin: 0 16px 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--brand);
+      background: rgba(30,77,58,0.06);
+      border-left: 4px solid var(--brand);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .paw-safety.caution { border-color: var(--amber); background: rgba(217,119,6,0.06); border-left-color: var(--amber); }
+    .paw-safety.danger { border-color: var(--red); background: rgba(220,38,38,0.06); border-left-color: var(--red); }
+    .paw-icon { flex-shrink: 0; color: var(--brand); margin-top: 1px; }
+    .paw-status {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--brand);
+      margin-bottom: 3px;
+    }
+    .paw-body { font-size: 13px; color: var(--ink); line-height: 1.5; }
+
+    .walk-window {
+      margin: 0 16px 16px;
+    }
+    .walk-window-title { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 10px; }
+    .hour-bar { display: flex; gap: 3px; margin-bottom: 8px; }
+    .hour-seg {
+      height: 28px;
+      border-radius: 4px;
+      flex: 1;
+    }
+    .hour-seg.ideal { background: var(--brand); }
+    .hour-seg.marginal { background: var(--amber); }
+    .hour-seg.poor { background: var(--border); }
+    .hour-seg.night { background: #E9EBF0; }
+    .hour-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--ink-2);
+      margin-bottom: 8px;
+    }
+    .walk-window-summary { font-size: 13px; color: var(--ink-2); }
+    .walk-window-summary strong { color: var(--brand); font-weight: 600; }
+
+    .forecast-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 0 16px 24px;
+    }
+    .forecast-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 8px;
+      text-align: center;
+    }
+    .forecast-day { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+    .forecast-icon { color: var(--ink-2); margin-bottom: 6px; display: flex; justify-content: center; }
+    .forecast-temps { font-size: 12px; color: var(--ink); font-weight: 500; margin-bottom: 8px; }
+    .forecast-temps span { color: var(--ink-2); font-weight: 400; }
+    .forecast-verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 99px;
+    }
+    .forecast-verdict.good { background: rgba(30,77,58,0.1); color: var(--brand); }
+    .forecast-verdict.wet { background: rgba(217,119,6,0.1); color: var(--amber); }
+    .forecast-verdict.poor { background: rgba(0,0,0,0.05); color: var(--ink-2); }
+
+    /* ─── WALKS TAB ─── */
+    .walks-sticky {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--bg);
+      padding-bottom: 4px;
+    }
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 16px 10px;
+      height: 44px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0 12px;
+    }
+    .search-bar input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      color: var(--ink-2);
+      background: transparent;
+      pointer-events: none;
+    }
+    .search-bar svg { color: var(--ink-2); flex-shrink: 0; }
+
+    .chips-row {
+      display: flex;
+      gap: 8px;
+      padding: 0 16px 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .chips-row::-webkit-scrollbar { display: none; }
+    .chip {
+      flex-shrink: 0;
+      height: 34px;
+      padding: 0 16px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid var(--chip-off);
+      background: var(--surface);
+      color: #374151;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      transition: background 150ms, color 150ms, border-color 150ms;
+    }
+    .chip.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+    .seg-toggle {
+      display: flex;
+      margin: 0 16px 10px;
+      height: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .seg-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      transition: background 150ms, color 150ms;
+    }
+    .seg-btn.active { background: var(--brand); color: #fff; font-weight: 600; }
+
+    .walks-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px 8px;
+    }
+    .walks-sort { font-size: 13px; color: var(--brand); font-weight: 500; }
+    .walks-count { font-size: 13px; color: var(--ink-2); }
+
+    .suitability-banner {
+      margin: 0 16px 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border-left: 3px solid var(--amber);
+      background: rgba(217,119,6,0.08);
+      font-size: 13px;
+      color: var(--ink);
+      line-height: 1.4;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .suitability-banner svg { color: var(--amber); flex-shrink: 0; }
+
+    /* Walk card */
+    .walk-card {
+      margin: 0 16px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 150ms ease-out;
+    }
+    .walk-card:active { transform: scale(0.98); }
+    .walk-photo {
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+    }
+    .walk-photo .photo-placeholder {
+      width: 100%;
+      height: 100%;
+    }
+    .walk-badge {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 99px;
+      padding: 4px 10px;
+    }
+    .walk-heart {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    }
+    .walk-body { padding: 14px 16px; }
+    .walk-name-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .walk-name { font-size: 17px; font-weight: 600; color: var(--ink); }
+    .walk-rating {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-2);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+    .walk-rating .star { color: #F59E0B; }
+    .walk-region { font-size: 13px; color: var(--ink-2); margin-bottom: 4px; }
+    .walk-meta-row { font-size: 13px; color: var(--ink-2); margin-bottom: 10px; }
+    .walk-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .walk-tag {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--brand);
+      background: rgba(30,77,58,0.1);
+      border-radius: 6px;
+      padding: 3px 8px;
+    }
+
+    /* ─── NEARBY TAB ─── */
+    .venue-card {
+      margin: 0 16px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .venue-photo {
+      height: 140px;
+      position: relative;
+      overflow: hidden;
+    }
+    .venue-badge {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 99px;
+      padding: 3px 9px;
+    }
+    .venue-heart {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 28px;
+      height: 28px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    }
+    .venue-body { padding: 12px 14px; }
+    .venue-name-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 3px;
+    }
+    .venue-name { font-size: 16px; font-weight: 600; color: var(--ink); }
+    .venue-rating {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-2);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+    .venue-rating .star { color: #F59E0B; }
+    .venue-detail { font-size: 13px; color: var(--ink-2); }
+
+    /* ─── ME TAB ─── */
+    .greeting-card {
+      margin: 0 16px 12px;
+      padding: 18px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .greeting-text { font-size: 22px; font-weight: 700; color: var(--ink); }
+    .greeting-edit {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--brand);
+      background: rgba(30,77,58,0.08);
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      padding: 0 16px 16px;
+    }
+    .stat-cell {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-number { font-size: 28px; font-weight: 700; color: var(--ink); }
+    .stat-label { font-size: 12px; color: var(--ink-2); margin-top: 3px; }
+
+    .settings-section {
+      margin: 0 16px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      height: 52px;
+      border-bottom: 1px solid var(--border);
+    }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-label { font-size: 15px; color: var(--ink); }
+    .settings-value { font-size: 13px; color: var(--ink-2); display: flex; align-items: center; gap: 4px; }
+
+    .misc-rows {
+      margin: 0 16px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .misc-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      height: 52px;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .misc-row:last-child { border-bottom: none; }
+    .misc-row.destructive { color: var(--red); }
+    .misc-row svg { color: var(--ink-2); }
+
+    /* ─── Walk Detail Overlay ─── */
+    .detail-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 200;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
+      will-change: transform;
+    }
+    .detail-overlay.open { transform: translateY(0); }
+    .detail-nav {
+      height: 52px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 10;
+    }
+    .detail-back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--brand);
+      cursor: pointer;
+    }
+    .detail-walk-name { font-size: 15px; font-weight: 600; color: var(--ink); }
+    .detail-heart { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .detail-scroll { flex: 1; overflow-y: auto; scrollbar-width: none; }
+    .detail-scroll::-webkit-scrollbar { display: none; }
+    .detail-hero { height: 240px; position: relative; overflow: hidden; }
+    .detail-hero .photo-placeholder { width: 100%; height: 100%; }
+    .detail-hero-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(transparent 40%, rgba(0,0,0,0.5) 100%);
+    }
+    .detail-hero-title {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+    .detail-body { padding: 20px 16px; }
+    .detail-section-title { font-size: 13px; font-weight: 600; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .detail-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .detail-chip .dc-icon { font-size: 16px; margin-bottom: 3px; }
+    .detail-chip .dc-label { font-size: 10px; color: var(--ink-2); }
+    .detail-chip .dc-value { font-size: 12px; font-weight: 600; color: var(--ink); }
+    .detail-description { font-size: 15px; color: var(--ink); line-height: 1.7; margin-bottom: 24px; }
+    .detail-map-placeholder {
+      height: 160px;
+      background: linear-gradient(135deg, #C8DDD0 0%, #A8C4B8 100%);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--brand);
+      font-weight: 500;
+      border: 1px solid var(--border);
+      gap: 6px;
+    }
+    .nearby-venues { margin-bottom: 20px; }
+    .nearby-title { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 10px; }
+    .nearby-venue-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .nearby-venue-row:last-child { border-bottom: none; }
+    .nv-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+    .nv-type { font-size: 12px; color: var(--ink-2); margin-top: 1px; }
+    .nv-dist { font-size: 13px; color: var(--ink-2); }
+    .share-btn {
+      width: 100%;
+      height: 50px;
+      background: var(--surface);
+      border: 1.5px solid var(--brand);
+      border-radius: 12px;
+      color: var(--brand);
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    /* ─── Utility ─── */
+    .section-gap { height: 8px; }
+    .divider { height: 1px; background: var(--border); margin: 0 16px 20px; }
+
+    /* ─── Photo placeholder gradients ─── */
+    .grad-forest  { background: linear-gradient(155deg, #1E4D3A 0%, #2D7A4A 45%, #5A9E6A 100%); }
+    .grad-coastal { background: linear-gradient(155deg, #1A5078 0%, #2A7AB8 50%, #5AA0C8 100%); }
+    .grad-moor    { background: linear-gradient(155deg, #4A3D5C 0%, #7A6080 50%, #A08898 100%); }
+    .grad-meadow  { background: linear-gradient(155deg, #5C6A20 0%, #8A9E30 50%, #B8C060 100%); }
+    .grad-heath   { background: linear-gradient(155deg, #5C4020 0%, #8A6030 60%, #C08840 100%); }
+    .grad-chalk   { background: linear-gradient(155deg, #3A4A5C 0%, #607080 50%, #90A8B8 100%); }
+    .grad-pub     { background: linear-gradient(155deg, #5C2020 0%, #8A3830 60%, #C07040 100%); }
+    .grad-cafe    { background: linear-gradient(155deg, #3A2810 0%, #705028 60%, #A07840 100%); }
+    .grad-park    { background: linear-gradient(155deg, #204030 0%, #40704A 50%, #70A060 100%); }
+
+    /* Mobile-first: on small screens remove the frame */
+    @media (max-width: 430px) {
+      body { padding: 0; background: var(--bg); }
+      .device {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .mockup-label { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="mockup-label">
+  <span>Sniffout</span> · Design Mockup · March 2026 · Tap tabs to explore all screens
+</div>
+
+<div class="device">
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="icons">
+      <!-- Signal -->
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="0.5" fill="currentColor"/><rect x="9" y="2" width="3" height="10" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="currentColor"/></svg>
+      <!-- WiFi -->
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 9.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM8 6a5.5 5.5 0 014.24 2L10.82 9.4A3.5 3.5 0 008 8a3.5 3.5 0 00-2.82 1.4L3.76 8A5.5 5.5 0 018 6zm0-4a9.5 9.5 0 017.07 3.14L13.65 6.6A7.5 7.5 0 008 4a7.5 7.5 0 00-5.65 2.6L.93 5.14A9.5 9.5 0 018 2z"/></svg>
+      <!-- Battery -->
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="22" y="3.5" width="2.5" height="5" rx="1.25" fill="currentColor" fill-opacity="0.4"/><rect x="2" y="2" width="16" height="8" rx="1.5" fill="currentColor"/></svg>
+    </div>
+  </div>
+
+  <!-- Screen area with tabs -->
+  <div class="screen-area">
+
+    <!-- ════════════════════════════
+         TAB: TODAY
+    ════════════════════════════ -->
+    <div id="tab-today" class="tab-panel active">
+      <!-- Persistent header -->
+      <div class="app-header">
+        <div class="wordmark">sniffout</div>
+        <div class="location-line">
+          <!-- pin icon -->
+          <svg width="12" height="14" viewBox="0 0 12 16" fill="currentColor"><path d="M6 0C3.24 0 1 2.24 1 5c0 3.75 5 11 5 11s5-7.25 5-11c0-2.76-2.24-5-5-5zm0 6.75A1.75 1.75 0 116 3.25a1.75 1.75 0 010 3.5z"/></svg>
+          Near Dorking, Surrey&nbsp;
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor"><path d="M1 1l4 4 4-4"/></svg>
+        </div>
+      </div>
+
+      <div class="tab-panel-content today-content">
+
+        <!-- Weather hero card -->
+        <div class="weather-hero" onclick="openDetail()">
+          <div class="weather-hero-top">
+            <div>
+              <div class="weather-hero-temp">14°C</div>
+              <div class="weather-hero-feels">Feels like 11°C</div>
+            </div>
+            <!-- Cloud SVG -->
+            <div class="weather-hero-icon">
+              <svg width="52" height="44" viewBox="0 0 52 40" fill="none">
+                <ellipse cx="26" cy="26" rx="16" ry="11" fill="rgba(255,255,255,0.85)"/>
+                <ellipse cx="18" cy="24" rx="9" ry="8" fill="rgba(255,255,255,0.85)"/>
+                <ellipse cx="34" cy="25" rx="8" ry="7" fill="rgba(255,255,255,0.85)"/>
+                <ellipse cx="26" cy="15" rx="10" ry="10" fill="rgba(255,255,255,0.85)"/>
+              </svg>
+            </div>
+          </div>
+          <div class="weather-verdict">
+            <!-- check icon -->
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="10" fill="rgba(255,255,255,0.22)"/><path d="M6 10l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Good walking conditions
+          </div>
+          <div class="weather-pills">
+            <span class="weather-pill">Wind 18 mph</span>
+            <span class="weather-pill">Dry</span>
+            <span class="weather-pill">UV Low</span>
+          </div>
+        </div>
+
+        <!-- Hazard card -->
+        <div class="hazard-card">
+          <div class="hazard-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1L1 18h18L10 1zm0 3.5l6.5 12H3.5L10 4.5zm-1 4v4h2V8.5H9zm0 5v2h2v-2H9z"/></svg>
+          </div>
+          <div>
+            <div class="hazard-title">Breezy today</div>
+            <div class="hazard-body">18 mph gusts on exposed routes. Consider sheltered woodland walks.</div>
+          </div>
+        </div>
+
+        <!-- Best walks section -->
+        <div class="hscroll-section">
+          <div class="section-header">
+            <span class="section-title">Best walks near you</span>
+            <a class="section-link" href="#">See all →</a>
+          </div>
+          <div class="hscroll-row">
+
+            <div class="portrait-card" onclick="openDetail()">
+              <div class="portrait-photo">
+                <div class="photo-placeholder grad-forest"></div>
+                <div class="portrait-badge">Off-lead</div>
+                <div class="portrait-heart">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E4D3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                </div>
+              </div>
+              <div class="portrait-body">
+                <div class="portrait-name">Ashdown Forest Loop</div>
+                <div class="portrait-meta">2.8 mi · 1h 20</div>
+              </div>
+            </div>
+
+            <div class="portrait-card" onclick="openDetail()">
+              <div class="portrait-photo">
+                <div class="photo-placeholder grad-chalk"></div>
+                <div class="portrait-badge">Popular</div>
+                <div class="portrait-heart">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#1E4D3A" stroke="#1E4D3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                </div>
+              </div>
+              <div class="portrait-body">
+                <div class="portrait-name">Box Hill Summit</div>
+                <div class="portrait-meta">3.4 mi · 1h 45</div>
+              </div>
+            </div>
+
+            <div class="portrait-card" onclick="openDetail()">
+              <div class="portrait-photo">
+                <div class="photo-placeholder grad-heath"></div>
+                <div class="portrait-badge">Hidden gem</div>
+                <div class="portrait-heart">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                </div>
+              </div>
+              <div class="portrait-body">
+                <div class="portrait-name">Leith Hill Circuit</div>
+                <div class="portrait-meta">4.1 mi · 2h 05</div>
+              </div>
+            </div>
+
+            <div class="portrait-card" onclick="openDetail()">
+              <div class="portrait-photo">
+                <div class="photo-placeholder grad-coastal"></div>
+                <div class="portrait-badge">Coastal</div>
+                <div class="portrait-heart">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                </div>
+              </div>
+              <div class="portrait-body">
+                <div class="portrait-name">Birling Gap Trail</div>
+                <div class="portrait-meta">2.2 mi · 1h 00</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Seasonal tip -->
+        <div class="seasonal-tip">
+          <div class="tip-emoji">🌿</div>
+          <div>
+            <div class="tip-title">Adder season (Apr–Sep)</div>
+            <div class="tip-body">Keep dogs on marked paths in heathland and moorland areas. Adders are mostly harmless but will bite if disturbed.</div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /today -->
+
+    <!-- ════════════════════════════
+         TAB: WEATHER
+    ════════════════════════════ -->
+    <div id="tab-weather" class="tab-panel">
+      <div class="tab-panel-content">
+
+        <div class="tab-title-bar">
+          <div class="tab-title">Weather</div>
+          <div class="tab-subtitle">
+            <svg width="11" height="13" viewBox="0 0 11 14" fill="currentColor"><path d="M5.5 0C3.03 0 1 2.03 1 4.5 1 7.88 5.5 14 5.5 14S10 7.88 10 4.5C10 2.03 7.97 0 5.5 0zm0 6.125A1.625 1.625 0 115.5 2.875a1.625 1.625 0 010 3.25z"/></svg>
+            Near Dorking, Surrey
+          </div>
+        </div>
+
+        <!-- Conditions grid -->
+        <div class="conditions-grid">
+          <div class="condition-cell">
+            <div class="condition-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 011 1v1a1 1 0 01-2 0V3a1 1 0 011-1zm4.22 2.22a1 1 0 011.42 1.42l-.71.7a1 1 0 01-1.42-1.41l.71-.71zm-8.44 0l.71.71a1 1 0 01-1.42 1.41l-.71-.7a1 1 0 011.42-1.42zM10 6a4 4 0 110 8 4 4 0 010-8zm7 3a1 1 0 010 2h-1a1 1 0 010-2h1zM4 9a1 1 0 010 2H3a1 1 0 010-2h1zm11.07 5.07a1 1 0 011.42 1.42l-.71.7a1 1 0 01-1.42-1.41l.71-.71zm-10.14 0l.71.71a1 1 0 01-1.42 1.41l-.71-.7a1 1 0 011.42-1.42zM10 17a1 1 0 011 1v1a1 1 0 01-2 0v-1a1 1 0 011-1z"/></svg>
+            </div>
+            <div class="condition-value">14°C</div>
+            <div class="condition-label">Temperature</div>
+          </div>
+          <div class="condition-cell">
+            <div class="condition-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.5 7h7.5l-6 4.5 2.5 7L10 15 3.5 19.5l2.5-7L0 8h7.5z" transform="scale(0.9) translate(1,1)"/><path d="M9 3C7.34 3 6 4.34 6 6v8a4 4 0 008 0V6c0-1.66-1.34-3-3-3zm0 2a1 1 0 012 0v8a2 2 0 01-4 0V5z" fill="currentColor"/></svg>
+            </div>
+            <div class="condition-value">78%</div>
+            <div class="condition-label">Humidity</div>
+          </div>
+          <div class="condition-cell">
+            <div class="condition-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 8c1.5-2 3-2 4.5 0s3 2 4.5 0 3-2 4.5 0"/><path d="M3 12c1.5-2 3-2 4.5 0s3 2 4.5 0 3-2 4.5 0"/></svg>
+            </div>
+            <div class="condition-value">18 mph</div>
+            <div class="condition-label">Wind</div>
+          </div>
+          <div class="condition-cell">
+            <div class="condition-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><circle cx="10" cy="10" r="4"/><path d="M10 1v2M10 17v2M1 10h2M17 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+            </div>
+            <div class="condition-value">UV 2</div>
+            <div class="condition-label">UV Index</div>
+          </div>
+          <div class="condition-cell">
+            <div class="condition-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="10" cy="10" rx="9" ry="5"/><circle cx="10" cy="10" r="2.5"/></svg>
+            </div>
+            <div class="condition-value">10 km</div>
+            <div class="condition-label">Visibility</div>
+          </div>
+          <div class="condition-cell">
+            <div class="condition-icon">
+              <svg width="16" height="20" viewBox="0 0 16 24" fill="currentColor"><rect x="6" y="0" width="4" height="14" rx="2"/><circle cx="8" cy="18" r="5"/><path d="M8 14v4" stroke="white" stroke-width="1.5"/></svg>
+            </div>
+            <div class="condition-value">11°C</div>
+            <div class="condition-label">Feels like</div>
+          </div>
+        </div>
+
+        <!-- Paw safety -->
+        <div class="paw-safety">
+          <div class="paw-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><ellipse cx="6" cy="7" rx="2.5" ry="3.5"/><ellipse cx="18" cy="7" rx="2.5" ry="3.5"/><ellipse cx="10" cy="5" rx="2" ry="2.8"/><ellipse cx="14" cy="5" rx="2" ry="2.8"/><path d="M12 10c-3 0-6 2.5-6 5.5 0 2.5 2 4.5 6 4.5s6-2 6-4.5C18 12.5 15 10 12 10z"/></svg>
+          </div>
+          <div>
+            <div class="paw-status">🐾 Paw Safety: Good</div>
+            <div class="paw-body">Pavement temperature is safe at 14°C. Reassess if temperature rises above 25°C — use the 7-second test before heading out.</div>
+          </div>
+        </div>
+
+        <!-- Walk window -->
+        <div style="padding: 0 16px 16px;">
+          <div class="walk-window-title">Today's ideal walk times</div>
+          <div class="hour-bar-labels">
+            <span>6 am</span><span>9 am</span><span>12 pm</span><span>3 pm</span><span>6 pm</span><span>9 pm</span>
+          </div>
+          <div class="hour-bar">
+            <!-- 6am-9am ideal (3 hrs = 3 segs) -->
+            <div class="hour-seg ideal"></div><div class="hour-seg ideal"></div><div class="hour-seg ideal"></div>
+            <!-- 9am-12 marginal (3) -->
+            <div class="hour-seg marginal"></div><div class="hour-seg marginal"></div><div class="hour-seg marginal"></div>
+            <!-- 12-3pm poor (3) -->
+            <div class="hour-seg poor"></div><div class="hour-seg poor"></div><div class="hour-seg poor"></div>
+            <!-- 3-5pm marginal (2) -->
+            <div class="hour-seg marginal"></div><div class="hour-seg marginal"></div>
+            <!-- 5-9pm ideal (4) -->
+            <div class="hour-seg ideal"></div><div class="hour-seg ideal"></div><div class="hour-seg ideal"></div><div class="hour-seg ideal"></div>
+            <!-- 9pm night (1) -->
+            <div class="hour-seg night"></div>
+          </div>
+          <div class="walk-window-summary">Ideal: <strong>6 am–9 am</strong> and <strong>5 pm–9 pm</strong> · Avoid 11 am–3 pm (peak UV)</div>
+        </div>
+
+        <!-- Walk window legend -->
+        <div style="padding: 0 16px 20px; display: flex; gap: 16px; font-size: 11px; color: var(--ink-2);">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--brand);display:inline-block"></span>Ideal</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--amber);display:inline-block"></span>Marginal</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--border);display:inline-block"></span>Poor</span>
+        </div>
+
+        <!-- 3-day forecast -->
+        <div style="padding: 0 16px 10px; font-size: 15px; font-weight: 600; color: var(--ink);">3-day forecast</div>
+        <div class="forecast-grid">
+          <div class="forecast-card">
+            <div class="forecast-day">Thu</div>
+            <div class="forecast-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="#F59E0B"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+            </div>
+            <div class="forecast-temps">16° <span>/ 9°</span></div>
+            <span class="forecast-verdict good">✓ Good</span>
+          </div>
+          <div class="forecast-card">
+            <div class="forecast-day">Fri</div>
+            <div class="forecast-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="13" rx="7" ry="5" fill="#94A3B8"/><ellipse cx="8" cy="11" rx="4.5" ry="4" fill="#94A3B8"/><ellipse cx="16" cy="12" rx="4" ry="3.5" fill="#94A3B8"/><path d="M9 18l-1 3M13 18l-1 3M11 19l-1 3" stroke="#60A5FA" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="forecast-temps">12° <span>/ 7°</span></div>
+            <span class="forecast-verdict wet">⚠ Wet</span>
+          </div>
+          <div class="forecast-card">
+            <div class="forecast-day">Sat</div>
+            <div class="forecast-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="11" r="4.5" fill="#F59E0B"/><ellipse cx="14" cy="14" rx="7" ry="5" fill="#CBD5E1"/><ellipse cx="10" cy="13" rx="4.5" ry="3.5" fill="#CBD5E1"/></svg>
+            </div>
+            <div class="forecast-temps">14° <span>/ 8°</span></div>
+            <span class="forecast-verdict good">✓ Good</span>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /weather -->
+
+    <!-- ════════════════════════════
+         TAB: WALKS
+    ════════════════════════════ -->
+    <div id="tab-walks" class="tab-panel">
+
+      <!-- Sticky header -->
+      <div class="walks-sticky">
+        <div class="search-bar">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="5"/><path d="M10.5 10.5l3.5 3.5"/></svg>
+          <input type="text" placeholder="Search walks..." readonly>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="2" y1="4" x2="14" y2="4"/><line x1="4" y1="8" x2="12" y2="8"/><line x1="6" y1="12" x2="10" y2="12"/></svg>
+        </div>
+        <div class="chips-row">
+          <div class="chip active">All</div>
+          <div class="chip">Off-lead</div>
+          <div class="chip">Short</div>
+          <div class="chip">Woodland</div>
+          <div class="chip">Coastal</div>
+          <div class="chip">Easy</div>
+          <div class="chip">No livestock</div>
+        </div>
+        <div class="seg-toggle">
+          <div class="seg-btn active">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="0" y="0" width="14" height="2" rx="1"/><rect x="0" y="4" width="14" height="2" rx="1"/><rect x="0" y="8" width="14" height="2" rx="1"/><rect x="0" y="12" width="14" height="2" rx="1"/></svg>
+            List
+          </div>
+          <div class="seg-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 0C4.24 0 2 2.24 2 5c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5zm0 6.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/></svg>
+            Map
+          </div>
+        </div>
+        <div class="walks-meta">
+          <span class="walks-sort">Sort: Nearest ▾</span>
+          <span class="walks-count">14 walks</span>
+        </div>
+      </div>
+
+      <div class="tab-panel-content" style="padding-top: 0;">
+
+        <!-- Weather banner -->
+        <div class="suitability-banner">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 0L0 14h14L7 0zm0 4l4.5 9H2.5L7 4zm-.75 3v3.5h1.5V7H6.25zm0 4.5v1.5h1.5v-1.5H6.25z"/></svg>
+          Breezy today — showing sheltered woodland routes first
+        </div>
+
+        <!-- Walk card 1 -->
+        <div class="walk-card" onclick="openDetail()">
+          <div class="walk-photo">
+            <div class="photo-placeholder grad-forest" style="width:100%;height:100%;"></div>
+            <div class="walk-badge">Off-lead</div>
+            <div class="walk-heart">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#1E4D3A" stroke="#1E4D3A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </div>
+          </div>
+          <div class="walk-body">
+            <div class="walk-name-row">
+              <span class="walk-name">Ashdown Forest Loop</span>
+              <span class="walk-rating"><span class="star">★</span> 4.2</span>
+            </div>
+            <div class="walk-region">East Sussex</div>
+            <div class="walk-meta-row">2.8 mi · ~1h 20 min · Woodland</div>
+            <div class="walk-tags">
+              <span class="walk-tag">🌿 Off-lead</span>
+              <span class="walk-tag">🐄 No livestock</span>
+              <span class="walk-tag">🚗 Parking</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Walk card 2 -->
+        <div class="walk-card" onclick="openDetail()">
+          <div class="walk-photo">
+            <div class="photo-placeholder grad-chalk" style="width:100%;height:100%;"></div>
+            <div class="walk-badge">Popular</div>
+            <div class="walk-heart">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </div>
+          </div>
+          <div class="walk-body">
+            <div class="walk-name-row">
+              <span class="walk-name">Box Hill Summit Trail</span>
+              <span class="walk-rating"><span class="star">★</span> 4.7</span>
+            </div>
+            <div class="walk-region">Surrey</div>
+            <div class="walk-meta-row">3.4 mi · ~1h 45 min · Mixed terrain</div>
+            <div class="walk-tags">
+              <span class="walk-tag">🌿 Off-lead (partial)</span>
+              <span class="walk-tag">🧱 No stiles</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Walk card 3 -->
+        <div class="walk-card" onclick="openDetail()">
+          <div class="walk-photo">
+            <div class="photo-placeholder grad-heath" style="width:100%;height:100%;"></div>
+            <div class="walk-badge">Hidden gem</div>
+            <div class="walk-heart">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </div>
+          </div>
+          <div class="walk-body">
+            <div class="walk-name-row">
+              <span class="walk-name">Leith Hill Circuit</span>
+              <span class="walk-rating"><span class="star">★</span> 4.4</span>
+            </div>
+            <div class="walk-region">Surrey Hills</div>
+            <div class="walk-meta-row">4.1 mi · ~2h 05 min · Woodland</div>
+            <div class="walk-tags">
+              <span class="walk-tag">🌿 Off-lead</span>
+              <span class="walk-tag">🐄 No livestock</span>
+              <span class="walk-tag">🚗 Parking</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /walks -->
+
+    <!-- ════════════════════════════
+         TAB: NEARBY
+    ════════════════════════════ -->
+    <div id="tab-nearby" class="tab-panel">
+
+      <div class="walks-sticky">
+        <div class="search-bar">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="5"/><path d="M10.5 10.5l3.5 3.5"/></svg>
+          <input type="text" placeholder="Search nearby..." readonly>
+        </div>
+        <div class="chips-row">
+          <div class="chip active">All</div>
+          <div class="chip">Pubs</div>
+          <div class="chip">Cafes</div>
+          <div class="chip">Parks</div>
+          <div class="chip">Vets</div>
+          <div class="chip">Car parks</div>
+        </div>
+        <div class="seg-toggle">
+          <div class="seg-btn active">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="0" y="0" width="14" height="2" rx="1"/><rect x="0" y="4" width="14" height="2" rx="1"/><rect x="0" y="8" width="14" height="2" rx="1"/><rect x="0" y="12" width="14" height="2" rx="1"/></svg>
+            List
+          </div>
+          <div class="seg-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 0C4.24 0 2 2.24 2 5c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5zm0 6.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/></svg>
+            Map
+          </div>
+        </div>
+        <div class="walks-meta" style="padding-bottom: 6px;">
+          <span class="walks-count" style="color: var(--ink-2);">Showing 12 places near you</span>
+        </div>
+      </div>
+
+      <div class="tab-panel-content" style="padding-top: 0;">
+
+        <!-- Venue card 1 -->
+        <div class="venue-card">
+          <div class="venue-photo">
+            <div class="photo-placeholder grad-pub" style="width:100%;height:100%;"></div>
+            <div class="venue-badge">Pub</div>
+            <div class="venue-heart">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </div>
+          </div>
+          <div class="venue-body">
+            <div class="venue-name-row">
+              <span class="venue-name">The Anchor Inn</span>
+              <span class="venue-rating"><span class="star">★</span> 3.9</span>
+            </div>
+            <div class="venue-detail">0.4 mi away · Dog-friendly patio</div>
+          </div>
+        </div>
+
+        <!-- Venue card 2 -->
+        <div class="venue-card">
+          <div class="venue-photo">
+            <div class="photo-placeholder grad-cafe" style="width:100%;height:100%;"></div>
+            <div class="venue-badge">Cafe</div>
+            <div class="venue-heart">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="#1E4D3A" stroke="#1E4D3A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </div>
+          </div>
+          <div class="venue-body">
+            <div class="venue-name-row">
+              <span class="venue-name">Dorking Coffee House</span>
+              <span class="venue-rating"><span class="star">★</span> 4.5</span>
+            </div>
+            <div class="venue-detail">0.7 mi away · Dogs welcome inside</div>
+          </div>
+        </div>
+
+        <!-- Venue card 3 -->
+        <div class="venue-card">
+          <div class="venue-photo">
+            <div class="photo-placeholder grad-park" style="width:100%;height:100%;"></div>
+            <div class="venue-badge">Park</div>
+            <div class="venue-heart">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </div>
+          </div>
+          <div class="venue-body">
+            <div class="venue-name-row">
+              <span class="venue-name">Deepdene Garden</span>
+              <span class="venue-rating"><span class="star">★</span> 4.2</span>
+            </div>
+            <div class="venue-detail">0.2 mi away · Free · Off-lead area</div>
+          </div>
+        </div>
+
+        <!-- Venue card 4 -->
+        <div class="venue-card">
+          <div class="venue-photo">
+            <div class="photo-placeholder grad-forest" style="width:100%;height:100%;opacity:0.7;"></div>
+            <div class="venue-badge">Pub</div>
+            <div class="venue-heart">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </div>
+          </div>
+          <div class="venue-body">
+            <div class="venue-name-row">
+              <span class="venue-name">The Plough</span>
+              <span class="venue-rating"><span class="star">★</span> 4.1</span>
+            </div>
+            <div class="venue-detail">1.1 mi away · Dog-friendly beer garden</div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /nearby -->
+
+    <!-- ════════════════════════════
+         TAB: ME
+    ════════════════════════════ -->
+    <div id="tab-me" class="tab-panel">
+      <div class="tab-panel-content">
+
+        <div class="tab-title-bar">
+          <div class="tab-title">Me</div>
+        </div>
+
+        <!-- Greeting card -->
+        <div class="greeting-card">
+          <div>
+            <div class="greeting-text">Hi, Alex! 👋</div>
+            <div style="font-size:13px;color:var(--ink-2);margin-top:4px;">Welcome back</div>
+          </div>
+          <button class="greeting-edit">Edit name</button>
+        </div>
+
+        <!-- Stats row -->
+        <div class="stats-row">
+          <div class="stat-cell">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Favourited walks</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number">12</div>
+            <div class="stat-label">Walks explored</div>
+          </div>
+        </div>
+
+        <!-- Favourites scroll -->
+        <div class="hscroll-section">
+          <div class="section-header">
+            <span class="section-title">Favourited walks</span>
+            <a class="section-link" href="#">See all →</a>
+          </div>
+          <div class="hscroll-row">
+
+            <div class="portrait-card" onclick="openDetail()">
+              <div class="portrait-photo">
+                <div class="photo-placeholder grad-forest"></div>
+                <div class="portrait-badge">Off-lead</div>
+                <div class="portrait-heart">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#1E4D3A" stroke="#1E4D3A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                </div>
+              </div>
+              <div class="portrait-body">
+                <div class="portrait-name">Ashdown Forest</div>
+                <div class="portrait-meta">2.8 mi · 1h 20</div>
+              </div>
+            </div>
+
+            <div class="portrait-card" onclick="openDetail()">
+              <div class="portrait-photo">
+                <div class="photo-placeholder grad-coastal"></div>
+                <div class="portrait-badge">Coastal</div>
+                <div class="portrait-heart">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#1E4D3A" stroke="#1E4D3A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                </div>
+              </div>
+              <div class="portrait-body">
+                <div class="portrait-name">Birling Gap Trail</div>
+                <div class="portrait-meta">2.2 mi · 1h 00</div>
+              </div>
+            </div>
+
+            <div class="portrait-card" onclick="openDetail()">
+              <div class="portrait-photo">
+                <div class="photo-placeholder grad-meadow"></div>
+                <div class="portrait-badge">Easy</div>
+                <div class="portrait-heart">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#1E4D3A" stroke="#1E4D3A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                </div>
+              </div>
+              <div class="portrait-body">
+                <div class="portrait-name">Reigate Heath</div>
+                <div class="portrait-meta">1.8 mi · 0h 50</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div style="padding: 0 16px 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-2);">Settings</div>
+        <div class="settings-section">
+          <div class="settings-row">
+            <span class="settings-label">Units</span>
+            <span class="settings-value">
+              Miles
+              <svg width="7" height="12" viewBox="0 0 7 12" fill="currentColor"><path d="M1 1l5 5-5 5"/></svg>
+            </span>
+          </div>
+          <div class="settings-row">
+            <span class="settings-label">Dark mode</span>
+            <span class="settings-value">
+              Auto (weather)
+              <svg width="7" height="12" viewBox="0 0 7 12" fill="currentColor"><path d="M1 1l5 5-5 5"/></svg>
+            </span>
+          </div>
+        </div>
+
+        <!-- Misc rows -->
+        <div class="misc-rows" style="margin-top: 8px;">
+          <div class="misc-row">
+            <span>About Sniffout</span>
+            <svg width="7" height="12" viewBox="0 0 7 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1l5 5-5 5"/></svg>
+          </div>
+          <div class="misc-row">
+            <span>Privacy & legal</span>
+            <svg width="7" height="12" viewBox="0 0 7 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1l5 5-5 5"/></svg>
+          </div>
+          <div class="misc-row destructive">
+            <span>Clear all data</span>
+            <svg width="7" height="12" viewBox="0 0 7 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1l5 5-5 5"/></svg>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /me -->
+
+    <!-- ════════════════════════════
+         WALK DETAIL OVERLAY
+    ════════════════════════════ -->
+    <div id="walk-detail" class="detail-overlay">
+      <div class="detail-nav">
+        <div class="detail-back" onclick="closeDetail()">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 4l-6 6 6 6"/></svg>
+          Back
+        </div>
+        <div class="detail-walk-name">Ashdown Forest</div>
+        <div class="detail-heart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#1E4D3A" stroke="#1E4D3A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </div>
+      </div>
+      <div class="detail-scroll">
+        <div class="detail-hero">
+          <div class="photo-placeholder grad-forest" style="width:100%;height:100%;"></div>
+          <div class="detail-hero-scrim"></div>
+          <div class="detail-hero-title">Ashdown Forest Loop</div>
+        </div>
+        <div class="detail-body">
+          <div class="detail-section-title">Walk details</div>
+          <div class="details-grid">
+            <div class="detail-chip">
+              <div class="dc-icon">📏</div>
+              <div class="dc-value">2.8 mi</div>
+              <div class="dc-label">Distance</div>
+            </div>
+            <div class="detail-chip">
+              <div class="dc-icon">⏱</div>
+              <div class="dc-value">~1h 20</div>
+              <div class="dc-label">Duration</div>
+            </div>
+            <div class="detail-chip">
+              <div class="dc-icon">⬆</div>
+              <div class="dc-value">Moderate</div>
+              <div class="dc-label">Difficulty</div>
+            </div>
+            <div class="detail-chip">
+              <div class="dc-icon">🌿</div>
+              <div class="dc-value">Full</div>
+              <div class="dc-label">Off-lead</div>
+            </div>
+            <div class="detail-chip">
+              <div class="dc-icon">🐄</div>
+              <div class="dc-value">None</div>
+              <div class="dc-label">Livestock</div>
+            </div>
+            <div class="detail-chip">
+              <div class="dc-icon">🚗</div>
+              <div class="dc-value">Yes</div>
+              <div class="dc-label">Parking</div>
+            </div>
+          </div>
+
+          <p class="detail-description">
+            A classic loop through the open heathland of Ashdown Forest — one of the largest areas of lowland heath in the south-east. Full off-lead throughout with no livestock. The forest is the inspiration for Winnie-the-Pooh's Hundred Acre Wood. Stunning in all seasons.
+          </p>
+
+          <div class="detail-map-placeholder">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1C5.24 1 3 3.24 3 6c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 118 4a1.5 1.5 0 010 3z"/></svg>
+            Map · East Sussex, TN22
+          </div>
+
+          <div class="nearby-venues">
+            <div class="nearby-title">Nearby dog-friendly places</div>
+            <div class="nearby-venue-row">
+              <div>
+                <div class="nv-name">The Hatch Inn</div>
+                <div class="nv-type">Pub · Dogs welcome</div>
+              </div>
+              <div class="nv-dist">0.3 mi</div>
+            </div>
+            <div class="nearby-venue-row">
+              <div>
+                <div class="nv-name">Forest Row Cafe</div>
+                <div class="nv-type">Cafe · Dog-friendly terrace</div>
+              </div>
+              <div class="nv-dist">1.1 mi</div>
+            </div>
+            <div class="nearby-venue-row">
+              <div>
+                <div class="nv-name">Ashdown Forest Car Park</div>
+                <div class="nv-type">Parking · Free, open 24h</div>
+              </div>
+              <div class="nv-dist">0.0 mi</div>
+            </div>
+          </div>
+
+          <button class="share-btn">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="3" r="2"/><circle cx="14" cy="15" r="2"/><circle cx="3" cy="9" r="2"/><path d="M5 8l7-4M5 10l7 4"/></svg>
+            Share this walk
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /screen-area -->
+
+  <!-- Bottom nav -->
+  <nav id="bottom-nav">
+    <button class="nav-item active" data-tab="today" onclick="switchTab('today')">
+      <div class="nav-icon">
+        <!-- Today: sun/home hybrid -->
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l-.75 1.5-1.5.75 1.5.75.75 1.5.75-1.5 1.5-.75-1.5-.75L12 2.5zM3.5 12H2l.75 1.5 1.5.75-1.5.75L2 16.5l1.5-.75.75 1.5.75-1.5 1.5-.75-1.5-.75L3.5 12zM20.5 12l-.75 1.5-1.5.75 1.5.75.75 1.5.75-1.5 1.5-.75-1.5-.75L20.5 12zM12 6a6 6 0 100 12A6 6 0 0012 6zm0 2a4 4 0 110 8 4 4 0 010-8z"/></svg>
+      </div>
+      <span class="nav-label">Today</span>
+    </button>
+    <button class="nav-item" data-tab="weather" onclick="switchTab('weather')">
+      <div class="nav-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg>
+      </div>
+      <span class="nav-label">Weather</span>
+    </button>
+    <button class="nav-item" data-tab="walks" onclick="switchTab('walks')">
+      <div class="nav-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"/></svg>
+      </div>
+      <span class="nav-label">Walks</span>
+    </button>
+    <button class="nav-item" data-tab="nearby" onclick="switchTab('nearby')">
+      <div class="nav-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      </div>
+      <span class="nav-label">Nearby</span>
+    </button>
+    <button class="nav-item" data-tab="me" onclick="switchTab('me')">
+      <div class="nav-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      </div>
+      <span class="nav-label">Me</span>
+    </button>
+  </nav>
+
+</div><!-- /device -->
+
+<div class="mockup-label" style="margin-top:4px;">
+  Tap any walk card to open the walk detail overlay
+</div>
+
+<script>
+  function switchTab(id) {
+    // Close detail if open
+    document.getElementById('walk-detail').classList.remove('open');
+    document.getElementById('bottom-nav').style.display = '';
+
+    // Switch panels
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    // Scroll to top
+    document.getElementById('tab-' + id).scrollTop = 0;
+
+    // Update nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.tab === id);
+    });
+  }
+
+  function openDetail() {
+    document.getElementById('walk-detail').classList.add('open');
+    document.getElementById('bottom-nav').style.display = 'none';
+    document.getElementById('walk-detail').querySelector('.detail-scroll').scrollTop = 0;
+  }
+
+  function closeDetail() {
+    document.getElementById('walk-detail').classList.remove('open');
+    document.getElementById('bottom-nav').style.display = '';
+  }
+
+  // Chip toggle interactions (visual only)
+  document.querySelectorAll('.chips-row').forEach(row => {
+    row.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        row.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+  });
+
+  // Segmented toggle interactions
+  document.querySelectorAll('.seg-toggle').forEach(tog => {
+    tog.querySelectorAll('.seg-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        tog.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
