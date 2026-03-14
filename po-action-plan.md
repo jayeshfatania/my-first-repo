@@ -1,5 +1,19 @@
 # Sniffout — Product Owner Action Plan
-*Reviewed: March 2026. Covers competitor-research.md, demand-validation.md, feature-recommendations.md, design-brief.md, design-spec.md. Updated following mockup review session.*
+*Reviewed: March 2026. Covers competitor-research.md, demand-validation.md, feature-recommendations.md, design-brief.md, design-spec.md, weather-research.md, copy-review.md. Updated following mockup review session and copy review.*
+
+---
+
+## **🚨 DO NOT MODIFY `dog-walk-dashboard.html` — EVER**
+
+**`dog-walk-dashboard.html` is the live production file. It has been shared with real users. It must not be touched, edited, refactored, or used as a base for any new work under any circumstances.**
+
+**All development happens in `sniffout-v2.html` only.**
+
+If a change to the live file is ever needed, it must be explicitly requested by the PO and treated as a separate, deliberate operation — never as part of v2 development work.
+
+- **`sniffout-v2.html`** — all new development goes here
+- **`dog-walk-dashboard.html`** — live production, do not touch
+- **`sw.js`, `manifest.json`** — may be updated only when explicitly instructed by the PO
 
 ---
 
@@ -58,8 +72,8 @@ The spec mentions Leaflet.markercluster as a CDN addition. Given this is a PWA t
 ## Anything That Conflicts With Non-Negotiables
 
 None of the core recommendations conflict with the non-negotiables. Specifically:
-- **Free**: No monetisation introduced anywhere. Confirmed.
-- **No login**: Respected throughout. The Me tab, community tab deferral, and login analysis all honour this.
+- **Free / no login**: These are the current product stance for the POC, not permanent brand promises. They must not appear in user-facing copy — do not advertise what may change. Internally they remain valid constraints for now.
+- **No login**: Respected throughout in implementation terms. The Me tab, community tab deferral, and login analysis all honour this.
 - **Mobile-first**: Spec is entirely mobile-first. Desktop "coming soon" screen is unchanged and untouched.
 - **Single HTML file**: The spec explicitly scopes everything to the single-file architecture. The complexity table addresses this directly. No recommendation requires a backend or separate file structure.
 
@@ -106,63 +120,93 @@ Do not let the Developer hardcode bland copy that will need reworking later. It 
 
 ## Recommended Order of Work
 
-### Immediate (before Developer starts any code)
+### Before Development Starts
 
-1. **Lock the WALKS_DB schema** — the new field definitions in the design spec (`offLead`, `livestock`, `hasStiles`, `hasParking`, `terrain`, `imageUrl`, `badge`, `distance` as number, `duration` as minutes integer, `rating`, `reviewCount`) should be finalised now. Everything downstream depends on this.
-2. **Start photo sourcing in parallel** — begin collecting representative UK countryside photos (Unsplash, Wikimedia Commons) for the 50+ existing walks. This is a content task that can run independently. No blocker on engineering.
-3. **Schedule copy review session** — before any microcopy is hardcoded. One focused session is enough.
+1. **Lock the WALKS_DB schema** — field definitions are confirmed in developer-questions.md. Everything downstream depends on this being settled first.
+2. **Assign photo sourcing owner** — walk cards need an `imageUrl` per entry. Use brand-green placeholder until photos are ready; do not block Phase 1 on this.
+3. **Copy is approved** — all strings confirmed in this doc and developer-questions.md. One item still outstanding: onboarding overlay title (deferred — overlay is out of scope for now).
 
-### Developer Sprint 1 — Visual Foundation
+---
 
-These changes transform the entire app's feel and are largely CSS/token updates:
+### Phase 1 — Visual Foundation and Mockup Refinement
 
-1. **CSS token swap** — implement the full colour token set (light + dark mode) from the design spec. Replace all existing glassmorphic variables.
-2. **Font swap** — load Inter (weights 400/500/600/700 only) via Google Fonts CDN. Replace Fraunces and DM Sans.
-3. **Bottom navigation redesign** — filled/outlined active states, new labels (Today, Weather, Walks, Nearby, Me), safe area inset handling, correct border.
-4. **Card base styles** — border-radius 16px, `1px solid var(--border)`, no glassmorphism, white surface on warm background.
-5. **Filter chip styles** — inactive/active states per spec. Used across Walks and Nearby tabs.
-6. **Segmented toggle styles** — List/Map control.
+*Goal: sniffout-v2.html looks and feels like the design spec. All visual foundations are in place. Walk cards are redesigned with real data fields. Mockup issues are resolved.*
 
-### Developer Sprint 2 — Walk Cards and Data
+**Visual foundation**
+1. **CSS token swap** — full colour token set (light + dark mode) per design spec. Remove all glassmorphic variables.
+2. **Font swap** — Inter (weights 400/500/600/700) via Google Fonts CDN. Replace Fraunces and DM Sans.
+3. **Bottom nav redesign** — filled/outlined active states, labels (Today · Weather · Walks · Nearby · Me), safe area insets, correct border.
+4. **Card base styles** — border-radius 16px, `1px solid var(--border)`, white surface on warm background, no glassmorphism.
+5. **Filter chip and segmented toggle styles** — inactive/active states per spec, used across Walks and Nearby tabs.
 
-1. **Update WALKS_DB schema** — add all new fields to each existing walk entry. This is the prerequisite for everything else.
-2. **Walk card redesign** — photo area (180px, lazy loading, solid green placeholder), badge pill (bottom-left overlay), heart icon (top-right), metadata row, tag chips row. This is the highest-visibility element in the app.
-3. **Paw safety indicator** (Weather tab) — always-visible block with traffic-light border colour, 7-second test reference, thresholds (<20°C / 20–25°C / 25°C+). Fast to implement, high differentiation value.
-4. **Livestock and off-lead tags on walk cards** — render from the new WALKS_DB fields. Simple once schema is in place.
+**Walk cards and data**
+6. **Update WALKS_DB schema** — add all confirmed fields per developer-questions.md (`offLead`, `livestock`, `hasStiles`, `hasParking`, `terrain`, `difficulty`, `imageUrl`, `badge`, `rating`, `reviewCount`, `distance`, `duration`, `source`). Drop `isPushchairFriendly`.
+7. **Walk card redesign** — photo area (180px, brand-green placeholder if no `imageUrl`, lazy loading), badge pill, heart icon, metadata row, tag chips for off-lead and livestock.
+8. **Hybrid content badge** — render `Sniffout Pick` pill on curated walks (`source: 'curated'`), neutral `Nearby` label on Google-sourced results.
 
-### Developer Sprint 3 — Today Tab (New Feature)
+**Mockup fixes**
+9. **Today tab State A preview cards** — warm up with brand-green tint (`rgba(30,77,58,0.06)`) instead of grey (Option A approved). Remove any grey placeholder treatment.
+10. **Remove all "free" / "no sign-up" / "no account" copy** — audit entire file for these strings and remove. Applies to all surfaces.
+11. **Subline** — update to `Handpicked walks. Live conditions.`
+12. **Social proof strip** — update to `50+ handpicked UK walks · Works offline · Dog-specific routes`
 
-This is the most significant new feature and deserves its own focused sprint:
+**Validator checkpoint after Phase 1:** Visual regression across all 5 tabs. Dark mode correct. Walk cards render on various screen sizes. WALKS_DB fields populated. No "free/no sign-up/no account" strings remain anywhere.
 
-1. **State A** — no location: hero section with geolocation-first approach, search as fallback, preview cards, social proof strip. Geolocation auto-attempted on load.
-2. **State B** — location known: weather hero card (solid brand green, verdict string, condition pills), hazard card (conditional, amber), horizontal walk scroll (nearest 5–8 walks), seasonal tip (conditional, date-driven).
-3. **getWalkVerdict()** — shared pure function used by both Today and Weather tabs. Six verdict values per spec.
-4. **SEASONAL_TIPS** — static lookup constant. Simple date comparison.
+---
 
-### Developer Sprint 4 — Weather Tab and Walks Tab Enhancements
+### Phase 2 — Core Feature Improvements Based on Research
 
-1. **Weather tab redesign** — conditions grid (drop visibility; retain temp/feels-like/rain/wind/UV/sunrise; humidity feeds hazard logic not grid), paw safety block (always shown, using updated heuristic: temp > 22°C AND uv_index > 5 AND time 10am–6pm), hazard cards (conditional), best walk window hourly bar, 3-day forecast cards.
-2. **Add UV index to Open-Meteo API call** — `uv_index` is not currently fetched. Must be added to the `fetchWeather()` parameters before any UV-dependent logic can work.
-3. **Update hazard logic for precipitation type** — use WMO weather codes to differentiate snow (ice balls, rock salt advice) and freezing rain (slip risk) from standard rain warnings.
-4. **getBestWalkWindows()** — pure function scanning Open-Meteo hourly data. ~30 lines.
-5. **Pollen card** — Open-Meteo `european_aqi` API call (grass, birch, alder pollen). Render pollen level (low/moderate/high) as a hazard card on Weather tab. Bubble to Today tab hazard card on High days only. No new API key required.
-4. **Filter chip logic on Walks tab** — off-lead, no livestock, terrain, distance range filters. Depends on Sprint 2 schema.
-5. **Radius selector** — "Within X miles ▾" inline control on Walks and Nearby tabs. Options as chips (1 / 3 / 5 / 10 mi), stored to `localStorage: sniffout_radius`. Replaces existing hidden `searchRadiusKm` global.
-6. **Weather suitability banner on Walks tab** — derived from session weather, modifies walk sort order. Thin amber-tinted strip, one line of text.
-7. **Walk detail overlay** — fixed/inset overlay, slide-up animation, body scroll lock, bottom nav hide, back button, hero image with scrim, practical details grid, embedded map, nearby venues section (top 3 from existing `fetchPlaces()`), share button (Web Share API).
+*Goal: the app's key differentiating features are built and working. The Today tab exists. Walk filtering works. Walk detail is fully featured. The weather-walk connection is live.*
 
-### Developer Sprint 5 — Quick Wins and Me Tab Polish
+**Today tab (new feature)**
+1. **State A** — geolocation attempted on load; search as fallback; Option A preview cards (brand-green tinted); social proof strip; recent search pills from localStorage.
+2. **State B** — weather hero card (solid brand green, `getWalkVerdict()` string, condition pills), conditional hazard card (amber), horizontal walk scroll (nearest 5–8 walks), conditional seasonal tip.
+3. **`getWalkVerdict()`** — shared pure function, used by both Today and Weather tabs. Approved verdict strings per copy review.
+4. **`SEASONAL_TIPS`** — static lookup constant, date-driven.
 
-1. **Share walk button** — Web Share API, 5 lines. Add to walk detail overlay. (Could be done in Sprint 4.)
-2. **Me tab redesign** — greeting card, stats row (favourited count, explored count — no streak), favourites horizontal scroll, settings rows (units, dark mode override), "Clear all data" with inline confirmation.
-3. **Nearby tab visual polish** — apply new card styles, chip styles, toggle. The tab is largely functional; this is primarily visual.
+**Walks tab enhancements**
+5. **Filter chip logic** — off-lead, no livestock, terrain, distance range. Depends on Phase 1 schema.
+6. **Radius selector** — `Within X miles ▾` inline control on Walks and Nearby tabs. Chips: 1 / 3 / 5 / 10 mi. Stored to `localStorage: sniffout_radius`.
+7. **Weather suitability banner** — thin amber strip on Walks tab when a weather hazard is active; adjusts walk sort order (e.g. shaded/woodland routes first on hot days).
+8. **Walk detail overlay** — `position: fixed; inset: 0` overlay, slide-up animation, scroll lock, bottom nav hidden when open. Content: hero image with scrim, practical details grid, embedded Leaflet map, nearby venues (top 3 via existing `fetchPlaces()`), share button (Web Share API).
 
-### Validator Agent — When to Run
+**Paw safety indicator**
+9. **Paw safety block on Weather tab** — always visible, traffic-light left border, approved copy. Thresholds: < 20°C safe, 20–25°C caution, 25°C+ danger.
 
-- After Sprint 1: visual regression check on all 5 tabs (existing functionality intact, new styles applied correctly, dark mode working).
-- After Sprint 2: walk card rendering across different screen sizes, lazy image loading behaviour, new WALKS_DB fields populated correctly.
-- After Sprint 3: Today tab both states, geolocation granted / denied / blocked, session restore behaviour, transition from State A to State B.
-- After Sprint 4: weather verdict logic, paw safety thresholds, filter chip combinations, walk detail overlay on iOS Safari (scroll lock, safe area insets, back navigation).
+**Validator checkpoint after Phase 2:** Today tab both states (geolocation granted / denied / blocked). Session restore. Filter chip combinations. Walk detail overlay on iOS Safari (scroll lock, safe area insets, back button). Weather verdict logic correct.
+
+---
+
+### Phase 3 — Polish, Copy, Weather Enhancements and Pollen
+
+*Goal: weather tab is fully redesigned with all dog-specific intelligence. Pollen is live. Me tab and Nearby tab are polished. All approved copy is in place.*
+
+**Weather tab full redesign**
+1. **Conditions grid** — drop visibility; retain temp, feels-like, rain, wind, UV, sunrise/sunset. Humidity feeds hazard logic, not grid.
+2. **Add `uv_index` to Open-Meteo API call** — not currently fetched; required for paw safety heuristic and UV hazard card.
+3. **Updated paw safety heuristic** — `temp > 22°C AND uv_index > 5 AND time between 10am–6pm`.
+4. **Precipitation type differentiation** — use WMO weather codes to distinguish snow (ice ball / rock salt advice) and freezing rain (slip risk) from standard rain.
+5. **`getBestWalkWindows()`** — pure function scanning Open-Meteo hourly data. ~30 lines. Renders as colour-coded hourly bar.
+6. **3-day forecast cards** — day, condition icon, high/low, suitability verdict chip.
+
+**Pollen**
+7. **Pollen card** — Open-Meteo `european_aqi` endpoint (`grass_pollen`, `birch_pollen`, `alder_pollen`). No new API key. Render as hazard card on Weather tab (low/moderate/high). Bubble to Today tab hazard section on High days only.
+
+**Me tab and Nearby tab polish**
+8. **Me tab** — greeting card, stats row (saved count, explored count — passive view tracking, no explicit mark-as-done), favourites horizontal scroll, settings rows (units, dark mode override), "Clear all data" with inline confirmation.
+9. **Nearby tab** — apply new card styles, chip styles, segmented toggle. Primarily visual polish; tab is largely functional.
+10. **Share walk button** — Web Share API, ~5 lines. In walk detail overlay.
+
+**Copy pass**
+11. Final audit: all approved strings from copy review are in place. No placeholder or ⏳ strings remain in the live build.
+
+**Validator checkpoint after Phase 3:** Pollen API response handling. UV-dependent paw safety threshold. Precipitation type hazard differentiation. Me tab stats (passive walk tracking). iOS "Get directions" (Apple Maps on iOS, Google Maps on Android). Full copy audit — no "free/no sign-up/no account" strings.
+
+---
+
+### Breed Personalisation — Phase 3 or Post-POC
+
+Build only after Phases 1–3 are stable. Four-category system (`flat-faced`, `thick-coated`, `small-thin`, `standard`), localStorage only, contextual prompt on first hazard trigger. See breed personalisation section for full spec.
 
 ---
 
@@ -351,9 +395,252 @@ Do not build until Sprints 1–5 are complete and the core experience is stable.
 
 ---
 
+## Copy Review — Assessment and Approved Recommendations
+
+### Tone of Voice — Is It Right?
+
+**Yes.** The Monzo/Citymapper benchmark is exactly correct for Sniffout. Clear, warm, occasionally dry, never gushing. Treats the user as an adult. Gets to the point. The copy reviewer has correctly identified that the current live app sounds like technical documentation with emoji sprinkled on top — functional, impersonal, and inconsistent. The proposed direction fixes this without overcorrecting into forced quirk.
+
+The key principle the reviewer establishes — and which should govern all future copy decisions — is: **write like a friend who knows dogs and the outdoors, not like a weather service or a directory.** This is the right brief.
+
+---
+
+### Tagline — Decision
+
+**POC tagline: `Discover great walks` — owner confirmed. Use this for now.**
+
+The copy reviewer's revised proposal "Dog walks, done properly." is strong and worth keeping in mind for post-POC when the brand is more established. It's quietly confident, British in register, and implies a standard the alternatives haven't met. But for the POC, simplicity wins. "Discover great walks" is clear, direct, and sets the right expectation — walk discovery first.
+
+This is a deliberate POC-phase pragmatic call, not a permanent brand decision. Revisit after user feedback from v2.
+
+---
+
+### What to Implement — Approved Copy Changes
+
+All the following are approved for implementation in sniffout-v2.html. The Developer should not hardcode any string that isn't on this approved list.
+
+**Metadata (handled in `<head>` of v2)**
+- Page title: `Sniffout — Dog walks & weather for the UK` *(approved)*
+- Meta description: `Discover 50+ handpicked UK dog walks with live weather checks, paw safety alerts and nearby dog-friendly spots.` *(approved — "Free, no sign-up." removed)*
+- OG title: `Sniffout — Dog walks & weather, sorted` *(approved)*
+
+**Navigation labels**
+- Today · Weather · Walks · Nearby · Me *(approved)*
+
+**Tagline**
+- `Discover great walks` *(approved — POC phase. "Dog walks, done properly." held for post-POC consideration.)*
+
+**Home screen / State A**
+- Headline: `Find your next great walk.` *(approved)*
+- Subline: `Handpicked walks. Live conditions.` *(approved — copy reviewer's revised version, with "No account." removed per owner instruction as this will change in future)*
+- Body: `50+ handpicked UK walks with terrain, off-lead and livestock info — plus live weather checks and nearby dog-friendly spots.` *(approved — "Free, no sign-up." removed)*
+- Social proof strip: `50+ handpicked UK walks · Works offline · Dog-specific routes` *(updated — "Free · No account needed" removed; replaced with factual, durable claims)*
+- Helper text: `Enter any UK postcode, town or landmark to see what's near you.` *(approved)*
+- Search error: `We couldn't find that — try a postcode (e.g. SW11) or a place name.` *(approved)*
+
+**Onboarding overlay**
+- Title: ⏳ **Still needs work** — copy reviewer's revised `Good walks for you and your dog.` is too generic per owner feedback. `Your walks start here.` (the reviewer's alternative) is slightly better but still flat. Copy reviewer to take another pass — needs to feel specific to Sniffout, not interchangeable with any walk app. Should not mention weather.
+- Subtitle: `Curated walks, live weather checks and dog-friendly spots — all in one place.` *(approved — "all free, no sign-up needed." removed)*
+- Feature 1 — Walk discovery: `50+ handpicked routes` / `Every walk in Sniffout has been chosen by hand — with terrain, livestock and off-lead info included.` *(approved — now leads)*
+- Feature 2 — Weather: `Is it safe to walk today?` / `We check rain, temperature and paw safety so you know before you leave.` *(approved — moved to second position)*
+- Feature 3: `Save walks you love` / `Heart any walk to save it. Your saved walks live in the Me tab.` *(approved)*
+- Feature 4: `Dog-friendly places nearby` / `Pubs, cafes and parks that actually welcome dogs — near wherever you're walking.` *(approved)*
+- CTA button: `Start exploring` *(approved)*
+
+**Weather verdict strings (all 10 — highest priority copy in the app)**
+- Perfect: `🌤️ Lovely walking weather` / `[X]°C and [condition]. About as good as it gets — get out there.`
+- Good + high UV: `☀️ Good walking — strong UV` / `Lovely out, but UV is [X]. Walk in the shade where you can, and press your hand on the pavement before you start — if it's too hot to hold for 7 seconds, it's too hot for paws.`
+- Rain arriving soon: `🌂 Dry for now — rain arriving` / `Good window right now, but heavy rain is forecast within 3 hours. If you're going, go soon.`
+- Rain likely: `🌧️ Showers on the way` / `Dry now, but worth a jacket. A shorter walk while the window's open.`
+- Rain: `☔ It's raining — but walkable` / `Not ideal, but fine if you're dressed for it. Stick to shorter routes and dry off your dog when you're back.`
+- Rain + cold: `🥶 Wet and cold — make it a quick one` / `Rain plus cold is hard going. A short loop is fine, but wrap up and don't hang about.`
+- Cold: `❄️ Brisk walk day` / `Feels like [X]°C. Fine for a quick outing — just watch for ice on paths, and rinse paws when you're home if there's been gritting.`
+- Fog: `🌁 Foggy out there` / `Stick to familiar routes and keep your dog close. Low visibility means less reaction time for drivers on lanes and bridleways.`
+- Hot: `🌡️ Warm today — timing matters` / `At this temperature, pavement can get hot enough to burn paws. Walk in the morning or evening, bring water, and do the 7-second test before setting off.`
+- Storm/very windy: `⛈️ Not a walk day` / `There's a thunderstorm. Stay in — your dog would rather be safe than soggy.`
+- Very windy: `💨 Too gusty to be out` / `Gusts of [X] km/h today — enough to cause problems on exposed routes. Worth waiting for it to ease.`
+
+**Hazard warning titles**
+- Extreme heat: `🌡️ Too hot to walk safely`
+- Hot: `☀️ Hot enough to hurt paws`
+- Thunderstorm: `⛈️ Thunderstorm warning — stay inside`
+- Dangerous gusts: `💨 Dangerous winds — don't go out`
+- Strong gusts: `💨 Very gusty — choose sheltered routes`
+- Dangerous cold: `🧊 Very cold — brief outings only`
+- Freezing: `❄️ Freezing — watch for grit and ice`
+- High UV: `🔆 Strong UV — pale and thin-coated dogs at risk`
+
+**Paw safety block**
+- Safe: `Paws safe at [X]°C`
+- Caution: `Paw check needed`
+- Danger: `Too hot for paws`
+- Body (safe): `At [X]°C, pavement is fine. If it gets above 25°C, press your hand on the tarmac — if you can't hold it for 7 seconds, it's too hot for your dog's paws.`
+
+**Walk window**
+- Title: `Best time to walk today`
+- Good: `Best window today: [time] · [X]°C · [X]% chance of rain`
+- Poor: `Best option today: [time] — but still [X]% chance of rain. Take a coat.`
+
+**Walks tab**
+- Filter empty state: `Nothing matching those filters right now. Show all walks →`
+- Contribution banner title: `[X] walks reviewed by people near you`
+- Contribution banner body: `Rate a walk you know — it helps everyone find the good ones.`
+- Submit walk form title: `Know a good walk near here?`
+- Sniffout Pick explainer: `Walks marked as community picks have been submitted by Sniffout users. Add yours below.`
+- First review nudge: `No reviews yet — be the first.`
+- Share walk button: `Share this walk` *(no paw emoji)*
+- Weather suitability banner: `Breezy today — showing sheltered woodland routes first` *(keep as-is, it's good)*
+
+**Me tab**
+- Profile sub: `Your walks, saved locally`
+- Sign-in banner title: `Your data stays on your phone`
+- Sign-in banner body: `Your favourites and reviews are saved on this device. Sync across devices is coming.`
+- Favourites empty: `Heart any walk to save it here.`
+- Reviews empty: `Rate a walk you've tried — it'll show up here.`
+- Recommendations empty: `Add a walk from the Walks tab and it'll appear here.`
+- History placeholder: `Full review history is coming.`
+- Greeting: `Hi, [name] 👋` with stats sub-line (`[X walks saved · X reviews]`), not "Welcome back"
+- Stats labels: `Saved walks` / `Walks explored` *("Favourited" as a verb is removed)*
+
+**PWA install card**
+- Title: `Save Sniffout to your phone`
+- Sub: `Works offline. Loads in a second. No app store.`
+- Button: `Save`
+
+**Walk detail**
+- Section title: `About this walk`
+
+**Nearby/Places tab**
+- Empty state: `Nothing found nearby` / `No dog-friendly places in range. Try widening your search, or check Google Maps.`
+- Error state: `Places didn't load` / `Something went wrong. Try again, or check Google Maps for now.`
+
+**Loading state**
+- `Getting your weather…`
+
+**Hazard card body (mockup)**
+- `[X] mph gusts on exposed routes. Woodland walks are the better call today.`
+
+**Desktop screen**
+- Keep: `Sniffout is built for walks, not desks.`
+- Update body: `Open it on your phone to find what's worth walking near you.`
+- Remove: "Coming soon on desktop" tag — replace with `Mobile only (for now)` or remove entirely
+
+**Seasonal tip (adder example)**
+- Body: `Keep dogs on marked paths in heathland and moorland. Adders will usually move away — but if disturbed, they bite. Most incidents happen when dogs sniff around undergrowth.`
+
+**Rain section summaries**
+- `<strong>Looks dry</strong> for the rest of today`
+- `<strong>Mostly dry</strong> — light showers possible. Worth a jacket.`
+- `<strong>Brief showers</strong> — about [X] hour. The dry windows are worth planning around.`
+- `<strong>Wet afternoon</strong> — [X] hours of rain, up to [X]mm forecast. Best to walk early.`
+
+---
+
+### Pushbacks and Refinements
+
+**1. "Effort" vs "Difficulty" on walk detail — minor pushback**
+The reviewer suggests renaming the detail label from "Difficulty" to "Effort" as a warmer alternative. I'd keep "Difficulty." It's the industry standard across AllTrails, Walkiees, OS Maps, and every walk app in the competitive landscape. Users will scan it immediately. "Effort" introduces a small moment of confusion ("effort for who? my dog or me?"). This is low stakes but the convention exists for good reason.
+
+**2. Remove all "free" and "no sign-up / no account" copy**
+Do not use "free", "no sign-up", "no account", or "no login" in any user-facing copy. These are the current product stance, not permanent promises — advertising them now only creates a problem if either changes in future. This applies to all surfaces: tagline, home screen, onboarding, metadata, social proof strips, Me tab, and PWA install card.
+
+**3. "You found it." onboarding title — reject**
+The reviewer offers "You found it." as an alternative onboarding title. It's too oblique for a first-time user who doesn't yet understand what they've found. "Walks worth the weather." is the better call — it's distinctive, hints at the weather integration, and is confident without being cryptic.
+
+**4. Paw emoji frequency — implement the restriction**
+The reviewer correctly identifies the paw emoji (🐾) as significantly overused throughout the current app. In v2, reserve it for the paw safety section specifically. It should not appear on: loading states, contribution banners, share buttons, submit forms, or onboarding cards. Used sparingly, it earns meaning. Used everywhere, it becomes visual noise.
+
+**5. Rain section punctuation (em dash)**
+The reviewer flags dashes throughout. All instances should use em dashes (—) not hyphens or en dashes. This is a Developer implementation detail — do a search-and-replace pass when implementing copy.
+
+---
+
+### Designer Flags from Copy Review
+
+- The tagline `Every walk, safely.` and subheadline `Great walks. Safe conditions. No fuss.` need to be incorporated into the State A design (home screen, no location). Designer should update the hero section spec to reflect the approved headline/body.
+- The onboarding overlay title changes to `Walks worth the weather.` — update the overlay design component.
+- The greeting card on the Me tab changes from `Hi, [name]! / Welcome back` to `Hi, [name] 👋 / [X walks saved · X reviews]` — Designer to update the Me tab spec accordingly.
+- Paw emoji restriction applies to all designed components. Review the mockup/spec for any 🐾 usage outside of the paw safety block and remove.
+
+---
+
+## Adding Dog Character to the Design
+
+**Observation:** The mockup design is clean and well-executed but feels generic — it could be a food discovery app or a venue finder. It doesn't immediately read as a dog app. The constraint is that we don't want to change the overall design direction (typography, layout, colour system, card structure are all approved). The question is: where can we add targeted, tasteful dog character without undermining the premium feel?
+
+The answer is small, purposeful accents in specific moments — not a wholesale redesign. The goal is that someone opening the app for the first time immediately knows it's for dogs, without being hit over the head with paw prints everywhere.
+
+### Recommendations
+
+**1. Wordmark — add a small nose or paw motif (Designer action)**
+
+The "sniffout" wordmark in Inter 700 is clean but anonymous. A minimal addition — a small filled dog nose (•᷄‸•᷅ style, simplified to a geometric shape) or a tiny paw glyph after or within the wordmark — would instantly anchor the brand identity to dogs. This should be subtle: 14–16px, same brand green as the text, not an emoji. Think of how Spotify has the soundwave curves integrated into its wordmark — small, purposeful, not decorative.
+
+This applies to: the wordmark in the top-left of every tab, the splash/State A screen, the desktop coming-soon screen, and any share card or PWA icon usage.
+
+**2. App icon / PWA icon — verify and strengthen**
+
+The existing icon files (`icon-192.png`, `icon-512.png`) already exist but their design hasn't been referenced in the spec. If they don't clearly read as a dog/paw app at 192×192, they should be updated for v2 — this is a home screen icon and the first visual impression when installed. A paw print on brand green is the obvious and correct direction. Should be clean and geometric, not clipart.
+
+**3. Empty states — dog illustration, done properly**
+
+The design spec already calls for "simple line art of a dog and a tree" on the walks tab empty state. This is the right instinct. The brief for the Developer/Designer: these illustrations should have genuine character — a specific dog silhouette, not a generic paw or cartoon dog. Think the style of Monzo's empty state illustrations: minimal, one or two colours, slightly expressive. These are moments where the app has nothing to show and they're currently a risk of feeling dead. A well-drawn dog sitting next to a signpost or looking at a map is a chance to make the app feel alive and specific.
+
+Empty states that should have dog illustration treatment:
+- Walks tab (no results / no location set)
+- Me tab favourites (no saved walks yet)
+- Nearby tab (no venues found)
+
+**4. Paw print — used in exactly one functional place**
+
+The copy review correctly flagged that the paw emoji (🐾) is overused in the live app. In v2, reserve it for the paw safety block only — where it earns its place because the content is literally about paw health. Using it elsewhere dilutes this.
+
+However, a single decorative paw print could work as a very subtle background watermark on the Today tab weather hero card — extremely low opacity (4–6%), in white, positioned bottom-right of the card. This gives the card a faint dog texture without competing with the weather data. This is optional and should only be implemented if it looks right in context.
+
+**5. Walk card badge — "Sniffout Pick" visual treatment**
+
+The curated walk badge (`Sniffout Pick`) is the main moment where Sniffout's brand appears on the content. The badge design could incorporate a tiny nose or paw as part of the badge icon — similar to how Airbnb's "Superhost" badge uses a small house icon. A small, filled paw or nose mark (8×8px) before the "Sniffout Pick" text inside the pill would add dog identity to every curated walk card without changing the card layout.
+
+**6. Onboarding feature card icons**
+
+The onboarding overlay has four feature cards, each with a title and description. Currently no icons are specified. Simple line-art icons for each feature — drawn in the same style and brand green — would add visual warmth and dog specificity:
+- Walk discovery: a dog lead or pawprint trail
+- Weather: a cloud with a small paw inside (replaces generic weather icon)
+- Favourites: a heart (already implied in copy, could use the heart)
+- Nearby places: a location pin with a small paw or bone — or just the standard location pin
+
+These should be SVGs, drawn consistently, at around 32px. Not emoji. Not stock icons.
+
+**7. Language does a lot of the work**
+
+Several of the approved copy strings already do this well — "dry off your dog when you're back," "your dog would rather be safe than soggy," "keep your dog close." Consistently writing for the dog as well as the owner is the cheapest and most effective way to make the app feel dog-specific. The copy reviewer and Developer should maintain this in every string.
+
+### What Not to Do
+
+- Do not add paw prints as section dividers, background patterns, or decorative elements throughout the app — this tips into the "generic dog app" aesthetic we're trying to avoid
+- Do not use dog cartoon illustrations on the main content screens (walk cards, weather tab) — the photography and data should do the visual work there
+- Do not add dog emoji liberally — same note as the paw emoji: used once, it earns meaning; used everywhere, it becomes noise
+- Do not change the colour scheme, typography, card styles, or layout — the design direction is approved
+
+### Summary — Designer Actions
+
+| Element | Action | Priority |
+|---------|--------|---------|
+| Wordmark | Design a small nose/paw accent for the "sniffout" wordmark | High |
+| App icon | Review and update if not already a clean paw-on-green design | High |
+| Empty state illustrations | Brief and design dog line-art for 3 empty states | Medium |
+| Onboarding feature icons | Design 4 small SVG icons in brand style | Medium |
+| Walk card Sniffout Pick badge | Add tiny paw/nose element to badge design | Low |
+| Weather hero card watermark | Test subtle paw watermark at ~5% opacity — implement only if it works | Low |
+
+---
+
 ## Open Questions to Resolve Before Developer Starts
 
-1. **Image sourcing ownership**: Who is responsible for sourcing walk photos? This needs to be assigned before Sprint 2 begins, or walk cards will ship without images.
-2. **Copy review**: Confirm timing of the dedicated copy session. Ideally completed before Sprint 3 (Today tab) since the hero headline and verdict strings live there.
-3. **Walk schema sign-off**: The PO should review and approve the WALKS_DB field additions (including the new `source` field for hybrid content) before the Developer implements them. Once the schema is locked and 50 entries are updated, changing it is expensive.
-4. **Hybrid content model badge spec**: Designer to add Sniffout Pick / Nearby badge treatment to the walk card spec before Sprint 2 begins.
+1. **sniffout-v2.html starting point**: Developer to create `sniffout-v2.html` as the new working file. Do not copy-paste the live file as a starting point without explicit PO sign-off — v2 is a redesign, not a patch.
+2. **Image sourcing ownership**: ⏳ Still unassigned. Walk cards should use a solid brand-green (`#1E4D3A`) placeholder background until real photos are sourced — not a grey box, not a broken image. Sprint 2 is not blocked by this, but photos need an owner.
+3. **Copy — mostly approved, one item outstanding**: All copy strings are approved except the onboarding overlay title (deferred anyway — onboarding overlay is out of scope for current sprint). See developer-questions.md for full copy decisions.
+4. **Walk schema — signed off**: Confirmed in developer-questions.md. `isPushchairFriendly` removed. `source: "curated" | "places"` added for hybrid content model. Developer can proceed.
+5. **Today tab State A preview section — fix required**: Current mockup shows greyed-out preview cards under "WHAT YOU'LL GET" that read as broken content rather than a deliberate teaser. Developer to implement warmer card treatment (brand-green tint background, not grey) as Option A, or simplify to a three-line value proposition list as Option B if Option A still reads poorly. See developer-questions.md for full brief. Also remove "No account." from the subline.
+6. **Designer actions before Sprint 1**: (a) Wordmark with small nose/paw accent. (b) App icon review/update. (c) Update State A subline to `Handpicked walks. Live conditions.` and social proof strip to `50+ handpicked UK walks · Works offline · Dog-specific routes`. (d) Improve Today tab State A walk preview card warmth (use `rgba(30,77,58,0.05)` background, not grey — Option A approved). (e) Update Me tab greeting card. (f) Remove paw emoji from all non-paw-safety components. (g) Hybrid content model: add Sniffout Pick badge spec with paw element. (h) Remove all instances of "free", "no sign-up", and "no account" from any designed screens.
+7. **Designer actions before Sprint 2**: Empty state dog illustrations (3 screens: Walks tab, Me tab favourites, Nearby tab). Brief: minimal line art, specific dog silhouette with character, brand green only or brand green + ink.

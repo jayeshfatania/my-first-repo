@@ -1,0 +1,2009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Sniffout — Discover great walks</title>
+  <meta name="description" content="Discover 50+ handpicked UK dog walks with live weather checks, paw safety alerts and nearby dog-friendly spots." />
+  <meta name="theme-color" content="#1E4D3A" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Sniffout" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+/* ── TOKENS ──────────────────────────────────────────────────────────────── */
+:root {
+  --brand: #1E4D3A;
+  --brand-light: rgba(30,77,58,0.08);
+  --brand-mid: rgba(30,77,58,0.15);
+  --bg: #F7F5F0;
+  --surface: #FFFFFF;
+  --border: rgba(0,0,0,0.08);
+  --ink: #1A1A1A;
+  --ink-2: #6B6B6B;
+  --amber: #F59E0B;
+  --red: #EF4444;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --nav-h: 64px;
+}
+body.night {
+  --bg: #111810;
+  --surface: #1C2318;
+  --border: rgba(255,255,255,0.08);
+  --ink: #F0EDE6;
+  --ink-2: #9BA89A;
+  --brand-light: rgba(30,77,58,0.18);
+}
+
+/* ── RESET & BASE ────────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-family:'Inter',sans-serif;font-size:16px;background:var(--bg);color:var(--ink);-webkit-text-size-adjust:100%}
+body{min-height:100dvh;background:var(--bg);overscroll-behavior:none}
+button{font-family:'Inter',sans-serif;cursor:pointer;border:none;background:none}
+input{font-family:'Inter',sans-serif}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+
+/* ── LAYOUT ──────────────────────────────────────────────────────────────── */
+#app{
+  max-width:430px;
+  margin:0 auto;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  background:var(--bg);
+}
+#panel{
+  flex:1;
+  overflow-y:auto;
+  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 8px);
+}
+.tab-section{display:none}
+.tab-section.active{display:block}
+
+/* ── BOTTOM NAV ──────────────────────────────────────────────────────────── */
+#bottomNav{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:430px;
+  height:calc(var(--nav-h) + env(safe-area-inset-bottom));
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  display:flex;
+  align-items:flex-start;
+  padding-top:8px;
+  padding-bottom:env(safe-area-inset-bottom);
+  z-index:100;
+  transition:opacity .2s;
+}
+#bottomNav.dimmed{opacity:.4;pointer-events:none}
+.nav-item{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  padding:4px 0;
+  color:var(--ink-2);
+  font-size:.68rem;
+  font-weight:500;
+  transition:color .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-item.active{color:var(--brand)}
+.nav-icon{font-size:1.25rem;line-height:1}
+.nav-label{font-size:.65rem;letter-spacing:-.01em}
+
+/* ── TODAY TAB — STATE A ─────────────────────────────────────────────────── */
+#today-state-a{
+  min-height:100dvh;
+  padding:0 20px;
+  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 20px);
+  display:flex;
+  flex-direction:column;
+}
+.state-a-wordmark{
+  padding-top:max(env(safe-area-inset-top),16px);
+  padding-bottom:8px;
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--brand);
+  letter-spacing:-.02em;
+}
+.state-a-hero{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:24px 0 20px;
+}
+.state-a-headline{
+  font-size:2rem;
+  font-weight:700;
+  line-height:1.15;
+  letter-spacing:-.04em;
+  color:var(--ink);
+  margin-bottom:10px;
+}
+.state-a-subline{
+  font-size:1rem;
+  font-weight:500;
+  color:var(--brand);
+  margin-bottom:14px;
+  letter-spacing:-.02em;
+}
+.state-a-body{
+  font-size:.88rem;
+  line-height:1.55;
+  color:var(--ink-2);
+  margin-bottom:28px;
+  max-width:340px;
+}
+.state-a-cta{
+  background:var(--brand);
+  color:#fff;
+  border-radius:12px;
+  padding:14px 20px;
+  font-size:.95rem;
+  font-weight:600;
+  width:100%;
+  letter-spacing:-.02em;
+  margin-bottom:12px;
+  transition:opacity .15s;
+}
+.state-a-cta:active{opacity:.85}
+.state-a-or{
+  text-align:center;
+  font-size:.8rem;
+  color:var(--ink-2);
+  margin-bottom:10px;
+}
+.state-a-search{
+  display:flex;
+  gap:8px;
+  margin-bottom:28px;
+}
+.state-a-search input{
+  flex:1;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:11px 14px;
+  font-size:.9rem;
+  background:var(--surface);
+  color:var(--ink);
+  outline:none;
+  transition:border-color .15s;
+}
+.state-a-search input:focus{border-color:var(--brand)}
+.state-a-search input::placeholder{color:var(--ink-2)}
+.state-a-search-btn{
+  background:var(--brand);
+  color:#fff;
+  border-radius:var(--radius-sm);
+  padding:11px 16px;
+  font-size:.88rem;
+  font-weight:600;
+  white-space:nowrap;
+}
+.state-a-error{
+  font-size:.8rem;
+  color:var(--red);
+  margin-top:-20px;
+  margin-bottom:12px;
+  display:none;
+}
+.state-a-preview-section{margin-bottom:20px}
+.state-a-preview-label{
+  font-size:.72rem;
+  font-weight:600;
+  color:var(--ink-2);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.state-a-preview-cards{display:flex;flex-direction:column;gap:10px}
+.preview-card{
+  border-radius:var(--radius);
+  overflow:hidden;
+  background:rgba(30,77,58,0.06);
+  border:1px solid rgba(30,77,58,0.15);
+  position:relative;
+}
+.preview-card-photo{
+  height:100px;
+  background:#1E4D3A;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.preview-card-photo-icon{font-size:2rem;opacity:.35}
+.preview-card-lock{
+  position:absolute;
+  inset:0;
+  background:rgba(30,77,58,0.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.75rem;
+  color:rgba(255,255,255,.7);
+  font-weight:500;
+  gap:4px;
+}
+.preview-card-body{padding:12px 14px}
+.preview-card-name{
+  font-size:.9rem;
+  font-weight:600;
+  color:var(--ink);
+  margin-bottom:4px;
+  opacity:.7;
+}
+.preview-card-meta{
+  font-size:.77rem;
+  color:var(--ink-2);
+  display:flex;
+  gap:8px;
+  margin-bottom:8px;
+  opacity:.7;
+}
+.preview-card-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag-chip{
+  font-size:.7rem;
+  font-weight:500;
+  background:var(--brand-light);
+  color:var(--brand);
+  border-radius:20px;
+  padding:3px 9px;
+  opacity:.7;
+}
+.state-a-social-proof{
+  font-size:.77rem;
+  color:var(--ink-2);
+  text-align:center;
+  padding:14px 0;
+  border-top:1px solid var(--border);
+  line-height:1.8;
+}
+
+/* ── TODAY TAB — STATE B ─────────────────────────────────────────────────── */
+#today-state-b{padding-bottom:8px}
+.today-topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:max(env(safe-area-inset-top),14px) 16px 12px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+.today-wordmark{font-size:.9rem;font-weight:700;color:var(--brand);letter-spacing:-.02em}
+.today-location{
+  font-size:.82rem;
+  color:var(--ink-2);
+  display:flex;
+  align-items:center;
+  gap:4px;
+  max-width:180px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.today-refresh{
+  font-size:1.1rem;
+  color:var(--ink-2);
+  padding:4px;
+  border-radius:8px;
+}
+.today-content{padding:0 16px}
+.weather-hero{
+  background:#1E4D3A;
+  border-radius:var(--radius);
+  padding:20px;
+  margin:12px 0;
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+}
+body.night .weather-hero{background:#152E22}
+.weather-hero-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.weather-hero-temp{font-size:3rem;font-weight:700;letter-spacing:-.04em;line-height:1}
+.weather-hero-feels{font-size:.82rem;opacity:.75;margin-top:4px}
+.weather-hero-icon{font-size:2.5rem;line-height:1}
+.weather-hero-desc{font-size:.95rem;font-weight:500;margin-bottom:4px;opacity:.9}
+.weather-hero-wind{font-size:.8rem;opacity:.65}
+.weather-hero-updated{font-size:.72rem;opacity:.5;margin-top:8px}
+.walk-rec-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px 16px;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  margin-bottom:12px;
+}
+.walk-rec-icon{font-size:1.5rem;line-height:1;flex-shrink:0}
+.walk-rec-title{font-size:.9rem;font-weight:600;color:var(--ink);margin-bottom:3px;letter-spacing:-.02em}
+.walk-rec-body{font-size:.8rem;color:var(--ink-2);line-height:1.45}
+.hazard-card{
+  border-radius:var(--radius-sm);
+  padding:12px 14px;
+  margin-bottom:10px;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+}
+.hazard-card.amber{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3)}
+.hazard-card.red{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3)}
+.hazard-card-icon{font-size:1.2rem;flex-shrink:0}
+.hazard-card-title{font-size:.83rem;font-weight:600;margin-bottom:4px;color:var(--ink)}
+.hazard-card.red .hazard-card-title{color:var(--red)}
+.hazard-card.amber .hazard-card-title{color:#B45309}
+body.night .hazard-card.amber .hazard-card-title{color:#FCD34D}
+.hazard-tips{list-style:none;font-size:.77rem;color:var(--ink-2);line-height:1.5}
+.hazard-tips li::before{content:"• ";color:var(--ink-2)}
+.today-section-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:16px 0 10px;
+}
+.today-section-title{font-size:.85rem;font-weight:600;color:var(--ink);letter-spacing:-.02em}
+.today-section-link{font-size:.8rem;color:var(--brand);font-weight:500}
+.today-walks-scroll{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding-bottom:4px;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  margin-bottom:16px;
+}
+.today-walks-scroll::-webkit-scrollbar{display:none}
+.today-walk-card{
+  flex-shrink:0;
+  width:180px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.today-walk-photo{
+  height:100px;
+  background:#1E4D3A;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.8rem;
+  position:relative;
+}
+.today-walk-body{padding:10px 10px 12px}
+.today-walk-name{font-size:.8rem;font-weight:600;line-height:1.3;margin-bottom:4px;color:var(--ink)}
+.today-walk-meta{font-size:.72rem;color:var(--ink-2)}
+
+/* ── WEATHER TAB ─────────────────────────────────────────────────────────── */
+#weather-content{padding:12px 16px}
+.weather-section-title{
+  font-size:.72rem;
+  font-weight:600;
+  color:var(--ink-2);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  margin:16px 0 8px;
+}
+.conditions-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:12px;
+}
+.cond-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px;
+}
+.cond-label{font-size:.68rem;font-weight:600;color:var(--ink-2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+.cond-icon{font-size:1.4rem;margin-bottom:4px}
+.cond-value{font-size:1.35rem;font-weight:700;color:var(--ink);letter-spacing:-.03em}
+.cond-unit{font-size:.8rem;font-weight:500;color:var(--ink-2)}
+.cond-sub{font-size:.73rem;color:var(--ink-2);margin-top:3px}
+.cond-card.warn{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.05)}
+.cond-card.danger{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.05)}
+.paw-safety{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 16px;
+  margin-bottom:12px;
+}
+.paw-safety-title{font-size:.9rem;font-weight:600;color:var(--ink);margin-bottom:6px}
+.paw-safety-body{font-size:.8rem;color:var(--ink-2);line-height:1.5}
+.hourly-scroll{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  margin-bottom:12px;
+}
+.hourly-scroll::-webkit-scrollbar{display:none}
+.hourly-strip{display:flex;gap:0}
+.h-item{
+  flex-shrink:0;
+  width:52px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:8px 4px;
+  border-right:1px solid var(--border);
+  background:var(--surface);
+}
+.h-item:first-child{border-radius:var(--radius-sm) 0 0 var(--radius-sm)}
+.h-item:last-child{border-right:none;border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.h-item.now{background:var(--brand-light)}
+.h-time{font-size:.65rem;color:var(--ink-2);margin-bottom:4px;font-weight:500}
+.h-icon{font-size:1rem;margin-bottom:3px}
+.h-temp{font-size:.8rem;font-weight:600;color:var(--ink);margin-bottom:3px}
+.h-rain-bar{width:3px;background:var(--brand);border-radius:2px;min-height:2px;margin-bottom:2px}
+.h-rain{font-size:.62rem;color:var(--ink-2)}
+.walk-window{
+  background:var(--brand-light);
+  border:1px solid var(--brand-mid);
+  border-radius:var(--radius-sm);
+  padding:10px 14px;
+  font-size:.8rem;
+  color:var(--brand);
+  margin-bottom:8px;
+  line-height:1.4;
+}
+body.night .walk-window{color:#86C5A0}
+.rain-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 16px;
+  margin-bottom:12px;
+}
+.rain-header{margin-bottom:10px}
+.rain-summary{font-size:.8rem;color:var(--ink-2);margin-top:3px;line-height:1.4}
+.rain-bars{display:flex;gap:0;overflow-x:auto;scrollbar-width:none}
+.rain-bars::-webkit-scrollbar{display:none}
+.rain-hour{
+  flex-shrink:0;
+  width:44px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+}
+.rh-time{font-size:.6rem;color:var(--ink-2)}
+.rh-bar-wrap{height:40px;display:flex;align-items:flex-end;justify-content:center;width:100%}
+.rh-bar{width:6px;border-radius:3px 3px 0 0;min-height:2px}
+.rh-pct{font-size:.62rem;color:var(--ink-2)}
+.rh-icon{font-size:.75rem}
+.seven-day{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 16px;
+  margin-bottom:12px;
+}
+.day-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 0;
+  border-bottom:1px solid var(--border);
+}
+.day-row:last-child{border-bottom:none}
+.day-label{width:42px;font-size:.8rem;font-weight:500;color:var(--ink)}
+.day-icon{width:24px;text-align:center;font-size:1rem}
+.day-temps{display:flex;gap:6px;margin-left:auto}
+.day-max{font-size:.83rem;font-weight:600;color:var(--ink)}
+.day-min{font-size:.83rem;color:var(--ink-2)}
+.day-rain-wrap{display:flex;align-items:center;gap:4px;width:80px}
+.day-rain-bar{height:4px;border-radius:2px;min-width:2px}
+.day-rain-pct{font-size:.7rem;color:var(--ink-2);white-space:nowrap}
+.sun-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 16px;
+  margin-bottom:12px;
+}
+.sun-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sun-row{display:flex;align-items:center;gap:10px}
+.sun-time{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:44px}
+.sun-time-icon{font-size:1.1rem}
+.sun-time-val{font-size:.78rem;font-weight:600;color:var(--ink)}
+.sun-time-label{font-size:.65rem;color:var(--ink-2)}
+.daylight-bar{
+  flex:1;
+  height:6px;
+  background:var(--border);
+  border-radius:3px;
+  position:relative;
+}
+.daylight-fill{height:100%;background:var(--amber);border-radius:3px}
+.sun-marker{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:.9rem}
+.weather-footer{
+  font-size:.75rem;
+  color:var(--ink-2);
+  text-align:center;
+  padding:8px 0 4px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.refresh-btn{
+  font-size:.78rem;
+  color:var(--brand);
+  font-weight:500;
+  padding:4px 8px;
+  border-radius:8px;
+  background:var(--brand-light);
+}
+
+/* ── WALKS TAB ───────────────────────────────────────────────────────────── */
+.walks-header{
+  position:sticky;
+  top:0;
+  background:var(--bg);
+  z-index:10;
+  padding:max(env(safe-area-inset-top),12px) 16px 10px;
+  border-bottom:1px solid var(--border);
+}
+.walks-search-row{
+  display:flex;
+  gap:8px;
+  margin-bottom:10px;
+}
+.walks-search-input{
+  flex:1;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:9px 14px;
+  font-size:.88rem;
+  background:var(--surface);
+  color:var(--ink);
+  outline:none;
+}
+.walks-search-input:focus{border-color:var(--brand)}
+.walks-search-input::placeholder{color:var(--ink-2)}
+.view-toggle{
+  display:flex;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  overflow:hidden;
+  background:var(--surface);
+}
+.view-btn{
+  padding:8px 12px;
+  font-size:.8rem;
+  font-weight:500;
+  color:var(--ink-2);
+  border:none;
+  background:none;
+}
+.view-btn.active{background:var(--brand);color:#fff}
+.filter-chips{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  padding-bottom:2px;
+}
+.filter-chips::-webkit-scrollbar{display:none}
+.filter-chip{
+  flex-shrink:0;
+  font-size:.75rem;
+  font-weight:500;
+  border:1.5px solid var(--border);
+  border-radius:20px;
+  padding:5px 12px;
+  color:var(--ink-2);
+  background:var(--surface);
+  white-space:nowrap;
+  transition:all .15s;
+}
+.filter-chip.active{
+  background:var(--brand);
+  border-color:var(--brand);
+  color:#fff;
+}
+.walks-list{padding:12px 16px;display:flex;flex-direction:column;gap:14px}
+.walks-empty{
+  text-align:center;
+  padding:48px 24px;
+  color:var(--ink-2);
+  font-size:.88rem;
+  line-height:1.6;
+}
+
+/* ── WALK CARD ───────────────────────────────────────────────────────────── */
+.walk-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .1s;
+}
+.walk-card:active{transform:scale(.99)}
+.walk-card-photo{
+  height:180px;
+  background:#1E4D3A;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.walk-card-photo img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.walk-card-photo-icon{font-size:3rem;opacity:.35;z-index:1}
+.walk-card-badge{
+  position:absolute;
+  top:10px;
+  left:10px;
+  background:var(--amber);
+  color:#fff;
+  font-size:.65rem;
+  font-weight:700;
+  border-radius:20px;
+  padding:3px 9px;
+  letter-spacing:.03em;
+  z-index:2;
+}
+.walk-card-heart{
+  position:absolute;
+  top:8px;
+  right:10px;
+  font-size:1.2rem;
+  z-index:2;
+  background:rgba(0,0,0,.25);
+  border-radius:50%;
+  width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:transform .1s;
+  -webkit-tap-highlight-color:transparent;
+}
+.walk-card-heart:active{transform:scale(.85)}
+.walk-card-body{padding:12px 14px 14px}
+.walk-card-name{
+  font-size:.95rem;
+  font-weight:600;
+  color:var(--ink);
+  line-height:1.3;
+  margin-bottom:6px;
+  letter-spacing:-.02em;
+}
+.walk-card-meta{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:.77rem;
+  color:var(--ink-2);
+  margin-bottom:8px;
+  flex-wrap:wrap;
+}
+.walk-card-meta-sep{color:var(--border)}
+.difficulty-chip{
+  font-size:.68rem;
+  font-weight:600;
+  border-radius:20px;
+  padding:2px 8px;
+}
+.difficulty-chip.easy{background:rgba(30,77,58,.1);color:var(--brand)}
+.difficulty-chip.moderate{background:rgba(245,158,11,.1);color:#92400E}
+body.night .difficulty-chip.moderate{color:#FCD34D}
+.difficulty-chip.hard{background:rgba(239,68,68,.1);color:var(--red)}
+.walk-card-tags{display:flex;gap:6px;flex-wrap:wrap}
+.walk-card-rating{
+  display:flex;
+  align-items:center;
+  gap:3px;
+  font-size:.73rem;
+  color:var(--ink-2);
+  margin-left:auto;
+}
+
+/* ── WALK DETAIL OVERLAY ─────────────────────────────────────────────────── */
+#walk-detail{
+  position:fixed;
+  inset:0;
+  z-index:200;
+  transform:translateY(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  display:flex;
+  flex-direction:column;
+}
+#walk-detail.open{transform:translateY(0)}
+.detail-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.4);
+}
+.detail-sheet{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  max-height:96dvh;
+  background:var(--bg);
+  border-radius:24px 24px 0 0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.detail-photo{
+  height:200px;
+  background:#1E4D3A;
+  border-radius:24px 24px 0 0;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  flex-shrink:0;
+}
+.detail-photo img{width:100%;height:100%;object-fit:cover}
+.detail-photo-icon{font-size:4rem;opacity:.3;z-index:1}
+.detail-photo-scrim{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 60%);
+  z-index:2;
+}
+.detail-close{
+  position:absolute;
+  top:max(env(safe-area-inset-top),12px);
+  left:14px;
+  z-index:10;
+  background:rgba(0,0,0,.4);
+  color:#fff;
+  border-radius:50%;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1rem;
+  -webkit-tap-highlight-color:transparent;
+}
+.detail-photo-text{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  padding:14px 16px;
+  z-index:3;
+  color:#fff;
+}
+.detail-photo-name{font-size:1.2rem;font-weight:700;letter-spacing:-.03em;line-height:1.2;margin-bottom:3px}
+.detail-photo-area{font-size:.82rem;opacity:.8}
+.detail-body{padding:16px 16px calc(env(safe-area-inset-bottom)+80px)}
+.detail-section-title{
+  font-size:.82rem;
+  font-weight:700;
+  color:var(--ink);
+  margin:16px 0 8px;
+  letter-spacing:-.01em;
+}
+.detail-description{font-size:.88rem;color:var(--ink-2);line-height:1.6;margin-bottom:4px}
+.detail-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:4px;
+}
+.detail-grid-item{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:10px 12px;
+}
+.detail-grid-label{font-size:.65rem;font-weight:600;color:var(--ink-2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px}
+.detail-grid-value{font-size:.83rem;font-weight:600;color:var(--ink)}
+.detail-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.detail-directions-btn{
+  background:var(--brand);
+  color:#fff;
+  border-radius:var(--radius-sm);
+  padding:12px 20px;
+  font-size:.9rem;
+  font-weight:600;
+  text-align:center;
+  display:block;
+}
+.detail-share-btn{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  color:var(--ink);
+  border-radius:var(--radius-sm);
+  padding:12px 20px;
+  font-size:.9rem;
+  font-weight:600;
+  text-align:center;
+}
+.detail-map{
+  height:180px;
+  border-radius:var(--radius-sm);
+  overflow:hidden;
+  margin-bottom:4px;
+  background:var(--surface);
+  border:1px solid var(--border);
+}
+
+/* ── NEARBY TAB ──────────────────────────────────────────────────────────── */
+.nearby-header{
+  position:sticky;
+  top:0;
+  background:var(--bg);
+  z-index:10;
+  padding:max(env(safe-area-inset-top),12px) 16px 10px;
+  border-bottom:1px solid var(--border);
+}
+.nearby-cats{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.nearby-cats::-webkit-scrollbar{display:none}
+.cat-chip{
+  flex-shrink:0;
+  font-size:.75rem;
+  font-weight:500;
+  border:1.5px solid var(--border);
+  border-radius:20px;
+  padding:6px 14px;
+  background:var(--surface);
+  color:var(--ink-2);
+  white-space:nowrap;
+  transition:all .15s;
+}
+.cat-chip.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.nearby-content{padding:12px 16px}
+.place-card{
+  display:flex;
+  gap:12px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  overflow:hidden;
+  margin-bottom:10px;
+  -webkit-tap-highlight-color:transparent;
+}
+.place-thumb{
+  width:80px;
+  height:80px;
+  flex-shrink:0;
+  background:var(--brand-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.8rem;
+  object-fit:cover;
+}
+.place-thumb img{width:80px;height:80px;object-fit:cover}
+.place-body{padding:10px 12px 10px 0;flex:1;min-width:0}
+.place-name{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.place-rating{font-size:.75rem;color:var(--ink-2);margin-bottom:3px}
+.place-address{font-size:.73rem;color:var(--ink-2);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.place-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px}
+.place-open.open{font-size:.7rem;font-weight:600;color:#16A34A;background:rgba(22,163,74,.1);border-radius:20px;padding:2px 7px}
+.place-open.closed{font-size:.7rem;font-weight:600;color:var(--red);background:rgba(239,68,68,.1);border-radius:20px;padding:2px 7px}
+.place-maps-link{font-size:.73rem;color:var(--brand);font-weight:500}
+.nearby-no-location{
+  text-align:center;
+  padding:64px 24px;
+  color:var(--ink-2);
+}
+.nearby-no-location-icon{font-size:2.5rem;margin-bottom:12px}
+.nearby-no-location-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:6px}
+.nearby-no-location-body{font-size:.83rem;line-height:1.5}
+.nearby-tip{
+  font-size:.75rem;
+  color:var(--ink-2);
+  background:var(--brand-light);
+  border-radius:var(--radius-sm);
+  padding:10px 12px;
+  margin-bottom:12px;
+  line-height:1.4;
+}
+
+/* ── ME TAB ──────────────────────────────────────────────────────────────── */
+.me-content{padding:0 0 8px}
+.me-header{
+  padding:max(env(safe-area-inset-top),16px) 16px 16px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  margin-bottom:12px;
+}
+.me-greeting{font-size:1.3rem;font-weight:700;color:var(--ink);letter-spacing:-.03em;margin-bottom:3px}
+.me-sub{font-size:.82rem;color:var(--ink-2)}
+.me-stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  padding:0 16px;
+  margin-bottom:16px;
+}
+.me-stat{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 16px;
+  text-align:center;
+}
+.me-stat-num{font-size:1.8rem;font-weight:700;color:var(--brand);letter-spacing:-.04em;display:block;line-height:1}
+.me-stat-label{font-size:.72rem;color:var(--ink-2);margin-top:4px;display:block}
+.me-section{
+  padding:0 16px;
+  margin-bottom:16px;
+}
+.me-section-title{
+  font-size:.82rem;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:10px;
+  letter-spacing:-.01em;
+}
+.me-section-subtitle{
+  font-size:.72rem;
+  color:var(--ink-2);
+  margin-bottom:10px;
+}
+.saved-walks-scroll{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  padding-bottom:4px;
+}
+.saved-walks-scroll::-webkit-scrollbar{display:none}
+.saved-walk-card{
+  flex-shrink:0;
+  width:140px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  overflow:hidden;
+  cursor:pointer;
+}
+.saved-walk-photo{
+  height:80px;
+  background:#1E4D3A;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.5rem;
+  opacity:.7;
+}
+.saved-walk-name{font-size:.75rem;font-weight:600;padding:7px 9px 8px;color:var(--ink);line-height:1.3}
+.me-empty{font-size:.82rem;color:var(--ink-2);line-height:1.6;padding:4px 0}
+.me-settings-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:13px 0;
+  border-bottom:1px solid var(--border);
+}
+.me-settings-row:last-child{border-bottom:none}
+.me-settings-label{font-size:.88rem;color:var(--ink);font-weight:500}
+.me-settings-value{font-size:.82rem;color:var(--ink-2)}
+.me-settings-input{
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  padding:6px 10px;
+  font-size:.83rem;
+  background:var(--surface);
+  color:var(--ink);
+  outline:none;
+  width:140px;
+  text-align:right;
+}
+.me-settings-input:focus{border-color:var(--brand)}
+.toggle-switch{
+  width:44px;
+  height:26px;
+  background:var(--border);
+  border-radius:13px;
+  position:relative;
+  cursor:pointer;
+  transition:background .2s;
+  flex-shrink:0;
+}
+.toggle-switch.on{background:var(--brand)}
+.toggle-knob{
+  position:absolute;
+  top:3px;
+  left:3px;
+  width:20px;
+  height:20px;
+  background:#fff;
+  border-radius:50%;
+  transition:transform .2s;
+  box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+.toggle-switch.on .toggle-knob{transform:translateX(18px)}
+
+/* ── LOADING & STATES ────────────────────────────────────────────────────── */
+.loading{
+  text-align:center;
+  padding:64px 24px;
+  color:var(--ink-2);
+  font-size:.88rem;
+}
+.spinner{
+  width:28px;
+  height:28px;
+  border:3px solid var(--border);
+  border-top-color:var(--brand);
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  margin:0 auto 12px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── UV BAR ──────────────────────────────────────────────────────────────── */
+.uv-bar-wrap{margin-top:8px}
+.uv-bar{
+  height:4px;
+  border-radius:2px;
+  background:linear-gradient(to right,#22c55e,#eab308,#f97316,#ef4444,#8b5cf6);
+  position:relative;
+}
+.uv-marker{
+  position:absolute;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:8px;
+  height:8px;
+  background:#fff;
+  border:2px solid var(--ink);
+  border-radius:50%;
+}
+
+/* ── MISC ────────────────────────────────────────────────────────────────── */
+.section-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 16px;
+  margin-bottom:10px;
+}
+.no-location-prompt{
+  text-align:center;
+  padding:80px 24px 40px;
+  color:var(--ink-2);
+}
+.no-location-icon{font-size:2.5rem;margin-bottom:12px}
+.no-location-title{font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:8px}
+.no-location-body{font-size:.85rem;line-height:1.6;margin-bottom:20px}
+.no-location-btn{
+  background:var(--brand);
+  color:#fff;
+  border-radius:var(--radius-sm);
+  padding:12px 24px;
+  font-size:.9rem;
+  font-weight:600;
+  display:inline-block;
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── PANEL ───────────────────────────────────────────────────────────── -->
+  <div id="panel">
+
+    <!-- TODAY TAB -->
+    <div id="tab-home" class="tab-section active">
+
+      <!-- STATE A: No location -->
+      <div id="today-state-a">
+        <div class="state-a-wordmark">Sniffout</div>
+        <div class="state-a-hero">
+          <h1 class="state-a-headline">Discover great walks.</h1>
+          <p class="state-a-subline">Handpicked walks. Live conditions.</p>
+          <p class="state-a-body">50+ handpicked UK walks with terrain, off-lead and livestock info — plus live weather checks and nearby dog-friendly spots.</p>
+          <button class="state-a-cta" onclick="useCurrentLocation()">Use my location</button>
+          <p class="state-a-or">or search by location</p>
+          <div class="state-a-search">
+            <input id="state-a-input" type="text" placeholder="Postcode or place name…" autocomplete="off"
+              onkeydown="if(event.key==='Enter')doSearch()" />
+            <button class="state-a-search-btn" onclick="doSearch()">Search</button>
+          </div>
+          <p class="state-a-error" id="state-a-error">Couldn't find that location. Try a postcode like SW11 or a place name.</p>
+          <div class="state-a-preview-section">
+            <div class="state-a-preview-cards">
+              <div class="preview-card">
+                <div class="preview-card-photo">
+                  <div class="preview-card-photo-icon">🦌</div>
+                  <div class="preview-card-lock">📍 Set your location to unlock walks</div>
+                </div>
+                <div class="preview-card-body">
+                  <div class="preview-card-name">Richmond Park Loop</div>
+                  <div class="preview-card-meta"><span>6.8 mi</span><span>·</span><span>2.5h</span><span>·</span><span>Moderate</span></div>
+                  <div class="preview-card-tags"><span class="tag-chip">Royal Park</span><span class="tag-chip">Deer</span><span class="tag-chip">Wildlife</span></div>
+                </div>
+              </div>
+              <div class="preview-card">
+                <div class="preview-card-photo">
+                  <div class="preview-card-photo-icon">🌊</div>
+                  <div class="preview-card-lock">📍 Set your location to unlock walks</div>
+                </div>
+                <div class="preview-card-body">
+                  <div class="preview-card-name">Thames Path — Kingston to Richmond</div>
+                  <div class="preview-card-meta"><span>5.3 mi</span><span>·</span><span>2h</span><span>·</span><span>Easy</span></div>
+                  <div class="preview-card-tags"><span class="tag-chip">Riverside</span><span class="tag-chip">Flat</span><span class="tag-chip">Scenic</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="state-a-social-proof">50+ handpicked UK walks · Works offline · Dog-specific routes</div>
+        </div>
+      </div>
+
+      <!-- STATE B: Location known -->
+      <div id="today-state-b" style="display:none">
+        <div class="today-topbar">
+          <div class="today-wordmark">Sniffout</div>
+          <div class="today-location" id="today-location-label">📍 —</div>
+          <button class="today-refresh" onclick="refreshWeather()" title="Refresh">↻</button>
+        </div>
+        <div class="today-content" id="today-content">
+          <div class="loading"><div class="spinner"></div>Loading…</div>
+        </div>
+      </div>
+
+    </div><!-- /tab-home -->
+
+    <!-- WEATHER TAB -->
+    <div id="tab-weather" class="tab-section">
+      <div id="weather-content">
+        <div class="no-location-prompt">
+          <div class="no-location-icon">☁️</div>
+          <div class="no-location-title">No location set</div>
+          <div class="no-location-body">Set your location on the Today tab to see the weather for your area.</div>
+          <button class="no-location-btn" onclick="showTab('home')">Go to Today</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WALKS TAB -->
+    <div id="tab-walks" class="tab-section">
+      <div class="walks-header">
+        <div class="walks-search-row">
+          <input class="walks-search-input" id="walks-search" type="text" placeholder="Search walks…" oninput="filterWalks()" autocomplete="off" />
+          <div class="view-toggle">
+            <button class="view-btn active" id="walks-list-btn" onclick="setWalksView('list')">List</button>
+            <button class="view-btn" id="walks-map-btn" onclick="setWalksView('map')">Map</button>
+          </div>
+        </div>
+        <div class="filter-chips" id="filter-chips">
+          <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
+          <button class="filter-chip" onclick="setFilter('easy',this)">Easy</button>
+          <button class="filter-chip" onclick="setFilter('moderate',this)">Moderate</button>
+          <button class="filter-chip" onclick="setFilter('hard',this)">Hard</button>
+          <button class="filter-chip" onclick="setFilter('offlead',this)">Off-lead</button>
+          <button class="filter-chip" onclick="setFilter('muddy',this)">Muddy</button>
+          <button class="filter-chip" onclick="setFilter('rocky',this)">Rocky</button>
+        </div>
+      </div>
+      <div class="walks-list" id="walks-list"></div>
+      <div id="walks-map" style="display:none;height:calc(100dvh - 120px - var(--nav-h))"></div>
+    </div>
+
+    <!-- NEARBY TAB -->
+    <div id="tab-nearby" class="tab-section">
+      <div class="nearby-header">
+        <div class="nearby-cats" id="nearby-cats">
+          <button class="cat-chip active" onclick="switchCat('cafe',this)">☕ Cafés</button>
+          <button class="cat-chip" onclick="switchCat('pub',this)">🍺 Pubs</button>
+          <button class="cat-chip" onclick="switchCat('beach',this)">🏖️ Beaches</button>
+          <button class="cat-chip" onclick="switchCat('petshop',this)">🐾 Pet Shops</button>
+          <button class="cat-chip" onclick="switchCat('vet',this)">🏥 Vets</button>
+        </div>
+      </div>
+      <div class="nearby-content" id="nearby-content">
+        <div class="nearby-no-location">
+          <div class="nearby-no-location-icon">📍</div>
+          <div class="nearby-no-location-title">Set your location first</div>
+          <div class="nearby-no-location-body">Head to the Today tab and search for a location or use your GPS to find nearby dog-friendly spots.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ME TAB -->
+    <div id="tab-me" class="tab-section">
+      <div class="me-content" id="me-content">
+        <div class="loading"><div class="spinner"></div>Loading…</div>
+      </div>
+    </div>
+
+  </div><!-- /panel -->
+
+  <!-- ── BOTTOM NAV ──────────────────────────────────────────────────────── -->
+  <nav id="bottomNav">
+    <button class="nav-item active" onclick="showTab('home')" id="nav-home">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Today</span>
+    </button>
+    <button class="nav-item" onclick="showTab('weather')" id="nav-weather">
+      <span class="nav-icon">☁️</span>
+      <span class="nav-label">Weather</span>
+    </button>
+    <button class="nav-item" onclick="showTab('walks')" id="nav-walks">
+      <span class="nav-icon">🐕</span>
+      <span class="nav-label">Walks</span>
+    </button>
+    <button class="nav-item" onclick="showTab('nearby')" id="nav-nearby">
+      <span class="nav-icon">📍</span>
+      <span class="nav-label">Nearby</span>
+    </button>
+    <button class="nav-item" onclick="showTab('me')" id="nav-me">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Me</span>
+    </button>
+  </nav>
+
+  <!-- ── WALK DETAIL OVERLAY ─────────────────────────────────────────────── -->
+  <div id="walk-detail">
+    <div class="detail-backdrop" onclick="closeWalkDetail()"></div>
+    <div class="detail-sheet" id="detail-sheet-content"></div>
+  </div>
+
+</div><!-- /app -->
+
+
+<script>
+// ── WALKS DATABASE ────────────────────────────────────────────────────────
+const WALKS_DB=[
+{id:'thames-kt2',name:"Thames Path — Kingston to Richmond",area:"Kingston upon Thames",lat:51.4085,lon:-0.3064,icon:"🌊",distance:5.3,duration:120,difficulty:"Easy",terrain:"mixed",offLead:"partial",livestock:false,hasStiles:false,hasParking:false,badge:"Popular",rating:4.7,reviewCount:3,source:"curated",tags:["Riverside","Flat","Scenic"],description:"Gorgeous flat route along the Thames passing Canbury Gardens, Teddington Lock, Ham Lands and Petersham Meadows. Dogs can access the river at multiple points.",wetNote:"Mostly paved and accessible after light rain. Avoid after heavy rain — Ham Lands can flood.",hotNote:"Riverside breezes keep it cool. Dogs can access the river easily."},
+{id:'richmond-park',name:"Richmond Park Loop",area:"Richmond",lat:51.4408,lon:-0.2815,icon:"🦌",distance:6.8,duration:150,difficulty:"Moderate",terrain:"mixed",offLead:"partial",livestock:true,hasStiles:false,hasParking:true,badge:"Popular",rating:4.5,reviewCount:2,source:"curated",tags:["Royal Park","Deer","Wildlife"],description:"2,500 acres of open grassland with 650 roaming deer. Views of St Paul's from King Henry's Mound. Dogs on leads near deer May–August.",wetNote:"Tarmac paths great in wet weather. Grassy sections can be muddy — stick to the main loop.",hotNote:"Woodland sections offer good shade. Ponds perfect for dogs to cool off."},
+{id:'bushy-park',name:"Bushy Park & River Crane",area:"Hampton",lat:51.4136,lon:-0.3407,icon:"🌳",distance:5.6,duration:120,difficulty:"Easy",terrain:"mixed",offLead:"partial",livestock:true,hasStiles:false,hasParking:true,badge:"Sniffout Pick",rating:4.7,reviewCount:2,source:"curated",tags:["Royal Park","Woodland","Riverside"],description:"1,000 acres with 320 free-roaming deer. Follow the famous Chestnut Avenue then pick up the River Crane trail through beautiful woodland.",wetNote:"Tarmac paths excellent in wet weather. River trail can be muddy — wellies recommended.",hotNote:"Large ornamental pond perfect for dogs to cool down. Plenty of shade."},
+{id:'hampstead-heath',name:"Hampstead Heath Circuit",area:"Hampstead",lat:51.5625,lon:-0.1606,icon:"🌿",distance:4.3,duration:105,difficulty:"Moderate",terrain:"muddy",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:"Popular",rating:4.3,reviewCount:3,source:"curated",tags:["Heathland","Swimming ponds","Views"],description:"North London's wild open space with rolling hills, ancient woodland and swimming ponds. Stunning views over London from Parliament Hill.",wetNote:"Can be very muddy after rain — good boots essential. East side paths are better drained.",hotNote:"Shaded woodland walks. Dogs allowed in the mixed pond area to splash around."},
+{id:'regents-canal',name:"Regent's Canal — Little Venice to Victoria Park",area:"Paddington",lat:51.5199,lon:-0.1873,icon:"🛶",distance:5.0,duration:120,difficulty:"Easy",terrain:"paved",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:3.7,reviewCount:2,source:"curated",tags:["Canal","Flat","Urban nature"],description:"Peaceful towpath walk through the heart of London, passing Little Venice, London Zoo, Broadway Market and finishing at Victoria Park.",wetNote:"Tarmac towpath perfect in rain — stays dry underfoot. Most rain-friendly walk in London.",hotNote:"Shaded by trees for much of the route. Stop at Broadway Market for a coffee."},
+{id:'epping-forest',name:"Epping Forest — Chingford to Connaught Water",area:"Epping Forest",lat:51.6333,lon:0.0080,icon:"🌲",distance:6.2,duration:150,difficulty:"Moderate",terrain:"muddy",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Ancient woodland","Off-lead","Wildlife"],description:"Ancient royal hunting forest stretching 12 miles. Beautiful woodland trails with off-lead freedom. Look out for deer and rare fungi.",wetNote:"Forest floor can be very boggy. Stick to bridleways after rain.",hotNote:"Dense canopy provides excellent shade all summer."},
+{id:'canbury-gardens',name:"Canbury Gardens & Kingston Riverside",area:"Kingston upon Thames",lat:51.4120,lon:-0.3063,icon:"🌿",distance:1.9,duration:45,difficulty:"Easy",terrain:"paved",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Short","Urban park","Quick"],description:"Perfect short loop — open grass in Canbury Gardens with easy river access, continuing along the promenade past Kingston Bridge.",wetNote:"Mostly paved — great rainy-day option. Quick and not too muddy.",hotNote:"Shaded by trees in summer. Dogs can access the river easily."},
+{id:'hogsmill-river',name:"Hogsmill River Greenway",area:"Kingston upon Thames",lat:51.3944,lon:-0.2980,icon:"🏞️",distance:3.7,duration:90,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:"Hidden gem",rating:null,reviewCount:0,source:"curated",tags:["Hidden gem","Wildlife","Quiet"],description:"Hidden green corridor along the Hogsmill River. Surprisingly rural for London — look for kingfishers, herons and water voles.",wetNote:"Riverbank can be muddy after rain. Stick to upper paths.",hotNote:"Well shaded along the river. Calm water great for dogs to paddle."},
+{id:'wimbledon-common',name:"Wimbledon Common Loop",area:"Wimbledon",lat:51.4350,lon:-0.2380,icon:"🌾",distance:5.0,duration:120,difficulty:"Moderate",terrain:"muddy",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:"Popular",rating:4.5,reviewCount:2,source:"curated",tags:["Common land","Off-lead","Windmill"],description:"Nearly 1,100 acres of common land, woodland and ponds. Completely off-lead friendly. Visit the iconic windmill at the centre.",wetNote:"Can be muddy but well-trodden paths hold up well.",hotNote:"Plenty of ponds for dogs to splash in. Shaded woodland paths throughout."},
+{id:'primrose-hill',name:"Primrose Hill & Regent's Park",area:"Primrose Hill",lat:51.5388,lon:-0.1591,icon:"🌸",distance:3.1,duration:75,difficulty:"Easy",terrain:"paved",offLead:"partial",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Views","City park","Flat"],description:"Climb Primrose Hill for the best skyline views in London, then loop through Regent's Park. Beautiful gardens and open grass.",wetNote:"Well maintained paths stay accessible in most weather. Hill can be slippery when wet.",hotNote:"Regent's Park has shaded avenues. Bring water — limited river access."},
+{id:'blackheath-greenwich',name:"Blackheath & Greenwich Park",area:"Greenwich",lat:51.4769,lon:-0.0005,icon:"🏛️",distance:3.7,duration:90,difficulty:"Easy",terrain:"mixed",offLead:"partial",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Royal Park","Views","History"],description:"Vast open heath leading into beautiful Greenwich Park. Views over the Thames and Canary Wharf. Visit the Royal Observatory.",wetNote:"Blackheath exposed and windy in bad weather. Greenwich Park paths well maintained.",hotNote:"The park has shaded avenues. Good views from the hilltop."},
+{id:'south-downs-ditchling',name:"South Downs Way — Ditchling Beacon",area:"Brighton",lat:50.9003,lon:-0.1083,icon:"⛰️",distance:6.2,duration:150,difficulty:"Moderate",terrain:"mixed",offLead:"full",livestock:true,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Countryside","Views","Off-lead"],description:"Classic South Downs ridge walk from Ditchling Beacon with sweeping views over Brighton and the Weald. Ancient drove roads and open chalk grassland.",wetNote:"Chalk paths get slippery when wet. Can be very exposed in wind.",hotNote:"Exposed ridge can be very hot in summer. Early morning walk recommended."},
+{id:'box-hill',name:"Box Hill & Stepping Stones",area:"Dorking",lat:51.2514,lon:-0.3104,icon:"🌄",distance:5.0,duration:120,difficulty:"Moderate",terrain:"muddy",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:"Sniffout Pick",rating:4.6,reviewCount:2,source:"curated",tags:["National Trust","Woodland","River"],description:"Climb Box Hill through ancient yew woodland to panoramic Surrey Hills views. Descend to the famous stepping stones across the River Mole.",wetNote:"Woodland paths can be slippery. Stepping stones may be submerged after heavy rain.",hotNote:"Woodland shade throughout. The River Mole perfect for dogs to cool off."},
+{id:'ashdown-forest',name:"Ashdown Forest — Poohsticks Bridge",area:"Ashdown Forest",lat:51.0833,lon:0.0333,icon:"🍯",distance:4.3,duration:105,difficulty:"Easy",terrain:"muddy",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:"Sniffout Pick",rating:5.0,reviewCount:2,source:"curated",tags:["Heathland","Family","Off-lead"],description:"The real Hundred Acre Wood. Sweeping heathland with ancient woodland. Play Poohsticks on the original bridge!",wetNote:"Heathland drains well after rain. Forest tracks can be boggy in winter.",hotNote:"Open heathland with little shade — early morning walks best in summer."},
+{id:'seven-sisters',name:"Cuckmere Haven & Seven Sisters",area:"Eastbourne",lat:50.7517,lon:0.1539,icon:"🏖️",distance:6.8,duration:180,difficulty:"Moderate",terrain:"mixed",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Coastal","Cliffs","Stunning views"],description:"One of England's most spectacular coastal walks. White chalk cliffs, a meandering river and a shingle beach.",wetNote:"Cliff path can be exposed and slippery. Valley floor path safer in bad weather.",hotNote:"Very exposed — sun cream and plenty of water essential. Dogs can swim in the Cuckmere River."},
+{id:'stanage-edge',name:"Stanage Edge",area:"Peak District",lat:53.3667,lon:-1.6500,icon:"🪨",distance:5.6,duration:150,difficulty:"Moderate",terrain:"muddy",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Peak District","Moorland","Dramatic views"],description:"Iconic gritstone escarpment above the Hope Valley. Dramatic moorland views and fascinating rock formations.",wetNote:"Moorland paths can be very boggy. Gritstone rocks slippery when wet.",hotNote:"Exposed moorland — bring sun protection. The edge catches any breeze."},
+{id:'windermere',name:"Fell Foot to Ambleside — Windermere",area:"Lake District",lat:54.3481,lon:-2.9282,icon:"🏔️",distance:8.7,duration:210,difficulty:"Moderate",terrain:"mixed",offLead:"partial",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Lake District","Lakeshore","Fells"],description:"Beautiful walk along the eastern shore of England's largest lake, with stunning mountain reflections in the water.",wetNote:"Lakeshore path can flood after heavy rain. Fell sections require good boots.",hotNote:"The lake provides plenty of cooling opportunities for dogs."},
+{id:'malham-cove',name:"Malham Cove & Gordale Scar",area:"Yorkshire Dales",lat:54.0696,lon:-2.1568,icon:"🏞️",distance:5.6,duration:150,difficulty:"Moderate",terrain:"rocky",offLead:"full",livestock:true,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Yorkshire Dales","Geology","Spectacular"],description:"One of Yorkshire's most dramatic landscapes. Climb the ancient limestone pavement above Malham Cove then squeeze through the towering Gordale Scar gorge.",wetNote:"Limestone can be very slippery when wet — take extreme care.",hotNote:"Sheltered in the gorge but exposed on the tops."},
+{id:'hadrians-wall',name:"Hadrian's Wall — Steel Rigg to Housesteads",area:"Northumberland",lat:55.0000,lon:-2.3833,icon:"🏰",distance:5.0,duration:120,difficulty:"Moderate",terrain:"muddy",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["History","Moorland","UNESCO"],description:"Walk along the best preserved section of the ancient Roman wall with sweeping views north into Scotland.",wetNote:"Exposed moorland — very wet and windy in bad weather.",hotNote:"Exposed ridge with strong winds even in summer. Bring layers."},
+{id:'arthurs-seat',name:"Arthur's Seat — Holyrood Park",area:"Edinburgh",lat:55.9447,lon:-3.1623,icon:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",distance:3.1,duration:90,difficulty:"Moderate",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Edinburgh","Views","City walk"],description:"Extinct volcano rising dramatically in the heart of Edinburgh. Stunning 360° views over the city and the Firth of Forth.",wetNote:"Paths can be slippery on steeper sections when wet.",hotNote:"Exposed summit — bring layers even in summer."},
+{id:'ben-aan',name:"Ben A'an — Loch Katrine",area:"Trossachs",lat:56.2333,lon:-4.4167,icon:"⛰️",distance:3.1,duration:120,difficulty:"Moderate",terrain:"rocky",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Scotland","Highlands","Views"],description:"A compact but rewarding Highland hill with a dramatic rocky summit and stunning views over Loch Katrine.",wetNote:"Rocky path can be slippery when wet. Summit scramble requires care.",hotNote:"Summit can be very exposed. Loch Katrine is beautiful on a clear day."},
+{id:'pen-y-fan',name:"Brecon Beacons — Pen y Fan",area:"Brecon Beacons",lat:51.8836,lon:-3.4364,icon:"🏴󠁧󠁢󠁷󠁬󠁳󠁿",distance:7.5,duration:210,difficulty:"Hard",terrain:"muddy",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Wales","Mountain","Spectacular"],description:"The highest peak in southern Britain. Classic ridge walk over Corn Du and Pen y Fan with dramatic views in all directions.",wetNote:"Mountain paths can be dangerous in poor visibility. Check forecasts carefully.",hotNote:"Exposed mountain top — bring warm layers regardless of forecast."},
+{id:'pembrokeshire-coast',name:"Pembrokeshire Coast Path — Marloes to St Bride's",area:"Pembrokeshire",lat:51.7667,lon:-5.1833,icon:"🌊",distance:6.2,duration:150,difficulty:"Moderate",terrain:"mixed",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Wales","Coastal","Wildlife"],description:"Spectacular coastal walk with dramatic red sandstone cliffs, sea stacks and stunning beaches. Grey seals visible from the cliff tops.",wetNote:"Coastal paths can be very exposed and slippery in rain.",hotNote:"Sea breezes keep it cool. Dogs allowed on most beaches outside summer restrictions."},
+{id:'dartmoor-haytor',name:"Haytor & Hound Tor — Dartmoor",area:"Dartmoor",lat:50.5765,lon:-3.7545,icon:"🪨",distance:5.6,duration:150,difficulty:"Moderate",terrain:"muddy",offLead:"full",livestock:true,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Dartmoor","Moorland","Off-lead"],description:"Dramatic granite tors rising from open moorland. Completely off-lead across Dartmoor with stunning 360° views. Ancient Bronze Age remains scattered throughout.",wetNote:"Moorland can be extremely boggy — stick to higher ground and avoid valleys.",hotNote:"Exposed moorland with little shade. Start early in summer."},
+{id:'cornwall-lands-end',name:"Land's End to Sennen Cove",area:"Cornwall",lat:50.0665,lon:-5.7145,icon:"🌊",distance:4.3,duration:120,difficulty:"Moderate",terrain:"mixed",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Cornwall","Coastal","Iconic"],description:"Walk Britain's most westerly point along stunning granite cliffs to the beautiful sandy beach at Sennen Cove. Atlantic views all the way.",wetNote:"Cliff path very exposed in wind and rain — take care near edges.",hotNote:"Sea breezes keep temperatures down. Dogs allowed on Sennen Cove beach outside summer hours."},
+{id:'exmoor-doone-valley',name:"Doone Valley & Watersmeet",area:"Exmoor",lat:51.2167,lon:-3.7833,icon:"🌿",distance:6.2,duration:150,difficulty:"Moderate",terrain:"muddy",offLead:"partial",livestock:true,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Exmoor","Woodland","River"],description:"Follow the East Lyn River through spectacular wooded gorges to Watersmeet, then up onto open moorland above the Doone Valley.",wetNote:"Valley paths can flood after heavy rain. Higher moorland routes are better drained.",hotNote:"The river provides constant cooling for dogs along the valley route."},
+{id:'jurassic-coast-durdle',name:"Durdle Door & Lulworth Cove",area:"Dorset",lat:50.6213,lon:-2.2772,icon:"🏖️",distance:4.3,duration:120,difficulty:"Moderate",terrain:"mixed",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Jurassic Coast","Iconic","Coastal"],description:"Walk to one of England's most iconic natural arches then drop down to the perfect circular bay at Lulworth Cove. Stunning UNESCO World Heritage coastline.",wetNote:"Steep chalk paths become very slippery in wet weather — take care.",hotNote:"Very exposed in summer heat. Dogs restricted on Lulworth beach in summer."},
+{id:'cotswolds-bourton',name:"Bourton-on-the-Water & the Slaughters",area:"Cotswolds",lat:51.8739,lon:-1.7589,icon:"🏡",distance:5.0,duration:120,difficulty:"Easy",terrain:"mixed",offLead:"partial",livestock:true,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Cotswolds","Villages","Scenic"],description:"Classic Cotswolds loop linking the famous water village of Bourton with the enchanting Upper and Lower Slaughter. Honey-stone villages, riverside meadows and sheep-dotted hills.",wetNote:"Well maintained paths stay accessible in most weather.",hotNote:"Shade in villages but exposed on the meadow sections."},
+{id:'peak-dovedale',name:"Dovedale Stepping Stones",area:"Peak District",lat:53.0833,lon:-1.7833,icon:"🌊",distance:5.0,duration:120,difficulty:"Easy",terrain:"rocky",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:"Popular",rating:null,reviewCount:0,source:"curated",tags:["Peak District","River","Family"],description:"One of the Peak District's most loved valleys. Cross the famous stepping stones over the River Dove, surrounded by dramatic limestone spires and ash woodland.",wetNote:"Stepping stones may be submerged after heavy rain — use the footbridge.",hotNote:"Shaded valley walk. The river is perfect for dogs to splash around."},
+{id:'cannock-chase',name:"Cannock Chase Forest Loop",area:"Staffordshire",lat:52.7000,lon:-1.9667,icon:"🌲",distance:6.2,duration:150,difficulty:"Easy",terrain:"muddy",offLead:"full",livestock:true,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Forest","Off-lead","Wildlife"],description:"Ancient royal hunting forest with open heathland and dense pine woodland. Fallow deer roam freely. Completely off-lead friendly on the open chase.",wetNote:"Forest tracks drain well. Heathland paths can be boggy after prolonged rain.",hotNote:"Forest shade makes this a great summer walk. Deer are most visible at dawn and dusk."},
+{id:'malvern-hills',name:"Malvern Hills Ridge Walk",area:"Worcestershire",lat:52.1167,lon:-2.3333,icon:"⛰️",distance:6.8,duration:180,difficulty:"Moderate",terrain:"mixed",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Malvern Hills","Ridge","Views"],description:"Ancient Pre-Cambrian ridge offering breathtaking views over 15 counties on a clear day. The ridge walk takes in the highest point, Worcestershire Beacon, at 425m.",wetNote:"Ridge can be very exposed and paths slippery on the steep sections.",hotNote:"Ridge catches the breeze — pleasant even on hot days."},
+{id:'sherwood-forest',name:"Sherwood Forest & Major Oak",area:"Nottinghamshire",lat:53.2000,lon:-1.0667,icon:"🌳",distance:4.3,duration:105,difficulty:"Easy",terrain:"muddy",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Sherwood Forest","History","Family"],description:"Walk through Robin Hood's legendary forest to the 1,000-year-old Major Oak. Ancient woodland with gnarled veteran trees and open glades.",wetNote:"Well maintained paths through the forest stay accessible in most weather.",hotNote:"Dense woodland canopy provides excellent shade throughout."},
+{id:'norfolk-holkham',name:"Holkham Beach & Pinewoods",area:"Norfolk",lat:52.9667,lon:0.8000,icon:"🏖️",distance:5.0,duration:120,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:"Sniffout Pick",rating:null,reviewCount:0,source:"curated",tags:["Norfolk","Beach","Off-lead"],description:"Vast empty beach backed by atmospheric Corsican pine woods. One of England's finest and most dog-friendly beaches — off-lead year round.",wetNote:"Beach walk accessible in most weather. Pinewoods provide shelter from wind and rain.",hotNote:"Sea breezes keep it cool. Plenty of space for dogs to run free."},
+{id:'suffolk-dunwich',name:"Dunwich Heath & Minsmere",area:"Suffolk",lat:52.2667,lon:1.6167,icon:"🦅",distance:5.6,duration:135,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Suffolk","Wildlife","RSPB"],description:"Walk across haunting heathland to the ghost town of Dunwich — once a great medieval city, now mostly swallowed by the sea. RSPB Minsmere reserve nearby.",wetNote:"Heathland paths drain well. Coastal sections exposed in strong winds.",hotNote:"Open heathland with limited shade. Early morning best for wildlife spotting."},
+{id:'cambridge-grantchester',name:"Cambridge to Grantchester Meadows",area:"Cambridge",lat:52.1951,lon:0.1218,icon:"🛶",distance:4.3,duration:105,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Cambridge","Riverside","Punting"],description:"Follow the River Cam through famous meadows to the village of Grantchester, immortalised by Rupert Brooke. Watch the punters drift past from the riverside.",wetNote:"Meadow paths can be very muddy after rain — stick to the raised bank.",hotNote:"Dappled shade along the riverbank. Dogs can swim in the Cam."},
+{id:'yorkshire-coast-robin-hood',name:"Robin Hood's Bay Coastal Walk",area:"North Yorkshire",lat:54.4333,lon:-0.5333,icon:"🌊",distance:6.2,duration:150,difficulty:"Moderate",terrain:"mixed",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Yorkshire Coast","Coastal","Village"],description:"Dramatic cliff walk between the historic fishing villages of Robin Hood's Bay and Ravenscar. Fossil hunting on the beach at low tide.",wetNote:"Cliff paths exposed and muddy in wet weather. Beach only accessible at low tide.",hotNote:"Coastal breezes. Dogs allowed on the beach year round."},
+{id:'yorkshire-dales-ingleborough',name:"Ingleborough & Horton-in-Ribblesdale",area:"Yorkshire Dales",lat:54.1667,lon:-2.3833,icon:"🏔️",distance:7.5,duration:210,difficulty:"Hard",terrain:"rocky",offLead:"full",livestock:true,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Yorkshire Dales","Mountain","Three Peaks"],description:"One of the famous Yorkshire Three Peaks. Climb through limestone scenery to the flat summit plateau with stunning Dales views in every direction.",wetNote:"Mountain paths can be treacherous in wet weather. Limestone very slippery.",hotNote:"Exposed summit — bring warm layers even in summer."},
+{id:'north-york-moors-goathland',name:"Goathland & Mallyan Spout",area:"North York Moors",lat:54.4000,lon:-0.7167,icon:"🌊",distance:4.3,duration:120,difficulty:"Moderate",terrain:"muddy",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["North York Moors","Waterfall","Heartbeat Country"],description:"Visit the stunning Mallyan Spout waterfall then walk across open moorland above Goathland — the village used as 'Aidensfield' in classic TV show Heartbeat.",wetNote:"Waterfall path can be slippery. Moorland drains well.",hotNote:"Open moorland — bring sun protection. Waterfall area stays cool."},
+{id:'catbells',name:"Cat Bells Ridge",area:"Lake District",lat:54.5616,lon:-3.1764,icon:"🏔️",distance:3.7,duration:120,difficulty:"Moderate",terrain:"rocky",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:"Sniffout Pick",rating:null,reviewCount:0,source:"curated",tags:["Lake District","Fell","Views"],description:"One of the most popular and rewarding short fells in the Lake District. Brilliant ridge walk above Derwentwater with stunning views of Borrowdale.",wetNote:"Rocky path can be very slippery when wet. Take care on descent.",hotNote:"Exposed ridge. Derwentwater below is a beautiful backdrop on a clear day."},
+{id:'grasmere-rydal',name:"Grasmere & Rydal Water",area:"Lake District",lat:54.4597,lon:-3.0244,icon:"🦢",distance:5.0,duration:120,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Lake District","Lakeshore","Wordsworth"],description:"Circular walk linking two of the most beautiful lakes in England, passing Dove Cottage where Wordsworth lived. Stunning reflections on calm days.",wetNote:"Valley paths well maintained. Some sections muddy after rain.",hotNote:"Lakeshore provides cooling for dogs. Shade in the woodland sections."},
+{id:'northumberland-coast',name:"Bamburgh Castle & Seahouses",area:"Northumberland",lat:55.6089,lon:-1.7097,icon:"🏰",distance:5.6,duration:135,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Northumberland","Beach","Castle"],description:"Walk along one of England's finest beaches in the shadow of the magnificent Bamburgh Castle. Views to the Farne Islands and Holy Island on clear days.",wetNote:"Beach walk accessible in most weather. Very exposed in strong winds.",hotNote:"Sea breezes. Dogs allowed on Bamburgh beach year round."},
+{id:'durham-river-wear',name:"Durham Cathedral River Loop",area:"County Durham",lat:54.7761,lon:-1.5750,icon:"🏛️",distance:3.1,duration:75,difficulty:"Easy",terrain:"muddy",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Durham","History","Riverside"],description:"Beautiful wooded gorge walk around the UNESCO World Heritage peninsula crowned by Durham Cathedral and Castle. Ancient woodland and the River Wear.",wetNote:"Riverside paths well maintained and accessible in most weather.",hotNote:"Woodland shade throughout. Dogs can access the river at several points."},
+{id:'loch-lomond-conic-hill',name:"Conic Hill — Loch Lomond",area:"Loch Lomond",lat:56.0833,lon:-4.5000,icon:"🏔️",distance:4.3,duration:150,difficulty:"Moderate",terrain:"muddy",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Scotland","Loch Lomond","Views"],description:"Outstanding hill walk on the Highland Boundary Fault with panoramic views over Loch Lomond and its islands. The start of the West Highland Way.",wetNote:"Path can be muddy and slippery in wet weather — good boots essential.",hotNote:"Exposed summit but the loch views are worth it on a clear day."},
+{id:'glencoe-valley',name:"Glencoe Valley Floor Walk",area:"Glencoe",lat:56.6833,lon:-5.0833,icon:"🏔️",distance:6.2,duration:150,difficulty:"Moderate",terrain:"muddy",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Scotland","Glencoe","Dramatic"],description:"Walk the floor of Scotland's most dramatic glen beneath towering mountains. The River Coe provides constant company and dogs love the river access.",wetNote:"Valley floor path can flood after heavy rain. Higher paths available as alternatives.",hotNote:"Mountains provide shade in the afternoon. River perfect for dogs to cool off."},
+{id:'cairngorms-loch-an-eilein',name:"Loch an Eilein — Cairngorms",area:"Cairngorms",lat:57.1333,lon:-3.8167,icon:"🏰",distance:3.7,duration:90,difficulty:"Easy",terrain:"muddy",offLead:"partial",livestock:false,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Cairngorms","Loch","Castle ruins"],description:"Circular walk around a beautiful loch with a ruined castle on an island. Ancient Caledonian pine forest surrounds the loch. Red squirrels and ospreys.",wetNote:"Well maintained forest path stays accessible in most weather.",hotNote:"Forest shade throughout. The loch is stunning on calm days."},
+{id:'giants-causeway',name:"Giant's Causeway Coastal Path",area:"County Antrim",lat:55.2408,lon:-6.5116,icon:"🪨",distance:5.0,duration:120,difficulty:"Moderate",terrain:"rocky",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:"Sniffout Pick",rating:null,reviewCount:0,source:"curated",tags:["Northern Ireland","UNESCO","Iconic"],description:"Walk along one of the world's most remarkable natural wonders — 40,000 interlocking basalt columns formed by an ancient volcanic eruption. Dramatic cliff scenery throughout.",wetNote:"Coastal path exposed in wind and rain. Basalt columns can be very slippery.",hotNote:"Atlantic breezes keep temperatures down. One of Ireland's most iconic walks."},
+{id:'mourne-mountains-slieve-donard',name:"Slieve Donard — Mourne Mountains",area:"County Down",lat:54.1833,lon:-5.9167,icon:"🏔️",distance:6.8,duration:210,difficulty:"Hard",terrain:"muddy",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Northern Ireland","Mountains","Views"],description:"Climb Northern Ireland's highest peak through the beautiful Glen River valley. Spectacular views over the Irish Sea to the Isle of Man and Scotland on clear days.",wetNote:"Mountain paths can be very wet and boggy. Check forecast carefully.",hotNote:"Exposed summit — bring warm layers regardless of season."},
+{id:'snowdonia-rhyd-ddu',name:"Snowdon — Rhyd Ddu Path",area:"Snowdonia",lat:53.0678,lon:-4.0783,icon:"🏔️",distance:8.1,duration:240,difficulty:"Hard",terrain:"mixed",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Wales","Snowdon","Mountain"],description:"The quietest and most scenic route up Wales's highest mountain. Dramatic ridge walking with stunning views over the Nantlle Valley and out to sea.",wetNote:"Mountain paths dangerous in poor visibility — check weather carefully.",hotNote:"Exposed mountain — layers essential at the summit year round."},
+{id:'gower-three-cliffs',name:"Three Cliffs Bay — Gower Peninsula",area:"Gower",lat:51.5667,lon:-4.1167,icon:"🏖️",distance:4.3,duration:120,difficulty:"Moderate",terrain:"mixed",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Wales","Coastal","Beach"],description:"Walk to one of Wales's most beautiful beaches — dramatic limestone arches, a ruined castle and a beautiful estuary. Often voted the UK's finest bay.",wetNote:"Beach access depends on tides — check before going. Coastal paths exposed in wind.",hotNote:"Sea breezes. Dogs allowed on Three Cliffs beach year round."},
+{id:'brecon-waterfall-country',name:"Waterfall Country — Sgwd yr Eira",area:"Brecon Beacons",lat:51.8167,lon:-3.5833,icon:"🌊",distance:5.0,duration:120,difficulty:"Moderate",terrain:"muddy",offLead:"full",livestock:false,hasStiles:true,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Wales","Waterfalls","Woodland"],description:"Walk behind a thundering waterfall in a spectacular wooded limestone gorge. Four major waterfalls on this route including the famous Sgwd yr Eira where you walk behind the falls.",wetNote:"Gorge paths can be very slippery when wet — take care on rock sections.",hotNote:"Shaded gorge walk — cool even in hot weather. Perfect summer route."},
+{id:'manchester-heaton-park',name:"Heaton Park Loop",area:"Manchester",lat:53.5369,lon:-2.2729,icon:"🌳",distance:3.1,duration:75,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Flat","Off-lead","Urban park"],description:"One of the largest municipal parks in Europe. Rolling parkland, a boating lake and woodland trails make this a fantastic off-lead run for dogs of all sizes.",wetNote:"Paths are mostly paved or well-drained. Fine in light rain.",hotNote:"Plenty of shade from mature trees. Lake access for a splash."},
+{id:'manchester-worsley-woods',name:"Worsley Woods & Bridgewater Canal",area:"Manchester",lat:53.5033,lon:-2.3833,icon:"🌿",distance:3.7,duration:90,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Woodland","Canal","Flat"],description:"Ancient woodland combined with the famous Bridgewater Canal towpath. Dogs love the woodland trails and can safely walk the flat canal path for miles.",wetNote:"Woodland paths can get muddy but the canal towpath is always walkable.",hotNote:"Shaded woodland keeps things cool. Canal dipping points for dogs."},
+{id:'birmingham-cannon-hill',name:"Cannon Hill Park & River Rea",area:"Birmingham",lat:52.4489,lon:-1.8983,icon:"🦆",distance:2.5,duration:60,difficulty:"Easy",terrain:"paved",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Flat","Urban park","Riverside"],description:"Birmingham's most popular park combines open grassland, ornamental lakes and a lovely riverside path along the River Rea. Dogs welcome throughout.",wetNote:"Mostly hard paths, fine in wet weather. Avoid the grass sections after heavy rain.",hotNote:"Lake and river access for dogs to cool off. Plenty of shade trees."},
+{id:'birmingham-sutton-park',name:"Sutton Park — Powell Pool Loop",area:"Birmingham",lat:52.5683,lon:-1.8397,icon:"🌾",distance:5.0,duration:120,difficulty:"Easy",terrain:"muddy",offLead:"full",livestock:true,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Heathland","Lakes","Off-lead"],description:"One of the largest urban nature reserves in Europe. Ancient heathland, seven pools and extensive woodland — feels nothing like a city park. Dogs can swim in several of the pools.",wetNote:"Heathland and woodland drain well. The pools add to the atmosphere after rain.",hotNote:"Open heathland can be exposed — early morning or evening walks best. Dogs love the pools."},
+{id:'bristol-ashton-court',name:"Ashton Court Estate Loop",area:"Bristol",lat:51.4489,lon:-2.6372,icon:"🦌",distance:3.7,duration:90,difficulty:"Easy",terrain:"mixed",offLead:"partial",livestock:true,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Deer park","Woodland","Views"],description:"A stunning 850-acre deer park on the edge of Bristol with panoramic views over the city and Clifton Suspension Bridge. Deer roam freely — keep dogs on leads near them.",wetNote:"Grass sections can be muddy after rain but woodland tracks are firm.",hotNote:"Elevated and exposed in parts — good breeze. Woodland shade available."},
+{id:'bristol-blaise-castle',name:"Blaise Castle Estate",area:"Bristol",lat:51.5117,lon:-2.6411,icon:"🏰",distance:3.1,duration:75,difficulty:"Moderate",terrain:"muddy",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Woodland","Historic","Gorge"],description:"A magical wooded estate with a fairy-tale mock castle, deep gorge and ancient woodland. One of Bristol's best-kept secrets for dog walking — varied terrain and loads of interest.",wetNote:"Gorge paths can be very slippery — stick to higher paths in wet conditions.",hotNote:"Dense woodland canopy provides good shade throughout."},
+{id:'leeds-roundhay-park',name:"Roundhay Park & Waterloo Lake",area:"Leeds",lat:53.8281,lon:-1.4933,icon:"🌊",distance:3.1,duration:75,difficulty:"Easy",terrain:"paved",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Lake","Flat","Urban park"],description:"One of the largest city parks in Europe. Two lakes, open parkland and woodland make this a brilliant all-year dog walk. The lakeside path is flat and scenic.",wetNote:"Hard paths throughout — excellent in all weather.",hotNote:"Lake access for dogs. Tree-lined paths provide shade."},
+{id:'leeds-golden-acre',name:"Golden Acre Park & Breary Marsh",area:"Leeds",lat:53.8817,lon:-1.5700,icon:"🌿",distance:2.5,duration:60,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Lake","Nature reserve","Quiet"],description:"A peaceful lakeside park on the northern edge of Leeds with an adjoining nature reserve. Far less busy than Roundhay, brilliant for dogs who love water and wildlife.",wetNote:"Marsh boardwalk can be slippery — take care.",hotNote:"Lakeside breezes keep it cool. Dogs can paddle at the lake edge."},
+{id:'liverpool-sefton-park',name:"Sefton Park Loop",area:"Liverpool",lat:53.3808,lon:-2.9378,icon:"🌸",distance:2.5,duration:60,difficulty:"Easy",terrain:"paved",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Flat","Urban park","Lake"],description:"Liverpool's most beloved park — a grand Victorian landscape with a large boating lake, palm house and open meadows. Fantastic for dogs to roam freely.",wetNote:"Hard paths and well-drained grass. Fine year-round.",hotNote:"Open parkland can be warm — lake access for dogs to cool off."},
+{id:'liverpool-otterspool-promenade',name:"Otterspool Promenade & Mersey",area:"Liverpool",lat:53.3633,lon:-2.9539,icon:"🌊",distance:3.7,duration:90,difficulty:"Easy",terrain:"paved",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Riverside","Flat","Scenic"],description:"A flat riverside walk along the Mersey with stunning views across to the Wirral. Completely flat, open and great for dogs. Continue into Sefton Park for a longer route.",wetNote:"Exposed riverside path — manageable in light rain but windy in storms.",hotNote:"Open with river breezes. Dogs can access the riverbank at points."},
+{id:'cardiff-bute-park',name:"Bute Park & River Taff",area:"Cardiff",lat:51.4878,lon:-3.1867,icon:"🏰",distance:2.5,duration:60,difficulty:"Easy",terrain:"paved",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Riverside","Flat","Castle views"],description:"A stunning arboretum and parkland in the heart of Cardiff, bordering the River Taff with views of Cardiff Castle. Dogs welcome throughout and can access the river in places.",wetNote:"Hard paths throughout — perfectly walkable in rain.",hotNote:"River access for dogs. Tree canopy provides shade."},
+{id:'glasgow-pollok-country-park',name:"Pollok Country Park",area:"Glasgow",lat:55.8214,lon:-4.3108,icon:"🌿",distance:3.7,duration:90,difficulty:"Easy",terrain:"muddy",offLead:"full",livestock:true,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Woodland","Highland cattle","Off-lead"],description:"Glasgow's finest country park — ancient woodland, the River Cart and famous Highland cattle. Dogs can roam freely in the woodland and along the riverside paths.",wetNote:"Woodland paths hold up well in wet weather.",hotNote:"Shaded woodland keeps it cool. River access for dogs."},
+{id:'glasgow-mugdock-country-park',name:"Mugdock Country Park",area:"Glasgow",lat:55.9736,lon:-4.3131,icon:"🏔️",distance:4.3,duration:105,difficulty:"Easy",terrain:"muddy",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Loch","Moorland","Off-lead"],description:"On the edge of the Campsie Fells, Mugdock offers moorland, ancient woodland and a beautiful loch. Stunning views towards the Highlands. Dogs can swim in Mugdock Loch.",wetNote:"Moorland paths can be boggy after prolonged rain — good boots recommended.",hotNote:"Elevated and open — cooler than the city. Loch swimming for dogs."},
+{id:'epsom-common',name:"Epsom Common & Stew Ponds",area:"Epsom",lat:51.3408,lon:-0.2694,icon:"🌿",distance:3.1,duration:75,difficulty:"Easy",terrain:"muddy",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:"Sniffout Pick",rating:null,reviewCount:0,source:"curated",tags:["Off-lead","Woodland","Ponds"],description:"One of Surrey's finest commons — ancient woodland, open glades and beautiful stew ponds. Dogs can splash in the ponds and run freely through the heathland. A local favourite that never feels overcrowded.",wetNote:"Well-drained woodland paths throughout. Perfectly walkable in light rain.",hotNote:"Dense woodland canopy provides shade. Ponds for dogs to cool off."},
+{id:'epsom-downs',name:"Epsom Downs & The Gallops",area:"Epsom",lat:51.3167,lon:-0.2478,icon:"🏇",distance:3.7,duration:90,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Views","Open","Dog-friendly"],description:"Sweeping chalk downland above Epsom with panoramic views across Surrey. The famous racecourse perimeter is a brilliant open walk — wide skies, big views and fresh air. Dogs love the space.",wetNote:"Open and exposed — rain gear advised. Turf paths handle wet well.",hotNote:"Elevated and breezy — cooler than the town below. Bring water."},
+{id:'nonsuch-park',name:"Nonsuch Park Loop",area:"Epsom",lat:51.3594,lon:-0.2394,icon:"🏰",distance:2.8,duration:60,difficulty:"Easy",terrain:"paved",offLead:"full",livestock:false,hasStiles:false,hasParking:true,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Historic","Flat","Dog-friendly"],description:"A beautiful 60-acre historic park on the site of Henry VIII's lost Nonsuch Palace. Open grassland, mature tree avenues and a walled garden. Dogs welcome throughout.",wetNote:"Hard paths and well-drained grass. Fine in most weather.",hotNote:"Open parkland — some shade from mature trees. Water tap near the mansion."},
+{id:'tolworth-court-farm',name:"Tolworth Court Farm Fields",area:"Tolworth",lat:51.3769,lon:-0.2797,icon:"🌾",distance:2.2,duration:45,difficulty:"Easy",terrain:"muddy",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:"Hidden gem",rating:null,reviewCount:0,source:"curated",tags:["Local gem","Flat","Off-lead"],description:"A hidden gem just minutes from Tolworth — open meadows and former farmland with a lovely informal feel. Great for an easy morning walk or quick lunchtime run with the dog.",wetNote:"Grass paths can be muddy in winter — wellies helpful.",hotNote:"Open meadow — limited shade. Best for early morning walks in summer."},
+{id:'hogsmill-stoneleigh',name:"Hogsmill River Walk — Stoneleigh",area:"Stoneleigh",lat:51.3714,lon:-0.2583,icon:"🌊",distance:2.5,duration:60,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:"New",rating:null,reviewCount:0,source:"curated",tags:["Riverside","Flat","Local"],description:"Follow the peaceful Hogsmill River from Stoneleigh through the valley to Ewell. A lovely flat riverside path through a hidden green corridor in the suburbs. Dogs can dip in the river at multiple access points.",wetNote:"Riverside path can flood after heavy rain — check before going.",hotNote:"Tree-lined river corridor provides good shade throughout."},
+{id:'stone-court-farm-walk',name:"Stoneleigh to Epsom Common",area:"Stoneleigh",lat:51.3650,lon:-0.2650,icon:"🌳",distance:3.7,duration:90,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Local loop","Woodland","Quiet"],description:"A satisfying circular walk from Stoneleigh connecting the residential paths to Epsom Common. A proper local dog walk — quiet, green and a great way to access the common without driving.",wetNote:"Mix of paved and woodland paths — good year round.",hotNote:"Shaded woodland in the common section. Good for hot days."},
+{id:'surbiton-thames-ditton',name:"Thames Ditton & Surbiton Riverbank",area:"Surbiton",lat:51.3908,lon:-0.3150,icon:"⛵",distance:3.1,duration:75,difficulty:"Easy",terrain:"paved",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Thames","Flat","Village"],description:"A wonderful Thames-side walk linking Surbiton to the charming village of Thames Ditton. River views, moored boats and a lovely village pub at the end. Dogs can access the Thames bank at several points.",wetNote:"Well-surfaced riverside path — perfectly walkable in rain.",hotNote:"Open riverside — great breeze. Dogs can splash at river access points."},
+{id:'berrylands-nature-reserve',name:"Berrylands Nature Reserve",area:"Surbiton",lat:51.3847,lon:-0.2786,icon:"🦋",distance:1.9,duration:45,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:"Hidden gem",rating:null,reviewCount:0,source:"curated",tags:["Nature reserve","Wildlife","Local"],description:"A peaceful nature reserve tucked between suburban streets — wildflower meadows, scrubland and a seasonal pond. Brilliant for an easy evening stroll with the dog and surprisingly wild feeling for the location.",wetNote:"Grass paths can be wet — but short enough to be manageable.",hotNote:"Open meadow — limited shade. The wildflower sections are beautiful in summer."},
+{id:'dulwich-park',name:"Dulwich Park & Belair Park",area:"Dulwich",lat:51.4478,lon:-0.0881,icon:"🌸",distance:3.1,duration:75,difficulty:"Easy",terrain:"paved",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Flat","Dog-friendly","South London"],description:"Two gorgeous Victorian parks connected by a short walk. Dulwich Park has a boating lake and American garden, while Belair Park is quieter with more off-lead freedom. A classic south London dog walk.",wetNote:"Hard paths throughout — perfectly walkable in rain.",hotNote:"Lake access for dogs. Mature tree canopy provides excellent shade."},
+{id:'streatham-common',name:"Streatham Common & The Rookery",area:"Streatham",lat:51.4194,lon:-0.1272,icon:"🌿",distance:2.5,duration:60,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Common land","Views","Off-lead"],description:"Wide open common with sweeping views north towards the city, plus the beautiful Rookery formal gardens. Great for off-lead running and the elevated position gives lovely breezes on warm days.",wetNote:"Common grass can be muddy but paths drain well.",hotNote:"Elevated with good breeze. Formal garden area has a cafe with outdoor seating."},
+{id:'crystal-palace-park',name:"Crystal Palace Park",area:"Crystal Palace",lat:51.4214,lon:-0.0733,icon:"🦕",distance:2.8,duration:60,difficulty:"Easy",terrain:"mixed",offLead:"full",livestock:false,hasStiles:false,hasParking:false,badge:undefined,rating:null,reviewCount:0,source:"curated",tags:["Historic","Dinosaurs","South London"],description:"One of south London's most distinctive parks — Victorian terraces, a boating lake and the famous life-size dinosaur sculptures. Hilly in parts but a fantastic dog walk with loads of interesting features.",wetNote:"Mix of hard paths and grass. Fine in most weather.",hotNote:"Elevated and open in parts. Lake area and trees provide shade."}
+];
+
+// ── WMO WEATHER CODES ─────────────────────────────────────────────────────
+const WMO={0:['☀️','Clear sky'],1:['⛅','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],45:['🌁','Foggy'],48:['🌁','Icy fog'],51:['🌂','Light drizzle'],53:['🌂','Drizzle'],55:['☔','Heavy drizzle'],61:['☔','Slight rain'],63:['☔','Moderate rain'],65:['☔','Heavy rain'],71:['❄️','Light snow'],73:['❄️','Moderate snow'],75:['❄️','Heavy snow'],80:['🌂','Rain showers'],81:['☔','Heavy showers'],82:['⛈️','Violent showers'],95:['⛈️','Thunderstorm'],99:['⛈️','Thunderstorm+hail']};
+</script>
+<script>
+// ── STATE ─────────────────────────────────────────────────────────────────
+let weatherData=null,currentLocation=null,currentTab='home',activeCat='cafe',walksFilter='all',walksView='list',walksSearchQuery='',detailMap=null,walksMap=null;
+const placesCache={};
+
+// ── STORAGE ───────────────────────────────────────────────────────────────
+function getFavourites(){try{return JSON.parse(localStorage.getItem('sniffout_favs')||'[]')}catch{return[]}}
+function isFavourite(id){return getFavourites().includes(id)}
+function saveFavourites(f){try{localStorage.setItem('sniffout_favs',JSON.stringify(f))}catch(e){}}
+function toggleFavourite(id,e){
+  if(e){e.stopPropagation();}
+  const f=getFavourites(),idx=f.indexOf(id);
+  if(idx===-1){f.push(id);}else{f.splice(idx,1);}
+  saveFavourites(f);
+  const btn=document.querySelector('[data-heart="'+id+'"]');
+  if(btn)btn.textContent=f.includes(id)?'❤️':'🤍';
+}
+function getUsername(){return localStorage.getItem('sniffout_username')||''}
+function saveUsername(n){try{localStorage.setItem('sniffout_username',n)}catch(e){}}
+function getExplored(){try{return new Set(JSON.parse(localStorage.getItem('sniffout_explored')||'[]'))}catch{return new Set()}}
+function addExplored(id){const s=getExplored();s.add(id);try{localStorage.setItem('sniffout_explored',JSON.stringify([...s]))}catch(e){}}
+function getReviews(){try{return JSON.parse(localStorage.getItem('walkReviews')||'{}')}catch{return{}}}
+function saveReviews(r){try{localStorage.setItem('walkReviews',JSON.stringify(r))}catch(e){}}
+function getAvgRating(id){const r=(getReviews()[id]||[]);if(!r.length)return null;return(r.reduce((s,x)=>s+(x.stars||0),0)/r.length).toFixed(1)}
+function saveSession(){
+  if(!currentLocation||!weatherData)return;
+  try{localStorage.setItem('sniffout_active_tab',currentTab);localStorage.setItem('sniffout_session',JSON.stringify({location:currentLocation,weather:weatherData,tab:currentTab,savedAt:Date.now()}))}catch(e){}
+}
+async function restoreSession(){
+  try{
+    const raw=localStorage.getItem('sniffout_session');
+    if(!raw)return false;
+    const s=JSON.parse(raw);
+    if(Date.now()-s.savedAt>8*60*60*1000){localStorage.removeItem('sniffout_session');return false;}
+    currentLocation=s.location;weatherData=s.weather;
+    fetchWeather(currentLocation.lat,currentLocation.lon).then(w=>{weatherData=w;saveSession();}).catch(()=>{});
+    if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
+    document.getElementById('today-location-label').textContent='📍 '+currentLocation.displayName;
+    const tab=localStorage.getItem('sniffout_active_tab')||s.tab||'home';
+    showTab(tab);
+    return true;
+  }catch(e){return false;}
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function getWmo(c){return WMO[c]||['🌡️','Unknown']}
+function fmtTime(iso){return new Date(iso).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}
+function windDir(d){return['N','NE','E','SE','S','SW','W','NW'][Math.round(d/45)%8]}
+function uvLevel(u){if(u<=2)return['🟢','Low'];if(u<=5)return['🟡','Moderate'];if(u<=7)return['🟠','High'];if(u<=10)return['🔴','Very High'];return['🟣','Extreme']}
+function daylightPct(rise,set){const n=Date.now(),r=new Date(rise).getTime(),s=new Date(set).getTime();if(n<r)return 0;if(n>s)return 100;return Math.round(((n-r)/(s-r))*100)}
+function rainColor(p){if(p<20)return'#a8d4b8';if(p<50)return'#6aabde';if(p<75)return'#3b82c4';return'#1a4fa0'}
+function haversine(lat1,lon1,lat2,lon2){const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
+function greeting(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':'Good evening'}
+function fmtDist(mi){return mi.toFixed(1)+' mi'}
+function fmtDur(min){if(min<60)return min+'min';const h=Math.floor(min/60),m=min%60;return m?h+'h '+m+'min':h+'h'}
+function difficultyClass(d){const dl=d.toLowerCase();if(dl.includes('hard')||dl.includes('challeng'))return'hard';if(dl.includes('moderate')||dl.includes('mod'))return'moderate';return'easy'}
+
+// ── GEOCODING ─────────────────────────────────────────────────────────────
+function isPostcode(q){return /^[a-z]{1,2}\d{1,2}[a-z]?\s*\d?[a-z]{0,2}$/i.test(q.trim())}
+async function geocodePostcode(pc){const clean=pc.replace(/\s/g,'').toUpperCase();const j=await(await fetch('https://api.postcodes.io/outcodes/'+encodeURIComponent(clean))).json();if(j.status!==200||!j.result)throw new Error('not found');return{lat:j.result.latitude,lon:j.result.longitude,displayName:clean}}
+async function geocodePlaceName(name){const q=encodeURIComponent(name+', United Kingdom');const j=await(await fetch('https://nominatim.openstreetmap.org/search?q='+q+'&format=json&limit=1&countrycodes=gb',{headers:{'Accept-Language':'en'}})).json();if(!j||!j.length)throw new Error('not found');return{lat:parseFloat(j[0].lat),lon:parseFloat(j[0].lon),displayName:j[0].display_name.split(',').slice(0,2).join(',').trim()}}
+async function geocode(query){const q=query.trim();if(isPostcode(q)){try{return await geocodePostcode(q)}catch(e){}}return await geocodePlaceName(q)}
+
+// ── WEATHER API ───────────────────────────────────────────────────────────
+async function fetchWeather(lat,lon){
+  const url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,is_day&hourly=temperature_2m,apparent_temperature,precipitation_probability,precipitation,weather_code&daily=sunrise,sunset,uv_index_max,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_gusts_10m_max&timezone=Europe%2FLondon&forecast_days=7';
+  const j=await(await fetch(url)).json();const c=j.current,d=j.daily,h=j.hourly;
+  return{temp:Math.round(c.temperature_2m),feelsLike:c.apparent_temperature,humidity:c.relative_humidity_2m,windSpeed:Math.round(c.wind_speed_10m),windDir:windDir(c.wind_direction_10m),windGust:c.wind_gusts_10m,weatherCode:c.weather_code,isDay:c.is_day,sunrise:d.sunrise[0],sunset:d.sunset[0],uvMax:d.uv_index_max[0],hourlyTimes:h.time,hourlyRainProb:h.precipitation_probability,hourlyPrecip:h.precipitation,hourlyWmo:h.weather_code,hourlyTemp:h.temperature_2m,hourlyFeels:h.apparent_temperature,dailyTimes:d.time,dailyWmo:d.weather_code,dailyMax:d.temperature_2m_max,dailyMin:d.temperature_2m_min,dailyRainProb:d.precipitation_probability_max,dailyGusts:d.wind_gusts_10m_max,updatedAt:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}
+}
+
+// ── WALK RECOMMENDATION ───────────────────────────────────────────────────
+function walkRec(d){
+  const rain=[51,53,55,61,63,65,80,81,82,95,99].includes(d.weatherCode),storm=[82,95,99].includes(d.weatherCode);
+  const now=new Date();
+  const currentHourProb=d.hourlyTimes?d.hourlyTimes.reduce((best,t,i)=>{const diff=Math.abs(new Date(t)-now);return diff<best.diff?{diff,prob:d.hourlyRainProb[i]}:best},{diff:Infinity,prob:0}).prob:0;
+  const actuallyRaining=rain||currentHourProb>=60;
+  if(storm)return['⛈️','Stay in today','Thunderstorms make this a bad day for walks. Wait it out.'];
+  if(d.windGust>=50)return['💨','Very windy today','Gusts of '+Math.round(d.windGust)+' km/h are too strong. Try later.'];
+  if(actuallyRaining&&d.feelsLike<5)return['🥶','Raining and cold — keep it short','Wet and cold out there. A quick walk with a good coat is fine but don\'t linger.'];
+  if(actuallyRaining)return['☔','Raining — grab the lead & a raincoat','Wet out there but walkable. Stick to shorter paved routes and dry off when you\'re back.'];
+  if([45,48].includes(d.weatherCode))return['🌁','Foggy — stay visible','Low visibility. Stick to familiar routes.'];
+  if(d.feelsLike<2)return['🥶','Brisk walk day','Feels like '+Math.round(d.feelsLike)+'°C — keep it short, watch for ice.'];
+  if(d.feelsLike>28)return['🌡️','Stay cool on your walk','Quite warm. Walk early or evening and bring water for your dog.'];
+  if(d.uvMax>=6)return['☀️','Lovely walk — watch the UV','Great day but UV is '+d.uvMax+'. Walk in shade, check paw temps on tarmac.'];
+  if(d.hourlyTimes&&d.hourlyRainProb){
+    const upcoming=d.hourlyTimes.map((t,i)=>({time:new Date(t),prob:d.hourlyRainProb[i]})).filter(h=>h.time>=now&&h.time<=new Date(now.getTime()+3*60*60*1000));
+    const maxUpcoming=Math.max(...upcoming.map(h=>h.prob),0);
+    if(maxUpcoming>=70)return['☔','Rain arriving soon — head out now','It\'s dry now but heavy rain is forecast within 3 hours. Get your walk in soon!'];
+    if(maxUpcoming>=40)return['🌂','Rain likely soon — worth a jacket','Dry at the moment but showers are on the way. A good time for a shorter walk.'];
+  }
+  return['🌤️','Great day for a walk!',getWmo(d.weatherCode)[1]+' with '+Math.round(d.feelsLike)+'°C feels-like. Perfect conditions.'];
+}
+
+// ── HAZARD WARNINGS ───────────────────────────────────────────────────────
+function getHazardWarnings(d){
+  const warnings=[];
+  if(d.feelsLike>=32)warnings.push({level:"red",icon:"🌡️",title:"Extreme heat — consider skipping the walk",tips:["Pavements can exceed 60°C and will burn paws instantly","Dogs can overheat within minutes in this temperature","If you must go out, walk before 8am or after 8pm","Bring plenty of fresh water and take frequent breaks"]});
+  else if(d.feelsLike>=25)warnings.push({level:"amber",icon:"☀️",title:"It's hot — take precautions",tips:["Check tarmac with your hand before letting your dog walk on it","Bring water for your dog — they need it more than you in heat","Walk in shade where possible","Keep walks shorter than usual"]});
+  if([82,95,99].includes(d.weatherCode))warnings.push({level:"red",icon:"⛈️",title:"Thunderstorm — stay indoors",tips:["Lightning poses a real danger to you and your dog","Many dogs are severely distressed by thunder","Wait until the storm has fully passed before going out"]});
+  if(d.windGust>=60)warnings.push({level:"red",icon:"💨",title:"Dangerous gusts — do not walk",tips:["Gusts of "+Math.round(d.windGust)+" km/h can knock dogs and people over","Falling branches are a serious risk in wooded areas","Stay away from trees, coastal paths and exposed hilltops"]});
+  else if(d.windGust>=45)warnings.push({level:"amber",icon:"💨",title:"Very strong gusts — be careful",tips:["Gusts reaching "+Math.round(d.windGust)+" km/h today","Avoid exposed routes, coastal paths and woodland","Keep your dog on the lead — wind can disorientate them"]});
+  if(d.feelsLike<=-5)warnings.push({level:"red",icon:"🧊",title:"Dangerous cold — keep it very short",tips:["Risk of ice on all surfaces — watch your own footing too","Gritting salt can irritate and burn paw pads","Rinse paws with warm water immediately after the walk"]});
+  else if(d.feelsLike<2)warnings.push({level:"amber",icon:"❄️",title:"Freezing temperatures — paw care needed",tips:["Ice and gritting salt can irritate paw pads","Rinse paws with warm water after getting home","Keep walks shorter in severe cold"]});
+  if(d.uvMax>=8)warnings.push({level:"amber",icon:"🔆",title:"Very high UV — protect your dog",tips:["Light-coloured and short-haired dogs can get sunburned","Apply pet-safe sun cream to nose, ears and belly","Avoid peak UV hours: 11am–3pm"]});
+  return warnings;
+}
+function buildHazardHTML(d){
+  return getHazardWarnings(d).map(w=>'<div class="hazard-card '+w.level+'"><div class="hazard-card-icon">'+w.icon+'</div><div><div class="hazard-card-title">'+w.title+'</div><ul class="hazard-tips">'+w.tips.map(t=>'<li>'+t+'</li>').join('')+'</ul></div></div>').join('');
+}
+
+// ── BEST WALK WINDOW ──────────────────────────────────────────────────────
+function getBestWalkWindow(d){
+  const now=new Date(),eod=new Date(now);eod.setHours(23,59,59,999);
+  const hours=d.hourlyTimes.map((t,i)=>({time:new Date(t),label:fmtTime(t),temp:Math.round(d.hourlyTemp[i]),feels:Math.round(d.hourlyFeels[i]),rain:d.hourlyRainProb[i],wmo:d.hourlyWmo[i]})).filter(h=>{const hr=h.time.getHours();return h.time>=now&&h.time<=eod&&hr>=6&&hr<=22});
+  if(!hours.length)return null;
+  const scored=hours.map(h=>{let s=0;if(h.rain>=70)s+=50;else if(h.rain>=40)s+=20;else if(h.rain>=20)s+=5;if(h.feels<2)s+=30;else if(h.feels<5)s+=10;if(h.feels>28)s+=25;else if(h.feels>24)s+=10;if([82,95,99].includes(h.wmo))s+=60;return{...h,score:s}});
+  if(!scored.length)return null;
+  const wSz=Math.min(3,scored.length);let bIdx=0,bScore=Infinity;
+  for(let i=0;i<=scored.length-wSz;i++){const s=scored.slice(i,i+wSz).reduce((a,b)=>a+b.score,0)/wSz;if(s<bScore){bScore=s;bIdx=i;}}
+  if(bScore>40)return null;
+  const eIdx=Math.min(bIdx+wSz,scored.length-1);
+  return{label:scored[bIdx].label+'–'+scored[eIdx].label,feels:scored[bIdx].feels,rain:scored[bIdx].rain,poor:bScore>20};
+}
+
+// ── HOURLY STRIP ──────────────────────────────────────────────────────────
+function buildHourlyHTML(d){
+  const now=new Date();
+  const hours=d.hourlyTimes.map((t,i)=>({time:new Date(t),label:fmtTime(t),temp:Math.round(d.hourlyTemp[i]),feels:Math.round(d.hourlyFeels[i]),rain:d.hourlyRainProb[i],wmo:d.hourlyWmo[i]})).filter(h=>h.time>=now).slice(0,24);
+  const best=getBestWalkWindow(d);
+  const bestHtml=best?(best.poor?'<div class="walk-window">☔ Best available window today: <strong>'+best.label+'</strong> · '+best.feels+'°C feels-like · '+best.rain+'% rain chance — bring a raincoat</div>':'<div class="walk-window">Best time to walk today: <strong>'+best.label+'</strong> · '+best.feels+'°C feels-like · '+best.rain+'% rain chance</div>'):'';
+  const items=hours.map(h=>{const isNow=Math.abs(h.time-now)<30*60*1000;const barH=Math.round(h.rain*0.4)+2;return'<div class="h-item'+(isNow?' now':'')+'"><div class="h-time">'+(isNow?'Now':h.label)+'</div><div class="h-icon">'+getWmo(h.wmo)[0]+'</div><div class="h-temp">'+h.temp+'°</div><div class="h-rain-bar" style="height:'+barH+'px"></div><div class="h-rain">'+h.rain+'%</div></div>';}).join('');
+  return bestHtml+'<div class="section-card" style="padding:12px 14px;overflow:hidden"><div class="weather-section-title" style="margin-top:0">Hourly forecast</div><div class="hourly-scroll"><div class="hourly-strip">'+items+'</div></div></div>';
+}
+
+// ── RAIN SECTION ──────────────────────────────────────────────────────────
+function buildRainHTML(d){
+  const now=new Date();
+  const hours=d.hourlyTimes.map((t,i)=>({time:fmtTime(t),fullTime:new Date(t),prob:d.hourlyRainProb[i],precip:d.hourlyPrecip[i],wmo:d.hourlyWmo[i]})).filter(h=>h.fullTime>=now).slice(0,12);
+  const maxProb=Math.max(...hours.map(h=>h.prob),0),rainHours=hours.filter(h=>h.prob>=40).length,totalPrecip=hours.reduce((s,h)=>s+h.precip,0);
+  let summary;
+  if(maxProb<20)summary='<strong>Looks dry</strong> for the rest of today.';
+  else if(maxProb<50)summary='<strong>Mostly dry</strong> — light showers possible. Worth a jacket.';
+  else if(rainHours<=2)summary='<strong>Brief showers</strong> (~'+rainHours+'h). Plan around the dry windows.';
+  else summary='<strong>Rainy ahead</strong> — '+rainHours+'h of rain, up to '+totalPrecip.toFixed(1)+'mm expected.';
+  const bars=hours.map(h=>'<div class="rain-hour"><div class="rh-time">'+h.time+'</div><div class="rh-bar-wrap"><div class="rh-bar" style="height:'+h.prob+'%;background:'+rainColor(h.prob)+'"></div></div><div class="rh-pct">'+h.prob+'%</div><div class="rh-icon">'+getWmo(h.wmo)[0]+'</div></div>').join('');
+  return '<div class="rain-card"><div class="rain-header"><div class="weather-section-title" style="margin:0 0 4px">Rain forecast — next 12 hours</div><div class="rain-summary">'+summary+'</div></div><div class="rain-bars">'+bars+'</div></div>';
+}
+
+// ── 7-DAY FORECAST ────────────────────────────────────────────────────────
+function buildSevenDayHTML(d){
+  const days=d.dailyTimes.map((t,i)=>{const date=new Date(t+'T12:00:00'),isToday=i===0,label=isToday?'Today':date.toLocaleDateString('en-GB',{weekday:'short'});const[wi]=getWmo(d.dailyWmo[i]),rain=d.dailyRainProb[i];return'<div class="day-row"><div class="day-label">'+label+'</div><div class="day-icon">'+wi+'</div><div class="day-rain-wrap"><div class="day-rain-bar" style="width:'+rain+'%;background:'+rainColor(rain)+'"></div><span class="day-rain-pct">'+rain+'%</span></div><div class="day-temps"><span class="day-max">'+Math.round(d.dailyMax[i])+'°</span><span class="day-min">'+Math.round(d.dailyMin[i])+'°</span></div></div>';}).join('');
+  return '<div class="seven-day"><div class="weather-section-title" style="margin-top:0">7-day forecast</div>'+days+'</div>';
+}
+
+// ── PAW SAFETY ────────────────────────────────────────────────────────────
+function buildPawSafetyHTML(d){
+  const t=d.temp;
+  let title,body;
+  if(t>25){title='🐾 Hot pavement warning — check before you walk';body='Place your hand on the tarmac for 7 seconds. If it\'s too hot for your hand, it\'s too hot for paw pads. Walk in the early morning or on grass.';}
+  else if(t<0){title='🐾 Ice risk — paw care needed';body='Gritting salt can irritate and burn paw pads. Rinse paws with warm water after getting home and watch for limping or paw-licking.';}
+  else{title='🐾 Paws safe at '+t+'°C';body='Ground temperature is comfortable. Place your hand on tarmac for 7 seconds — if it\'s comfortable for you, it\'s safe for your dog\'s paws.';}
+  return '<div class="paw-safety"><div class="paw-safety-title">'+title+'</div><div class="paw-safety-body">'+body+'</div></div>';
+}
+
+// ── RENDER WEATHER TAB ────────────────────────────────────────────────────
+function renderWeather(d){
+  const[wi,wd]=getWmo(d.weatherCode),[ri,rt,rp]=walkRec(d),[ud,ut]=uvLevel(d.uvMax);
+  const dp=daylightPct(d.sunrise,d.sunset),up=Math.min((d.uvMax/11)*100,100);
+  const windLevel=d.windGust>=50?'danger':d.windGust>=35?'warn':'ok';
+  const tempLevel=d.feelsLike>=28||d.feelsLike<2?'warn':'ok';
+  const pawLevel=d.temp>25?'danger':d.temp<0?'warn':'ok';
+  return buildHazardHTML(d)+
+    '<div class="walk-rec-card"><div class="walk-rec-icon">'+ri+'</div><div><div class="walk-rec-title">'+rt+'</div><div class="walk-rec-body">'+rp+'</div></div></div>'+
+    buildHourlyHTML(d)+
+    '<div class="conditions-grid">'+
+      '<div class="cond-card '+(tempLevel==='warn'?'warn':'')+'"><div class="cond-label">Temperature</div><div class="cond-icon">🌡️</div><div class="cond-value">'+d.temp+'<span class="cond-unit">°C</span></div><div class="cond-sub">Feels like '+Math.round(d.feelsLike)+'°C'+(tempLevel==='warn'?' ⚠️':'')+'</div></div>'+
+      '<div class="cond-card"><div class="cond-label">Conditions</div><div class="cond-icon">'+wi+'</div><div class="cond-value" style="font-size:1rem">'+wd+'</div></div>'+
+      '<div class="cond-card '+(windLevel!=='ok'?windLevel:'')+'"><div class="cond-label">Wind</div><div class="cond-icon">💨</div><div class="cond-value">'+d.windSpeed+'<span class="cond-unit">km/h</span></div><div class="cond-sub">'+d.windDir+' · Gusts '+Math.round(d.windGust)+' km/h'+(windLevel!=='ok'?' ⚠️':'')+'</div></div>'+
+      '<div class="cond-card"><div class="cond-label">Humidity</div><div class="cond-icon">💧</div><div class="cond-value">'+d.humidity+'<span class="cond-unit">%</span></div><div class="cond-sub">'+(d.humidity<40?'Dry air':d.humidity<70?'Comfortable':'Quite humid')+'</div></div>'+
+      '<div class="cond-card"><div class="cond-label">UV Index</div><div class="cond-icon">'+ud+'</div><div class="cond-value">'+d.uvMax.toFixed(1)+'</div><div class="cond-sub">'+ut+'</div><div class="uv-bar-wrap"><div class="uv-bar"><div class="uv-marker" style="left:'+up+'%"></div></div></div></div>'+
+      '<div class="cond-card '+(pawLevel!=='ok'?pawLevel:'')+'"><div class="cond-label">Paw Check</div><div class="cond-icon">'+(d.temp>25?'🔥':d.temp<0?'🧊':'✅')+'</div><div class="cond-value" style="font-size:.9rem">'+(d.temp>25?'Hot pavements':d.temp<0?'Ice risk':'Paws safe')+'</div><div class="cond-sub">'+(d.temp>25?'Check tarmac before walking':d.temp<0?'Watch for gritting salt':'Ground temp is fine')+'</div></div>'+
+    '</div>'+
+    buildPawSafetyHTML(d)+
+    buildRainHTML(d)+
+    buildSevenDayHTML(d)+
+    '<div class="sun-card"><div class="sun-header"><span class="weather-section-title" style="margin:0">Daylight · '+fmtTime(d.sunrise)+' – '+fmtTime(d.sunset)+'</span><span style="font-size:.72rem;color:var(--ink-2)">'+dp+'% through the day</span></div><div class="sun-row"><div class="sun-time"><div class="sun-time-icon">🌅</div><div class="sun-time-val">'+fmtTime(d.sunrise)+'</div><div class="sun-time-label">Sunrise</div></div><div class="daylight-bar"><div class="daylight-fill" style="width:'+dp+'%"></div><div class="sun-marker" style="left:'+dp+'%">☀️</div></div><div class="sun-time"><div class="sun-time-icon">🌇</div><div class="sun-time-val">'+fmtTime(d.sunset)+'</div><div class="sun-time-label">Sunset</div></div></div></div>'+
+    '<div class="weather-footer"><div>Updated '+d.updatedAt+' · Open-Meteo · '+currentLocation.displayName+'</div><button class="refresh-btn" onclick="refreshWeather()">↻ Refresh</button></div>';
+}
+</script>
+<script>
+// ── WALK CARD HTML ────────────────────────────────────────────────────────
+function walkCardHTML(w){
+  const fav=isFavourite(w.id);
+  const dc=difficultyClass(w.difficulty);
+  const badge=w.badge?'<div class="walk-card-badge">'+w.badge+'</div>':'';
+  const rating=w.rating?'<span class="walk-card-rating">★ '+w.rating+'</span>':'';
+  const tags=w.tags.slice(0,3).map(t=>'<span class="tag-chip">'+t+'</span>').join('');
+  const photo=w.imageUrl?'<img src="'+w.imageUrl+'" alt="'+w.name+'" loading="lazy" />':'<div class="walk-card-photo-icon">'+w.icon+'</div>';
+  return '<div class="walk-card" id="wc-'+w.id+'" onclick="openWalkDetail(\''+w.id+'\')">'+
+    '<div class="walk-card-photo">'+photo+badge+
+      '<button class="walk-card-heart" data-heart="'+w.id+'" onclick="toggleFavourite(\''+w.id+'\',event)" aria-label="Save walk">'+(fav?'❤️':'🤍')+'</button>'+
+    '</div>'+
+    '<div class="walk-card-body">'+
+      '<div class="walk-card-name">'+w.name+'</div>'+
+      '<div class="walk-card-meta">'+
+        '<span>'+w.area+'</span>'+
+        '<span class="walk-card-meta-sep">·</span>'+
+        '<span>'+fmtDist(w.distance)+'</span>'+
+        '<span class="walk-card-meta-sep">·</span>'+
+        '<span>'+fmtDur(w.duration)+'</span>'+
+        rating+
+        '<span class="difficulty-chip '+dc+'">'+w.difficulty+'</span>'+
+      '</div>'+
+      '<div class="walk-card-tags">'+tags+'</div>'+
+    '</div>'+
+  '</div>';
+}
+
+// ── WALKS TAB ─────────────────────────────────────────────────────────────
+function renderWalks(){
+  let walks=[...WALKS_DB];
+  // Sort by distance from current location if available
+  if(currentLocation){
+    walks.sort((a,b)=>haversine(currentLocation.lat,currentLocation.lon,a.lat,a.lon)-haversine(currentLocation.lat,currentLocation.lon,b.lat,b.lon));
+  }
+  // Apply filter
+  if(walksFilter==='easy')walks=walks.filter(w=>difficultyClass(w.difficulty)==='easy');
+  else if(walksFilter==='moderate')walks=walks.filter(w=>difficultyClass(w.difficulty)==='moderate');
+  else if(walksFilter==='hard')walks=walks.filter(w=>difficultyClass(w.difficulty)==='hard');
+  else if(walksFilter==='offlead')walks=walks.filter(w=>w.offLead==='full');
+  else if(walksFilter==='muddy')walks=walks.filter(w=>w.terrain==='muddy');
+  else if(walksFilter==='rocky')walks=walks.filter(w=>w.terrain==='rocky');
+  // Apply search
+  if(walksSearchQuery){
+    const q=walksSearchQuery.toLowerCase();
+    walks=walks.filter(w=>w.name.toLowerCase().includes(q)||w.area.toLowerCase().includes(q)||w.tags.some(t=>t.toLowerCase().includes(q)));
+  }
+  const el=document.getElementById('walks-list');
+  if(!el)return;
+  if(!walks.length){el.innerHTML='<div class="walks-empty">No walks match your filters.<br>Try clearing the search or changing the filter.</div>';return;}
+  el.innerHTML=walks.map(walkCardHTML).join('');
+}
+function setFilter(f,btn){
+  walksFilter=f;
+  document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderWalks();
+}
+function filterWalks(){
+  walksSearchQuery=document.getElementById('walks-search').value;
+  renderWalks();
+}
+function setWalksView(v){
+  walksView=v;
+  document.getElementById('walks-list-btn').classList.toggle('active',v==='list');
+  document.getElementById('walks-map-btn').classList.toggle('active',v==='map');
+  document.getElementById('walks-list').style.display=v==='list'?'flex':'none';
+  const mapEl=document.getElementById('walks-map');
+  mapEl.style.display=v==='map'?'block':'none';
+  if(v==='map')initWalksMap();
+}
+function initWalksMap(){
+  if(walksMap){walksMap.invalidateSize();return;}
+  const el=document.getElementById('walks-map');
+  if(!el||typeof L==='undefined')return;
+  const center=currentLocation?[currentLocation.lat,currentLocation.lon]:[54.0,−2.0];
+  walksMap=L.map(el,{center:center,zoom:currentLocation?11:6,zoomControl:true});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(walksMap);
+  WALKS_DB.forEach(w=>{
+    const icon=L.divIcon({html:'<div style="background:#1E4D3A;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)">'+w.icon+'</div>',className:'',iconSize:[28,28],iconAnchor:[14,14]});
+    L.marker([w.lat,w.lon],{icon}).addTo(walksMap).bindPopup('<strong>'+w.name+'</strong><br>'+w.area+'<br><button onclick="openWalkDetail(\''+w.id+'\');walksMap.closePopup()" style="margin-top:6px;padding:4px 10px;background:#1E4D3A;color:#fff;border:none;border-radius:6px;font-size:.78rem;cursor:pointer">View walk →</button>');
+  });
+  if(currentLocation){
+    L.circleMarker([currentLocation.lat,currentLocation.lon],{radius:8,fillColor:'#3B82F6',fillOpacity:1,color:'#fff',weight:2}).addTo(walksMap).bindPopup('You are here');
+  }
+}
+
+// ── WALK DETAIL OVERLAY ───────────────────────────────────────────────────
+function openWalkDetail(id){
+  const w=WALKS_DB.find(x=>x.id===id);
+  if(!w)return;
+  addExplored(id);
+  const fav=isFavourite(id);
+  const dc=difficultyClass(w.difficulty);
+  const offLeadLabel=w.offLead==='full'?'✅ Full off-lead':w.offLead==='partial'?'⚡ Partial (check signs)':'🚫 On-lead only';
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(/Mac/.test(navigator.userAgent)&&navigator.maxTouchPoints>0);
+  const mapsUrl=isIOS?'https://maps.apple.com/?q='+w.lat+','+w.lon:'https://maps.google.com/?q='+w.lat+','+w.lon;
+  const heroPhoto=w.imageUrl?'<img src="'+w.imageUrl+'" alt="'+w.name+'" style="width:100%;height:100%;object-fit:cover" />':'<div class="detail-photo-icon">'+w.icon+'</div>';
+  const reviews=getReviews()[id]||[];
+  const avgRating=getAvgRating(id);
+  const reviewsHtml=reviews.length?reviews.slice(0,3).map(r=>'<div style="padding:10px 0;border-bottom:1px solid var(--border)"><div style="font-size:.75rem;color:var(--ink-2);margin-bottom:3px">'+('⭐'.repeat(r.stars||0))+' · '+(r.date||'')+'</div>'+(r.text?'<div style="font-size:.82rem;color:var(--ink);line-height:1.45">"'+r.text+'"</div>':'')+'</div>').join(''):'<div style="font-size:.82rem;color:var(--ink-2);padding:8px 0">No reviews yet — be the first!</div>';
+  document.getElementById('detail-sheet-content').innerHTML=
+    '<button class="detail-close" onclick="closeWalkDetail()">✕</button>'+
+    '<div class="detail-photo">'+heroPhoto+'<div class="detail-photo-scrim"></div><div class="detail-photo-text"><div class="detail-photo-name">'+w.name+'</div><div class="detail-photo-area">'+w.area+'</div></div></div>'+
+    '<div class="detail-body">'+
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">'+
+        '<span class="difficulty-chip '+dc+'">'+w.difficulty+'</span>'+
+        (w.badge?'<span style="background:var(--amber);color:#fff;font-size:.65rem;font-weight:700;border-radius:20px;padding:3px 9px">'+w.badge+'</span>':'')+
+        (avgRating?'<span style="font-size:.78rem;color:var(--ink-2)">★ '+avgRating+' ('+reviews.length+')</span>':'')+
+        (fav?'<span style="font-size:.78rem;color:var(--red)">❤️ Saved</span>':'')+
+      '</div>'+
+      '<div class="detail-section-title">About this walk</div>'+
+      '<div class="detail-description">'+w.description+'</div>'+
+      '<div class="detail-section-title" style="margin-top:14px">Walk details</div>'+
+      '<div class="detail-grid">'+
+        '<div class="detail-grid-item"><div class="detail-grid-label">Distance</div><div class="detail-grid-value">'+fmtDist(w.distance)+'</div></div>'+
+        '<div class="detail-grid-item"><div class="detail-grid-label">Duration</div><div class="detail-grid-value">'+fmtDur(w.duration)+'</div></div>'+
+        '<div class="detail-grid-item"><div class="detail-grid-label">Terrain</div><div class="detail-grid-value" style="text-transform:capitalize">'+w.terrain+'</div></div>'+
+        '<div class="detail-grid-item"><div class="detail-grid-label">Difficulty</div><div class="detail-grid-value">'+w.difficulty+'</div></div>'+
+        '<div class="detail-grid-item"><div class="detail-grid-label">Off-lead</div><div class="detail-grid-value" style="font-size:.78rem">'+offLeadLabel+'</div></div>'+
+        '<div class="detail-grid-item"><div class="detail-grid-label">Parking</div><div class="detail-grid-value">'+(w.hasParking?'✅ Available':'—')+'</div></div>'+
+        (w.livestock?'<div class="detail-grid-item" style="grid-column:span 2"><div class="detail-grid-label">⚠️ Livestock</div><div class="detail-grid-value" style="font-size:.78rem">Keep dogs under close control near livestock</div></div>':'')+
+        (w.hasStiles?'<div class="detail-grid-item" style="grid-column:span 2"><div class="detail-grid-label">Stiles</div><div class="detail-grid-value" style="font-size:.78rem">This route has stiles — check suitability for your dog</div></div>':'')+
+      '</div>'+
+      (weatherData?'<div class="section-card" style="margin-top:12px"><div style="font-size:.75rem;font-weight:600;color:var(--ink-2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em">Today\'s conditions</div><div style="font-size:.83rem;color:var(--ink-2)">'+w.wetNote+'</div></div>':'')+
+      '<div class="detail-map" id="detail-map"></div>'+
+      '<div class="detail-actions">'+
+        '<a class="detail-directions-btn" href="'+mapsUrl+'" target="_blank">Get directions</a>'+
+        '<button class="detail-share-btn" onclick="shareWalk(\''+id+'\')">Share this walk</button>'+
+        '<button class="detail-share-btn" onclick="toggleFavourite(\''+id+'\',event);this.textContent=isFavourite(\''+id+'\')?\'❤️ Saved\':\'🤍 Save walk\'" style="font-size:.88rem">'+(fav?'❤️ Saved':'🤍 Save walk')+'</button>'+
+      '</div>'+
+      '<div class="detail-section-title" style="margin-top:20px">Reviews</div>'+
+      reviewsHtml+
+    '</div>';
+  document.getElementById('walk-detail').classList.add('open');
+  document.getElementById('bottomNav').style.display='none';
+  // Init map
+  setTimeout(()=>{
+    if(detailMap){detailMap.remove();detailMap=null;}
+    const mel=document.getElementById('detail-map');
+    if(mel&&typeof L!=='undefined'){
+      detailMap=L.map(mel,{center:[w.lat,w.lon],zoom:14,zoomControl:false,attributionControl:false});
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(detailMap);
+      const icon=L.divIcon({html:'<div style="background:#1E4D3A;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:.9rem;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)">'+w.icon+'</div>',className:'',iconSize:[32,32],iconAnchor:[16,16]});
+      L.marker([w.lat,w.lon],{icon}).addTo(detailMap);
+    }
+  },300);
+}
+function closeWalkDetail(){
+  document.getElementById('walk-detail').classList.remove('open');
+  document.getElementById('bottomNav').style.display='';
+  setTimeout(()=>{if(detailMap){detailMap.remove();detailMap=null;}},350);
+}
+function shareWalk(id){
+  const w=WALKS_DB.find(x=>x.id===id);if(!w)return;
+  if(navigator.share){navigator.share({title:w.name,text:'Check out this dog walk: '+w.name+' in '+w.area,url:window.location.href}).catch(()=>{});}
+  else{navigator.clipboard.writeText(window.location.href).then(()=>alert('Link copied!')).catch(()=>alert('Share: '+window.location.href));}
+}
+
+// ── NEARBY TAB ────────────────────────────────────────────────────────────
+const CAT_CONFIG={
+  cafe:{label:'☕ Cafés',emoji:'☕',search:'dog friendly cafes',tip:'Many UK cafés welcome dogs on terraces or in dedicated dog-friendly areas. Call ahead to be sure.'},
+  pub:{label:'🍺 Pubs',emoji:'🍺',search:'dog friendly pubs',tip:'Most UK pubs welcome dogs in the bar area. A water bowl outside is usually a good sign.'},
+  beach:{label:'🏖️ Beaches',emoji:'🏖️',search:'dog friendly beaches',tip:'Many UK beaches have seasonal restrictions — dogs often allowed Oct–Apr only. Always check local signs.'},
+  petshop:{label:'🐾 Pet Shops',emoji:'🐾',search:'pet shops',tip:'Stock up on treats, leads, poo bags and anything else you need for the walk.'},
+  vet:{label:'🏥 Vets',emoji:'🏥',search:'veterinary clinics',tip:'Good to know your nearest vet before heading out, especially on longer walks.'},
+};
+const PLACES_API_KEY='AIzaSyCXKhkeAN3HdhmCc7_czGo3QzVIT34caT4';
+
+async function fetchPlaces(cat){
+  if(!currentLocation)throw new Error('No location');
+  const cfg=CAT_CONFIG[cat];
+  const cacheKey=cat+'-'+currentLocation.lat+'-'+currentLocation.lon;
+  if(placesCache[cacheKey])return placesCache[cacheKey];
+  const body={textQuery:cfg.search+' near '+currentLocation.displayName,locationBias:{circle:{center:{latitude:currentLocation.lat,longitude:currentLocation.lon},radius:5000}},maxResultCount:8,languageCode:'en-GB'};
+  const res=await fetch('https://places.googleapis.com/v1/places:searchText',{method:'POST',headers:{'Content-Type':'application/json','X-Goog-Api-Key':PLACES_API_KEY,'X-Goog-FieldMask':'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.googleMapsUri,places.photos,places.location'},body:JSON.stringify(body)});
+  const data=await res.json();
+  const results=data.places||[];
+  placesCache[cacheKey]=results;
+  return results;
+}
+function renderPlaceCard(p,cfg){
+  const name=p.displayName?.text||'Unknown venue';
+  const address=(p.formattedAddress||'').split(',').slice(0,2).join(',').trim();
+  const rating=p.rating;
+  const isOpen=p.regularOpeningHours?.openNow;
+  const mapsUrl=p.googleMapsUri||'https://www.google.com/maps/search/'+encodeURIComponent(name);
+  const photoRef=p.photos?.[0]?.name;
+  const photoUrl=photoRef?'https://places.googleapis.com/v1/'+photoRef+'/media?maxHeightPx=120&maxWidthPx=120&key='+PLACES_API_KEY:'';
+  const openBadge=isOpen===true?'<span class="place-open open">Open now</span>':isOpen===false?'<span class="place-open closed">Closed</span>':'';
+  const distKm=p.location?haversine(currentLocation.lat,currentLocation.lon,p.location.latitude,p.location.longitude):null;
+  const distStr=distKm?(distKm<1?(distKm*1000).toFixed(0)+'m':distKm.toFixed(1)+'km')+' away':'';
+  const photoEl=photoUrl?'<img src="'+photoUrl+'" alt="'+name+'" style="width:80px;height:80px;object-fit:cover" onerror="this.style.display=\'none\'" />':'<div class="place-thumb">'+cfg.emoji+'</div>';
+  return '<a class="place-card" href="'+mapsUrl+'" target="_blank">'+photoEl+'<div class="place-body"><div class="place-name">'+name+'</div>'+(rating?'<div class="place-rating">★ '+rating.toFixed(1)+(p.userRatingCount?' ('+p.userRatingCount+')':"")+'</div>':'')+
+    '<div class="place-address">'+(distStr?'📍 '+distStr+' · ':'')+address+'</div><div class="place-footer">'+openBadge+'<span class="place-maps-link">View on Google Maps →</span></div></div></a>';
+}
+async function loadPlaces(cat){
+  const el=document.getElementById('nearby-content');
+  if(!el)return;
+  const cfg=CAT_CONFIG[cat];
+  el.innerHTML='<div class="nearby-tip">'+cfg.tip+'</div><div class="loading"><div class="spinner"></div>Finding '+cfg.label.toLowerCase()+'…</div>';
+  try{
+    const places=await fetchPlaces(cat);
+    if(!places.length){el.innerHTML='<div class="nearby-tip">'+cfg.tip+'</div><div class="nearby-no-location"><div class="nearby-no-location-icon">'+cfg.emoji+'</div><div class="nearby-no-location-title">None found nearby</div><div class="nearby-no-location-body">Try searching on Google Maps for '+cfg.search+' near you.</div></div>';return;}
+    el.innerHTML='<div class="nearby-tip">'+cfg.tip+'</div>'+places.map(p=>renderPlaceCard(p,cfg)).join('');
+  }catch(err){el.innerHTML='<div class="nearby-no-location"><div class="nearby-no-location-title">Couldn\'t load results</div><div class="nearby-no-location-body">Check your connection and try again.</div></div>';}
+}
+function switchCat(cat,btn){
+  activeCat=cat;
+  document.querySelectorAll('.cat-chip').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  if(currentLocation)loadPlaces(cat);
+}
+
+// ── ME TAB ────────────────────────────────────────────────────────────────
+function renderMeTab(){
+  const el=document.getElementById('me-content');
+  if(!el)return;
+  const name=getUsername();
+  const favIds=getFavourites();
+  const explored=getExplored();
+  const favWalks=WALKS_DB.filter(w=>favIds.includes(w.id));
+  const isDark=document.body.classList.contains('night');
+  const savedWalksHTML=favWalks.length?'<div class="saved-walks-scroll">'+favWalks.map(w=>'<div class="saved-walk-card" onclick="openWalkDetail(\''+w.id+'\')"><div class="saved-walk-photo">'+w.icon+'</div><div class="saved-walk-name">'+w.name+'</div></div>').join('')+'</div>':'<div class="me-empty">Tap the 🤍 on any walk to save it here.</div>';
+  el.innerHTML='<div class="me-content">'+
+    '<div class="me-header">'+
+      '<div class="me-greeting">'+greeting()+', '+(name||'Walker')+'</div>'+
+      '<div class="me-sub">'+(favIds.length+' saves · '+explored.size+' walks explored')+'</div>'+
+    '</div>'+
+    '<div class="me-stats">'+
+      '<div class="me-stat"><span class="me-stat-num">'+favIds.length+'</span><span class="me-stat-label">Saved walks</span></div>'+
+      '<div class="me-stat"><span class="me-stat-num">'+explored.size+'</span><span class="me-stat-label">Walks explored</span></div>'+
+    '</div>'+
+    '<div class="me-section">'+
+      '<div class="me-section-title">Saved walks</div>'+
+      '<div class="me-section-subtitle">Your walks, saved locally</div>'+
+      savedWalksHTML+
+    '</div>'+
+    '<div class="me-section">'+
+      '<div class="me-section-title">Settings</div>'+
+      '<div class="me-settings-row"><span class="me-settings-label">Your name</span><input class="me-settings-input" id="me-name-input" type="text" placeholder="Enter name…" value="'+name+'" onchange="saveUsername(this.value);renderMeTab()" /></div>'+
+      '<div class="me-settings-row"><span class="me-settings-label">Dark mode</span><div class="toggle-switch '+(isDark?'on':'')+'" onclick="toggleTheme();renderMeTab()"><div class="toggle-knob"></div></div></div>'+
+      (currentLocation?'<div class="me-settings-row"><span class="me-settings-label">Location</span><span class="me-settings-value">'+currentLocation.displayName+'</span></div>':'')+
+      '<div class="me-settings-row"><span class="me-settings-label">Change location</span><button style="font-size:.82rem;color:var(--brand);font-weight:500" onclick="clearLocation()">Search new location →</button></div>'+
+    '</div>'+
+  '</div>';
+}
+function clearLocation(){
+  currentLocation=null;weatherData=null;
+  try{localStorage.removeItem('sniffout_session');}catch(e){}
+  showTab('home');
+}
+function toggleTheme(){
+  const isNight=document.body.classList.toggle('night');
+  try{localStorage.setItem('theme',isNight?'night':'day');}catch(e){}
+}
+</script>
+<script>
+// ── TODAY TAB STATE B ─────────────────────────────────────────────────────
+function renderTodayStateB(){
+  if(!weatherData||!currentLocation)return;
+  const[wi,wd]=getWmo(weatherData.weatherCode);
+  const[ri,rt,rp]=walkRec(weatherData);
+  const hazards=buildHazardHTML(weatherData);
+  // Nearby walks (closest 4)
+  const nearby=[...WALKS_DB].sort((a,b)=>haversine(currentLocation.lat,currentLocation.lon,a.lat,a.lon)-haversine(currentLocation.lat,currentLocation.lon,b.lat,b.lon)).slice(0,4);
+  const nearbyCards=nearby.map(w=>'<div class="today-walk-card" onclick="openWalkDetail(\''+w.id+'\')">'+
+    '<div class="today-walk-photo">'+w.icon+'</div>'+
+    '<div class="today-walk-body">'+
+      '<div class="today-walk-name">'+w.name+'</div>'+
+      '<div class="today-walk-meta">'+fmtDist(w.distance)+' · '+w.difficulty+'</div>'+
+    '</div></div>').join('');
+  document.getElementById('today-content').innerHTML=
+    '<div class="weather-hero">'+
+      '<div class="weather-hero-top">'+
+        '<div><div class="weather-hero-temp">'+weatherData.temp+'°<span style="font-size:1.5rem">C</span></div><div class="weather-hero-feels">Feels like '+Math.round(weatherData.feelsLike)+'°C</div></div>'+
+        '<div style="text-align:right"><div class="weather-hero-icon">'+wi+'</div></div>'+
+      '</div>'+
+      '<div class="weather-hero-desc">'+wd+'</div>'+
+      '<div class="weather-hero-wind">💨 '+weatherData.windSpeed+' km/h '+weatherData.windDir+' · Gusts '+Math.round(weatherData.windGust)+' km/h</div>'+
+      '<div class="weather-hero-updated">Updated '+weatherData.updatedAt+'</div>'+
+    '</div>'+
+    '<div class="walk-rec-card"><div class="walk-rec-icon">'+ri+'</div><div><div class="walk-rec-title">'+rt+'</div><div class="walk-rec-body">'+rp+'</div></div></div>'+
+    hazards+
+    '<div class="today-section-header">'+
+      '<div class="today-section-title">Walks near you</div>'+
+      '<button class="today-section-link" onclick="showTab(\'walks\')">View all →</button>'+
+    '</div>'+
+    '<div class="today-walks-scroll">'+nearbyCards+'</div>';
+}
+
+// ── TAB NAVIGATION ────────────────────────────────────────────────────────
+function showTab(tab){
+  currentTab=tab;
+  // Hide all tab sections
+  document.querySelectorAll('.tab-section').forEach(s=>s.classList.remove('active'));
+  // Show the target tab
+  const el=document.getElementById('tab-'+tab);
+  if(el)el.classList.add('active');
+  // Update nav active states
+  ['home','weather','walks','nearby','me'].forEach(t=>{
+    const btn=document.getElementById('nav-'+t);
+    if(btn)btn.classList.toggle('active',t===tab);
+  });
+  // Dim nav on home/state A
+  const nav=document.getElementById('bottomNav');
+  const stateA=document.getElementById('today-state-a');
+  nav.classList.toggle('dimmed',tab==='home'&&stateA&&stateA.style.display!=='none');
+  // Tab-specific render
+  if(tab==='home'){
+    if(currentLocation&&weatherData){
+      renderTodayStateB();
+    }
+    const stateAEl=document.getElementById('today-state-a');
+    const stateBEl=document.getElementById('today-state-b');
+    if(currentLocation&&weatherData){
+      if(stateAEl)stateAEl.style.display='none';
+      if(stateBEl)stateBEl.style.display='';
+      nav.classList.remove('dimmed');
+    } else {
+      if(stateAEl)stateAEl.style.display='';
+      if(stateBEl)stateBEl.style.display='none';
+    }
+  }
+  if(tab==='weather'){
+    const wc=document.getElementById('weather-content');
+    if(wc){
+      if(currentLocation&&weatherData){
+        wc.innerHTML='<div id="weather-inner" style="padding:12px 16px">'+renderWeather(weatherData)+'</div>';
+      } else {
+        wc.innerHTML='<div class="no-location-prompt"><div class="no-location-icon">☁️</div><div class="no-location-title">No location set</div><div class="no-location-body">Set your location on the Today tab to see the weather for your area.</div><button class="no-location-btn" onclick="showTab(\'home\')">Go to Today</button></div>';
+      }
+    }
+  }
+  if(tab==='walks'){
+    renderWalks();
+    if(walksView==='map')initWalksMap();
+  }
+  if(tab==='nearby'){
+    const nc=document.getElementById('nearby-content');
+    if(currentLocation){
+      loadPlaces(activeCat);
+    } else {
+      if(nc)nc.innerHTML='<div class="nearby-no-location"><div class="nearby-no-location-icon">📍</div><div class="nearby-no-location-title">Set your location first</div><div class="nearby-no-location-body">Head to the Today tab and search for a location or use your GPS to find nearby dog-friendly spots.</div></div>';
+    }
+  }
+  if(tab==='me')renderMeTab();
+  saveSession();
+}
+
+// ── LOCATION & SEARCH ─────────────────────────────────────────────────────
+async function doSearch(){
+  const input=document.getElementById('state-a-input');
+  if(!input)return;
+  const q=input.value.trim();
+  if(!q)return;
+  const errEl=document.getElementById('state-a-error');
+  if(errEl)errEl.style.display='none';
+  input.disabled=true;
+  try{
+    currentLocation=await geocode(q);
+    document.getElementById('today-location-label').textContent='📍 '+currentLocation.displayName;
+    const stateAEl=document.getElementById('today-state-a');
+    const stateBEl=document.getElementById('today-state-b');
+    if(stateAEl)stateAEl.style.display='none';
+    if(stateBEl){stateBEl.style.display='';document.getElementById('today-content').innerHTML='<div class="loading"><div class="spinner"></div>Fetching conditions…</div>';}
+    document.getElementById('bottomNav').classList.remove('dimmed');
+    weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
+    if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
+    renderTodayStateB();
+    saveSession();
+  }catch(e){
+    if(errEl)errEl.style.display='block';
+    currentLocation=null;
+  }finally{input.disabled=false;}
+}
+
+async function useCurrentLocation(){
+  if(!navigator.geolocation){alert('Geolocation is not supported by your browser.');return;}
+  const btn=document.querySelector('.state-a-cta');
+  if(btn){btn.textContent='Finding location…';btn.disabled=true;}
+  const errEl=document.getElementById('state-a-error');
+  if(errEl)errEl.style.display='none';
+  navigator.geolocation.getCurrentPosition(
+    async pos=>{
+      const{latitude:lat,longitude:lon}=pos.coords;
+      const stateAEl=document.getElementById('today-state-a');
+      const stateBEl=document.getElementById('today-state-b');
+      if(stateAEl)stateAEl.style.display='none';
+      if(stateBEl){stateBEl.style.display='';document.getElementById('today-content').innerHTML='<div class="loading"><div class="spinner"></div>Fetching conditions…</div>';}
+      document.getElementById('bottomNav').classList.remove('dimmed');
+      try{
+        const res=await fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lon+'&format=json&zoom=16');
+        const data=await res.json();
+        const a=data.address||{};
+        const displayName=a.road||a.neighbourhood||a.suburb||a.quarter||a.village||a.town||a.city||a.county||'Your location';
+        currentLocation={lat,lon,displayName};
+        document.getElementById('today-location-label').textContent='📍 '+displayName;
+        weatherData=await fetchWeather(lat,lon);
+        if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
+        renderTodayStateB();
+        saveSession();
+      }catch(e){
+        currentLocation=null;
+        if(stateAEl)stateAEl.style.display='';
+        if(stateBEl)stateBEl.style.display='none';
+        document.getElementById('bottomNav').classList.add('dimmed');
+        if(errEl)errEl.style.display='block';
+      }finally{
+        if(btn){btn.textContent='Use my location';btn.disabled=false;}
+      }
+    },
+    err=>{
+      if(btn){btn.textContent='Use my location';btn.disabled=false;}
+      alert('Could not get your location. Please check your browser permissions.');
+    },
+    {enableHighAccuracy:true,timeout:10000,maximumAge:0}
+  );
+}
+
+async function refreshWeather(){
+  if(!currentLocation)return;
+  try{
+    weatherData=await fetchWeather(currentLocation.lat,currentLocation.lon);
+    if(!localStorage.getItem('theme'))document.body.classList.toggle('night',!weatherData.isDay);
+    renderTodayStateB();
+    if(currentTab==='weather'){
+      const wc=document.getElementById('weather-content');
+      if(wc)wc.innerHTML='<div id="weather-inner" style="padding:12px 16px">'+renderWeather(weatherData)+'</div>';
+    }
+    saveSession();
+  }catch(e){alert('Couldn\'t refresh weather. Check your connection.');}
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',async()=>{
+  // Apply saved theme
+  const theme=localStorage.getItem('theme');
+  if(theme==='night')document.body.classList.add('night');
+  // Apply saved text scale
+  const scale=parseFloat(localStorage.getItem('sniffout_textscale')||'1');
+  if(scale!==1)document.documentElement.style.fontSize=(scale*100)+'%';
+  // Restore session or show State A
+  const restored=await restoreSession();
+  if(!restored){
+    showTab('home');
+    // Make sure State A is visible
+    const stateAEl=document.getElementById('today-state-a');
+    const stateBEl=document.getElementById('today-state-b');
+    if(stateAEl)stateAEl.style.display='';
+    if(stateBEl)stateBEl.style.display='none';
+    document.getElementById('bottomNav').classList.add('dimmed');
+  }
+  // Register service worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/my-first-repo/sw.js').catch(()=>{});
+  }
+});
+</script>
+</body>
+</html>
