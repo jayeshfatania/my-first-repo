@@ -66,14 +66,12 @@ Three clean beats: the product (curation), the differentiator (live conditions �
 
 ---
 
-### Meta description 🔁 Revised
+### Meta description ✅
 
-**PO feedback:** The original proposal (`Know if it's safe to walk before you leave the house...`) was returned — it opens with safety/weather, which should now follow rather than lead.
+**Approved:**
+`Discover 50+ handpicked UK dog walks with live weather checks, paw safety alerts and nearby dog-friendly spots.`
 
-**Revised:**
-`Discover 50+ handpicked UK dog walks with live weather checks, paw safety alerts and nearby dog-friendly spots. Free, no sign-up.`
-
-**Reasoning:** Opens with the product (walk discovery and curation). Weather check is present as a named feature, not as the opening hook. Closes with the two trust signals.
+*"Free, no sign-up." removed per PO instruction — these are not permanent product promises and must not appear anywhere in the app.*
 
 ---
 
@@ -93,7 +91,9 @@ Three clean beats: the product (curation), the differentiator (live conditions �
 
 ### Hero headline ✅
 **Current:** `Discover great walks / Explore more. Together.`
-**Approved:** `Find your next great walk.`
+**Approved:** `Discover great walks`
+
+*Note: Owner confirmed this directly. Overrides the copy reviewer's original recommendation of `Find your next great walk.` — see developer-questions.md Part 1.*
 
 ---
 
@@ -111,10 +111,10 @@ Leads with curation (the product), includes weather as the differentiator (secon
 
 **PO feedback:** `50+ handpicked UK walks, live paw-safe weather checks...` returned — weather shouldn't be the lead benefit.
 
-**Revised:**
-`50+ handpicked UK walks with terrain, off-lead and livestock info — plus live weather checks and nearby dog-friendly spots. Free, no sign-up.`
+**Approved:**
+`50+ handpicked UK walks with terrain, off-lead and livestock info — plus live weather checks and nearby dog-friendly spots.`
 
-**Reasoning:** Leads with the curation and the practical detail that makes Sniffout walks different from a Google Maps result (terrain, off-lead, livestock). Weather is the second beat. Social proof closes it.
+*"Free, no sign-up." removed per PO instruction.*
 
 ---
 
@@ -157,9 +157,9 @@ Warm. Companion-framed. Names the dual audience (owner and dog). Not weather-led
 
 ### Subtitle ✅
 **Current:** `Shared, discovered and rated by the community.`
-**Approved:** `Curated walks, live weather checks and dog-friendly spots — all free, no sign-up needed.`
+**Approved:** `Curated walks, live weather checks and dog-friendly spots — all in one place.`
 
-*(Weather appears here as one of three items, which is correct — the PO approved this as acceptable balance.)*
+*(Onboarding overlay is out of scope for Phase 1. "All free, no sign-up needed." removed per PO instruction.)*
 
 ---
 
@@ -376,16 +376,16 @@ All dashes in copy strings should be em dashes (—), not hyphens (-) or en dash
 
 ---
 
-## Items Pending PO Confirmation ⏳
+## Items Confirmed by PO ✅
 
-The following items have been revised in this version and are awaiting PO sign-off before the Developer hardcodes them:
+All previously pending items are now resolved:
 
-1. **Tagline** — `Dog walks, done properly.` (see Section above)
-2. **Home subline** — `Handpicked walks. Live conditions. No account.`
-3. **Hero body text** — `50+ handpicked UK walks with terrain, off-lead and livestock info — plus live weather checks and nearby dog-friendly spots. Free, no sign-up.`
-4. **Meta description** — `Discover 50+ handpicked UK dog walks with live weather checks, paw safety alerts and nearby dog-friendly spots. Free, no sign-up.`
-5. **Onboarding title** — `Good walks for you and your dog.`
-6. **Onboarding feature order** — walk discovery leads (Feature 1), weather moves to Feature 2
+1. **Tagline** — `Discover great walks` *(POC phase. "Dog walks, done properly." held for post-POC.)*
+2. **Home subline** — `Handpicked walks. Live conditions.` *("No account." removed — not a permanent promise)*
+3. **Hero body text** — `50+ handpicked UK walks with terrain, off-lead and livestock info — plus live weather checks and nearby dog-friendly spots.` *("Free, no sign-up." removed)*
+4. **Meta description** — `Discover 50+ handpicked UK dog walks with live weather checks, paw safety alerts and nearby dog-friendly spots.` *("Free, no sign-up." removed)*
+5. **Onboarding title** — ⏳ Still deferred — onboarding overlay is out of scope for current build. Use `Discover great walks` as placeholder if built.
+6. **Onboarding feature order** — ✅ Walk discovery leads (Feature 1), weather moves to Feature 2
 
 ---
 

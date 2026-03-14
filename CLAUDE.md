@@ -2,48 +2,68 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 🚨 File Protection — Read First
+
+**`dog-walk-dashboard.html` is the live production file. Do not touch it under any circumstances.**
+
+All new development happens in **`sniffout-v2.html`** only. The visual reference for v2 is `mockup.html` and `design-spec.md`. Do not use `dog-walk-dashboard.html` as a reference or base for any new code.
+
+- **`sniffout-v2.html`** — active development file for v2
+- **`dog-walk-dashboard.html`** — live production, do not modify
+- **`sw.js`, `manifest.json`** — modify only when explicitly instructed
+
 ## Project Vision
 
-Sniffout is a concept/POC being validated before investing in a backend. It must remain free, no-login, and simple. Do not add complexity unless explicitly instructed.
+Sniffout is a mobile-first PWA for discovering dog walks across the UK, being validated as a POC before investing in a backend. The product is walk discovery first; weather intelligence is the differentiator, not the lead. Keep it simple — do not add complexity unless explicitly instructed.
 
 ## Competitive Context
 
-Closest competitor is PlayDogs (France/Switzerland, 170k downloads), but it relies on community-generated content so is empty in new regions. Sniffout differentiates with curated content from day one plus live weather integration.
+Closest competitor is PlayDogs (France/Switzerland, 170k downloads), but it relies on community-generated content so is empty in new regions. Sniffout differentiates with curated content from day one plus live weather integration. No UK competitor combines walk discovery + live weather + dog-specific hazard context in a single no-login product.
 
 ## Design Principles
 
-Mobile-first, uncluttered, modern and slick. The current glassmorphic green style is open to change based on research. Nothing gimmicky.
+Mobile-first, uncluttered, modern and slick. **v2 uses a clean card-based design — glassmorphism has been removed.** Design reference is `design-spec.md` and `mockup.html`. Key decisions locked:
+- Brand colour: `#1E4D3A` (forest green)
+- Background: `#F7F5F0` (warm off-white)
+- Typography: Inter 400/500/600/700 only
+- Cards: `border-radius: 16px`, `1px solid var(--border)`, no blur or translucent surfaces
+- Dark mode: `body.night` class, triggered by weather `isDay` flag
+
+Nothing gimmicky. Paw emoji (🐾) reserved for paw safety block only.
 
 ## Deferred — Do Not Implement Without Instruction
 
-Firebase backend, Google Places API (already integrated but not to be expanded), user accounts, native app.
+Firebase backend, Google Places API expansion (already integrated at current scope — do not add new venue categories or API calls), user accounts, native app, marker clustering plugin, community tab, walk submission, push notifications.
 
 ## Project Overview
 
-**Sniffout** is a mobile-first PWA for discovering dog walks across the UK. It has no build step — it's a single HTML file deployed to GitHub Pages at `sniffout.app`.
+**Sniffout** is a mobile-first PWA for discovering dog walks across the UK. No build step — it's a single HTML file deployed to GitHub Pages at `sniffout.app` via a CNAME. `index.html` redirects to `dog-walk-dashboard.html` (live). Desktop users see a "Coming soon" screen (viewport ≥768px or non-touch device).
 
 ## Development
 
 No build tools, no package manager, no test framework. Development is:
 
-1. Edit `dog-walk-dashboard.html` directly
+1. Edit `sniffout-v2.html` directly (v2 — active development)
 2. Open in a browser (or use a local static server: `python3 -m http.server`)
 3. Deploy by pushing to `main` — GitHub Pages auto-deploys
 
-The `index.html` redirects to `dog-walk-dashboard.html`. Desktop users see a "Coming soon" screen (viewport ≥768px or non-touch device).
+`sniffout-v2.html` must be built entirely from scratch. It must not copy or reuse code or structure from `dog-walk-dashboard.html`. The only carry-overs from the original app are:
+- The API integrations (Open-Meteo for weather, Google Places for venues, Nominatim/postcodes.io for geocoding) — implemented fresh, same endpoints and API key
+- The curated walks data from `WALKS_DB` — content carries over, extended with v2 schema fields
 
 ## Architecture
 
-Everything lives in `dog-walk-dashboard.html` (~2,700 lines): inline CSS in `<style>`, inline JS in `<script>`, and all HTML. No modules, no bundler.
+Everything lives in `sniffout-v2.html`: inline CSS in `<style>`, inline JS in `<script>`, and all HTML. No modules, no bundler.
 
 **Other files:**
 - `sw.js` — service worker (network-first, cache fallback, cache key `sniffout-v2`)
 - `manifest.json` — PWA manifest
 - `CNAME` — custom domain (`sniffout.app`)
+- `mockup.html` — visual design reference for v2 (do not deploy)
 
 ### Navigation
 
-Tab-based, no URL routing. Tabs: `home`, `weather`, `walks`, `places`, `profile`. Active tab stored in `localStorage` (`sniffout_active_tab`). `showTab(tab)` switches views.
+Tab-based, no URL routing. Five tabs: **today · weather · walks · nearby · me**. Active tab stored in `localStorage` (`sniffout_active_tab`). `showTab(tab)` switches views. Bottom nav uses inline SVG icons with filled (active) and outlined (inactive) variants — not emoji.
 
 ### State
 
@@ -55,33 +75,81 @@ All state is in-memory globals + `localStorage`. Key storage:
 | `sniffout_active_tab` | last active tab |
 | `sniffout_favs` | array of favourited walk IDs |
 | `sniffout_username` | user's display name |
+| `sniffout_radius` | search radius in miles (1/3/5/10) |
+| `sniffout_explored` | Set of walk IDs viewed (passive completion tracking) |
 | `walkReviews` | JSON object of user reviews |
-| `communityWalks` | JSON array of user-submitted walks |
 | `recentSearches` | JSON array |
+
+Note: `communityWalks` is not part of v2 — community features are deferred.
 
 ### Data
 
-Walk data is hardcoded in `WALKS_DB` (50+ UK walks). No backend database — all persistence is `localStorage`.
+Walk data is hardcoded in `WALKS_DB` (50+ UK walks). No backend — all persistence is `localStorage`. The v2 schema for each walk entry:
+
+```
+id, name, location, lat, lon, description
+offLead:     "full" | "partial" | "none"
+livestock:   boolean
+hasStiles:   boolean
+hasParking:  boolean
+terrain:     "paved" | "muddy" | "mixed" | "rocky"
+difficulty:  "easy" | "moderate" | "hard"
+imageUrl:    string (use "" until photo is sourced — brand-green placeholder renders)
+badge:       "Popular" | "Hidden gem" | "New" | "Sniffout Pick" | undefined
+rating:      number
+reviewCount: number
+distance:    number (miles)
+duration:    number (minutes)
+source:      "curated" | "places"
+```
+
+Do not add fields without PO sign-off. `isPushchairFriendly` has been removed.
 
 ### APIs
 
 | Service | Purpose | Auth |
 |---------|---------|------|
-| Open-Meteo | Weather forecasts | None (free) |
+| Open-Meteo | Weather forecasts (current + hourly) | None |
 | Google Places (New) | Dog-friendly venues | API key hardcoded in JS |
 | Nominatim (OSM) | Reverse geocoding | None |
 | postcodes.io | UK postcode → lat/lon | None |
 | Leaflet 1.9.4 (CDN) | Map rendering | None |
 
+**Phase 3 additions (not yet implemented):** Open-Meteo `uv_index` parameter; Open-Meteo `european_aqi` endpoint for pollen.
+
 ### CSS
 
-All inline. Uses CSS custom properties (`--amber`, `--moss`, `--ink`, etc.). Dark mode toggled via `body.night` class, set automatically based on weather `isDay` flag.
+All inline. v2 token set:
 
-### Key Function Groups
+| Token | Value | Notes |
+|-------|-------|-------|
+| `--brand` | `#1E4D3A` | Forest green — brand colour |
+| `--bg` | `#F7F5F0` | Warm off-white page background |
+| `--surface` | `#FFFFFF` | Card surfaces |
+| `--border` | `rgba(0,0,0,0.08)` | Card borders |
+| `--ink` | `#1A1A1A` | Primary text |
+| `--ink-2` | `#6B6B6B` | Secondary text |
+| `--amber` | `#F59E0B` | Warnings |
+| `--red` | `#EF4444` | Danger/errors |
 
-- **Weather**: `fetchWeather(lat, lon)`, `renderWeather(data)` — hazard detection for rain/heat/wind
-- **Walks**: `renderWalks()`, `loadNearbyGreenSpaces()` — filtering, map view, favourites
+Dark mode toggled via `body.night` class, set automatically based on weather `isDay` flag.
+
+### Key Function Groups (v2)
+
+- **Weather**: `fetchWeather(lat, lon)`, `renderWeather(data)` — hazard detection for rain/heat/wind/UV
+- **Walk verdict**: `getWalkVerdict(weatherData)` — shared pure function returning approved verdict strings; used by Today and Weather tabs
+- **Walks**: `renderWalks()` — filtering by offLead/livestock/terrain/distance, map view, favourites
 - **Places**: `renderPlacesPanel()`, `fetchPlaces(category)` — Google Places + Leaflet map
-- **Storage**: `getReviews/saveReviews`, `getFavourites/saveFavourites`, `getCommunityWalks/saveCommunityWalks`
+- **Storage**: `getReviews/saveReviews`, `getFavourites/saveFavourites`
 - **Session**: `saveSession()`, `restoreSession()` — persists location + weather for 8h
 - **Geocoding**: `geocodePostcode(pc)` — postcodes.io lookup
+
+### Approved Copy — Key Strings
+
+- **Hero headline:** `Discover great walks`
+- **Subline:** `Handpicked walks. Live conditions.`
+- **Page title:** `Sniffout — Dog walks & weather for the UK`
+- **Nav labels:** Today · Weather · Walks · Nearby · Me
+- All weather verdict strings, hazard titles, and paw safety strings: see `copy-review.md` and `po-action-plan.md`
+
+Do not use "free", "no sign-up", "no account", or "no login" anywhere in the app.

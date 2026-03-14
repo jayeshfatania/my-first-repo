@@ -322,13 +322,13 @@ The home screen has two distinct states depending on whether a location is known
 - Background: `#1E4D3A` in light mode, `#1A2E22` in dark/night mode
 - No photo background — solid colour only (see Part 1, point 2 for reasoning)
 - Condition icon: 44px SVG, white. Use a small set of meaningful icons: sun, cloud, rain, wind, snow, fog, storm. Do not use emoji.
-- Verdict text is the single most important line on the screen. Six possible values:
-  - "Good walking conditions" (green check icon)
-  - "Good, but breezy" (caution icon)
-  - "Hot day — walk early or late" (thermometer icon)
-  - "Wet but walkable" (umbrella icon)
-  - "Avoid the heat today" (red warning icon)
-  - "Poor conditions" (red warning icon)
+- Verdict text is the single most important line on the screen. **⚠️ The verdict strings listed below are first-draft placeholders and are superseded. Do not use them.** Approved verdict strings are in `copy-review.md` Section 6 and `phase1-build-brief.md` Section 9 — use those only.
+  - ~~"Good walking conditions"~~ → use `🌤️ Lovely walking weather`
+  - ~~"Good, but breezy"~~ → use `💨 Too gusty to be out` (if applicable)
+  - ~~"Hot day — walk early or late"~~ → use `🌡️ Warm today — timing matters`
+  - ~~"Wet but walkable"~~ → use `☔ It's raining — but walkable`
+  - ~~"Avoid the heat today"~~ → use `🌡️ Too hot to walk safely`
+  - ~~"Poor conditions"~~ → use appropriate approved string from phase1-build-brief.md
 - Condition pills: small rounded pills for key readings. Max 3 pills. `rgba(255,255,255,0.18)` background, white text, 11px/500
 - Tap on card: navigates to the Weather tab for full detail
 

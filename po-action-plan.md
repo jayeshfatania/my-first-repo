@@ -431,7 +431,7 @@ All the following are approved for implementation in sniffout-v2.html. The Devel
 - `Discover great walks` *(approved — POC phase. "Dog walks, done properly." held for post-POC consideration.)*
 
 **Home screen / State A**
-- Headline: `Find your next great walk.` *(approved)*
+- Headline: `Discover great walks` *(approved — owner confirmed directly. Overrides copy reviewer's `Find your next great walk.`)*
 - Subline: `Handpicked walks. Live conditions.` *(approved — copy reviewer's revised version, with "No account." removed per owner instruction as this will change in future)*
 - Body: `50+ handpicked UK walks with terrain, off-lead and livestock info — plus live weather checks and nearby dog-friendly spots.` *(approved — "Free, no sign-up." removed)*
 - Social proof strip: `50+ handpicked UK walks · Works offline · Dog-specific routes` *(updated — "Free · No account needed" removed; replaced with factual, durable claims)*
