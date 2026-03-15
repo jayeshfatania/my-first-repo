@@ -1033,16 +1033,30 @@
     .venue-card-gp {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 0;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 14px 16px;
+      overflow: hidden;
       margin: 0 16px 10px;
       text-decoration: none;
       color: inherit;
     }
     .venue-card-gp:active { opacity: 0.8; }
+    .venue-card-photo-gp {
+      width: 100%;
+      height: 140px;
+      background: var(--brand);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .venue-card-photo-gp img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .venue-card-body-gp { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px; }
     .venue-card-name-gp { font-size: 15px; font-weight: 600; color: var(--ink); }
     .venue-card-meta-gp {
       display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
@@ -2144,7 +2158,7 @@
       lat: 51.2497, lon: -0.3069,
       description: 'A classic Surrey Hills climb with sweeping views across the Weald. The open chalk grassland at the top is great for a run, and the National Trust café is dog-friendly.',
       distance: 3.2, duration: 90, difficulty: 'moderate', terrain: 'mixed',
-      offLead: 'partial', livestock: false, hasStiles: true, hasParking: true,
+      offLead: 'partial', enclosed: false, livestock: false, hasStiles: true, hasParking: true,
       imageUrl: '', badge: 'Popular', rating: 4.7, reviewCount: 312, source: 'curated'
     },
     {
@@ -2154,7 +2168,7 @@
       lat: 51.4408, lon: -0.2712,
       description: 'A wide circuit through one of London\'s greatest open spaces. Dogs must be kept on leads near the deer herds, but large sections of the park allow off-lead running.',
       distance: 4.5, duration: 100, difficulty: 'easy', terrain: 'mixed',
-      offLead: 'partial', livestock: true, hasStiles: false, hasParking: true,
+      offLead: 'partial', enclosed: true, livestock: true, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Popular', rating: 4.6, reviewCount: 528, source: 'curated'
     },
     {
@@ -2164,7 +2178,7 @@
       lat: 51.1789, lon: -0.3726,
       description: 'Surrey\'s highest point at 294m. Dense woodland trails lead to a Gothic tower with views to the sea on clear days. Excellent off-lead running on the open heath.',
       distance: 4.1, duration: 110, difficulty: 'moderate', terrain: 'muddy',
-      offLead: 'full', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 187, source: 'curated'
     },
     {
@@ -2174,7 +2188,7 @@
       lat: 51.1538, lon: -0.7803,
       description: 'Heathland and a large sandy beach on the Great Pond — rare in Surrey. Dogs can swim in the pond in the off-season. Keep leads on near the nesting areas in spring.',
       distance: 2.8, duration: 65, difficulty: 'easy', terrain: 'mixed',
-      offLead: 'partial', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 143, source: 'curated'
     },
     {
@@ -2184,7 +2198,7 @@
       lat: 51.1057, lon: -0.7218,
       description: 'A dramatic heather-covered valley with a circular rim walk. One of the most dog-friendly National Trust sites in Surrey — extensive off-lead access across open heath.',
       distance: 3.6, duration: 85, difficulty: 'easy', terrain: 'mixed',
-      offLead: 'full', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.6, reviewCount: 209, source: 'curated'
     },
     {
@@ -2194,7 +2208,7 @@
       lat: 50.7677, lon: 0.1344,
       description: 'The most dramatic coastal walk in southern England. Chalk cliffs with big views over the Channel. The valley behind Cuckmere Haven is excellent off-lead territory.',
       distance: 6.2, duration: 165, difficulty: 'moderate', terrain: 'mixed',
-      offLead: 'partial', livestock: true, hasStiles: true, hasParking: true,
+      offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
       imageUrl: '', badge: 'Popular', rating: 4.9, reviewCount: 441, source: 'curated'
     },
     {
@@ -2204,7 +2218,7 @@
       lat: 50.9091, lon: -0.2260,
       description: 'The South Downs\' most iconic viewpoint. Wide open grassland with 360-degree views. Excellent off-lead running when sheep are not grazing the escarpment.',
       distance: 4.0, duration: 95, difficulty: 'moderate', terrain: 'paved',
-      offLead: 'partial', livestock: true, hasStiles: false, hasParking: true,
+      offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.5, reviewCount: 276, source: 'curated'
     },
     {
@@ -2214,7 +2228,7 @@
       lat: 51.8001, lon: -0.5686,
       description: 'Ancient beech woodland managed by the National Trust. The bluebell carpets in late April are exceptional. Well-marked trails with good off-lead access.',
       distance: 3.4, duration: 80, difficulty: 'easy', terrain: 'muddy',
-      offLead: 'full', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Hidden gem', rating: 4.7, reviewCount: 163, source: 'curated'
     },
     {
@@ -2224,7 +2238,7 @@
       lat: 51.5624, lon: -0.1637,
       description: 'London\'s best dog walk. Parliament Hill has wide views over the city, and the heath\'s mixed woodland and meadows offer miles of off-lead running.',
       distance: 3.8, duration: 90, difficulty: 'easy', terrain: 'mixed',
-      offLead: 'full', livestock: false, hasStiles: false, hasParking: false,
+      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: false,
       imageUrl: '', badge: 'Popular', rating: 4.8, reviewCount: 619, source: 'curated'
     },
     {
@@ -2234,7 +2248,7 @@
       lat: 51.4348, lon: -0.2319,
       description: 'Over 460 hectares of heathland, woodland and horse rides right on the edge of London. The windmill trail is a classic and dogs are welcome everywhere off-lead.',
       distance: 3.0, duration: 70, difficulty: 'easy', terrain: 'mixed',
-      offLead: 'full', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.5, reviewCount: 384, source: 'curated'
     },
     {
@@ -2244,7 +2258,7 @@
       lat: 51.2311, lon: -0.4649,
       description: 'Panoramic chalk grassland high above the Tillingbourne Valley. Short sharp climbs reward you with open views. The connecting Silent Pool trails are excellent for confident dogs.',
       distance: 3.5, duration: 80, difficulty: 'moderate', terrain: 'mixed',
-      offLead: 'partial', livestock: false, hasStiles: true, hasParking: true,
+      offLead: 'partial', enclosed: false, livestock: false, hasStiles: true, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.4, reviewCount: 118, source: 'curated'
     },
     {
@@ -2254,7 +2268,7 @@
       lat: 51.2334, lon: -0.3481,
       description: 'Woodland ridge walk above the Mole Valley with views over the North Downs vineyards. Quiet trails, well away from roads. Good all-year walk.',
       distance: 4.8, duration: 115, difficulty: 'moderate', terrain: 'muddy',
-      offLead: 'full', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'New', rating: 4.3, reviewCount: 42, source: 'curated'
     },
     {
@@ -2264,7 +2278,7 @@
       lat: 50.5788, lon: -3.7573,
       description: 'The iconic Dartmoor tor circuit. Open moorland with granite outcrops and sweeping views. Completely off-lead territory — but watch the weather, it changes fast on the moor.',
       distance: 5.5, duration: 140, difficulty: 'hard', terrain: 'rocky',
-      offLead: 'full', livestock: true, hasStiles: false, hasParking: true,
+      offLead: 'full', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Sniffout Pick', rating: 4.9, reviewCount: 287, source: 'curated'
     },
     {
@@ -2274,7 +2288,7 @@
       lat: 50.8270, lon: -1.6726,
       description: 'Ancient forest trails from a charming New Forest village. Ponies and cattle roam freely — leads required when near animals. The heathland sections are completely open.',
       distance: 3.8, duration: 95, difficulty: 'easy', terrain: 'mixed',
-      offLead: 'partial', livestock: true, hasStiles: false, hasParking: true,
+      offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.6, reviewCount: 201, source: 'curated'
     },
     {
@@ -2284,7 +2298,7 @@
       lat: 53.3512, lon: -1.6497,
       description: 'The Peak District\'s most famous gritstone edge. Exposed moorland walk with fantastic views over the Hope Valley. A big day out for an adventurous dog.',
       distance: 6.8, duration: 175, difficulty: 'hard', terrain: 'rocky',
-      offLead: 'full', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Popular', rating: 4.8, reviewCount: 334, source: 'curated'
     },
     {
@@ -2294,7 +2308,7 @@
       lat: 54.0699, lon: -2.1586,
       description: 'One of the Yorkshire Dales\' most dramatic landscapes. The limestone pavement above the cove is extraordinary. Good sections of open fell for confident off-lead dogs.',
       distance: 5.2, duration: 145, difficulty: 'hard', terrain: 'rocky',
-      offLead: 'partial', livestock: true, hasStiles: true, hasParking: true,
+      offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
       imageUrl: '', badge: 'Sniffout Pick', rating: 4.9, reviewCount: 198, source: 'curated'
     },
     {
@@ -2304,7 +2318,7 @@
       lat: 54.4555, lon: -3.0234,
       description: 'A gentle circuit around one of the Lake District\'s most beautiful lakes. Mostly flat, excellent underfoot, and manageable for dogs of all ages and sizes.',
       distance: 3.2, duration: 75, difficulty: 'easy', terrain: 'paved',
-      offLead: 'partial', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Popular', rating: 4.7, reviewCount: 421, source: 'curated'
     },
     {
@@ -2314,7 +2328,7 @@
       lat: 51.2843, lon: -0.2513,
       description: 'Open heathland managed by the National Trust, rarely busy even at weekends. Dogs can run freely across the heather. Connects to Nower Wood for a longer woodland loop.',
       distance: 2.6, duration: 60, difficulty: 'easy', terrain: 'mixed',
-      offLead: 'full', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 76, source: 'curated'
     },
     {
@@ -2324,7 +2338,7 @@
       lat: 51.2972, lon: -0.3760,
       description: 'A large ancient common with wetland, grassland and oak woodland. The boardwalk trail through the wet carr woodland is excellent year-round. Low foot traffic on weekdays.',
       distance: 3.1, duration: 72, difficulty: 'easy', terrain: 'mixed',
-      offLead: 'full', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.3, reviewCount: 94, source: 'curated'
     },
     {
@@ -2334,7 +2348,7 @@
       lat: 51.2131, lon: -0.5002,
       description: 'The Pilgrim\'s Way along the sandy Greensand ridge to a hilltop chapel. Excellent views across the Surrey Hills and largely off-lead access on the sandy woodland paths.',
       distance: 3.7, duration: 88, difficulty: 'moderate', terrain: 'muddy',
-      offLead: 'full', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 102, source: 'curated'
     },
     {
@@ -2344,7 +2358,7 @@
       lat: 51.1645, lon: -0.4391,
       description: 'The largest area of privately owned open access land in south-east England. Extensive heather and bilberry heath with sweeping ridge views. Exceptionally quiet.',
       distance: 4.3, duration: 105, difficulty: 'moderate', terrain: 'mixed',
-      offLead: 'full', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Hidden gem', rating: 4.7, reviewCount: 58, source: 'curated'
     },
     {
@@ -2354,7 +2368,7 @@
       lat: 51.3198, lon: -0.2762,
       description: 'Ancient common land with the medieval stew ponds at its heart. Woodpeckers, deer, and extensive off-lead access make this a genuine hidden gem close to London.',
       distance: 2.4, duration: 55, difficulty: 'easy', terrain: 'muddy',
-      offLead: 'full', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Hidden gem', rating: 4.4, reviewCount: 61, source: 'curated'
     },
     {
@@ -2364,7 +2378,7 @@
       lat: 51.2197, lon: -0.4268,
       description: 'Start from one of Surrey\'s prettiest villages and head into the National Trust woodland of Abinger Roughs. The Tillingbourne stream is a favourite with dogs in summer.',
       distance: 3.3, duration: 78, difficulty: 'easy', terrain: 'muddy',
-      offLead: 'partial', livestock: false, hasStiles: true, hasParking: true,
+      offLead: 'partial', enclosed: false, livestock: false, hasStiles: true, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.5, reviewCount: 127, source: 'curated'
     },
     {
@@ -2374,7 +2388,7 @@
       lat: 50.7733, lon: 0.1588,
       description: 'The meandering Cuckmere River through a nature reserve to the sea. A flat, easy walk with the chalk cliffs behind Cuckmere Haven as the backdrop. Good for nervous or older dogs.',
       distance: 4.6, duration: 110, difficulty: 'easy', terrain: 'paved',
-      offLead: 'partial', livestock: true, hasStiles: false, hasParking: true,
+      offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.6, reviewCount: 173, source: 'curated'
     },
     {
@@ -2384,7 +2398,7 @@
       lat: 50.8678, lon: -0.3782,
       description: 'An Iron Age hillfort on the South Downs with huge circular earthworks and big views to the sea. The wide rampart path is a perfect run for energetic dogs.',
       distance: 2.9, duration: 65, difficulty: 'easy', terrain: 'mixed',
-      offLead: 'full', livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'New', rating: 4.4, reviewCount: 39, source: 'curated'
     }
   ];
@@ -2565,6 +2579,7 @@
     var terrainTag = (walk.terrain && walk.terrain !== 'mixed')
       ? '<span class="trail-tag">' + walk.terrain.charAt(0).toUpperCase() + walk.terrain.slice(1) + '</span>'
       : '';
+    var enclosedTag = walk.enclosed ? '<span class="trail-tag">Enclosed</span>' : '';
     return (
       '<div class="trail-card" onclick="onWalkTap(\'' + walk.id + '\')">' +
         '<div class="trail-card-photo">' + badgeHTML + '</div>' +
@@ -2575,6 +2590,7 @@
           '<div class="trail-card-tags">' +
             '<span class="trail-tag">' + ol.text + '</span>' +
             terrainTag +
+            enclosedTag +
           '</div>' +
         '</div>' +
       '</div>'
@@ -2640,7 +2656,7 @@
 
     // Nearby Green Spaces section (populated async)
     html += '<div class="walks-section" id="gs-section">';
-    html += '<div class="walks-section-label">Nearby Green Spaces</div>';
+    html += '<div class="walks-section-label">Other nearby green spaces</div>';
     html += '<div id="gs-list"><p style="padding:0 16px 16px;font-size:14px;color:var(--ink-2)">Looking for nearby green spaces…</p></div>';
     html += '</div>';
 
@@ -2861,7 +2877,7 @@
       headers: {
         'Content-Type':     'application/json',
         'X-Goog-Api-Key':   PLACES_API_KEY,
-        'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.googleMapsUri,places.location'
+        'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.googleMapsUri,places.location,places.photos'
       },
       body: JSON.stringify(body)
     })
@@ -2876,6 +2892,9 @@
           openNow = p.regularOpeningHours.openNow === true ? true
                   : p.regularOpeningHours.openNow === false ? false : null;
         }
+        var photoUrl = (p.photos && p.photos.length > 0)
+          ? 'https://places.googleapis.com/v1/' + p.photos[0].name + '/media?maxWidthPx=400&key=' + PLACES_API_KEY
+          : null;
         return {
           id:          'gp-' + i,
           name:        (p.displayName && p.displayName.text) || 'Unknown',
@@ -2884,6 +2903,7 @@
           ratingCount: p.userRatingCount || 0,
           isOpen:      openNow,
           mapsUrl:     p.googleMapsUri || '',
+          photoUrl:    photoUrl,
           cat:         cat,
           lat:         plat,
           lon:         plon,
@@ -3013,16 +3033,23 @@
     if (venue.isOpen === true)  openHtml = '<span class="venue-open-gp open">Open now</span>';
     if (venue.isOpen === false) openHtml = '<span class="venue-open-gp closed">Closed</span>';
 
+    var photoHtml = venue.photoUrl
+      ? '<div class="venue-card-photo-gp"><img src="' + venue.photoUrl + '" alt="" loading="lazy"></div>'
+      : '<div class="venue-card-photo-gp"></div>';
+
     return (
       '<a class="venue-card-gp" href="' + (venue.mapsUrl || '#') + '" target="_blank" rel="noopener">' +
-        '<div class="venue-card-name-gp">' + escHtml(venue.name) + '</div>' +
-        '<div class="venue-card-meta-gp">' +
-          (distStr ? '<span>' + distStr + '</span>' : '') +
-          ratingHtml +
-          openHtml +
+        photoHtml +
+        '<div class="venue-card-body-gp">' +
+          '<div class="venue-card-name-gp">' + escHtml(venue.name) + '</div>' +
+          '<div class="venue-card-meta-gp">' +
+            (distStr ? '<span>' + distStr + '</span>' : '') +
+            ratingHtml +
+            openHtml +
+          '</div>' +
+          (venue.address ? '<div class="venue-address-gp">' + escHtml(venue.address) + '</div>' : '') +
+          '<div class="venue-maps-link-gp">View on Google Maps →</div>' +
         '</div>' +
-        (venue.address ? '<div class="venue-address-gp">' + escHtml(venue.address) + '</div>' : '') +
-        '<div class="venue-maps-link-gp">View on Google Maps →</div>' +
       '</a>'
     );
   }
@@ -3059,6 +3086,11 @@
     }).addTo(nearbyMap).bindPopup('You are here');
 
     updateMapMarkers();
+  }
+
+  // With Google Places each fetch is already category-specific, so filteredVenues returns all current venues
+  function filteredVenues() {
+    return nearbyVenues.filter(function(v) { return v.lat && v.lon; });
   }
 
   function updateMapMarkers() {

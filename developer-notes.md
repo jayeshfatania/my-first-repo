@@ -134,6 +134,49 @@ Added `--brand: #6EE7B7;` to the `body.night` CSS block. This overrides the defa
 
 ---
 
+## FIX 4.1 — Walks tab: "Other nearby green spaces" label
+
+Copy-only change. Secondary section label in `renderWalksTab` changed from `"Nearby Green Spaces"` to `"Other nearby green spaces"`. Lowercase start and the word "Other" communicates the supplementary nature of this section relative to Community Picks above.
+
+---
+
+## FIX 4.2 — Nearby tab: venue photos
+
+**Field mask:** Added `places.photos` to `X-Goog-FieldMask` header in `fetchNearbyPlaces`.
+
+**URL construction:** Photo URL built as `https://places.googleapis.com/v1/{photos[0].name}/media?maxWidthPx=400&key=...`. Stored as `photoUrl` on the venue object. `null` when no photos array is returned.
+
+**Card layout:** `renderVenueCard` updated with:
+- `.venue-card-photo-gp` div (140px height) at the top of the card — shows `<img loading="lazy">` when `photoUrl` is set, brand-green background when not.
+- `.venue-card-body-gp` wrapper around the existing name/meta/address/maps-link content with padding.
+- `.venue-card-gp` changed to `overflow: hidden` (was `padding: 14px 16px`) so the photo bleeds edge-to-edge to the card border radius.
+
+---
+
+## FIX 4.3 — Nearby tab: map view broken
+
+**Root cause:** `filteredVenues()` was called in `updateMapMarkers()` but was never defined after the Google Places rewrite replaced the Overpass-based venue filter. JavaScript threw a `ReferenceError` when the Map button was tapped.
+
+**Fix:** Added `filteredVenues()` function that returns `nearbyVenues` filtered to entries with valid lat/lon coordinates. With Google Places, each fetch is already category-specific so no additional category filtering is needed.
+
+**Coordinate field names:** The venue objects in `nearbyVenues` already stored `lat` and `lon` from `p.location.latitude` / `p.location.longitude` (set in `fetchNearbyPlaces`). `L.marker([v.lat, v.lon])` is therefore correct — no coordinate field name change was needed.
+
+**`invalidateSize` on map reveal:** Already handled: the map button handler calls `setTimeout(function() { initNearbyMap(lat, lon); }, 50)` which calls `nearbyMap.invalidateSize()` inside `initNearbyMap`. No change needed.
+
+---
+
+## FIX 4.4 — WALKS_DB: `enclosed` field added
+
+Added `enclosed: boolean` to all 25 WALKS_DB entries, positioned between `offLead` and `livestock`.
+
+**Values assigned:**
+- `enclosed: true` — Richmond Park only. Richmond Park has a perimeter wall/fence with gated entries, making it a genuinely enclosed deer park where dogs cannot exit to a road without going through a gate.
+- `enclosed: false` — all other 24 entries. All remaining walks are open countryside, moorland, heathland, coastal paths, or commons with open boundaries.
+
+**UI:** `renderTrailCard` updated to render `<span class="trail-tag">Enclosed</span>` chip when `walk.enclosed === true`. No chip rendered when `false`.
+
+---
+
 ## Known Limitations
 
 - **Green spaces via Overpass vs Google Places:** The original `loadNearbyGreenSpaces()` uses Google Places which factors in relevance and reviews. Overpass returns raw OSM data without quality signals. Some results may be small or unnamed green spaces. The `["name"]` tag filter suppresses the worst of these. (This limitation only applies to the Walks tab green spaces supplement — the Nearby tab now uses Google Places.)
