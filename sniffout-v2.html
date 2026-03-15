@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Discover 50+ handpicked UK dog walks with live weather checks, paw safety alerts and nearby dog-friendly spots.">
+  <meta name="description" content="Discover 25 handpicked UK dog walks with live weather checks, paw safety alerts and nearby dog-friendly spots.">
   <title>Sniffout — Dog walks &amp; weather for the UK</title>
 
   <!-- PWA -->
@@ -127,8 +127,12 @@
     .section-link { font-size: 14px; font-weight: 500; color: var(--brand); }
 
     /* ─── Tab title bar ─── */
-    .tab-title-bar { padding: 12px 16px 8px; }
+    .tab-title-bar { padding: 12px 16px 8px; display: flex; align-items: center; justify-content: space-between; }
     .tab-title { font-size: 22px; font-weight: 700; color: var(--ink); }
+    .filter-btn { background: none; border: none; padding: 4px 2px; cursor: pointer; color: var(--ink-2); display: flex; align-items: center; flex-shrink: 0; }
+    .filter-btn:active { color: var(--brand); }
+    .radius-picker { display: none; gap: 8px; padding: 4px 16px 10px; }
+    .radius-picker.open { display: flex; }
     .tab-subtitle {
       display: flex;
       align-items: center;
@@ -180,35 +184,42 @@
       font-size: 14px;
       color: var(--ink-2);
       line-height: 1.55;
-      margin-bottom: 28px;
+      margin-bottom: 20px;
+    }
+    .cta-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 16px 16px;
+      margin-bottom: 20px;
     }
     .cta-primary {
       width: 100%;
-      height: 52px;
+      height: 56px;
       background: var(--brand);
       color: #fff;
       border: none;
       border-radius: 12px;
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       transition: opacity 150ms, transform 150ms ease-out;
     }
     .cta-primary:active { opacity: 0.88; transform: scale(0.98); }
     .cta-secondary {
       display: block;
       text-align: center;
-      font-size: 13px;
+      font-size: 14px;
       color: var(--ink-2);
       text-decoration: underline;
       text-underline-offset: 3px;
       cursor: pointer;
-      margin-bottom: 16px;
+      margin-bottom: 0;
     }
     .search-expand {
       margin-top: 10px;
@@ -258,6 +269,44 @@
       display: none;
     }
     .search-error.visible { display: block; }
+
+    /* Recent search pills */
+    #recent-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    #recent-pills:empty { display: none; }
+    .recent-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 99px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: border-color 120ms, background 120ms;
+      white-space: nowrap;
+    }
+    .recent-pill:active { background: var(--bg); }
+    .recent-pill.starred {
+      border-color: var(--brand);
+      background: rgba(30,77,58,0.06);
+      color: var(--brand);
+    }
+    .recent-pill .pill-star {
+      font-size: 11px;
+      opacity: 0.5;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+    }
+    .recent-pill.starred .pill-star { opacity: 1; }
 
     .preview-label {
       font-size: 11px;
@@ -979,6 +1028,178 @@
       font-size: 13px;
       color: var(--red);
     }
+
+    /* ── Nearby venue cards (Google Places) ── */
+    .venue-card-gp {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin: 0 16px 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .venue-card-gp:active { opacity: 0.8; }
+    .venue-card-name-gp { font-size: 15px; font-weight: 600; color: var(--ink); }
+    .venue-card-meta-gp {
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+      font-size: 13px; color: var(--ink-2); margin-top: 2px;
+    }
+    .venue-rating-gp { color: #D97706; font-weight: 500; }
+    .venue-open-gp  { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 99px; }
+    .venue-open-gp.open   { background: rgba(30,77,58,0.1); color: var(--brand); }
+    .venue-open-gp.closed { background: rgba(220,38,38,0.08); color: var(--red); }
+    .venue-address-gp { font-size: 12px; color: var(--ink-2); }
+    .venue-maps-link-gp { font-size: 13px; color: var(--brand); font-weight: 500; margin-top: 4px; }
+    .venue-cat-tip {
+      margin: 0 16px 12px;
+      background: rgba(30,77,58,0.05);
+      border: 1px solid rgba(30,77,58,0.12);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--ink-2);
+      line-height: 1.5;
+    }
+    .nearby-disclaimer {
+      margin: 16px 16px 24px;
+      font-size: 12px;
+      color: var(--ink-2);
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    /* ── Walks tab — sections layout ── */
+    .walks-location-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px 8px;
+    }
+    .walks-location-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink-2);
+    }
+    .walks-section { padding: 0 0 8px; }
+    .walks-section-label {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      padding: 12px 16px 10px;
+    }
+    .walks-section-label-sm {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink-2);
+      padding: 4px 16px 8px;
+    }
+    .trail-carousel {
+      display: flex;
+      gap: 12px;
+      padding: 0 16px 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .trail-carousel::-webkit-scrollbar { display: none; }
+    .trail-card {
+      flex-shrink: 0;
+      width: 200px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .trail-card-photo {
+      height: 120px;
+      background: var(--brand);
+      position: relative;
+    }
+    .trail-card-badge {
+      position: absolute;
+      bottom: 8px;
+      left: 10px;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 99px;
+      padding: 3px 8px;
+    }
+    .trail-card-body { padding: 10px 12px 12px; }
+    .trail-card-name { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; line-height: 1.3; }
+    .trail-card-rating { font-size: 12px; color: #D97706; font-weight: 500; margin-bottom: 4px; }
+    .trail-card-meta { font-size: 12px; color: var(--ink-2); margin-bottom: 6px; }
+    .trail-card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .trail-tag {
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 99px;
+      padding: 2px 8px;
+      border: 1.5px solid var(--chip-off);
+      color: var(--ink-2);
+      background: var(--surface);
+    }
+    .trail-list { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+    .gs-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 0 16px 8px;
+    }
+    .gs-card-left { flex: 1; min-width: 0; }
+    .gs-card-name { font-size: 14px; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .gs-card-meta { font-size: 12px; color: var(--ink-2); margin-top: 2px; }
+    .gs-nearby-badge {
+      font-size: 11px; font-weight: 500;
+      border-radius: 99px; padding: 3px 8px;
+      border: 1.5px solid var(--chip-off); color: var(--ink-2);
+      flex-shrink: 0; margin-left: 10px;
+    }
+
+    /* ── Info modal (weather explainer) ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1000;
+      display: flex; align-items: flex-end;
+    }
+    .modal-sheet {
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 16px;
+    }
+    .modal-title { font-size: 17px; font-weight: 600; color: var(--ink); }
+    .modal-close {
+      background: none; border: none; font-size: 20px;
+      color: var(--ink-2); cursor: pointer; padding: 4px; line-height: 1;
+    }
+    .modal-body p { font-size: 14px; color: var(--ink-2); line-height: 1.6; margin-bottom: 12px; }
+    .modal-body p:last-child { margin-bottom: 0; }
+    .weather-info-btn {
+      position: absolute; top: 12px; right: 12px;
+      background: rgba(255,255,255,0.2); border: none;
+      border-radius: 50%; width: 28px; height: 28px;
+      color: white; font-size: 15px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .weather-hero { position: relative; }
   </style>
 </head>
 <body>
@@ -1002,16 +1223,21 @@
           <div class="hero-section">
             <h1 class="hero-headline">Discover great walks</h1>
             <p class="hero-subline">Handpicked walks. Live conditions.</p>
-            <p class="hero-body">50+ handpicked UK walks with terrain, off-lead and livestock info — plus live weather checks and nearby dog-friendly spots.</p>
+            <p class="hero-body">25 handpicked UK walks with terrain, off-lead and livestock info — plus live weather checks and nearby dog-friendly spots.</p>
 
-            <button class="cta-primary" id="btn-use-location">
-              <svg width="18" height="18" viewBox="0 0 18 22" fill="white">
-                <path d="M9 0C5.13 0 2 3.13 2 7c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 116.5 7 2.5 2.5 0 019 9.5z"/>
-              </svg>
-              Use my location
-            </button>
+            <div class="cta-block">
+              <button class="cta-primary" id="btn-use-location">
+                <svg width="18" height="18" viewBox="0 0 18 22" fill="white">
+                  <path d="M9 0C5.13 0 2 3.13 2 7c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 116.5 7 2.5 2.5 0 019 9.5z"/>
+                </svg>
+                Find walks near me
+              </button>
 
-            <span class="cta-secondary" id="btn-toggle-search">or enter a place or postcode</span>
+              <span class="cta-secondary" id="btn-toggle-search">Or enter a location →</span>
+            </div>
+
+            <!-- Recent search pills (populated by JS) -->
+            <div id="recent-pills"></div>
 
             <div class="search-expand" id="search-expand">
               <div class="search-input-row">
@@ -1019,7 +1245,7 @@
                   <circle cx="6.5" cy="6.5" r="5"/>
                   <path d="M10.5 10.5l3.5 3.5"/>
                 </svg>
-                <input type="text" id="search-input" placeholder="Dorking, Richmond, SW11…" autocomplete="off">
+                <input type="text" id="search-input" placeholder="Enter place name or postcode" autocomplete="off">
                 <button class="search-submit" id="btn-search-submit">
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
                     <path d="M2 7h10M8 3l4 4-4 4"/>
@@ -1052,14 +1278,14 @@
           <div class="weather-preview-card">
             <div class="weather-preview-icon">⛅</div>
             <div>
-              <div class="weather-preview-title">Live weather + paw safety</div>
-              <div class="weather-preview-sub">Know before you go</div>
+              <div class="weather-preview-title">Live weather</div>
+              <div class="weather-preview-sub">Safety tips when conditions are extreme</div>
             </div>
           </div>
 
           <!-- Social proof -->
           <div class="social-proof">
-            50+ handpicked UK walks&nbsp;·&nbsp;Works offline&nbsp;·&nbsp;Dog-specific routes
+            25 handpicked UK walks&nbsp;·&nbsp;Works offline&nbsp;·&nbsp;Dog-specific routes
           </div>
 
         </div><!-- /state-a-scroll -->
@@ -1099,15 +1325,17 @@
     <div id="tab-walks" class="tab-panel">
       <div class="tab-title-bar">
         <h2 class="tab-title">Walks</h2>
+        <button class="filter-btn" id="walks-radius-btn" aria-label="Filter by radius">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4-2V12L3 4z"/></svg>
+        </button>
       </div>
-      <div class="filter-row" id="filter-row">
-        <button class="chip active" data-filter="all">All walks</button>
-        <button class="chip" data-filter="off-lead">Off-lead</button>
-        <button class="chip" data-filter="easy">Easy</button>
-        <button class="chip" data-filter="no-livestock">No livestock</button>
-        <button class="chip" data-filter="paved">Paved</button>
+      <div class="radius-picker" id="walks-radius-picker">
+        <button class="chip radius-chip" data-km="1">1 km</button>
+        <button class="chip radius-chip" data-km="3">3 km</button>
+        <button class="chip radius-chip" data-km="5">5 km</button>
+        <button class="chip radius-chip" data-km="10">10 km</button>
       </div>
-      <div id="walks-list">
+      <div id="walks-content">
         <div class="empty-state">Set your location on the Today tab to see nearby walks.</div>
       </div>
     </div><!-- /tab-walks -->
@@ -1115,8 +1343,19 @@
     <!-- ══════════ NEARBY TAB ══════════ -->
     <div id="tab-nearby" class="tab-panel">
       <div class="tab-title-bar">
-        <h2 class="tab-title">Nearby</h2>
-        <div class="tab-subtitle" id="nearby-location-sub"></div>
+        <div>
+          <h2 class="tab-title">Nearby</h2>
+          <div class="tab-subtitle" id="nearby-location-sub"></div>
+        </div>
+        <button class="filter-btn" id="nearby-radius-btn" aria-label="Filter by radius">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4-2V12L3 4z"/></svg>
+        </button>
+      </div>
+      <div class="radius-picker" id="nearby-radius-picker">
+        <button class="chip radius-chip" data-km="1">1 km</button>
+        <button class="chip radius-chip" data-km="3">3 km</button>
+        <button class="chip radius-chip" data-km="5">5 km</button>
+        <button class="chip radius-chip" data-km="10">10 km</button>
       </div>
       <div id="nearby-content">
         <div class="empty-state">Set your location on the Today tab to find dog-friendly places near you.</div>
@@ -1140,7 +1379,7 @@
           <div class="stat-label">Explored</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-value" id="stat-walks">50+</div>
+          <div class="stat-value" id="stat-walks">25</div>
           <div class="stat-label">Walks available</div>
         </div>
       </div>
@@ -1161,10 +1400,6 @@
           <div class="settings-item" id="setting-name">
             <span>Display name</span>
             <span class="settings-item-right" id="display-name-val">—</span>
-          </div>
-          <div class="settings-item" id="setting-radius">
-            <span>Search radius</span>
-            <span class="settings-item-right" id="radius-val">10 miles</span>
           </div>
           <div class="settings-item" id="setting-dark">
             <span>Dark mode</span>
@@ -1414,7 +1649,7 @@
     var errEl = document.getElementById('search-error');
     if (errEl) errEl.classList.remove('visible');
 
-    var postcodeRe = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i;
+    var postcodeRe = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
     if (postcodeRe.test(query.trim())) {
       fetch('https://api.postcodes.io/postcodes/' + encodeURIComponent(query.trim().replace(/\s/g, '')))
         .then(function(r) { return r.json(); })
@@ -1436,7 +1671,7 @@
 
   function geocodeByName(query) {
     var errEl = document.getElementById('search-error');
-    fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(query) + '&countrycodes=gb&format=json&limit=1', {
+    fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(query) + '&countrycodes=gb&format=json&limit=1&addressdetails=1&featuretype=settlement', {
       headers: { 'Accept-Language': 'en' }
     })
       .then(function(r) { return r.json(); })
@@ -1677,18 +1912,13 @@
   /* ─── Paw safety (Section 9) ─── */
 
   function getPawSafety(temp) {
-    var t = Math.round(temp);
     if (temp > 25) {
       return { state: 'danger', title: '🐾 Too hot for paws', body: 'Press your hand on the pavement for 7 seconds — if you can\'t hold it, it\'s too hot for your dog\'s paws.' };
     }
-    if (temp >= 20) {
-      return { state: 'caution', title: '🐾 Paw check needed', body: 'At ' + t + '°C, pavement can get warm. Do the 7-second test before setting off.' };
+    if (temp <= 0) {
+      return { state: 'caution', title: '🐾 Paw check needed', body: 'Ice and grit on paths can hurt paws. Rinse and check your dog\'s paws after the walk.' };
     }
-    return {
-      state: 'safe',
-      title: '🐾 Paws safe at ' + t + '°C',
-      body: 'At ' + t + '°C, pavement is fine. If it gets above 25°C, press your hand on the tarmac — if you can\'t hold it for 7 seconds, it\'s too hot for your dog\'s paws.'
-    };
+    return null;
   }
 
   /* ─── Rain summary (Section 9) ─── */
@@ -1756,6 +1986,7 @@
 
     content.innerHTML =
       '<div class="weather-hero" onclick="switchTab(\'weather\')">' +
+        '<button class="weather-info-btn" onclick="event.stopPropagation();openWeatherModal()" aria-label="About weather features">ⓘ</button>' +
         '<div class="weather-hero-top">' +
           '<div>' +
             '<div class="weather-hero-temp">' + temp + '°C</div>' +
@@ -1793,15 +2024,18 @@
       hazardHTML += '<div class="hazard-card" style="margin:0 16px 8px"><div class="hazard-title">' + hz.title + '</div><div class="hazard-body">' + hz.body + '</div></div>';
     });
 
-    var pawClass = paw.state === 'danger' ? 'danger' : (paw.state === 'caution' ? 'caution' : '');
-    var pawHTML =
-      '<div class="paw-safety ' + pawClass + '" style="margin:0 16px 12px">' +
-        '<div style="font-size:20px;flex-shrink:0;margin-top:1px;">🐾</div>' +
-        '<div>' +
-          '<div class="paw-status">' + paw.title + '</div>' +
-          '<div class="paw-body">' + paw.body + '</div>' +
-        '</div>' +
-      '</div>';
+    var pawHTML = '';
+    if (paw) {
+      var pawClass = paw.state === 'danger' ? 'danger' : 'caution';
+      pawHTML =
+        '<div class="paw-safety ' + pawClass + '" style="margin:0 16px 12px">' +
+          '<div style="font-size:20px;flex-shrink:0;margin-top:1px;">🐾</div>' +
+          '<div>' +
+            '<div class="paw-status">' + paw.title + '</div>' +
+            '<div class="paw-body">' + paw.body + '</div>' +
+          '</div>' +
+        '</div>';
+    }
 
     var rainSum    = getRainSummary(hourly);
     var bestWindow = getBestWindow(hourly);
@@ -2233,8 +2467,11 @@
     var photoInner = walk.imageUrl
       ? '<img src="' + walk.imageUrl + '" alt="' + walk.name + '" loading="lazy">'
       : '';
-    var badgeHTML = walk.badge
-      ? '<div class="walk-badge">' + walk.badge + '</div>'
+    var badgeText  = walk.badge || (walk.source === 'places' ? 'Nearby' : '');
+    var badgeHTML  = badgeText ? '<div class="walk-badge">' + badgeText + '</div>' : '';
+    var ratingHTML = walk.reviewCount > 0
+      ? '<div class="walk-rating"><span class="walk-rating-star">★</span>' +
+          walk.rating.toFixed(1) + ' <span>(' + walk.reviewCount + ')</span></div>'
       : '';
     var livestockHTML = walk.livestock
       ? '<span class="walk-tag">Livestock</span>'
@@ -2254,10 +2491,7 @@
         '</div>' +
         '<div class="walk-body">' +
           '<div class="walk-name">' + walk.name + '</div>' +
-          '<div class="walk-rating">' +
-            '<span class="walk-rating-star">★</span>' +
-            walk.rating.toFixed(1) + ' <span>(' + walk.reviewCount + ')</span>' +
-          '</div>' +
+          ratingHTML +
           '<div class="walk-meta">' +
             '<span class="walk-meta-item">' + walk.distance.toFixed(1) + ' mi</span>' +
             '<span class="walk-meta-item">' + walk.duration + ' min</span>' +
@@ -2321,25 +2555,169 @@
 
   /* ─── Render Walks tab ─── */
 
+  function renderTrailCard(walk) {
+    var badgeHTML = walk.badge ? '<div class="trail-card-badge">' + walk.badge + '</div>' : '';
+    var ratingHTML = walk.reviewCount > 0
+      ? '<div class="trail-card-rating">★ ' + walk.rating.toFixed(1) +
+          ' <span style="color:var(--ink-2);font-weight:400">(' + walk.reviewCount + ')</span></div>'
+      : '';
+    var ol = offLeadLabel(walk.offLead);
+    var terrainTag = (walk.terrain && walk.terrain !== 'mixed')
+      ? '<span class="trail-tag">' + walk.terrain.charAt(0).toUpperCase() + walk.terrain.slice(1) + '</span>'
+      : '';
+    return (
+      '<div class="trail-card" onclick="onWalkTap(\'' + walk.id + '\')">' +
+        '<div class="trail-card-photo">' + badgeHTML + '</div>' +
+        '<div class="trail-card-body">' +
+          '<div class="trail-card-name">' + walk.name + '</div>' +
+          ratingHTML +
+          '<div class="trail-card-meta">' + walk.duration + ' min · ' + walk.distance.toFixed(1) + ' mi</div>' +
+          '<div class="trail-card-tags">' +
+            '<span class="trail-tag">' + ol.text + '</span>' +
+            terrainTag +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function renderGreenSpaceCard(gs, refLat, refLon) {
+    var distKm = haversineKm(refLat, refLon, gs.lat, gs.lon);
+    var distText = distKm < 1
+      ? Math.round(distKm * 1000) + 'm away'
+      : distKm.toFixed(1) + ' km away';
+    return (
+      '<div class="gs-card">' +
+        '<div class="gs-card-left">' +
+          '<div class="gs-card-name">' + gs.name + '</div>' +
+          '<div class="gs-card-meta">' + distText + '</div>' +
+        '</div>' +
+        '<span class="gs-nearby-badge">Nearby</span>' +
+      '</div>'
+    );
+  }
+
   function renderWalksTab(lat, lon) {
-    var list = document.getElementById('walks-list');
-    if (!list) return;
+    var el = document.getElementById('walks-content');
+    if (!el) return;
 
-    var walks = WALKS_DB.slice();
-
-    // Sort by distance from user if coords available
-    if (lat && lon) {
-      walks.sort(function(a, b) {
-        return haversineMiles(lat, lon, a.lat, a.lon) - haversineMiles(lat, lon, b.lat, b.lon);
-      });
-    }
-
-    if (walks.length === 0) {
-      list.innerHTML = '<div class="walks-empty">Nothing matching those filters right now. <a onclick="renderWalksTab()">Show all walks →</a></div>';
+    if (!lat || !lon) {
+      el.innerHTML = '<div class="empty-state">Set your location on the Today tab to see nearby walks.</div>';
       return;
     }
 
-    list.innerHTML = walks.map(renderWalkCard).join('');
+    // Read location name from session (saved before this function is called)
+    var locationName = '';
+    try {
+      var sess = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}');
+      locationName = (sess && sess.location) ? sess.location : '';
+    } catch(e) {}
+
+    var radiusKm = getSavedRadius();
+    var locationCtx = locationName
+      ? 'Within ' + radiusKm + ' km of ' + locationName
+      : 'Within ' + radiusKm + ' km';
+
+    // Filter and sort curated walks by proximity
+    var curated = WALKS_DB.slice().filter(function(w) {
+      return haversineKm(lat, lon, w.lat, w.lon) <= radiusKm;
+    }).sort(function(a, b) {
+      return haversineKm(lat, lon, a.lat, a.lon) - haversineKm(lat, lon, b.lat, b.lon);
+    });
+
+    // Location context header
+    var html = '<div class="walks-location-header"><div class="walks-location-text">' + locationCtx + '</div></div>';
+
+    // Community Picks section
+    html += '<div class="walks-section">';
+    html += '<div class="walks-section-label">Community Picks</div>';
+    if (curated.length) {
+      html += '<div class="trail-carousel">' + curated.map(renderTrailCard).join('') + '</div>';
+    } else {
+      html += '<div style="padding:0 16px 16px"><p style="font-size:14px;color:var(--ink-2)">No community trails here yet — be the first to add one!</p></div>';
+    }
+    html += '</div>';
+
+    // Nearby Green Spaces section (populated async)
+    html += '<div class="walks-section" id="gs-section">';
+    html += '<div class="walks-section-label">Nearby Green Spaces</div>';
+    html += '<div id="gs-list"><p style="padding:0 16px 16px;font-size:14px;color:var(--ink-2)">Looking for nearby green spaces…</p></div>';
+    html += '</div>';
+
+    el.innerHTML = html;
+
+    // Fetch and append green spaces below community trails
+    fetchGreenSpacesForWalks(lat, lon, radiusKm * 1000, function(greenSpaces) {
+      var filtered = greenSpaces.filter(function(gs) {
+        return !curated.some(function(c) {
+          return haversineKm(gs.lat, gs.lon, c.lat, c.lon) < 0.3;
+        });
+      });
+      var gsList = document.getElementById('gs-list');
+      var gsSection = document.getElementById('gs-section');
+      if (!gsList) return;
+      if (filtered.length) {
+        gsList.innerHTML = filtered.map(function(gs) {
+          return renderGreenSpaceCard(gs, lat, lon);
+        }).join('');
+      } else if (gsSection) {
+        gsSection.style.display = 'none';
+      }
+    });
+  }
+
+  /* ─── Fetch green spaces for Walks tab supplement ─── */
+
+  var WALKS_GS_CACHE_KEY = 'sniffout_walks_gs';
+
+  function fetchGreenSpacesForWalks(lat, lon, radiusM, cb) {
+    var cacheKey = Math.round(lat * 100) / 100 + ',' + Math.round(lon * 100) / 100 + ',' + radiusM;
+    try {
+      var cached = JSON.parse(sessionStorage.getItem(WALKS_GS_CACHE_KEY));
+      if (cached && cached.key === cacheKey) { cb(cached.results); return; }
+    } catch(e) {}
+
+    var q = '[out:json][timeout:12];('
+      + 'node["leisure"~"park|nature_reserve|common"]["name"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+      + 'way["leisure"~"park|nature_reserve|common"]["name"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+      + ');out center body;';
+
+    fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: q })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var results = (data.elements || []).map(function(el) {
+          var elLat = el.lat !== undefined ? el.lat : (el.center ? el.center.lat : null);
+          var elLon = el.lon !== undefined ? el.lon : (el.center ? el.center.lon : null);
+          if (!elLat || !elLon) return null;
+          var tags = el.tags || {};
+          var name = tags.name;
+          if (!name) return null;
+          var distMi = haversineMiles(lat, lon, elLat, elLon);
+          return {
+            id: 'osm-' + el.id,
+            name: name,
+            location: '',
+            lat: elLat, lon: elLon,
+            description: 'A local green space near your area.',
+            distance: Math.round(distMi * 10) / 10 || 0.5,
+            duration: Math.round((distMi || 0.5) * 30),
+            difficulty: 'easy', terrain: 'mixed',
+            offLead: 'partial', livestock: false,
+            hasStiles: false, hasParking: false,
+            imageUrl: '', badge: undefined,
+            rating: 0, reviewCount: 0,
+            source: 'places'
+          };
+        }).filter(Boolean);
+
+        // Sort by distance, cap at 10
+        results.sort(function(a, b) { return a.distance - b.distance; });
+        results = results.slice(0, 10);
+
+        try { sessionStorage.setItem(WALKS_GS_CACHE_KEY, JSON.stringify({ key: cacheKey, results: results })); } catch(e) {}
+        cb(results);
+      })
+      .catch(function() { cb([]); });
   }
 
   /* ─── Render portrait cards on Today State B ─── */
@@ -2412,103 +2790,111 @@
      PHASE E — Nearby / Places tab
   ═══════════════════════════════ */
 
-  var nearbyMap      = null;
-  var nearbyVenues   = [];
-  var nearbyUserLat  = null;
-  var nearbyUserLon  = null;
-  var nearbyCategory = 'all';
-  var nearbyView     = 'list'; // 'list' | 'map'
+  var nearbyMap          = null;
+  var nearbyVenues       = [];
+  var nearbyUserLat      = null;
+  var nearbyUserLon      = null;
+  var nearbyLocationName = '';
+  var nearbyCategory     = 'pub'; // default: pubs (matches original POC default)
+  var nearbyView         = 'list';
+  var NEARBY_GOOGLE_CACHE = {};
 
-  /* ─── Category config ─── */
+  /* ─── Google Places API key ─── */
+  var PLACES_API_KEY = 'AIzaSyCXKhkeAN3HdhmCc7_czGo3QzVIT34caT4';
 
+  /* ─── Category config — mirrors dog-walk-dashboard.html CAT_CONFIG ─── */
   var CATEGORIES = [
-    { id: 'all',   label: 'All places' },
     { id: 'pub',   label: 'Pubs' },
     { id: 'cafe',  label: 'Cafés' },
-    { id: 'park',  label: 'Dog parks' },
-    { id: 'vet',   label: 'Vets' },
-    { id: 'shop',  label: 'Pet shops' }
+    { id: 'park',  label: 'Parks' },
+    { id: 'beach', label: 'Beaches' },
+    { id: 'shop',  label: 'Pet Shops' },
+    { id: 'vet',   label: 'Vets' }
   ];
 
   var CATEGORY_ICON = {
-    pub:  '🍺',
-    cafe: '☕',
-    park: '🌳',
-    vet:  '🏥',
-    shop: '🛍️',
+    pub:   '🍺',
+    cafe:  '☕',
+    park:  '🌳',
+    beach: '🏖️',
+    vet:   '🏥',
+    shop:  '🛍️',
     other: '📍'
   };
 
   var CATEGORY_LABEL = {
-    pub:  'Dog-friendly pub',
-    cafe: 'Dog-friendly café',
-    park: 'Dog park',
-    vet:  'Veterinary',
-    shop: 'Pet shop',
+    pub:   'Dog-friendly pub',
+    cafe:  'Dog-friendly café',
+    park:  'Dog park',
+    beach: 'Dog-friendly beach',
+    vet:   'Veterinary',
+    shop:  'Pet shop',
     other: 'Place'
   };
 
-  /* ─── Overpass fetch (nodes only — faster; dog!="no" — more results) ─── */
+  /* ─── Per-category Google Places queries + tips ─── */
+  var CAT_GOOGLE_CONFIG = {
+    pub:   { query: 'dog friendly pubs',              tip: 'Most UK pubs welcome dogs in the bar area. A water bowl outside is usually a good sign.' },
+    cafe:  { query: 'dog friendly cafes',             tip: 'Many cafés welcome dogs on terraces or in dedicated areas. Call ahead — policies vary.' },
+    park:  { query: 'dog parks and nature reserves',  tip: 'Parks and nature reserves are great for off-lead time. Check for seasonal restrictions before you go.' },
+    beach: { query: 'dog friendly beaches',           tip: 'Many UK beaches have seasonal dog restrictions — often Oct–Apr only. Always check local signs.' },
+    shop:  { query: 'pet shops',                      tip: 'Stock up on treats, leads, and poo bags before you head out.' },
+    vet:   { query: 'veterinary clinics',             tip: 'Good to know your nearest vet before heading out, especially on longer walks.' }
+  };
 
-  var NEARBY_CACHE_KEY = 'sniffout_nearby_cache';
+  /* ─── Google Places text-search fetch ─── */
+  function fetchNearbyPlaces(cat, lat, lon, locationName, cb) {
+    var radius  = getSavedRadius() * 1000; // km → metres (used as location bias, not hard filter)
+    var cacheKey = cat + '|' + Math.round(lat * 100) / 100 + '|' + Math.round(lon * 100) / 100 + '|' + radius;
+    if (NEARBY_GOOGLE_CACHE[cacheKey]) { cb(NEARBY_GOOGLE_CACHE[cacheKey]); return; }
 
-  function fetchNearbyPlaces(lat, lon, cb) {
-    // Cache key: round to ~1km grid so nearby refreshes reuse data
-    var cacheKey = Math.round(lat * 100) / 100 + ',' + Math.round(lon * 100) / 100;
-    try {
-      var cached = JSON.parse(sessionStorage.getItem(NEARBY_CACHE_KEY));
-      if (cached && cached.key === cacheKey) { cb(cached.venues); return; }
-    } catch(e) {}
+    var cfg  = CAT_GOOGLE_CONFIG[cat] || CAT_GOOGLE_CONFIG.pub;
+    var body = {
+      textQuery:     cfg.query + ' near ' + locationName,
+      locationBias:  { circle: { center: { latitude: lat, longitude: lon }, radius: radius } },
+      maxResultCount: 8,
+      languageCode:  'en-GB'
+    };
 
-    var r = 2000; // 2km — tighter radius loads faster
-    var q = '[out:json][timeout:10];('
-      + 'node["amenity"~"pub|bar"]["dog"!="no"](around:' + r + ',' + lat + ',' + lon + ');'
-      + 'node["amenity"~"restaurant|cafe"]["dog"!="no"](around:' + r + ',' + lat + ',' + lon + ');'
-      + 'node["leisure"~"dog_park|park|nature_reserve|common"](around:' + r + ',' + lat + ',' + lon + ');'
-      + 'node["amenity"="veterinary"](around:' + r + ',' + lat + ',' + lon + ');'
-      + 'node["shop"="pet"](around:' + r + ',' + lat + ',' + lon + ');'
-      + ');out body;';
-
-    fetch('https://overpass-api.de/api/interpreter', {
+    fetch('https://places.googleapis.com/v1/places:searchText', {
       method: 'POST',
-      body: q
+      headers: {
+        'Content-Type':     'application/json',
+        'X-Goog-Api-Key':   PLACES_API_KEY,
+        'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.googleMapsUri,places.location'
+      },
+      body: JSON.stringify(body)
     })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        var venues = normaliseVenues(data.elements, lat, lon);
-        try { sessionStorage.setItem(NEARBY_CACHE_KEY, JSON.stringify({ key: cacheKey, venues: venues })); } catch(e) {}
-        cb(venues);
-      })
-      .catch(function() { cb([]); });
-  }
-
-  function normaliseVenues(elements, userLat, userLon) {
-    return elements.map(function(el) {
-      var lat = el.lat !== undefined ? el.lat : (el.center ? el.center.lat : null);
-      var lon = el.lon !== undefined ? el.lon : (el.center ? el.center.lon : null);
-      if (!lat || !lon) return null;
-
-      var tags = el.tags || {};
-      var cat  = resolveCategory(tags);
-      var name = tags.name || CATEGORY_LABEL[cat];
-      var dist = haversineKm(userLat, userLon, lat, lon);
-
-      return { id: el.id, name: name, cat: cat, lat: lat, lon: lon, dist: dist, tags: tags };
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var places = (data.places || []).map(function(p, i) {
+        var plat   = p.location ? p.location.latitude  : null;
+        var plon   = p.location ? p.location.longitude : null;
+        var distKm = (plat && plon) ? haversineKm(lat, lon, plat, plon) : null;
+        var openNow = null;
+        if (p.regularOpeningHours) {
+          openNow = p.regularOpeningHours.openNow === true ? true
+                  : p.regularOpeningHours.openNow === false ? false : null;
+        }
+        return {
+          id:          'gp-' + i,
+          name:        (p.displayName && p.displayName.text) || 'Unknown',
+          address:     (p.formattedAddress || '').split(',').slice(0, 2).join(', ').trim(),
+          rating:      p.rating    || null,
+          ratingCount: p.userRatingCount || 0,
+          isOpen:      openNow,
+          mapsUrl:     p.googleMapsUri || '',
+          cat:         cat,
+          lat:         plat,
+          lon:         plon,
+          dist:        distKm
+        };
+      });
+      places.sort(function(a, b) { return (a.dist || 999) - (b.dist || 999); });
+      NEARBY_GOOGLE_CACHE[cacheKey] = places;
+      cb(places);
     })
-    .filter(Boolean)
-    .sort(function(a, b) { return a.dist - b.dist; });
-  }
-
-  function resolveCategory(tags) {
-    var amenity = tags.amenity || '';
-    var leisure = tags.leisure || '';
-    var shop    = tags.shop    || '';
-    if (amenity === 'veterinary')                              return 'vet';
-    if (shop === 'pet')                                        return 'shop';
-    if (/dog_park|park|nature_reserve|common/.test(leisure))  return 'park';
-    if (/pub|bar/.test(amenity))                              return 'pub';
-    if (/restaurant|cafe/.test(amenity))                      return 'cafe';
-    return 'other';
+    .catch(function() { cb([]); });
   }
 
   /* ─── Directions URL (iOS → Apple Maps, others → Google Maps) ─── */
@@ -2523,8 +2909,9 @@
   /* ─── Render ─── */
 
   function renderNearbyTab(lat, lon, locationName) {
-    nearbyUserLat = lat;
-    nearbyUserLon = lon;
+    nearbyUserLat      = lat;
+    nearbyUserLon      = lon;
+    nearbyLocationName = locationName || '';
 
     var sub = document.getElementById('nearby-location-sub');
     if (sub && locationName) sub.textContent = 'Near ' + locationName;
@@ -2534,7 +2921,7 @@
       content.innerHTML =
         '<div class="nearby-filters" id="nearby-filter-row">' +
           CATEGORIES.map(function(c) {
-            return '<button class="chip' + (c.id === 'all' ? ' active' : '') + '" data-nearby-cat="' + c.id + '">' + c.label + '</button>';
+            return '<button class="chip' + (c.id === nearbyCategory ? ' active' : '') + '" data-nearby-cat="' + c.id + '">' + c.label + '</button>';
           }).join('') +
         '</div>' +
         '<div class="nearby-toggle-row">' +
@@ -2547,14 +2934,22 @@
         '<div id="nearby-venues"><div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding places near you…</div></div></div>';
     }
 
-    // Bind category chips
+    // Bind category chips — each tap fetches that category from Google Places
     document.querySelectorAll('[data-nearby-cat]').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        nearbyCategory = this.getAttribute('data-nearby-cat');
+        var cat = this.getAttribute('data-nearby-cat');
+        nearbyCategory = cat;
         document.querySelectorAll('[data-nearby-cat]').forEach(function(b) { b.classList.remove('active'); });
         this.classList.add('active');
-        renderVenueList();
-        if (nearbyView === 'map') updateMapMarkers();
+        var venuesEl = document.getElementById('nearby-venues');
+        if (venuesEl) venuesEl.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding ' + CATEGORIES.find(function(c){return c.id===cat;}).label.toLowerCase() + ' near you…</div></div>';
+        var countEl  = document.getElementById('nearby-count');
+        if (countEl) countEl.textContent = 'Loading…';
+        fetchNearbyPlaces(cat, nearbyUserLat, nearbyUserLon, nearbyLocationName, function(venues) {
+          nearbyVenues = venues;
+          renderVenueList();
+          if (nearbyView === 'map') updateMapMarkers();
+        });
       });
     });
 
@@ -2579,15 +2974,11 @@
       setTimeout(function() { initNearbyMap(lat, lon); }, 50);
     });
 
-    fetchNearbyPlaces(lat, lon, function(venues) {
+    // Initial load — fetch default category (pubs)
+    fetchNearbyPlaces(nearbyCategory, lat, lon, nearbyLocationName, function(venues) {
       nearbyVenues = venues;
       renderVenueList();
     });
-  }
-
-  function filteredVenues() {
-    if (nearbyCategory === 'all') return nearbyVenues;
-    return nearbyVenues.filter(function(v) { return v.cat === nearbyCategory; });
   }
 
   function renderVenueList() {
@@ -2595,35 +2986,44 @@
     var count = document.getElementById('nearby-count');
     if (!el) return;
 
-    var venues = filteredVenues();
+    var venues = nearbyVenues; // already filtered to active category by Google Places query
     if (count) count.textContent = venues.length + ' place' + (venues.length !== 1 ? 's' : '') + ' found';
 
     if (venues.length === 0) {
-      el.innerHTML = '<div class="empty-state">No ' + (nearbyCategory === 'all' ? '' : CATEGORY_LABEL[nearbyCategory].toLowerCase() + 's ') + 'found nearby. Try a different category or widen your search.</div>';
+      el.innerHTML = '<div class="empty-state">No ' + (CATEGORY_LABEL[nearbyCategory] || 'places').toLowerCase() + 's found nearby. Try a different category or a wider radius.</div>';
       return;
     }
 
-    el.innerHTML = venues.slice(0, 30).map(renderVenueCard).join('');
+    var tip = (CAT_GOOGLE_CONFIG[nearbyCategory] || {}).tip || '';
+    var tipHtml = tip ? '<div class="venue-cat-tip">' + tip + '</div>' : '';
+    el.innerHTML = tipHtml + venues.map(renderVenueCard).join('') +
+      '<div class="nearby-disclaimer">Results may not always be up to date. We recommend calling ahead or checking official sources to confirm dogs are welcome and to verify opening times.</div>';
   }
 
   function renderVenueCard(venue) {
-    var distStr = venue.dist < 1
-      ? Math.round(venue.dist * 1000) + 'm away'
-      : venue.dist.toFixed(1) + ' km away';
-    var icon    = CATEGORY_ICON[venue.cat]  || CATEGORY_ICON.other;
-    var typeStr = CATEGORY_LABEL[venue.cat] || CATEGORY_LABEL.other;
-    var dirUrl  = getDirectionsUrl(venue.lat, venue.lon);
+    var distStr = venue.dist !== null
+      ? (venue.dist < 1 ? Math.round(venue.dist * 1000) + 'm' : venue.dist.toFixed(1) + ' km') + ' away'
+      : '';
+
+    var ratingHtml = venue.rating
+      ? '<span class="venue-rating-gp">★ ' + venue.rating.toFixed(1) + ' (' + venue.ratingCount + ')</span>'
+      : '';
+
+    var openHtml = '';
+    if (venue.isOpen === true)  openHtml = '<span class="venue-open-gp open">Open now</span>';
+    if (venue.isOpen === false) openHtml = '<span class="venue-open-gp closed">Closed</span>';
 
     return (
-      '<div class="venue-card">' +
-        '<div class="venue-icon">' + icon + '</div>' +
-        '<div class="venue-body">' +
-          '<div class="venue-name">' + escHtml(venue.name) + '</div>' +
-          '<div class="venue-type">' + typeStr + '</div>' +
-          '<div class="venue-dist">' + distStr + '</div>' +
+      '<a class="venue-card-gp" href="' + (venue.mapsUrl || '#') + '" target="_blank" rel="noopener">' +
+        '<div class="venue-card-name-gp">' + escHtml(venue.name) + '</div>' +
+        '<div class="venue-card-meta-gp">' +
+          (distStr ? '<span>' + distStr + '</span>' : '') +
+          ratingHtml +
+          openHtml +
         '</div>' +
-        '<a href="' + dirUrl + '" target="_blank" rel="noopener" class="venue-dir-btn" onclick="event.stopPropagation()">Directions</a>' +
-      '</div>'
+        (venue.address ? '<div class="venue-address-gp">' + escHtml(venue.address) + '</div>' : '') +
+        '<div class="venue-maps-link-gp">View on Google Maps →</div>' +
+      '</a>'
     );
   }
 
@@ -2726,7 +3126,7 @@
   /* ─── Read helpers ─── */
 
   function getSavedUsername()  { try { return localStorage.getItem(USERNAME_KEY)  || ''; } catch(e) { return ''; } }
-  function getSavedRadius()    { try { return parseInt(localStorage.getItem(RADIUS_KEY))  || 10; } catch(e) { return 10; } }
+  function getSavedRadius()    { try { return parseInt(localStorage.getItem(RADIUS_KEY))  || 5; } catch(e) { return 5; } }
   function getSavedDarkMode()  { try { return localStorage.getItem(DARKMODE_KEY)  || 'auto'; } catch(e) { return 'auto'; } }
 
   /* ─── Dark mode ─── */
@@ -2878,6 +3278,247 @@
       updateMeStats();
     }
   });
+</script>
+
+<script>
+  /* ═══════════════════════════════
+     FIX 1.2 — Recent searches
+  ═══════════════════════════════ */
+
+  var RECENT_KEY  = 'recentSearches';
+  var STARRED_KEY = 'sniffout_starred';
+  var RECENT_MAX  = 5;
+  var STARRED_MAX = 3;
+
+  function getRecent()  { try { return JSON.parse(localStorage.getItem(RECENT_KEY))  || []; } catch(e) { return []; } }
+  function getStarred() { try { return JSON.parse(localStorage.getItem(STARRED_KEY)) || []; } catch(e) { return []; } }
+
+  function saveRecentSearch(label, lat, lon) {
+    if (!label || !lat || !lon) return;
+    var entries = getRecent();
+    // Deduplicate by label — move to front if exists
+    entries = entries.filter(function(e) { return e.label && e.label !== label; });
+    entries.unshift({ label: label, lat: lat, lon: lon, timestamp: Date.now() });
+    if (entries.length > RECENT_MAX) entries = entries.slice(0, RECENT_MAX);
+    try { localStorage.setItem(RECENT_KEY, JSON.stringify(entries)); } catch(e) {}
+    renderRecentPills();
+  }
+
+  function renderRecentPills() {
+    var el = document.getElementById('recent-pills');
+    if (!el) return;
+
+    var starred = getStarred();
+    var recent  = getRecent();
+
+    // Starred pins first, then recent (excluding any that are already starred)
+    // Also strip out any malformed entries (no label/lat/lon)
+    starred = starred.filter(function(e) { return e && e.label && e.lat && e.lon; });
+    recent  = recent.filter(function(e)  { return e && e.label && e.lat && e.lon; });
+    var starredLabels = starred.map(function(s) { return s.label; });
+    var recentOnly = recent.filter(function(r) { return starredLabels.indexOf(r.label) === -1; });
+    var all = starred.concat(recentOnly);
+
+    if (all.length === 0) { el.innerHTML = ''; return; }
+
+    el.innerHTML = all.map(function(entry) {
+      var isStarred = starredLabels.indexOf(entry.label) !== -1;
+      var canStar   = !isStarred && starred.length < STARRED_MAX;
+      var starIcon  = isStarred ? '★' : '☆';
+      var starTitle = isStarred ? 'Unpin' : (canStar ? 'Pin' : 'Max 3 pinned');
+      return (
+        '<span class="recent-pill' + (isStarred ? ' starred' : '') + '" ' +
+          'onclick="loadFromPill(' + entry.lat + ',' + entry.lon + ',\'' + escPillLabel(entry.label) + '\')">' +
+          escHtml(entry.label) +
+          '<span class="pill-star" title="' + starTitle + '" ' +
+            'onclick="event.stopPropagation();toggleStarred(' + entry.lat + ',' + entry.lon + ',\'' + escPillLabel(entry.label) + '\')">' +
+            starIcon +
+          '</span>' +
+        '</span>'
+      );
+    }).join('');
+  }
+
+  function escPillLabel(str) {
+    return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  }
+
+  function loadFromPill(lat, lon, label) {
+    loadWeatherAndShow(lat, lon, label);
+  }
+
+  function toggleStarred(lat, lon, label) {
+    var starred = getStarred();
+    var idx = starred.findIndex(function(s) { return s.label === label; });
+    if (idx !== -1) {
+      // Unstar
+      starred.splice(idx, 1);
+    } else {
+      // Star — only if under max
+      if (starred.length >= STARRED_MAX) return;
+      starred.unshift({ label: label, lat: lat, lon: lon });
+    }
+    try { localStorage.setItem(STARRED_KEY, JSON.stringify(starred)); } catch(e) {}
+    renderRecentPills();
+  }
+
+  /* Hook: save search on every successful manual geocode */
+  var _origGeocodeByName = geocodeByName;
+  geocodeByName = function(query) {
+    // Wrap fetch to intercept successful results and save them
+    var errEl = document.getElementById('search-error');
+    fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(query) + '&countrycodes=gb&format=json&limit=1&addressdetails=1&featuretype=settlement', {
+      headers: { 'Accept-Language': 'en' }
+    })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data && data.length > 0) {
+          var lat  = parseFloat(data[0].lat);
+          var lon  = parseFloat(data[0].lon);
+          var name = data[0].display_name.split(',')[0];
+          saveRecentSearch(name, lat, lon);
+          loadWeatherAndShow(lat, lon, name);
+        } else {
+          if (errEl) errEl.classList.add('visible');
+        }
+      })
+      .catch(function() {
+        if (errEl) errEl.classList.add('visible');
+      });
+  };
+
+  /* Hook: save postcodes.io results too */
+  var _origGeocodeAndGo = geocodeAndGo;
+  geocodeAndGo = function(query) {
+    if (!query) return;
+    var errEl = document.getElementById('search-error');
+    if (errEl) errEl.classList.remove('visible');
+    var postcodeRe = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
+    if (postcodeRe.test(query.trim())) {
+      fetch('https://api.postcodes.io/postcodes/' + encodeURIComponent(query.trim().replace(/\s/g, '')))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.status === 200 && data.result) {
+            var lat  = data.result.latitude;
+            var lon  = data.result.longitude;
+            var name = data.result.admin_district || data.result.parish || query.toUpperCase();
+            saveRecentSearch(name, lat, lon);
+            loadWeatherAndShow(lat, lon, name);
+          } else {
+            geocodeByName(query);
+          }
+        })
+        .catch(function() { geocodeByName(query); });
+    } else {
+      geocodeByName(query);
+    }
+  };
+
+  /* Show pills when State A is shown */
+  var _origShowStateA = showStateA;
+  showStateA = function() {
+    _origShowStateA();
+    renderRecentPills();
+  };
+
+  /* Init */
+  renderRecentPills();
+</script>
+
+<script>
+  /* ═══════════════════════════════
+     FIX 2.5 — Weather info modal
+  ═══════════════════════════════ */
+
+  function openWeatherModal() {
+    var el = document.getElementById('weather-info-modal');
+    if (el) el.style.display = 'flex';
+  }
+  function closeWeatherModal() {
+    var el = document.getElementById('weather-info-modal');
+    if (el) el.style.display = 'none';
+  }
+</script>
+
+<!-- Weather info modal -->
+<div class="modal-overlay" id="weather-info-modal" style="display:none" onclick="if(event.target===this)closeWeatherModal()">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <div class="modal-title">What you'll see here</div>
+      <button class="modal-close" onclick="closeWeatherModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>We show live weather conditions for your location. On normal days, you'll see a walk verdict and current conditions.</p>
+      <p>If weather is extreme — very hot, freezing, stormy, or dangerously windy — we'll show a specific caution to help you plan your walk safely and protect your dog.</p>
+      <p>Paw safety warnings appear only when pavement temperatures are genuinely dangerous (above 25°C or below 0°C).</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ═══════════════════════════════
+     FIX 2.2 — Radius filter UI (Walks + Nearby tabs)
+  ═══════════════════════════════ */
+
+  var RADIUS_KM_OPTIONS = [1, 3, 5, 10];
+
+  function getActiveRadius() {
+    var saved = parseInt(localStorage.getItem('sniffout_radius')) || 5;
+    return RADIUS_KM_OPTIONS.indexOf(saved) >= 0 ? saved : 5;
+  }
+
+  function syncRadiusChips() {
+    var active = getActiveRadius();
+    document.querySelectorAll('.radius-chip').forEach(function(chip) {
+      chip.classList.toggle('active', parseInt(chip.dataset.km) === active);
+    });
+  }
+
+  function setRadius(km) {
+    try { localStorage.setItem('sniffout_radius', km); } catch(e) {}
+    // Clear caches so re-render fetches fresh data at new radius
+    NEARBY_GOOGLE_CACHE = {};
+    try { sessionStorage.removeItem('sniffout_walks_gs'); } catch(e) {}
+    syncRadiusChips();
+    // Close all pickers
+    document.querySelectorAll('.radius-picker').forEach(function(p) {
+      p.classList.remove('open');
+    });
+    // Re-render Walks and Nearby tabs from saved session
+    try {
+      var raw = localStorage.getItem('sniffout_session');
+      if (raw) {
+        var s = JSON.parse(raw);
+        if (s && s.lat && s.lon) {
+          renderWalksTab(s.lat, s.lon);
+          renderNearbyTab(s.lat, s.lon, s.location);
+        }
+      }
+    } catch(e) {}
+  }
+
+  // Funnel button toggles picker open/close
+  ['walks', 'nearby'].forEach(function(tab) {
+    var btn    = document.getElementById(tab + '-radius-btn');
+    var picker = document.getElementById(tab + '-radius-picker');
+    if (!btn || !picker) return;
+    btn.addEventListener('click', function() {
+      var isOpen = picker.classList.contains('open');
+      // Close all pickers first
+      document.querySelectorAll('.radius-picker').forEach(function(p) { p.classList.remove('open'); });
+      if (!isOpen) { picker.classList.add('open'); syncRadiusChips(); }
+    });
+  });
+
+  // Chip click handlers
+  document.querySelectorAll('.radius-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      setRadius(parseInt(chip.dataset.km));
+    });
+  });
+
+  // Sync chips on load
+  syncRadiusChips();
 </script>
 
 </body>
