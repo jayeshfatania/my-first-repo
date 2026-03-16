@@ -9,7 +9,9 @@
 
 **Phase 2: ACTIVE.**
 
-**Round 7 fixes:** All confirmed complete (FIX 8.1–8.9). Additional items also completed this cycle: sunrise/sunset pill added to Today tab weather hero (this resolved the FIX 8.9 duplicate wind pill — sunrise/sunset replaced the third pill); all emojis replaced with Lucide icons throughout the app. No outstanding developer work.
+**Round 8 complete:** FIX 9.1–9.4 (condition tags + mark as walked on carousel cards) all confirmed done. developer-brief-round9.md issued — FIX 10.1 dark mode colour revision ready for developer.
+
+**Round 7 fixes:** All confirmed complete (FIX 8.1–8.9). Additional items also completed this cycle: sunrise/sunset pill added to Today tab weather hero (this resolved the FIX 8.9 duplicate wind pill — sunrise/sunset replaced the third pill); all emojis replaced with Lucide icons throughout the app.
 
 **Research complete:** community-engagement-research.md and missing-dog-research.md both delivered. Key findings incorporated into Phase 2 and Phase 3 planning below.
 
@@ -59,12 +61,17 @@
 | designer-brief-round1.md | Full visual consistency audit (sniffout-v2.html vs mockup + spec) | ✅ Done — 8 issues found, all addressed |
 | designer-brief-round3.md | Card sizing hierarchy + filter/sort bottom sheet | ✅ Done — approved, passed to developer-brief-round6.md |
 | designer-brief-round2.md | Verification sweep V1–V9 (all pass); Today tab T1–T5; Weather tab W1–W4; new components N1–N3 | ✅ Done — findings assessed, developer-brief-round7.md issued |
+| condition-tags-design-spec.md | Condition tags UI, mark-as-walked, post-walk prompt, staleness, community disclaimer | ✅ Done — approved with 1 bug fix, developer-brief-round8.md issued |
+| dark-mode-colour-spec.md | Dark mode token revision (`--brand` #82B09A, `--ink-2`, `--border`); hardcoded rgba substitutions; rgba(30,77,58) overrides | ✅ Done — **approved in full**, added to developer-brief-round9.md as FIX 10.1 |
 
 ---
 
 ## Active Developer Session
 
-No active developer session. Developer is free. Next brief will follow condition tags designer output.
+| Brief | Contents | Status |
+|-------|----------|--------|
+| developer-brief-round8.md | FIX 9.1–9.4 (condition tags + mark as walked on carousel cards) | ✅ Done |
+| developer-brief-round9.md | FIX 10.1 dark mode colour revision (token update + rgba substitutions + new overrides) | ⏳ Pending |
 
 ---
 
@@ -72,7 +79,7 @@ No active developer session. Developer is free. Next brief will follow condition
 
 | Brief | Contents | Status |
 |-------|----------|--------|
-| condition-tags-designer-brief.md | Condition tags UI + mark-as-walked action + walk card integration + post-walk prompt + staleness display + community disclaimer | 🟢 Ready to issue |
+| missing-dog-designer-brief.md | Full user flows (reporting owner, nearby user, resolution); data model; GDPR/safeguarding spec; "coming soon" placeholder card | 🟢 Active — Stream 2 |
 
 ---
 
@@ -118,12 +125,23 @@ No open decisions.
 
 ---
 
+## Brand Colour — Open for Proposal
+
+**Owner confirmed (March 2026):** There is no locked brand colour. The current forest green (`#1E4D3A` light mode, `#82B09A` dark mode after Round 9) is not precious. The Designer has full creative freedom to recommend the best colour palette for both light and dark mode if they believe a different direction serves the product better.
+
+**For the Designer:** This applies to any future design review or brand exploration. The dark mode colour spec (approved March 2026) is a valid improvement to the *current* palette — implement it via developer-brief-round9.md as planned. But if during the missing dog design brief or subsequent work you want to propose an alternative colour direction for the whole product, that proposal is welcome. Bring it as a separate brief with rationale — it does not need to wait for a specific design review cycle.
+
+**For the Developer:** Implement FIX 10.1 as specified. If a brand colour change is approved in future, it will be a single token swap — the architecture is already correct for this.
+
+---
+
 ## Next Steps in Order
 
-1. **Designer** — condition tags designer brief (`condition-tags-designer-brief.md`). Covers condition tag UI, mark-as-walked action, walk card integration, post-walk prompt, staleness display, community disclaimer. See phase2-team-brief.md.
-2. **Designer** — missing dog alerts design brief (`missing-dog-designer-brief.md`). Full user flows, data model, privacy/safeguarding spec, and "coming soon" placeholder card. Can run in parallel with step 1 or immediately after. See phase2-team-brief.md and Phase 3 section of this plan.
-3. **Designer** — Sticky Sniffout Picks UX exploration. Prototype sticky vs non-sticky layout on device; present recommendation to PO before any developer brief is issued. See Phase 2 Planning section.
-4. **Developer** — no active brief. Free until condition tags design output is assessed by PO.
+1. **Developer** — implement developer-brief-round9.md (FIX 10.1 dark mode colour revision)
+2. **Designer** — complete missing dog alerts design (`missing-dog-designer-brief.md`) — Stream 2, active now
+3. **Designer** — walk detail overlay design. Required to complete the full condition tags + mark-as-walked experience (detail panel context deferred from Round 8). Follows missing dog brief.
+4. **Designer** — Sticky Sniffout Picks UX exploration. Follows Step 3.
+5. **PO** — assess Round 9 completion; assess missing dog design output when delivered; issue next developer brief
 
 ---
 
@@ -183,6 +201,11 @@ No open decisions.
 - Tags >30 days hidden by default, collapsible under "older reports"
 - Every piece of community content labelled "Community reported — not verified by Sniffout" adjacent to the tag (not buried in ToS)
 - Curated fields (difficulty, off-lead status, livestock: boolean) remain locked — community tags supplement, never override
+
+**Phase 2b — deferred items (not in current build):**
+- Written reviews (lightweight account required — Phase 2b)
+- `no-dogs` tag: proposed by Designer, deferred to Phase 2b. **Label needs rework before it ships** — "No dogs reported" is ambiguous (dogs not allowed vs. no dogs seen today). Suggest "Dog-free zone" or "Restricted — dogs on leads" as clearer alternatives. PO to confirm label before implementing.
+- Walk detail panel condition tags section (deferred from Round 8 — walk detail overlay not yet designed)
 
 **Design brief scope (condition-tags-designer-brief.md — ready to issue):**
 - Mark-as-walked action: button placement on walk cards and/or walk detail; tap interaction

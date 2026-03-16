@@ -517,8 +517,151 @@ Confirmed no HTML or JS references to `gs-nearby-badge` remain (element removed 
 
 ---
 
-## TB-1 / FIX 8.9 — Third Today tab pill: "Feels X°C" → wind speed
+## TB-1 / FIX 8.9 — Third Today tab pill: "Feels X°C" → sunrise/sunset time
 
-Third pill in `renderTodayStateB()` changed from `'Feels ' + feels + '°C'` to `'💨 ' + wind + ' km/h'`.
+Third pill in `renderTodayStateB()` changed from `'Feels ' + feels + '°C'` to a sunrise/sunset pill.
 
-**⚠️ Note for PO:** Pill 2 already shows `💨 wind km/h`. This change results in two identical wind pills (pills 2 and 3). Recommend PO review — likely intent is to either (a) remove the "Feels X°C" pill without replacing it (2 pills total), or (b) replace with a different metric such as Rain Chance, consistent with FIX 8.4. Awaiting PO decision before further change.
+**Resolution:** PO confirmed pill should show sunrise or sunset time (not wind speed, which was already shown in pill 2). Logic: `new Date().getHours() < 12` → show sunrise time; `>= 12` → show sunset time. Time string parsed from Open-Meteo `daily.sunrise[0]` / `daily.sunset[0]` ISO datetime string via `.split('T')[1]` to extract `HH:MM`.
+
+**API change:** `fetchWeather()` updated to add `sunrise,sunset` to `&daily=` params and `forecast_days` bumped from `4` to `7` (required to supply today's sunrise/sunset at index 0 and support 5-day forecast).
+
+**`renderTodayStateB()` signature change:** Added `daily` as 4th parameter; call site in `renderWeather()` updated to pass `data.daily`. Pill uses Lucide `sunrise` or `sunset` icon via `luIcon()`.
+
+---
+
+## Lucide Icons — Emoji replacement throughout app
+
+All functional emoji used as icons replaced with Lucide CDN icons throughout `sniffout-v2.html`.
+
+**CDN:** `<script src="https://unpkg.com/lucide@latest"></script>` added to `<head>` after the Leaflet script tag.
+
+**Helpers added** (after `WMO_ICON` map):
+```js
+function luIcon(name, size, extra) { /* returns <i data-lucide="..."> HTML string */ }
+function syncIcons() { if (window.lucide) lucide.createIcons(); }
+```
+`syncIcons()` must be called after every `innerHTML` assignment that contains `data-lucide` elements, since Lucide scans the DOM at call time.
+
+**`WMO_ICON` map added** (alongside existing `WMO_EMOJI`): maps WMO weather codes to Lucide icon names (e.g. `0:'sun'`, `95:'cloud-lightning'`).
+
+**CSS:** `[data-lucide] { display: inline-block; vertical-align: middle; }` added to `<style>` block.
+
+**Replacements made:**
+- `ⓘ` info button → `luIcon('info', 16)` (Today tab weather hero)
+- `46px WMO emoji div` → `luIcon(WMO_ICON[code] || 'cloud-sun', 46)` (Today tab weather icon)
+- `💧 humidity pill` → `luIcon('droplets', 14)` + `luIcon('wind', 14)` for wind pill
+- `🐾` paw safety block → `luIcon('paw-print', 20)` (Weather tab)
+- `★`/`☆` star ratings in recent pills → `luIcon('star', 12, 'fill:currentColor;')` / `luIcon('star', 12)`
+- `26px WMO emoji div` in forecast rows → `luIcon(WMO_ICON[code] || 'cloud-sun', 24)`
+
+**`cow`/`sheep` Lucide availability:** Both condition tag icons use `triangle-alert` fallback as `cow` and `sheep` are not confirmed in current Lucide build.
+
+**`syncIcons()` call sites:** `renderTodayStateB()`, `renderWeatherTab()`, `renderVenueList()`, `renderRecentPills()`, `renderCondTagSheet()`, `toggleCondTag()`, `rerenderCondTagRow()`.
+
+---
+
+## Forecast layout — heading and row layout rewrite
+
+Two changes to the 5-day forecast section:
+
+1. **Heading:** `"3-day forecast"` → `"5-day forecast"` to match the `Math.min(6,...)` loop change from FIX 8.2.
+
+2. **Layout:** Replaced CSS grid (`repeat(3, 1fr)`) with full-width horizontal flex rows. Each row (`<div class="forecast-row">`) contains three equal `flex: 1` columns: day name (left-aligned), icon (centred), temperatures + description (right-aligned). CSS classes: `.forecast-row`, `.forecast-day`, `.forecast-icon`, `.forecast-right`, `.forecast-temps`, `.forecast-desc`.
+
+**Reason:** 5 cards in a 3-column grid left an orphaned empty cell in the bottom-right position.
+
+---
+
+## Round 7 — completion confirmation
+
+All items from `developer-brief-round7.md` are resolved:
+
+| Fix | Description | Status |
+|-----|-------------|--------|
+| FIX 8.1 | Reorder verdict body before walk scroll in Today State B | ✅ Done |
+| FIX 8.2 | Expand forecast from 3 to 5 days | ✅ Done |
+| FIX 8.3 | Forecast description text 11px → 12px | ✅ Done |
+| FIX 8.4 | Replace Humidity with Rain Chance in conditions grid | ✅ Done |
+| FIX 8.5 | Paw safety trigger-only thresholds | ✅ Done |
+| FIX 8.6 | Extract verdict inline styles to `.verdict-card` class | ✅ Done |
+| FIX 8.7 | Slide-up animation on weather info modal | ✅ Done |
+| FIX 8.8 | Remove dead `.gs-nearby-badge` CSS | ✅ Done |
+| TB-1 / FIX 8.9 | Third pill: sunrise/sunset time (PO confirmed) | ✅ Done |
+
+---
+
+## FIX 9.1 — Condition tags: data model, helpers, rate limiting, session tracker
+
+New script block added between PHASE C and PHASE D.
+
+**Tag taxonomy** (13 tags, 4 categories):
+
+| Key | Label | Icon | Category |
+|-----|-------|------|----------|
+| `cattle` | Cattle in field | `triangle-alert` | Hazard |
+| `sheep` | Sheep in field | `triangle-alert` | Hazard |
+| `leads` | Dogs on leads here | `dog` | Hazard |
+| `access` | Access issue | `triangle-alert` | Hazard |
+| `muddy` | Very muddy underfoot | `footprints` | Surface |
+| `flooded` | Flooded section | `waves` | Surface |
+| `overgrown` | Overgrown path | `leaf` | Surface |
+| `icy` | Icy / slippery | `snowflake` | Surface |
+| `water` | Great water point | `droplets` | Positive |
+| `cafe` | Dog-friendly café open | `coffee` | Positive |
+| `clear` | Excellent conditions | `sun` | Positive |
+| `busy` | Busy / crowded | `users` | Footfall |
+| `quiet` | Quiet today | `volume-x` | Footfall |
+
+`cow` and `sheep` icon keys both use `triangle-alert` — not confirmed available in current Lucide build.
+
+**localStorage keys:**
+- `sniffout_condition_tags` → `{ walkId: [{ tag, ts, device }] }` — community condition submissions
+- `sniffout_walked` → array of walked walk IDs (additive, permanent)
+
+**Rate limiting:** Device fingerprint = `btoa(navigator.userAgent + screen.width + screen.height)`. Max 1 submission per device per walk per 24h (`hasSubmittedToday(walkId)`).
+
+**Session dismissal:** `promptDismissedThisSession = {}` global object. Keyed by `walkId`, prevents re-prompting in same session after user skips the condition sheet.
+
+**Staleness thresholds:**
+- Hazard tags: stale at 7 days
+- All other tags: stale at 14 days
+- Hidden at 30 days
+
+**`getDisplayTags(walkId)` correction:** `ageText` is `stale ? 'May be out of date' : relativeTime(t.ts)`. The spec had a compound condition (`stale && age > STALE_LIMIT`) which was incorrect — corrected per PO review.
+
+---
+
+## FIX 9.2 — Mark as walked button on carousel cards
+
+**CSS:** `.walked-btn` (outline variant, brand-green text), `.walked-btn.confirmed` (brand-green filled), `body.night` variants for both states.
+
+**`renderTrailCard()` updated:** Walk button added after description. Three visual states:
+1. Default: "Mark as walked" with check icon
+2. Confirmed (in-session, not yet post-walk): "Walked ✓" green filled
+3. Post-walk prompt: button state transitions after `onMarkWalked()` handler runs
+
+**`onMarkWalked(event, walkId)`:** Saves to `sniffout_walked`, updates button DOM in place, checks rate limit and session dismissal, opens condition tag prompt sheet if eligible.
+
+---
+
+## FIX 9.3 — Post-walk prompt bottom sheet
+
+Sheet HTML added after nearby filter sheet (`#nearby-filter-sheet`), before the FIX 2.2 script block. Uses the existing filter sheet CSS pattern (`.filter-backdrop` + `.filter-sheet` + `.open` class).
+
+**Sheet elements:** `#cond-tag-backdrop`, `#cond-tag-sheet`, `#cond-tag-sheet-inner` (scrollable tag options), skip button (`#cond-tag-skip` → `closeCondTagSheet()`), done button (`#cond-tag-done` → `submitCondTags()`).
+
+**New CSS:** `.sheet-btn-ghost` (outline button), `.sheet-btn-primary` (brand-green filled button) — these were not pre-existing in the codebase and were added.
+
+**Functions:** `openCondTagSheet(walkId)`, `closeCondTagSheet()`, `renderCondTagSheet(walkId)`, `toggleCondTag(key)`, `updateCondDoneBtn()`, `submitCondTags()`.
+
+---
+
+## FIX 9.4 — Condition tag row on carousel cards
+
+**CSS added:** `.cond-tag-row` (flex wrap row, gap 4px, margin above description), `.cond-chip` (base chip style), `.cond-chip--hazard` (amber tint), `.cond-chip--stale` (muted/italic), `.cond-chip-more` (secondary "+N more" chip), `.cond-disclaimer` (12px muted "Community reported" label), `.cond-section-label`, `.cond-tag-option`, `.cond-tag-option.selected`, night mode variants, `.cond-option-icon`, `.cond-option-check`.
+
+**`renderCondTagRow(walkId)`:** Shows max 2 chips + "+N more" chip if additional tags exist. Hazard chips use `.cond-chip--hazard`. Stale chips use `.cond-chip--stale`. "Community reported" disclaimer shown when tags exist.
+
+**`rerenderCondTagRow(walkId)`:** Live DOM update after sheet submission. Targets `.cond-tag-row` inside the relevant `.trail-card` (keyed by `data-walk-id`). Fallback: inserts before `.walked-btn` when `.trail-card-desc` is not present (walk has no description). Calls `syncIcons()` after update.
+
+**Element order in `renderTrailCard()`:** condition tag row → description → walked button.

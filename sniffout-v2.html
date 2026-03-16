@@ -300,6 +300,73 @@
     }
     .filter-apply-btn:active { opacity: 0.85; }
 
+    /* ─── Condition tag sheet buttons ─── */
+    .sheet-btn-ghost {
+      flex: 1;
+      height: 44px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-2);
+      cursor: pointer;
+    }
+    .sheet-btn-primary {
+      flex: 2;
+      height: 44px;
+      background: var(--brand);
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+    }
+    .sheet-btn-primary:active { opacity: 0.85; }
+
+    /* ─── Condition tag prompt ─── */
+    .cond-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 12px 16px 8px;
+      display: block;
+    }
+    .cond-tag-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: calc(100% - 32px);
+      height: 44px;
+      margin: 0 16px 8px;
+      padding: 0 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+    }
+    .cond-tag-option.selected {
+      background: rgba(30,77,58,0.08);
+      border-color: rgba(30,77,58,0.25);
+      color: var(--brand);
+      font-weight: 500;
+    }
+    body.night .cond-tag-option.selected {
+      background: rgba(130,176,154,0.10);
+      border-color: rgba(130,176,154,0.20);
+      color: var(--brand);
+    }
+    .cond-tag-option .cond-option-icon { color: var(--ink-2); flex-shrink: 0; }
+    .cond-tag-option.selected .cond-option-icon { color: var(--brand); }
+    .cond-tag-option .cond-option-check { margin-left: auto; color: var(--brand); flex-shrink: 0; }
+
     /* ─── Active filter indicator on funnel button ─── */
     .filter-btn { position: relative; }
     .filter-btn.has-filter::after {
@@ -1239,21 +1306,26 @@
        DARK MODE
     ═══════════════════════════════ */
     body.night {
-      --bg:      #0F1C16;
-      --surface: #1A2C22;
-      --border:  #2A3D30;
-      --ink:     #F0F0ED;
-      --ink-2:   #8A9E92;
-      --chip-off:#2A3D30;
-      --brand:   #6EE7B7;
+      --bg:       #0F1C16;
+      --surface:  #1A2C22;
+      --border:   #263530;
+      --ink:      #F0F0ED;
+      --ink-2:    #8B9690;
+      --chip-off: #263530;
+      --brand:    #82B09A;
     }
     body.night .search-input-row { background: var(--surface); }
     body.night .hour-seg.poor { background: var(--border); }
-    body.night .walk-preview-card { background: rgba(110,231,183,0.06); border-color: rgba(110,231,183,0.18); }
-    body.night .weather-preview-card { background: rgba(110,231,183,0.07); border-color: rgba(110,231,183,0.2); }
-    body.night .walk-preview-tag { background: rgba(110,231,183,0.12); color: #6EE7B7; }
-    body.night .weather-preview-title { color: #6EE7B7; }
-    body.night .today-conditions-card { background: rgba(110,231,183,0.06); border-color: rgba(110,231,183,0.18); }
+    body.night .walk-preview-card     { background: rgba(130,176,154,0.07); border-color: rgba(130,176,154,0.18); }
+    body.night .weather-preview-card  { background: rgba(130,176,154,0.08); border-color: rgba(130,176,154,0.20); }
+    body.night .walk-preview-tag      { background: rgba(130,176,154,0.13); color: #82B09A; }
+    body.night .weather-preview-title { color: #82B09A; }
+    body.night .today-conditions-card { background: rgba(130,176,154,0.07); border-color: rgba(130,176,154,0.18); }
+    body.night .venue-icon            { background: rgba(130,176,154,0.12); }
+    body.night .walk-tag.full         { background: rgba(130,176,154,0.10); border-color: rgba(130,176,154,0.22); }
+    body.night .venue-open-gp.open    { background: rgba(130,176,154,0.12); }
+    body.night .chip.active           { background: rgba(130,176,154,0.10); border-color: rgba(130,176,154,0.22); color: var(--brand); }
+    body.night .hazard-card.brand-variant { background: rgba(130,176,154,0.07); }
 
     /* ═══════════════════════════════
        LOADING STATE
@@ -1459,11 +1531,90 @@
       background: rgba(217,119,6,0.08);
     }
     body.night .trail-tag {
-      background: rgba(110,231,183,0.12);
+      background: rgba(130,176,154,0.13);
     }
     body.night .trail-tag.partial {
       background: rgba(217,119,6,0.12);
     }
+
+    /* ─── Mark as walked button ─── */
+    .walked-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      width: 100%;
+      height: 34px;
+      margin-top: 8px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-2);
+      cursor: pointer;
+    }
+    .walked-btn.confirmed {
+      background: rgba(30,77,58,0.08);
+      border-color: rgba(30,77,58,0.15);
+      color: var(--brand);
+      pointer-events: none;
+    }
+    body.night .walked-btn {
+      border-color: rgba(130,176,154,0.20);
+    }
+    body.night .walked-btn.confirmed {
+      background: rgba(130,176,154,0.10);
+      border-color: rgba(130,176,154,0.20);
+      color: var(--brand);
+    }
+
+    /* ─── Condition tag row on carousel card ─── */
+    .cond-tag-row {
+      display: flex;
+      gap: 4px;
+      flex-wrap: nowrap;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .cond-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--ink);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2px 7px;
+      white-space: nowrap;
+    }
+    .cond-chip--hazard {
+      color: var(--amber);
+      border-color: rgba(217,119,6,0.25);
+      background: rgba(217,119,6,0.06);
+    }
+    .cond-chip--stale { opacity: 0.55; }
+    .cond-chip-more {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--ink-2);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2px 7px;
+      white-space: nowrap;
+    }
+    .cond-disclaimer {
+      font-size: 10px;
+      color: var(--ink-2);
+      margin-top: 2px;
+      font-weight: 400;
+    }
+
     .trail-list { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
     .gs-card {
       display: flex;
@@ -2557,6 +2708,280 @@
 
 <script>
   /* ═══════════════════════════════
+     FIX 9.1 — Condition tags data model + helpers
+  ═══════════════════════════════ */
+
+  /* ─── Tag taxonomy ─── */
+  var CONDITION_TAGS = [
+    { key: 'cattle',    label: 'Cattle in field',        icon: 'triangle-alert', cat: 'Hazard'   },
+    { key: 'sheep',     label: 'Sheep in field',          icon: 'triangle-alert', cat: 'Hazard'   },
+    { key: 'leads',     label: 'Dogs on leads here',      icon: 'dog',            cat: 'Hazard'   },
+    { key: 'access',    label: 'Access issue',            icon: 'triangle-alert', cat: 'Hazard'   },
+    { key: 'muddy',     label: 'Very muddy underfoot',    icon: 'footprints',     cat: 'Surface'  },
+    { key: 'flooded',   label: 'Flooded section',         icon: 'waves',          cat: 'Surface'  },
+    { key: 'overgrown', label: 'Overgrown path',          icon: 'leaf',           cat: 'Surface'  },
+    { key: 'icy',       label: 'Icy / slippery',          icon: 'snowflake',      cat: 'Surface'  },
+    { key: 'water',     label: 'Great water point',       icon: 'droplets',       cat: 'Positive' },
+    { key: 'cafe',      label: 'Dog-friendly café open',  icon: 'coffee',         cat: 'Positive' },
+    { key: 'clear',     label: 'Excellent conditions',    icon: 'sun',            cat: 'Positive' },
+    { key: 'busy',      label: 'Busy / crowded',          icon: 'users',          cat: 'Footfall' },
+    { key: 'quiet',     label: 'Quiet today',             icon: 'volume-x',       cat: 'Footfall' }
+  ];
+
+  var HAZARD_KEYS = ['cattle', 'sheep', 'leads', 'access'];
+
+  /* ─── Session dismissal tracker ─── */
+  var promptDismissedThisSession = {};
+
+  /* ─── localStorage helpers ─── */
+  function getConditionTags() {
+    try { return JSON.parse(localStorage.getItem('sniffout_condition_tags')) || {}; } catch(e) { return {}; }
+  }
+  function saveConditionTags(data) {
+    try { localStorage.setItem('sniffout_condition_tags', JSON.stringify(data)); } catch(e) {}
+  }
+  function getWalkedIds() {
+    try { return JSON.parse(localStorage.getItem('sniffout_walked')) || []; } catch(e) { return []; }
+  }
+  function markWalked(walkId) {
+    var ids = getWalkedIds();
+    if (ids.indexOf(walkId) === -1) {
+      ids.push(walkId);
+      try { localStorage.setItem('sniffout_walked', JSON.stringify(ids)); } catch(e) {}
+    }
+  }
+  function hasWalked(walkId) {
+    return getWalkedIds().indexOf(walkId) > -1;
+  }
+
+  /* ─── Device fingerprint + rate limit ─── */
+  function getDeviceId() {
+    return btoa(navigator.userAgent + screen.width + screen.height);
+  }
+  function hasSubmittedToday(walkId) {
+    var all    = getConditionTags();
+    var tags   = (all[walkId] || []);
+    var cutoff = Date.now() - 86400000;
+    var deviceId = getDeviceId();
+    return tags.some(function(t) { return t.device === deviceId && t.ts > cutoff; });
+  }
+
+  /* ─── relativeTime() ─── */
+  function relativeTime(ts) {
+    var diff  = Date.now() - ts;
+    var mins  = Math.floor(diff / 60000);
+    var hours = Math.floor(diff / 3600000);
+    var days  = Math.floor(diff / 86400000);
+    var weeks = Math.floor(diff / 604800000);
+    if (mins  < 5)  return 'Just now';
+    if (mins  < 60) return mins + ' min ago';
+    if (hours < 24) return hours + ' hour' + (hours > 1 ? 's' : '') + ' ago';
+    if (days  < 30) return days  + ' day'  + (days  > 1 ? 's' : '') + ' ago';
+    if (weeks < 8)  return weeks + ' week' + (weeks > 1 ? 's' : '') + ' ago';
+    return Math.floor(days / 30) + ' months ago';
+  }
+
+  /* ─── getDisplayTags() — with PO correction ─── */
+  function getDisplayTags(walkId) {
+    var allTags      = (getConditionTags()[walkId] || []);
+    var now          = Date.now();
+    var HAZARD_STALE = 7  * 24 * 3600000;
+    var STALE_LIMIT  = 14 * 24 * 3600000;
+    var HIDE_LIMIT   = 30 * 24 * 3600000;
+
+    return allTags
+      .filter(function(t) { return (now - t.ts) < HIDE_LIMIT; })
+      .map(function(t) {
+        var age      = now - t.ts;
+        var isHazard = HAZARD_KEYS.indexOf(t.tag) > -1;
+        var stale    = isHazard ? age > HAZARD_STALE : age > STALE_LIMIT;
+        return {
+          tag:      t.tag,
+          ts:       t.ts,
+          isHazard: isHazard,
+          stale:    stale,
+          ageText:  stale ? 'May be out of date' : relativeTime(t.ts)
+        };
+      })
+      .sort(function(a, b) {
+        if (a.isHazard && !b.isHazard) return -1;
+        if (!a.isHazard && b.isHazard) return 1;
+        return a.ts - b.ts;
+      })
+      .reverse();
+  }
+
+  function getOlderTags(walkId) {
+    var allTags    = (getConditionTags()[walkId] || []);
+    var now        = Date.now();
+    var HIDE_LIMIT = 30 * 24 * 3600000;
+    return allTags
+      .filter(function(t) { return (now - t.ts) >= HIDE_LIMIT; })
+      .sort(function(a, b) { return b.ts - a.ts; });
+  }
+
+  /* ─── saveTagsForWalk() ─── */
+  function saveTagsForWalk(walkId, selectedKeys) {
+    var all      = getConditionTags();
+    var existing = all[walkId] || [];
+    var deviceId = getDeviceId();
+    var now      = Date.now();
+    selectedKeys.forEach(function(key) {
+      existing.push({ tag: key, ts: now, device: deviceId });
+    });
+    all[walkId] = existing;
+    saveConditionTags(all);
+  }
+
+  /* ─── onMarkWalked() ─── */
+  function onMarkWalked(event, walkId) {
+    event.stopPropagation();
+    var btn  = event.currentTarget;
+    btn.classList.add('confirmed');
+    var span = btn.querySelector('span');
+    if (span) span.textContent = 'Walked';
+    markWalked(walkId);
+    if (!hasSubmittedToday(walkId) && !promptDismissedThisSession[walkId]) {
+      openCondTagSheet(walkId);
+    }
+  }
+
+  /* ─── renderCondTagRow() ─── */
+  function renderCondTagRow(walkId) {
+    var tags = getDisplayTags(walkId);
+    if (tags.length === 0) return '';
+
+    var tagDef = {};
+    CONDITION_TAGS.forEach(function(t) { tagDef[t.key] = t; });
+
+    var html  = '<div class="cond-tag-row">';
+    var shown = tags.slice(0, 2);
+    var extra = tags.length - shown.length;
+
+    shown.forEach(function(t) {
+      var def = tagDef[t.tag];
+      if (!def) return;
+      var classes = 'cond-chip' +
+        (t.isHazard ? ' cond-chip--hazard' : '') +
+        (t.stale    ? ' cond-chip--stale'  : '');
+      html += '<span class="' + classes + '">' +
+        luIcon(def.icon, 11) +
+        escHtml(def.label) +
+      '</span>';
+    });
+
+    if (extra > 0) {
+      html += '<span class="cond-chip-more">+' + extra + ' more</span>';
+    }
+
+    html += '</div>';
+    html += '<div class="cond-disclaimer">Community reported</div>';
+    return html;
+  }
+
+  /* ─── rerenderCondTagRow() ─── */
+  function rerenderCondTagRow(walkId) {
+    var btns = document.querySelectorAll('[data-walk-id="' + walkId + '"]');
+    btns.forEach(function(btn) {
+      var card = btn.closest('.trail-card-body');
+      if (!card) return;
+      var existing   = card.querySelector('.cond-tag-row');
+      var disclaimer = card.querySelector('.cond-disclaimer');
+      var newHtml    = renderCondTagRow(walkId);
+      if (existing)   existing.remove();
+      if (disclaimer) disclaimer.remove();
+      var desc = card.querySelector('.trail-card-desc');
+      if (desc && newHtml) {
+        desc.insertAdjacentHTML('beforebegin', newHtml);
+        syncIcons();
+      } else if (!desc && newHtml) {
+        btn.insertAdjacentHTML('beforebegin', newHtml);
+        syncIcons();
+      }
+    });
+  }
+
+  /* ─── Condition tag sheet ─── */
+  var _condTagWalkId = null;
+
+  function openCondTagSheet(walkId) {
+    _condTagWalkId = walkId;
+    renderCondTagSheet();
+    document.getElementById('cond-tag-backdrop').classList.add('open');
+    document.getElementById('cond-tag-sheet').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCondTagSheet() {
+    if (_condTagWalkId) promptDismissedThisSession[_condTagWalkId] = true;
+    _condTagWalkId = null;
+    document.getElementById('cond-tag-backdrop').classList.remove('open');
+    document.getElementById('cond-tag-sheet').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function renderCondTagSheet() {
+    var categories = ['Hazard', 'Surface', 'Positive', 'Footfall'];
+    var html = '<div style="padding:16px 16px 4px;">' +
+      '<div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px;">How were the conditions?</div>' +
+      '<div style="font-size:13px;color:var(--ink-2);">Tap all that apply</div>' +
+      '</div>';
+
+    categories.forEach(function(cat) {
+      var tagsInCat = CONDITION_TAGS.filter(function(t) { return t.cat === cat; });
+      html += '<span class="cond-section-label">' + cat + '</span>';
+      tagsInCat.forEach(function(t) {
+        html += '<button class="cond-tag-option" data-tag="' + t.key + '" onclick="toggleCondTag(this)">' +
+          '<span class="cond-option-icon">' + luIcon(t.icon, 18) + '</span>' +
+          '<span>' + escHtml(t.label) + '</span>' +
+        '</button>';
+      });
+    });
+
+    document.getElementById('cond-tag-sheet-inner').innerHTML = html;
+    syncIcons();
+    updateCondDoneBtn();
+  }
+
+  function toggleCondTag(btn) {
+    btn.classList.toggle('selected');
+    var check = btn.querySelector('.cond-option-check');
+    if (btn.classList.contains('selected')) {
+      if (!check) {
+        var c = document.createElement('span');
+        c.className = 'cond-option-check';
+        c.innerHTML = luIcon('check', 14);
+        btn.appendChild(c);
+        syncIcons();
+      }
+    } else {
+      if (check) check.remove();
+    }
+    updateCondDoneBtn();
+  }
+
+  function updateCondDoneBtn() {
+    var selected = document.querySelectorAll('#cond-tag-sheet-inner .cond-tag-option.selected');
+    var n        = selected.length;
+    var doneBtn  = document.getElementById('cond-tag-done');
+    if (doneBtn) doneBtn.textContent = n > 0 ? 'Done \u00b7 ' + n + ' reported' : 'Done';
+  }
+
+  function submitCondTags() {
+    if (!_condTagWalkId) { closeCondTagSheet(); return; }
+    var selected = document.querySelectorAll('#cond-tag-sheet-inner .cond-tag-option.selected');
+    var keys = [];
+    selected.forEach(function(btn) { keys.push(btn.getAttribute('data-tag')); });
+    if (keys.length > 0) {
+      saveTagsForWalk(_condTagWalkId, keys);
+      rerenderCondTagRow(_condTagWalkId);
+    }
+    closeCondTagSheet();
+  }
+</script>
+
+<script>
+  /* ═══════════════════════════════
      PHASE D — WALKS_DB + Walk cards
   ═══════════════════════════════ */
 
@@ -3007,7 +3432,12 @@
             terrainTag +
             enclosedTag +
           '</div>' +
+          renderCondTagRow(walk.id) +
           (walk.description ? '<div class="trail-card-desc">' + escHtml(walk.description) + '</div>' : '') +
+          '<button class="walked-btn' + (hasWalked(walk.id) ? ' confirmed' : '') + '" data-walk-id="' + escHtml(walk.id) + '" onclick="onMarkWalked(event,\'' + escHtml(walk.id) + '\')">' +
+            luIcon('check', 13) +
+            '<span>' + (hasWalked(walk.id) ? 'Walked' : 'Mark as walked') + '</span>' +
+          '</button>' +
         '</div>' +
       '</div>'
     );
@@ -4174,6 +4604,17 @@
   <div class="filter-footer">
     <button class="filter-clear-btn" id="nearby-filter-clear">Clear all</button>
     <button class="filter-apply-btn" id="nearby-filter-apply">Show venues</button>
+  </div>
+</div>
+
+<!-- Condition tag sheet -->
+<div class="filter-backdrop" id="cond-tag-backdrop" onclick="closeCondTagSheet()"></div>
+<div class="filter-sheet" id="cond-tag-sheet">
+  <div class="filter-handle"></div>
+  <div id="cond-tag-sheet-inner" style="overflow-y:auto; max-height:calc(65vh - 60px); padding:0 0 8px;"></div>
+  <div style="display:flex; gap:12px; padding:12px 16px 16px; border-top:1px solid var(--border);">
+    <button class="sheet-btn-ghost" id="cond-tag-skip" onclick="closeCondTagSheet()">Skip</button>
+    <button class="sheet-btn-primary" id="cond-tag-done" onclick="submitCondTags()">Done</button>
   </div>
 </div>
 
