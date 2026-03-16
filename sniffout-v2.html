@@ -1570,6 +1570,8 @@
 
     isStateB = false;
     switchTab('today');
+    // Clear persisted location so refresh shows State A
+    try { localStorage.removeItem('sniffout_location'); } catch(e) {}
   }
 
   /* Nav button click handlers */
@@ -1628,15 +1630,15 @@
     });
   }
 
-  /* Restore last active tab from localStorage */
-  (function restoreTab() {
+  /* Restore last active tab — called by initApp() after all phases load */
+  function restoreTab() {
     var saved;
     try { saved = localStorage.getItem(ACTIVE_TAB_KEY); } catch(e) {}
     var validTabs = ['today', 'weather', 'walks', 'nearby', 'me'];
     if (saved && validTabs.indexOf(saved) !== -1) {
       switchTab(saved);
     }
-  })();
+  }
 </script>
 
 <script>
@@ -1778,6 +1780,8 @@
         lat: lat, lon: lon, location: location,
         weather: weather, timestamp: Date.now()
       }));
+      // Persist location separately with no TTL so refresh always restores it
+      localStorage.setItem('sniffout_location', JSON.stringify({lat: lat, lon: lon, location: location}));
     } catch(e) {}
   }
 
@@ -2158,8 +2162,7 @@
     renderWeatherTab(cur, hourly, daily, locationName, verdict, hazards, paw);
   }
 
-  /* ─── Init: restore session ─── */
-  restoreSession();
+  /* ─── Init: session restore is handled by initApp() at end of all phases ─── */
 </script>
 
 <script>
@@ -3144,19 +3147,7 @@
     renderNearbyTab(lat, lon, locationName);
   };
 
-  // Also hook into restoreSession
-  var _origRestoreSession = restoreSession;
-  restoreSession = function() {
-    _origRestoreSession();
-    try {
-      var raw = localStorage.getItem(SESSION_KEY);
-      if (!raw) return;
-      var s = JSON.parse(raw);
-      if (s && Date.now() - s.timestamp <= SESSION_TTL && s.lat && s.lon && s.location) {
-        renderNearbyTab(s.lat, s.lon, s.location);
-      }
-    } catch(e) {}
-  };
+  // restoreSession override removed — initApp() handles all tab rendering on load
 </script>
 
 <script>
@@ -3619,6 +3610,56 @@
 
   // Sync chips on load
   syncRadiusChips();
+</script>
+
+<script>
+  /* ═══════════════════════════════
+     INIT — Runs after all phases are defined
+  ═══════════════════════════════ */
+
+  function initApp() {
+    // 1. Try to restore location (no TTL — persists across refreshes)
+    var locRaw;
+    try { locRaw = localStorage.getItem('sniffout_location'); } catch(e) {}
+
+    if (locRaw) {
+      var loc;
+      try { loc = JSON.parse(locRaw); } catch(e) {}
+
+      if (loc && loc.lat && loc.lon && loc.location) {
+        // Show State B immediately with saved location name
+        showStateB(loc.location);
+
+        // Try to render weather from cached session if still fresh (<8h)
+        var sessionRestored = false;
+        try {
+          var raw = localStorage.getItem(SESSION_KEY);
+          if (raw) {
+            var s = JSON.parse(raw);
+            if (s && s.weather && Date.now() - s.timestamp <= SESSION_TTL) {
+              renderWeather(s.weather, s.location);
+              sessionRestored = true;
+            }
+          }
+        } catch(e) {}
+
+        // If session was stale or missing, trigger a fresh weather fetch in the background
+        if (!sessionRestored && typeof loadWeatherAndShow === 'function') {
+          loadWeatherAndShow(loc.lat, loc.lon, loc.location);
+        }
+
+        // Render walk and nearby content with saved coords
+        if (typeof renderWalksNearby === 'function') renderWalksNearby(loc.lat, loc.lon);
+        if (typeof renderWalksTab === 'function') renderWalksTab(loc.lat, loc.lon);
+        if (typeof renderNearbyTab === 'function') renderNearbyTab(loc.lat, loc.lon, loc.location);
+      }
+    }
+
+    // 2. Restore the last active tab (after location so tabs render correctly)
+    restoreTab();
+  }
+
+  initApp();
 </script>
 
 </body>
