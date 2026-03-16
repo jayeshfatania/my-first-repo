@@ -1319,12 +1319,11 @@
             </svg>
           </div>
         </div>
-        <!-- Inline location-change search (hidden until location-line is tapped) -->
-        <div id="state-b-search" style="display:none; padding: 0 16px 12px;">
+        <!-- Inline location-change search, hidden until location-line is tapped -->
+        <div id="state-b-search" style="display:none; padding:0 16px 12px;">
           <div class="search-input-row">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-              <circle cx="6.5" cy="6.5" r="5"/>
-              <path d="M10.5 10.5l3.5 3.5"/>
+              <circle cx="6.5" cy="6.5" r="5"/><path d="M10.5 10.5l3.5 3.5"/>
             </svg>
             <input type="text" id="state-b-search-input" placeholder="Enter place name or postcode" autocomplete="off">
             <button class="search-submit" id="state-b-search-submit">
@@ -1546,20 +1545,15 @@
 
   /* Show State B (called from Phase C after location is resolved) */
   function showStateB(locationName) {
-    var stateA    = document.getElementById('state-a');
-    var stateB    = document.getElementById('state-b');
-    var nav       = document.getElementById('bottom-nav');
-    var locEl     = document.getElementById('location-name');
-    var sbSearch  = document.getElementById('state-b-search');
-    var sbErrEl   = document.getElementById('state-b-search-error');
+    var stateA = document.getElementById('state-a');
+    var stateB = document.getElementById('state-b');
+    var nav    = document.getElementById('bottom-nav');
+    var locEl  = document.getElementById('location-name');
 
     if (stateA) stateA.style.display = 'none';
     if (stateB) stateB.style.display = '';
     if (nav)    nav.classList.remove('state-a');
     if (locEl && locationName) locEl.textContent = locationName;
-    // Close the inline location-change search bar on every State B activation
-    if (sbSearch) sbSearch.style.display = 'none';
-    if (sbErrEl)  sbErrEl.classList.remove('visible');
 
     isStateB = true;
   }
@@ -1752,8 +1746,6 @@
       } else {
         var errEl = document.getElementById('search-error');
         if (errEl) errEl.classList.add('visible');
-        var errElB = document.getElementById('state-b-search-error');
-        if (errElB) errElB.classList.add('visible');
         var btn = document.getElementById('btn-use-location');
         if (btn) {
           btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 22" fill="white"><path d="M9 0C5.13 0 2 3.13 2 7c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 116.5 7 2.5 2.5 0 019 9.5z"/></svg> Use my location';
@@ -3499,34 +3491,45 @@
 
 <script>
   /* ═══════════════════════════════
-     FIX — State B inline location search
+     FIX — State B inline location change
   ═══════════════════════════════ */
 
-  /* Toggle the inline location-change search bar in State B */
   function toggleStateBSearch() {
     var el    = document.getElementById('state-b-search');
     var input = document.getElementById('state-b-search-input');
     var err   = document.getElementById('state-b-search-error');
     if (!el) return;
-    var isOpen = el.style.display !== 'none';
-    el.style.display = isOpen ? 'none' : '';
+    var opening = el.style.display === 'none';
+    el.style.display = opening ? '' : 'none';
     if (err) err.classList.remove('visible');
-    if (!isOpen && input) {
-      setTimeout(function() { input.focus(); }, 50);
-    }
+    if (opening && input) setTimeout(function() { input.focus(); }, 50);
   }
 
-  /* Wire up State B search submit */
+  // Close the State B search bar whenever a new location loads successfully
+  var _showStateBOrig = showStateB;
+  showStateB = function(locationName) {
+    _showStateBOrig(locationName);
+    var sbSearch = document.getElementById('state-b-search');
+    var sbErr    = document.getElementById('state-b-search-error');
+    if (sbSearch) sbSearch.style.display = 'none';
+    if (sbErr)    sbErr.classList.remove('visible');
+  };
+
+  // Show State B search error if geocode fails while State B search is open
+  var _loadWeatherOrig = loadWeatherAndShow;
+  loadWeatherAndShow = function(lat, lon, locationName) {
+    _loadWeatherOrig(lat, lon, locationName);
+  };
+
+  // Wire submit button and Enter key for State B search
   var _sbInput = document.getElementById('state-b-search-input');
   var _sbBtn   = document.getElementById('state-b-search-submit');
-
   if (_sbBtn) {
     _sbBtn.addEventListener('click', function() {
       var val = _sbInput ? _sbInput.value.trim() : '';
       if (val) geocodeAndGo(val);
     });
   }
-
   if (_sbInput) {
     _sbInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.keyCode === 13) {
