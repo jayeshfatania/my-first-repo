@@ -1,5 +1,5 @@
 # Sniffout — Product Owner Action Plan
-*Reviewed: March 2026. Covers competitor-research.md, demand-validation.md, feature-recommendations.md, design-brief.md, design-spec.md, weather-research.md, copy-review.md. Updated following mockup review session and copy review.*
+*Reviewed: March 2026. Covers competitor-research.md, demand-validation.md, feature-recommendations.md, design-brief.md, design-spec.md, weather-research.md, copy-review.md. Updated following mockup review session, copy review, Round 3 developer review, and Design Review Round 1.*
 
 ---
 
@@ -7,26 +7,30 @@
 
 **Phase 1 build:** Complete. sniffout-v2.html validated and rebuilt from scratch. All core features functional.
 
-**Phase 1 fixes (round 1 + round 2):** All 11 fix items documented as complete in developer-notes.md. FIX 3.2 (filter chips) correctly deferred to Phase 2.
+**Phase 1 fixes (round 1–3):** Round 1 and 2 fixes confirmed complete. Round 3 fixes (4.1–4.4): mostly complete with two items flagged as regressions by design review (see below).
 
-**What was confirmed done:**
-- FIX 1.1 — Social proof count corrected to 25
-- FIX 1.2 — Recent searches persist; display as pills on State A
-- FIX 1.3 — Walks tab full layout: Community Trails carousel + Nearby Green Spaces section + location context header
-- FIX 1.4 — Location search accuracy: countrycodes=gb, postcodes.io routing, Accept-Language header
-- FIX 1.5 — Nearby tab switched to Google Places API (two-pass); disclaimer added
-- FIX 2.1 — Paw safety conditional display (only at >25°C and ≤0°C)
-- FIX 2.2 — Radius filter inline on Walks and Nearby tabs; km throughout; Me tab radius control removed
-- FIX 2.3 — Recent + starred locations with pill display on State A
-- FIX 2.4 — Prominent CTA on Today tab State A
-- FIX 2.5 — Weather card copy, info modal, search placeholder
-- FIX 3.1 — Dark mode `--brand: #6EE7B7` override
+**Round 3 — confirmed done:**
+- FIX 4.1 — "Other nearby green spaces" label text ✅
+- FIX 4.2 — Venue photos on Nearby tab ✅
+- FIX 4.4 — `enclosed` field added to all 25 WALKS_DB entries; chip renders on cards ✅
 
-**Currently in progress (Round 3):** Nearby tab fixes (map view broken, venue images, label change) + Designer visual consistency review. See developer-brief-round3.md and designer-brief-round1.md.
+**Round 3 — flagged as unresolved by Design Review:**
+- FIX 3.1 — Dark mode `--brand: #6EE7B7` documented as done but absent from file per designer full-file search → **Reopened as FIX 5.1**
+- FIX 4.3 — Map view `filteredVenues()` fix documented as done but function still undefined per designer → **Reopened as FIX 5.2**
+
+**Design Review Round 1:** Complete. 8 issues identified. All addressed in developer-brief-round4.md.
+
+**Round 4 fix brief:** Issued. See developer-brief-round4.md. Contains 9 items (FIX 5.1–5.9). Two are confirmed critical regressions (5.1, 5.2); two are high priority UX issues (5.3, 5.4); two are medium (5.5, 5.6); two are low polish (5.7, 5.8); one (5.9) is pending owner decision.
+
+**Owner decisions pending — Round 4:**
+1. **Walks tab section label** — "Community Picks" vs "Sniffout Picks" vs "Recommended Trails" — decision required before FIX 5.9 can be implemented. See Flag A in developer-brief-round4.md.
+2. **Walks tab empty state copy** — dependent on decision above. See Flag B in developer-brief-round4.md.
 
 **Owner decisions confirmed (March 2026):**
-1. `enclosed: boolean` field — **signed off**. Added to WALKS_DB schema spec in developer-brief-round3.md (FIX 4.4). Developer to populate all 25 entries and render chip on walk cards.
-2. Walks tab map toggle — **will not add**. Owner agreed with PO rationale: walk routes are not map pins; proximity-sorted list serves the use case better; Nearby tab map is fit for purpose for venues.
+1. `enclosed: boolean` field — **signed off**. Added to WALKS_DB schema (FIX 4.4). Done.
+2. Walks tab map toggle — **will not add**. Walk routes are not map pins; proximity-sorted list serves the use case better.
+3. Filter chips on Walks tab — **Phase 2 item**. Not in current build.
+4. Community submission features — **Deferred**. `communityWalks` is not part of v2.
 
 ---
 
