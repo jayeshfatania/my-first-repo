@@ -1,5 +1,5 @@
 # Sniffout — Product Owner Action Plan
-*Reviewed: March 2026. Covers competitor-research.md, demand-validation.md, feature-recommendations.md, design-brief.md, design-spec.md, weather-research.md, copy-review.md. Updated following mockup review session, copy review, Round 3 developer review, and Design Review Round 1.*
+*Reviewed: March 2026. Covers competitor-research.md, demand-validation.md, feature-recommendations.md, design-brief.md, design-spec.md, weather-research.md, copy-review.md. Updated following mockup review session, copy review, Round 3 developer review, Design Review Round 1, and issuance of Round 4 developer brief and Designer Brief Round 2.*
 
 ---
 
@@ -7,7 +7,7 @@
 
 **Phase 1 build:** Complete. sniffout-v2.html validated and rebuilt from scratch. All core features functional.
 
-**Phase 1 fixes (round 1–3):** Round 1 and 2 fixes confirmed complete. Round 3 fixes (4.1–4.4): mostly complete with two items flagged as regressions by design review (see below).
+**Phase 1 fixes (rounds 1–3):** All confirmed complete except two regressions flagged by Design Review (reopened below).
 
 **Round 3 — confirmed done:**
 - FIX 4.1 — "Other nearby green spaces" label text ✅
@@ -18,19 +18,31 @@
 - FIX 3.1 — Dark mode `--brand: #6EE7B7` documented as done but absent from file per designer full-file search → **Reopened as FIX 5.1**
 - FIX 4.3 — Map view `filteredVenues()` fix documented as done but function still undefined per designer → **Reopened as FIX 5.2**
 
-**Design Review Round 1:** Complete. 8 issues identified. All addressed in developer-brief-round4.md.
+**Design Review Round 1:** Complete. 8 issues identified. All 8 addressed in developer-brief-round4.md.
 
-**Round 4 fix brief:** Issued. See developer-brief-round4.md. Contains 9 items (FIX 5.1–5.9). Two are confirmed critical regressions (5.1, 5.2); two are high priority UX issues (5.3, 5.4); two are medium (5.5, 5.6); two are low polish (5.7, 5.8); one (5.9) is pending owner decision.
+**Round 4 developer brief:** Issued. See developer-brief-round4.md. Contains 9 items (FIX 5.1–5.9). Two confirmed critical regressions (5.1, 5.2); two high priority UX issues (5.3, 5.4); two medium (5.5, 5.6); two low polish (5.7, 5.8); one (5.9) pending owner decision. **Awaiting developer implementation.**
 
-**Owner decisions pending — Round 4:**
-1. **Walks tab section label** — "Community Picks" vs "Sniffout Picks" vs "Recommended Trails" — decision required before FIX 5.9 can be implemented. See Flag A in developer-brief-round4.md.
-2. **Walks tab empty state copy** — dependent on decision above. See Flag B in developer-brief-round4.md.
+**Designer Brief Round 2:** Issued. See designer-brief-round2.md. Scopes: verification sweep of all 9 Round 4 fixes; focused review of Today tab State B, Weather tab, and new components from Rounds 3–4. **Awaiting developer to complete Round 4 fixes before Designer begins Round 2 review.**
 
 **Owner decisions confirmed (March 2026):**
 1. `enclosed: boolean` field — **signed off**. Added to WALKS_DB schema (FIX 4.4). Done.
 2. Walks tab map toggle — **will not add**. Walk routes are not map pins; proximity-sorted list serves the use case better.
 3. Filter chips on Walks tab — **Phase 2 item**. Not in current build.
 4. Community submission features — **Deferred**. `communityWalks` is not part of v2.
+5. Walks tab section label — **"Sniffout Picks"** confirmed. Empty state: "No walks found nearby. Try a wider radius." FIX 5.9 unblocked.
+
+**Today tab:** today-tab-design-proposal.md complete. today-tab-dev-brief.md issued. Approved with two modifications: (1) social proof "No account needed" replaced with "Dog-specific routes" per CLAUDE.md non-negotiable; (2) advisory hero body text copy NOT approved (contained "no account needed") — current body text stands.
+
+**Next milestones:**
+1. Developer to implement Round 4 fixes (FIX 5.1–5.9) + Today tab changes (today-tab-dev-brief.md) in a **single session** — see bundling rationale below
+2. Designer to run Round 2 review (designer-brief-round2.md) once developer session is complete
+3. PO to assess Round 2 design review findings and issue further briefs as needed
+
+**Bundling rationale — why Round 4 + Today tab should be implemented together:**
+- All changes are in `sniffout-v2.html` — two separate sessions risk merge conflicts and double context setup
+- FIX 5.1 (dark mode `--brand`) is a prerequisite for the Today tab conditions card dark mode override — must be implemented first in the same session
+- FIX 5.9 (Sniffout Picks section label on Walks tab) and the Today tab "Sniffout Picks nearby" label are complementary — consistent if done together
+- No dependencies between the two briefs that require sequential sessions
 
 ---
 

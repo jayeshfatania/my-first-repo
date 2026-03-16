@@ -251,25 +251,21 @@ body.night .weather-preview-title {
 
 ## Copy Fix — Section Label Terminology
 
-### FIX 5.9 — "Community Picks" label is misleading for curated content
+### FIX 5.9 — "Community Picks" label replaced with "Sniffout Picks"
 
-**Issue:** The primary Walks tab section is labelled "Community Picks." The walks in this section are not community-submitted — they are curated by Sniffout. `CLAUDE.md` explicitly states "communityWalks is not part of v2 — community features are deferred." Using "Community Picks" misrepresents what the section contains.
+**Owner decision (March 2026): confirmed — use `Sniffout Picks`.**
 
-The empty state "No community trails here yet — be the first to add one!" has the same problem — it implies community submission functionality that doesn't exist and is deferred.
+The primary Walks tab section is labelled "Community Picks." The walks in this section are curated by Sniffout, not community-submitted. `communityWalks` is not part of v2 — community features are deferred. "Community Picks" misrepresents what the section contains. The owner has confirmed the replacement.
 
-**This is a PO decision item — see the flags section below before implementing.**
+**Changes — implement now:**
 
-**Pending PO confirmation, the proposed changes are:**
-
-| Current | Proposed |
+| Current | Confirmed replacement |
 |---------|----------|
 | Section label: `Community Picks` | `Sniffout Picks` |
-| Location context: `Community Trails` (anywhere used in JS) | `Curated Walks` |
+| Any JS string referencing `Community Trails` | `Curated Walks` |
 | Empty state: `No community trails here yet — be the first to add one!` | `No walks found nearby. Try a wider radius.` |
 
-`Sniffout Picks` aligns with the `Sniffout Pick` badge name already in the schema and copy-review. The empty state change removes the forward-looking community submission implication, which is appropriate for a POC that must not set expectations around features that don't exist.
-
-**Do not implement until PO confirms.** See flags below.
+`Sniffout Picks` aligns with the `Sniffout Pick` badge name already in the schema. The empty state change removes the community submission implication, which is appropriate for a POC.
 
 ---
 
@@ -283,23 +279,7 @@ The empty state "No community trails here yet — be the first to add one!" has 
 - [ ] Dark mode State A: preview cards visibly distinguishable from background (FIX 5.6)
 - [ ] Walk card photo placeholders use `var(--brand)` not hardcoded `#1E4D3A` (FIX 5.7)
 - [ ] Green space cards: `border-radius: 16px` (FIX 5.8)
-- [ ] Section label copy (FIX 5.9): implement only after PO confirms below
-
----
-
-## PO Flags — Decisions Required Before FIX 5.9
-
-### Flag A — "Community Picks" vs "Sniffout Picks"
-
-The owner's round 2 user story said: *"Labelled 'Community Picks' or 'Recommended Trails'."* The developer chose "Community Picks." However, this creates a positioning problem: the walks are curated, not community-generated, and community features are explicitly deferred. "Sniffout Picks" is accurate and consistent with the badge naming. "Recommended Trails" is also acceptable and avoids the issue.
-
-**Decision needed:** Confirm preferred label — `Sniffout Picks`, `Recommended Trails`, or keep `Community Picks`.
-
-### Flag B — Empty state forward-looking copy
-
-The empty state "No community trails here yet — be the first to add one!" was previously accepted as forward-looking (PO note in `owner-feedback-round2.md`). However, this sets a user expectation of community submission — a feature that is deferred and may not arrive in POC. If the label changes to "Sniffout Picks", the empty state must also change. If label stays as "Community Picks", this string is acceptable as-is.
-
-**Decision needed:** Confirm in context of Flag A decision.
+- [ ] Section label copy (FIX 5.9): section label → `Sniffout Picks`; empty state → `No walks found nearby. Try a wider radius.`
 
 ---
 

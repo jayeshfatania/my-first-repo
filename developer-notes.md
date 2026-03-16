@@ -177,8 +177,94 @@ Added `enclosed: boolean` to all 25 WALKS_DB entries, positioned between `offLea
 
 ---
 
+---
+
+## FIX 5.1 — Dark mode `--brand` override
+
+Added `--brand: #6EE7B7;` to the `body.night` CSS block. This makes the brand colour light teal in dark mode, ensuring the CTA button, active nav, filter chips, preview picks prompt, and conditions card link all read clearly on dark surfaces.
+
+---
+
+## FIX 5.2 — Nearby tab map: removed `filteredVenues()`, use `nearbyVenues` directly
+
+Removed the `filteredVenues()` helper function. `updateMapMarkers()` now iterates `nearbyVenues` directly with an inline `if (!v.lat || !v.lon) return;` guard. `filteredVenues()` was a leftover from the Overpass era and was still being called in the map markers loop.
+
+---
+
+## FIX 5.3 — Green spaces section label uses `walks-section-label-sm`
+
+Changed `walks-section-label` to `walks-section-label-sm` on the "Other nearby green spaces" section header in `renderWalksTab`. The smaller class (15px/500 vs 18px/600) communicates correct visual hierarchy — supplementary section reads as subordinate to Sniffout Picks above.
+
+---
+
+## FIX 5.4 — Trail card heart button added
+
+Added `.trail-heart` CSS (`position: absolute; top: 8px; right: 8px`). Updated `renderTrailCard` to include a `<button class="trail-heart">` inside `.trail-card-photo`, calling `toggleFavourite()` on tap with `event.stopPropagation()` to prevent card tap interference.
+
+---
+
+## FIX 5.5 — `.trail-tag` style: brand-green tinted
+
+Changed `.trail-tag` from grey outlined pill (`border: 1.5px solid var(--chip-off); border-radius: 99px; color: var(--ink-2)`) to brand-green tinted chip (`border-radius: 6px; color: var(--brand); background: rgba(30,77,58,0.1)`). Added `body.night .trail-tag { background: rgba(110,231,183,0.12); }` dark mode override.
+
+---
+
+## FIX 5.6 — Dark mode preview card tints
+
+Added `body.night` overrides for `.walk-preview-card`, `.weather-preview-card`, `.walk-preview-tag`, `.weather-preview-title`, and `.today-conditions-card`. All use teal tint values (`rgba(110,231,183,...)`) consistent with the dark mode brand colour.
+
+---
+
+## FIX 5.7 — Walk photo placeholders use `var(--brand)`
+
+Changed `.walk-photo { background: #1E4D3A }` → `var(--brand)` in CSS. Changed the inline placeholder style in both `renderWalkCard` and `renderPortraitCard` from `background:#1E4D3A;` to `background:var(--brand);`. Dark mode will now correctly show teal placeholders.
+
+---
+
+## FIX 5.8 — Green space card `border-radius: 16px`
+
+Changed `.gs-card { border-radius: 12px }` → `16px`. Consistent with the 16px standard for surface cards throughout the app.
+
+---
+
+## FIX 5.9 — Section label: "Sniffout Picks" (PO confirmed)
+
+PO confirmed label as "Sniffout Picks". Changed `renderWalksTab`:
+- Section label: "Community Picks" → "Sniffout Picks"
+- Empty state: "No community trails here yet — be the first to add one!" → "No walks found nearby. Try a wider radius."
+
+Also updated all three WALKS_DB badge values from `'Sniffout Pick'` (singular) to `'Sniffout Picks'` (plural) so trail card badges display consistently.
+
+---
+
+## Today Tab — State A: Sniffout Picks preview section
+
+Removed from State A HTML: `<p class="preview-label">`, `.walk-preview-card`, `.weather-preview-card`.
+
+Added `<div class="preview-picks-section">` containing a header with label "Sniffout Picks" and prompt "Set your location to see what's nearest →", plus a `.trail-carousel.preview-carousel` populated by `renderStateAPreviews()`.
+
+**Walk IDs selected:** `leith-hill` (Surrey — south), `haytor-dartmoor` (Devon — south-west/coastal), `malham-cove` (North Yorkshire — north). All three have `badge: 'Sniffout Picks'` and ratings of 4.8–4.9. Geographic spread: south, south-west, north.
+
+`renderStateAPreviews()` is called on init and on every `showStateA()` call.
+
+Prompt click triggers `document.getElementById('btn-use-location').click()` — same as "Find walks near me" button (ID confirmed as `#btn-use-location`).
+
+**Social proof copy** updated to: "25 handpicked UK walks · Live conditions · Dog-specific routes" (removed "Works offline", per PO approval).
+
+---
+
+## Today Tab — State B improvements
+
+**Section label:** `renderWalksNearby` section title changed from "Walks nearby" → "Sniffout Picks nearby".
+
+**Today's conditions card:** Added to `renderTodayStateB` after `#today-walks-section`. Surfaces `verdict.body` (property path confirmed — `getWalkVerdict` returns `{title, body}`). "Full forecast →" link calls `switchTab('weather')`. Tab switch function name confirmed as `switchTab`.
+
+**Hidden gems section:** Added to `renderWalksNearby` after the portrait card scroll. Uses `haversineKm` (confirmed — returns km, threshold 50km). Filters `WALKS_DB` for `badge === 'Hidden gem'` within 50km, sorted by proximity, capped at 4 cards. Renders into `#today-hidden-gems` div. Section absent if no qualifying walks. `renderPortraitCard` confirmed as the portrait card function name.
+
+---
+
 ## Known Limitations
 
 - **Green spaces via Overpass vs Google Places:** The original `loadNearbyGreenSpaces()` uses Google Places which factors in relevance and reviews. Overpass returns raw OSM data without quality signals. Some results may be small or unnamed green spaces. The `["name"]` tag filter suppresses the worst of these. (This limitation only applies to the Walks tab green spaces supplement — the Nearby tab now uses Google Places.)
 - **Beach results depend on OSM coverage:** Coastal areas are well-tagged; inland areas will return no beach results, which is correct.
-- **Community Picks empty at small radii:** With 25 curated UK walks, a 1 km or 3 km radius will often return zero curated results outside walk hotspots. The "No community trails here yet" empty state and green spaces below are the main content at small radii.
+- **Sniffout Picks empty at small radii:** With 25 curated UK walks, a 1 km or 3 km radius will often return zero curated results outside walk hotspots. The "No walks found nearby. Try a wider radius." empty state and green spaces below are the main content at small radii.

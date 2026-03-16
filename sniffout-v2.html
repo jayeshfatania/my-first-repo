@@ -394,6 +394,56 @@
       line-height: 1.8;
     }
 
+    /* ── Preview Picks Section (State A) ── */
+    .preview-picks-section {
+      padding: 8px 0 24px;
+    }
+    .preview-picks-header {
+      padding: 0 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .preview-picks-label {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.2px;
+    }
+    .preview-picks-prompt {
+      font-size: 13px;
+      color: var(--brand);
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .preview-carousel {
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    /* ── Today's Conditions Card (State B) ── */
+    .today-conditions-card {
+      margin: 4px 16px 16px;
+      background: rgba(30,77,58,0.05);
+      border: 1px solid rgba(30,77,58,0.12);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+    .today-conditions-body {
+      font-size: 14px;
+      color: var(--ink);
+      line-height: 1.55;
+      margin-bottom: 10px;
+    }
+    .today-conditions-link {
+      font-size: 13px;
+      color: var(--brand);
+      font-weight: 600;
+      cursor: pointer;
+      display: block;
+      text-align: right;
+    }
+
     /* ═══════════════════════════════
        STATE B — Location known (Today)
     ═══════════════════════════════ */
@@ -714,7 +764,7 @@
     .walk-photo {
       height: 180px;
       position: relative;
-      background: #1E4D3A;
+      background: var(--brand);
     }
     .walk-photo img {
       width: 100%;
@@ -983,9 +1033,15 @@
       --ink:     #F0F0ED;
       --ink-2:   #8A9E92;
       --chip-off:#2A3D30;
+      --brand:   #6EE7B7;
     }
     body.night .search-input-row { background: var(--surface); }
     body.night .hour-seg.poor { background: var(--border); }
+    body.night .walk-preview-card { background: rgba(110,231,183,0.06); border-color: rgba(110,231,183,0.18); }
+    body.night .weather-preview-card { background: rgba(110,231,183,0.07); border-color: rgba(110,231,183,0.2); }
+    body.night .walk-preview-tag { background: rgba(110,231,183,0.12); color: #6EE7B7; }
+    body.night .weather-preview-title { color: #6EE7B7; }
+    body.night .today-conditions-card { background: rgba(110,231,183,0.06); border-color: rgba(110,231,183,0.18); }
 
     /* ═══════════════════════════════
        LOADING STATE
@@ -1134,6 +1190,21 @@
       background: var(--brand);
       position: relative;
     }
+    .trail-heart {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255,255,255,0.85);
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
     .trail-card-badge {
       position: absolute;
       bottom: 8px;
@@ -1153,11 +1224,13 @@
     .trail-tag {
       font-size: 11px;
       font-weight: 500;
-      border-radius: 99px;
+      border-radius: 6px;
       padding: 2px 8px;
-      border: 1.5px solid var(--chip-off);
-      color: var(--ink-2);
-      background: var(--surface);
+      color: var(--brand);
+      background: rgba(30,77,58,0.1);
+    }
+    body.night .trail-tag {
+      background: rgba(110,231,183,0.12);
     }
     .trail-list { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
     .gs-card {
@@ -1166,7 +1239,7 @@
       justify-content: space-between;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 16px;
       padding: 12px 14px;
       margin: 0 16px 8px;
     }
@@ -1270,36 +1343,22 @@
             </div>
           </div>
 
-          <p class="preview-label">Here's what you'll see:</p>
-
-          <!-- Walk preview card (teaser) -->
-          <div class="walk-preview-card">
-            <div class="walk-preview-photo">
-              <div class="mute-overlay"></div>
-              <div class="preview-badge">Off-lead</div>
+          <!-- Sniffout Picks preview (populated by renderStateAPreviews()) -->
+          <div class="preview-picks-section">
+            <div class="preview-picks-header">
+              <span class="preview-picks-label">Sniffout Picks</span>
+              <span class="preview-picks-prompt" id="preview-picks-prompt">
+                Set your location to see what's nearest →
+              </span>
             </div>
-            <div class="walk-preview-body">
-              <div class="walk-preview-name">Walks near your location</div>
-              <div class="walk-preview-tags">
-                <span class="walk-preview-tag">Off-lead</span>
-                <span class="walk-preview-tag">Woodland</span>
-                <span class="walk-preview-tag">Coastal</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Weather preview card (static) -->
-          <div class="weather-preview-card">
-            <div class="weather-preview-icon">⛅</div>
-            <div>
-              <div class="weather-preview-title">Live weather</div>
-              <div class="weather-preview-sub">Safety tips when conditions are extreme</div>
+            <div class="trail-carousel preview-carousel" id="preview-picks-carousel">
+              <!-- populated by renderStateAPreviews() -->
             </div>
           </div>
 
           <!-- Social proof -->
           <div class="social-proof">
-            25 handpicked UK walks&nbsp;·&nbsp;Works offline&nbsp;·&nbsp;Dog-specific routes
+            25 handpicked UK walks&nbsp;·&nbsp;Live conditions&nbsp;·&nbsp;Dog-specific routes
           </div>
 
         </div><!-- /state-a-scroll -->
@@ -1572,6 +1631,8 @@
     switchTab('today');
     // Clear persisted location so refresh shows State A
     try { localStorage.removeItem('sniffout_location'); } catch(e) {}
+    // Re-render preview picks carousel
+    if (typeof renderStateAPreviews === 'function') renderStateAPreviews();
   }
 
   /* Nav button click handlers */
@@ -1596,6 +1657,15 @@
   var btnToggle = document.getElementById('btn-toggle-search');
   if (btnToggle) {
     btnToggle.addEventListener('click', toggleSearch);
+  }
+
+  /* Preview picks prompt — same action as "Find walks near me" */
+  var previewPrompt = document.getElementById('preview-picks-prompt');
+  if (previewPrompt) {
+    previewPrompt.addEventListener('click', function() {
+      var btn = document.getElementById('btn-use-location');
+      if (btn) btn.click();
+    });
   }
 
   /* Search submit on Enter key */
@@ -2037,7 +2107,12 @@
         '</div>' +
       '</div>' +
       hazardHTML +
-      '<div id="today-walks-section"></div>';
+      '<div id="today-walks-section"></div>' +
+      '<div class="today-conditions-card">' +
+        '<div class="today-conditions-body">' + verdict.body + '</div>' +
+        '<span class="today-conditions-link" onclick="switchTab(\'weather\')">Full forecast →</span>' +
+      '</div>' +
+      '<div id="today-hidden-gems"></div>';
   }
 
   /* ─── Render: Weather tab ─── */
@@ -2199,7 +2274,7 @@
       description: 'Surrey\'s highest point at 294m. Dense woodland trails lead to a Gothic tower with views to the sea on clear days. Excellent off-lead running on the open heath.',
       distance: 4.1, duration: 110, difficulty: 'moderate', terrain: 'muddy',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 187, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Picks', rating: 4.8, reviewCount: 187, source: 'curated'
     },
     {
       id: 'frensham-common',
@@ -2299,7 +2374,7 @@
       description: 'The iconic Dartmoor tor circuit. Open moorland with granite outcrops and sweeping views. Completely off-lead territory — but watch the weather, it changes fast on the moor.',
       distance: 5.5, duration: 140, difficulty: 'hard', terrain: 'rocky',
       offLead: 'full', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.9, reviewCount: 287, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Picks', rating: 4.9, reviewCount: 287, source: 'curated'
     },
     {
       id: 'burley-new-forest',
@@ -2329,7 +2404,7 @@
       description: 'One of the Yorkshire Dales\' most dramatic landscapes. The limestone pavement above the cove is extraordinary. Good sections of open fell for confident off-lead dogs.',
       distance: 5.2, duration: 145, difficulty: 'hard', terrain: 'rocky',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.9, reviewCount: 198, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Picks', rating: 4.9, reviewCount: 198, source: 'curated'
     },
     {
       id: 'grasmere-lake',
@@ -2497,7 +2572,7 @@
     var ol      = offLeadLabel(walk.offLead);
     var photoStyle = walk.imageUrl
       ? ''
-      : 'background:#1E4D3A;';
+      : 'background:var(--brand);';
     var photoInner = walk.imageUrl
       ? '<img src="' + walk.imageUrl + '" alt="' + walk.name + '" loading="lazy">'
       : '';
@@ -2542,7 +2617,7 @@
 
   function renderPortraitCard(walk) {
     var fav = isFavourited(walk.id);
-    var photoStyle = walk.imageUrl ? '' : 'background:#1E4D3A;';
+    var photoStyle = walk.imageUrl ? '' : 'background:var(--brand);';
     var photoInner = walk.imageUrl ? '<img src="' + walk.imageUrl + '" alt="' + walk.name + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;">' : '';
     var badgeHTML  = walk.badge ? '<div class="portrait-badge">' + walk.badge + '</div>' : '';
 
@@ -2602,7 +2677,12 @@
     var enclosedTag = walk.enclosed ? '<span class="trail-tag">Enclosed</span>' : '';
     return (
       '<div class="trail-card" onclick="onWalkTap(\'' + walk.id + '\')">' +
-        '<div class="trail-card-photo">' + badgeHTML + '</div>' +
+        '<div class="trail-card-photo">' +
+          badgeHTML +
+          '<button class="trail-heart" data-heart="' + walk.id + '" onclick="event.stopPropagation();toggleFavourite(\'' + walk.id + '\',this)">' +
+            heartSVG(isFavourited(walk.id)) +
+          '</button>' +
+        '</div>' +
         '<div class="trail-card-body">' +
           '<div class="trail-card-name">' + walk.name + '</div>' +
           ratingHTML +
@@ -2664,19 +2744,19 @@
     // Location context header
     var html = '<div class="walks-location-header"><div class="walks-location-text">' + locationCtx + '</div></div>';
 
-    // Community Picks section
+    // Sniffout Picks section
     html += '<div class="walks-section">';
-    html += '<div class="walks-section-label">Community Picks</div>';
+    html += '<div class="walks-section-label">Sniffout Picks</div>';
     if (curated.length) {
       html += '<div class="trail-carousel">' + curated.map(renderTrailCard).join('') + '</div>';
     } else {
-      html += '<div style="padding:0 16px 16px"><p style="font-size:14px;color:var(--ink-2)">No community trails here yet — be the first to add one!</p></div>';
+      html += '<div style="padding:0 16px 16px"><p style="font-size:14px;color:var(--ink-2)">No walks found nearby. Try a wider radius.</p></div>';
     }
     html += '</div>';
 
     // Nearby Green Spaces section (populated async)
     html += '<div class="walks-section" id="gs-section">';
-    html += '<div class="walks-section-label">Other nearby green spaces</div>';
+    html += '<div class="walks-section-label-sm">Other nearby green spaces</div>';
     html += '<div id="gs-list"><p style="padding:0 16px 16px;font-size:14px;color:var(--ink-2)">Looking for nearby green spaces…</p></div>';
     html += '</div>';
 
@@ -2770,12 +2850,36 @@
 
     section.innerHTML =
       '<div class="section-header" style="padding-top:4px">' +
-        '<div class="section-title">Walks nearby</div>' +
+        '<div class="section-title">Sniffout Picks nearby</div>' +
         '<span class="section-link" onclick="switchTab(\'walks\')">See all</span>' +
       '</div>' +
       '<div class="hscroll-row" style="padding:0 16px 16px">' +
         nearest.map(renderPortraitCard).join('') +
       '</div>';
+
+    // Hidden gems section
+    var HIDDEN_GEM_THRESHOLD_KM = 50;
+    var hiddenGems = WALKS_DB
+      .filter(function(w) { return w.badge === 'Hidden gem'; })
+      .map(function(w) {
+        return { walk: w, dist: haversineKm(lat, lon, w.lat, w.lon) };
+      })
+      .filter(function(item) { return item.dist <= HIDDEN_GEM_THRESHOLD_KM; })
+      .sort(function(a, b) { return a.dist - b.dist; })
+      .slice(0, 4)
+      .map(function(item) { return item.walk; });
+
+    var gemsEl = document.getElementById('today-hidden-gems');
+    if (gemsEl && hiddenGems.length > 0) {
+      gemsEl.innerHTML =
+        '<div class="section-header">' +
+          '<div class="section-title">Hidden gems</div>' +
+          '<span class="section-link" onclick="switchTab(\'walks\')">Explore →</span>' +
+        '</div>' +
+        '<div class="hscroll-row" style="padding:0 16px 24px">' +
+          hiddenGems.map(renderPortraitCard).join('') +
+        '</div>';
+    }
 
     // Also update Walks tab with sorted results
     renderWalksTab(lat, lon);
@@ -2815,10 +2919,23 @@
     });
   });
 
+  /* ─── State A preview carousel ─── */
+  var PREVIEW_PICK_IDS = ['leith-hill', 'haytor-dartmoor', 'malham-cove'];
+
+  function renderStateAPreviews() {
+    var carousel = document.getElementById('preview-picks-carousel');
+    if (!carousel) return;
+    var walks = PREVIEW_PICK_IDS.map(function(id) {
+      return WALKS_DB.filter(function(w) { return w.id === id; })[0];
+    }).filter(Boolean);
+    carousel.innerHTML = walks.map(renderTrailCard).join('');
+  }
+
   /* ─── Init ─── */
   renderWalksTab();
   renderFavouritesList();
   updateMeStats();
+  renderStateAPreviews();
 </script>
 
 <script>
@@ -3108,11 +3225,6 @@
     updateMapMarkers();
   }
 
-  // With Google Places each fetch is already category-specific, so filteredVenues returns all current venues
-  function filteredVenues() {
-    return nearbyVenues.filter(function(v) { return v.lat && v.lon; });
-  }
-
   function updateMapMarkers() {
     if (!nearbyMap) return;
     // Remove old venue markers (user marker kept by not tracking it separately)
@@ -3120,7 +3232,8 @@
       if (layer instanceof L.Marker) nearbyMap.removeLayer(layer);
     });
 
-    filteredVenues().forEach(function(v) {
+    nearbyVenues.forEach(function(v) {
+      if (!v.lat || !v.lon) return;
       var icon  = CATEGORY_ICON[v.cat] || CATEGORY_ICON.other;
       var label = escHtml(v.name);
       L.marker([v.lat, v.lon])
