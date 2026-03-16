@@ -870,21 +870,21 @@
     .legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
 
     .forecast-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
       padding: 0 16px 24px;
     }
-    .forecast-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 8px;
-      text-align: center;
+    .forecast-row {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
     }
-    .forecast-day { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
-    .forecast-temps { font-size: 12px; color: var(--ink); font-weight: 500; margin-bottom: 8px; }
-    .forecast-temps span { color: var(--ink-2); font-weight: 400; }
+    .forecast-row:last-child { border-bottom: none; }
+    .forecast-day { font-size: 14px; font-weight: 600; color: var(--ink); width: 90px; flex-shrink: 0; }
+    .forecast-icon { flex: 1; display: flex; justify-content: center; }
+    .forecast-right { text-align: right; }
+    .forecast-temps { font-size: 14px; color: var(--ink); font-weight: 600; }
+    .forecast-temps span { color: var(--ink-2); font-weight: 400; margin-left: 4px; }
+    .forecast-desc { font-size: 12px; color: var(--ink-2); margin-top: 2px; }
 
     /* Rain section */
     .rain-section {
@@ -2477,7 +2477,7 @@
         '<div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Marginal</div>' +
         '<div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>Poor</div>' +
       '</div>' +
-      '<div class="section-header"><div class="section-title">3-day forecast</div></div>' +
+      '<div class="section-header"><div class="section-title">5-day forecast</div></div>' +
       '<div class="forecast-grid" style="padding-bottom:16px">' + forecastHTML + '</div>';
     syncIcons();
   }
@@ -2509,11 +2509,13 @@
       var emoji   = WMO_EMOJI[code] || '🌤️';
       var desc    = WMO_DESC[code] || '';
       html +=
-        '<div class="forecast-card">' +
+        '<div class="forecast-row">' +
           '<div class="forecast-day">' + dayName + '</div>' +
-          '<div style="margin-bottom:6px;">' + luIcon(WMO_ICON[code] || 'cloud-sun', 26) + '</div>' +
-          '<div class="forecast-temps">' + hi + '° <span>' + lo + '°</span></div>' +
-          '<div style="font-size:12px;color:var(--ink-2);">' + desc + '</div>' +
+          '<div class="forecast-icon">' + luIcon(WMO_ICON[code] || 'cloud-sun', 24) + '</div>' +
+          '<div class="forecast-right">' +
+            '<div class="forecast-temps">' + hi + '°<span>' + lo + '°</span></div>' +
+            '<div class="forecast-desc">' + desc + '</div>' +
+          '</div>' +
         '</div>';
     }
     return html;

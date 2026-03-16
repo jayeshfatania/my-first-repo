@@ -1,5 +1,5 @@
 # Sniffout — Product Owner Action Plan
-*Reviewed: March 2026. Covers competitor-research.md, demand-validation.md, feature-recommendations.md, design-brief.md, design-spec.md, weather-research.md, copy-review.md. Updated following mockup review session, copy review, Rounds 3–5 developer review, Design Reviews Rounds 1–2, Today tab design, and owner phone feedback session.*
+*Reviewed: March 2026. Covers competitor-research.md, demand-validation.md, feature-recommendations.md, design-brief.md, design-spec.md, weather-research.md, copy-review.md, community-engagement-research.md, missing-dog-research.md. Updated following mockup review session, copy review, Rounds 3–7 developer review, Design Reviews Rounds 1–2, Today tab design, owner phone feedback session, and Phase 2 research completion.*
 
 ---
 
@@ -8,6 +8,10 @@
 **Phase 1: ✅ SIGNED OFF — March 2026.** sniffout-v2.html validated and rebuilt from scratch. All core features functional. All Phase 1 blockers resolved. See phase1-signoff.md.
 
 **Phase 2: ACTIVE.**
+
+**Round 7 fixes:** All confirmed complete (FIX 8.1–8.9). Additional items also completed this cycle: sunrise/sunset pill added to Today tab weather hero (this resolved the FIX 8.9 duplicate wind pill — sunrise/sunset replaced the third pill); all emojis replaced with Lucide icons throughout the app. No outstanding developer work.
+
+**Research complete:** community-engagement-research.md and missing-dog-research.md both delivered. Key findings incorporated into Phase 2 and Phase 3 planning below.
 
 **Final copy decision at Phase 1 close:** Social proof strip third item changed from "Works offline" → "Just open and explore" (owner-confirmed override). Strip now reads: `25 handpicked UK walks · Just open and explore · Dog-specific routes`.
 
@@ -41,6 +45,8 @@
 | developer-brief-round4.md | FIX 5.1–5.9 (design consistency, dark mode, map fix, trail heart, tag style, label hierarchy, Sniffout Picks label) | ✅ Done |
 | today-tab-dev-brief.md | State A preview picks section; State B conditions card + hidden gems; label rename | ✅ Done |
 | developer-brief-round5.md | FIX 6.1–6.3 (remove parks/beaches from Nearby; remove Nearby pill; add Google Maps link to gs cards) | ✅ Done |
+| developer-brief-round6.md | FIX 7.0–7.5 (badge regression, trail card resize, gs card thumbnail, environment field, filter sheet, saveRadius); Issue A (paw safety safe state); Issue 4 partial (trail-tag.partial); TA-1 (social proof copy) | ✅ Done |
+| developer-brief-round7.md | FIX 8.1–8.9 (verdict order, 5-day forecast, text sizes, rain chance, paw safety thresholds, verdict CSS, modal animation, dead CSS, wind pill); sunrise/sunset pill (resolved FIX 8.9 duplicate); Lucide icons throughout | ✅ Done |
 
 **Note:** FIX 5.9 introduced a badge regression — developer changed badge field values to `'Sniffout Picks'` (plural) when they should remain `'Sniffout Pick'` (singular). Corrected in FIX 7.0 in developer-brief-round6.md.
 
@@ -58,15 +64,15 @@
 
 ## Active Developer Session
 
-| Brief | Contents | Status |
-|-------|----------|--------|
-| developer-brief-round7.md | FIX 8.1 verdict body order (Today); FIX 8.2 5-day forecast; FIX 8.3 forecast text 12px; FIX 8.4 rain chance replaces humidity; FIX 8.5 paw safety trigger-only; FIX 8.6 verdict card class; FIX 8.7 modal slide animation; FIX 8.8 dead CSS removed; FIX 8.9 wind speed replaces third Today pill | ⏳ Pending |
+No active developer session. Developer is free. Next brief will follow condition tags designer output.
 
 ---
 
 ## Active Designer Session
 
-No active designer session. Round 2 complete.
+| Brief | Contents | Status |
+|-------|----------|--------|
+| condition-tags-designer-brief.md | Condition tags UI + mark-as-walked action + walk card integration + post-walk prompt + staleness display + community disclaimer | 🟢 Ready to issue |
 
 ---
 
@@ -87,7 +93,7 @@ Filter/sort implementation is now fully unblocked. designer-brief-round3.md upda
 1. `enclosed: boolean` field — **signed off**. Done.
 2. Walks tab map toggle — **will not add**.
 3. Filter/sort expansion — **in scope**. All filter decisions confirmed (see table above).
-4. Community submission features — **Deferred**.
+4. Community submission features (walk routes, full social layer) — **Deferred to Phase 3**. Condition tags and star ratings are Phase 2 — see Phase 2 Planning section.
 5. Walks tab section label — **"Sniffout Picks"** confirmed.
 6. Parks + beaches removed from Nearby tab — **confirmed** (FIX 6.1).
 7. "Nearby" pill removed from green space cards — **confirmed** (FIX 6.2).
@@ -97,7 +103,12 @@ Filter/sort implementation is now fully unblocked. designer-brief-round3.md upda
 11. Duration thresholds: Short <60 min, Medium 60–120 min, Long >120 min — **confirmed**.
 12. Nearby category filter stays as chip row only — **confirmed**.
 13. Paw safety block — **show only in extreme/dangerous conditions** (≥25°C caution, ≥35°C danger, ≤0°C caution for ice). Must not render at normal temperatures. Confirmed and final (W2 decision, March 2026).
-14. Third Today tab weather pill — **wind speed** replaces "Feels X°C". Confirmed (TB-1 decision, March 2026). Implemented in FIX 8.9.
+14. Third Today tab weather pill — **sunrise/sunset** (implemented). FIX 8.9 duplicate wind pill resolved by developer — sunrise/sunset pill is live. Confirmed complete.
+15. Condition tags — **Phase 2 priority feature**. Zero moderation, no accounts required. Owner confirmed. Designer brief ready to issue.
+16. Missing dog alerts — **Phase 3, post-backend**. Design brief to be issued. Phone number verification non-negotiable. Owner confirmed.
+17. Accounts — **contextual introduction only**. Prompt when user tries to write a review, never on first open. Display name + email minimum. Confirmed (March 2026).
+18. **Mark as walked** — **Phase 2, include alongside condition tags**. Serves as the primary trigger for the post-walk condition tag prompt. New UI element required on walk cards or walk detail. Owner confirmed (March 2026).
+19. **Star ratings** — **Deferred**. Seeded WALKS_DB ratings to remain as-is for POC. Community ratings not mixed in until post-launch. Owner confirmed (March 2026).
 
 ---
 
@@ -109,11 +120,10 @@ No open decisions.
 
 ## Next Steps in Order
 
-1. **Developer** to implement Round 7 (developer-brief-round7.md) — 8 fixes, all low complexity
-2. **Owner** to confirm TB-1 pill decision (see Open Owner Decisions above)
-3. **PO** to assess Round 7 completion → issue developer-brief-round8.md if further fixes found, or bundle TB-1 decision
-4. **Phase 2 planning** — sticky Sniffout Picks UX investigation; Community Engagement research brief (see Phase 2 Planning section below)
-5. **Walk detail overlay** — designer brief, then developer brief
+1. **Designer** — condition tags designer brief (`condition-tags-designer-brief.md`). Covers condition tag UI, mark-as-walked action, walk card integration, post-walk prompt, staleness display, community disclaimer. See phase2-team-brief.md.
+2. **Designer** — missing dog alerts design brief (`missing-dog-designer-brief.md`). Full user flows, data model, privacy/safeguarding spec, and "coming soon" placeholder card. Can run in parallel with step 1 or immediately after. See phase2-team-brief.md and Phase 3 section of this plan.
+3. **Designer** — Sticky Sniffout Picks UX exploration. Prototype sticky vs non-sticky layout on device; present recommendation to PO before any developer brief is issued. See Phase 2 Planning section.
+4. **Developer** — no active brief. Free until condition tags design output is assessed by PO.
 
 ---
 
@@ -140,18 +150,112 @@ No open decisions.
 
 ### PHASE 2 RESEARCH BRIEF — Community Engagement
 
-**Context:** Community features (walk submission, ratings, reviews) are confirmed deferred per CLAUDE.md. Before they are built, the product needs a clear model for what incentivises users to contribute. Community platforms that launch without incentive design typically stagnate — content contribution requires a reason.
+**Research complete.** community-engagement-research.md delivered. Top findings incorporated below.
 
-**Research questions:**
-1. What motivates dog owners to share walks publicly (status, altruism, local identity, reciprocity)?
-2. What formats lower the barrier to contribution — a star rating is easier than a written review, a photo is easier than a description. What is the minimum viable contribution?
-3. What do successful small-scale community walk apps (AllTrails, WalkiePawie) do to seed and sustain contribution? What fails?
-4. Is there a gamification model appropriate for Sniffout's tone (clean, uncluttered, not gimmicky)? Walk streaks were deprioritised — is there a lighter alternative?
-5. What is the right incentive for early contributors (the users who shape the platform before it has critical mass)?
+---
 
-**Output needed:** A researcher brief summarising findings across the above questions, with a recommendation for the minimum community contribution model to build in Phase 3. The output should be specific enough to inform a UX design brief.
+### PHASE 2 PRIORITY FEATURE — Condition Tags
 
-**Owner rationale:** Community content is the long-term moat — user-generated routes in new regions extend the app beyond the 25 curated walks without requiring continuous editorial investment. Getting the incentive model right before building is substantially cheaper than building the wrong system and iterating.
+**Owner confirmed. Design brief to be issued.**
+
+**What it is:** Pre-defined tap-selectable labels that walkers leave on walk entries. No text input, no account required. Examples: "Cattle in field", "Very muddy underfoot", "Flooded section", "Quiet today". Timestamped and auto-expiring.
+
+**Why it's the right Phase 2 move:**
+- Zero moderation cost — pre-defined taxonomy, no free text
+- No accounts required — IP/device rate limiting is sufficient
+- Creates a daily habit loop: users return to check conditions before each walk, not just to find a new one
+- The most time-sensitive, dog-specific information that UK dog owners actively share with each other (cattle, livestock, flooded paths) is captured in a single tap
+- Research finding: condition tags outperform star ratings per unit of user effort, and recency matters more than volume — 3 tags from the last 48 hours makes the app feel alive in a way 50 reviews from last year cannot
+
+**Approved tag taxonomy (from community-engagement-research.md):**
+
+| Category | Tags |
+|----------|------|
+| Hazard | Cattle in field · Sheep in field · Dogs on leads here · Access issue |
+| Surface | Very muddy underfoot · Flooded section · Overgrown path · Icy/slippery |
+| Positive | Great water point for dogs · Dog-friendly café open · Excellent conditions today |
+| Footfall | Busy/crowded · Quiet today |
+
+**Tag rules:**
+- Each tag timestamped at submission
+- Animal hazard tags (cattle, sheep): stale after **7 days**
+- All other tags: stale after **14 days** ("may be out of date" label shown)
+- Tags >30 days hidden by default, collapsible under "older reports"
+- Every piece of community content labelled "Community reported — not verified by Sniffout" adjacent to the tag (not buried in ToS)
+- Curated fields (difficulty, off-lead status, livestock: boolean) remain locked — community tags supplement, never override
+
+**Design brief scope (condition-tags-designer-brief.md — ready to issue):**
+- Mark-as-walked action: button placement on walk cards and/or walk detail; tap interaction
+- Post-walk prompt: appears after "mark as walked" tap; single-tap tag selection flow; dismissible without tagging
+- Condition tag display on walk cards: tag count + most recent tag type as preview
+- Tag input UI: full tag selection screen or bottom sheet
+- Timestamp and staleness display: "2 hours ago", "may be out of date" treatment, hidden >30 days
+- "Community reported — not verified by Sniffout" disclaimer placement (must be adjacent to content, not buried)
+- Empty state on walk with no tags: "Be the first to report conditions on this walk"
+
+**What this is not:** Walk submission, free-text reviews, photo uploads, or social features. Those are Phase 3. This is a single-tap information layer only.
+
+---
+
+### PHASE 2 FEATURE — Accounts (Contextual Introduction)
+
+**Owner confirmed. Sequencing locked.**
+
+- **Phase 2a (no-account layer):** Condition tags + star ratings (if approved). No account required. Launches with condition tags.
+- **Phase 2b (lightweight account for written reviews):** Triggered contextually — only when a user attempts to write a review. Prompt: "Create a free account to post your review." Minimum ask: display name + email only. No phone number, no profile photo required at signup.
+- The app works fully without an account. Community features requiring an account are optional enhancements, never gates on core functionality.
+- UK Defamation Act 2013 note: condition tags (pre-defined, non-defamatory) can remain fully anonymous. Written reviews should require a lightweight account for legal cover.
+
+---
+
+## Phase 3 Roadmap
+
+---
+
+### PHASE 3 FEATURE — Missing Dog Alerts
+
+**Owner confirmed: design now, build post-POC.**
+
+**Research complete.** missing-dog-research.md delivered. Full viability study including demand evidence, competitive gap analysis, safeguarding requirements, and MVP feature spec.
+
+**The case in brief:**
+- ~250,000 pets go missing in the UK annually; ~5 dogs stolen per day
+- No existing service sends real-time alerts to active dog walkers near the last known location — that is the gap
+- "Found via Sniffout" is exceptional word-of-mouth: a story with a villain, hero, and resolution, tailor-made for social sharing and press
+- Sniffout's unique position: push notifications to people who are *already outside with dogs* near where the animal was lost — more targeted than DogLost (email), PetRadar (social ads), or Petlog (alerts to vets, not walkers)
+
+**Why not now — three hard blockers:**
+1. **Backend required.** Push notifications need a server to store subscriptions and trigger alerts. The current static GitHub Pages PWA cannot support this. Backend is a prerequisite — and that decision should be driven by the full product roadmap (accounts, community features), not this feature alone.
+2. **User density required.** A 2-mile alert is only valuable if there are active users within 2 miles. In the POC phase, geographic coverage is too thin. Launching a feature that fails to deliver in most UK areas is worse than not launching it.
+3. **Moderation capacity.** Phone number verification and a flag queue require operational attention. Not the right distraction at POC stage.
+
+**Immediate action — design brief to be issued:**
+Design the feature fully before the backend exists. Benefits: (a) it can be built quickly once infrastructure is ready; (b) it signals product vision to early users and investors. A "coming soon" card in the Me tab or Today tab is a valid placeholder once the design is done.
+
+**Non-negotiables confirmed by owner:**
+- Phone number verification to post an alert — no exceptions
+- One active alert per verified phone number
+- Last seen location shown as approximate map pin, never a home address
+- Contact mediated through in-app messaging, never owner's phone number displayed publicly
+- Community disclaimer on all alerts: "Community reported — not verified by Sniffout"
+
+**MVP feature set (from research):**
+
+| Feature | Notes |
+|---------|-------|
+| Report missing dog flow | Photo + breed/colour + last seen GPS pin + in-app contact only |
+| Phone number verification | Required to post — one active alert per number |
+| Push notifications to nearby users | 2–5 mile radius; iOS requires installed PWA |
+| In-app banner fallback | For users without push permissions |
+| Sighting report | "I've seen this dog" → GPS pin + note → owner notified instantly |
+| Resolution flow | "My dog has been found" → notification to all searchers |
+| Auto-archive | 7 days if unresolved; owner prompted to confirm or re-post |
+| Disclaimer label | Adjacent to all alert content — not in ToS |
+| Flag/report button | Routes to moderation queue |
+
+**Out of scope for MVP:** Stolen dog reporting (different legal category), breed filtering, external sharing from within the app, sightings map.
+
+**Design brief: to be issued.** Output needed: full user flows (reporting owner + nearby user receiving alert), data model, privacy approach (GDPR), safeguarding spec, and "coming soon" placeholder card design.
 
 ---
 
