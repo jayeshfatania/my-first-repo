@@ -3956,6 +3956,138 @@
   </div>
 </div>
 
+<!-- Walks filter sheet -->
+<div class="filter-backdrop" id="walks-filter-backdrop"></div>
+<div class="filter-sheet" id="walks-filter-sheet" role="dialog" aria-modal="true" aria-label="Filter walks">
+  <div class="filter-handle"></div>
+  <div class="filter-header">
+    <span class="filter-title">Filter &amp; Sort</span>
+    <button class="filter-close-btn" id="walks-filter-close" aria-label="Close">&#x2715;</button>
+  </div>
+  <div class="filter-body">
+
+    <div class="filter-section">
+      <div class="filter-section-label">Sort by</div>
+      <div class="filter-sort-row" data-sort="distance">
+        <div class="filter-radio selected" id="walks-sort-distance"></div>
+        <span class="filter-sort-label">Distance</span>
+      </div>
+      <div class="filter-sort-row" data-sort="rating">
+        <div class="filter-radio" id="walks-sort-rating"></div>
+        <span class="filter-sort-label">Rating</span>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Radius</div>
+      <div class="filter-chip-row" id="walks-radius-chips">
+        <button class="chip" data-walks-radius="1">1 km</button>
+        <button class="chip" data-walks-radius="3">3 km</button>
+        <button class="chip active" data-walks-radius="5">5 km</button>
+        <button class="chip" data-walks-radius="10">10 km</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Surface</div>
+      <div class="filter-chip-row" id="walks-surface-chips">
+        <button class="chip active" data-walks-surface="any">Any</button>
+        <button class="chip" data-walks-surface="paved">Paved</button>
+        <button class="chip" data-walks-surface="muddy">Muddy</button>
+        <button class="chip" data-walks-surface="mixed">Mixed</button>
+        <button class="chip" data-walks-surface="rocky">Rocky</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Environment</div>
+      <div class="filter-chip-row" id="walks-env-chips">
+        <button class="chip active" data-walks-env="any">Any</button>
+        <button class="chip" data-walks-env="woodland">Woodland</button>
+        <button class="chip" data-walks-env="coastal">Coastal</button>
+        <button class="chip" data-walks-env="urban">Urban</button>
+        <button class="chip" data-walks-env="moorland">Moorland</button>
+        <button class="chip" data-walks-env="heathland">Heathland</button>
+        <button class="chip" data-walks-env="open">Open</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Duration</div>
+      <div class="filter-chip-row" id="walks-duration-chips">
+        <button class="chip active" data-walks-duration="any">Any</button>
+        <button class="chip" data-walks-duration="short">Short &lt;1hr</button>
+        <button class="chip" data-walks-duration="medium">Medium 1&#x2013;2hr</button>
+        <button class="chip" data-walks-duration="long">Long 2hr+</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Off-lead</div>
+      <div class="filter-chip-row" id="walks-offlead-chips">
+        <button class="chip active" data-walks-offlead="any">Any</button>
+        <button class="chip" data-walks-offlead="full">Full off-lead</button>
+        <button class="chip" data-walks-offlead="partial">Partial</button>
+        <button class="chip" data-walks-offlead="none">On-lead only</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Difficulty</div>
+      <div class="filter-chip-row" id="walks-difficulty-chips">
+        <button class="chip active" data-walks-difficulty="any">Any</button>
+        <button class="chip" data-walks-difficulty="easy">Easy</button>
+        <button class="chip" data-walks-difficulty="moderate">Moderate</button>
+        <button class="chip" data-walks-difficulty="hard">Hard</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="filter-footer">
+    <button class="filter-clear-btn" id="walks-filter-clear">Clear all</button>
+    <button class="filter-apply-btn" id="walks-filter-apply">Show walks</button>
+  </div>
+</div>
+
+<!-- Nearby filter sheet -->
+<div class="filter-backdrop" id="nearby-filter-backdrop"></div>
+<div class="filter-sheet" id="nearby-filter-sheet" role="dialog" aria-modal="true" aria-label="Filter nearby places">
+  <div class="filter-handle"></div>
+  <div class="filter-header">
+    <span class="filter-title">Filter &amp; Sort</span>
+    <button class="filter-close-btn" id="nearby-filter-close" aria-label="Close">&#x2715;</button>
+  </div>
+  <div class="filter-body">
+
+    <div class="filter-section">
+      <div class="filter-section-label">Sort by</div>
+      <div class="filter-sort-row" data-sort="distance">
+        <div class="filter-radio selected" id="nearby-sort-distance"></div>
+        <span class="filter-sort-label">Distance</span>
+      </div>
+      <div class="filter-sort-row" data-sort="rating">
+        <div class="filter-radio" id="nearby-sort-rating"></div>
+        <span class="filter-sort-label">Rating</span>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Radius</div>
+      <div class="filter-chip-row" id="nearby-radius-chips">
+        <button class="chip" data-nearby-radius="1">1 km</button>
+        <button class="chip" data-nearby-radius="3">3 km</button>
+        <button class="chip active" data-nearby-radius="5">5 km</button>
+        <button class="chip" data-nearby-radius="10">10 km</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="filter-footer">
+    <button class="filter-clear-btn" id="nearby-filter-clear">Clear all</button>
+    <button class="filter-apply-btn" id="nearby-filter-apply">Show venues</button>
+  </div>
+</div>
+
 <script>
   /* ═══════════════════════════════
      FIX 2.2 — Radius filter UI (Walks + Nearby tabs)
@@ -4255,137 +4387,6 @@
   initApp();
 </script>
 
-<!-- Walks filter sheet -->
-<div class="filter-backdrop" id="walks-filter-backdrop"></div>
-<div class="filter-sheet" id="walks-filter-sheet" role="dialog" aria-modal="true" aria-label="Filter walks">
-  <div class="filter-handle"></div>
-  <div class="filter-header">
-    <span class="filter-title">Filter &amp; Sort</span>
-    <button class="filter-close-btn" id="walks-filter-close" aria-label="Close">&#x2715;</button>
-  </div>
-  <div class="filter-body">
-
-    <div class="filter-section">
-      <div class="filter-section-label">Sort by</div>
-      <div class="filter-sort-row" data-sort="distance">
-        <div class="filter-radio selected" id="walks-sort-distance"></div>
-        <span class="filter-sort-label">Distance</span>
-      </div>
-      <div class="filter-sort-row" data-sort="rating">
-        <div class="filter-radio" id="walks-sort-rating"></div>
-        <span class="filter-sort-label">Rating</span>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Radius</div>
-      <div class="filter-chip-row" id="walks-radius-chips">
-        <button class="chip" data-walks-radius="1">1 km</button>
-        <button class="chip" data-walks-radius="3">3 km</button>
-        <button class="chip active" data-walks-radius="5">5 km</button>
-        <button class="chip" data-walks-radius="10">10 km</button>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Surface</div>
-      <div class="filter-chip-row" id="walks-surface-chips">
-        <button class="chip active" data-walks-surface="any">Any</button>
-        <button class="chip" data-walks-surface="paved">Paved</button>
-        <button class="chip" data-walks-surface="muddy">Muddy</button>
-        <button class="chip" data-walks-surface="mixed">Mixed</button>
-        <button class="chip" data-walks-surface="rocky">Rocky</button>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Environment</div>
-      <div class="filter-chip-row" id="walks-env-chips">
-        <button class="chip active" data-walks-env="any">Any</button>
-        <button class="chip" data-walks-env="woodland">Woodland</button>
-        <button class="chip" data-walks-env="coastal">Coastal</button>
-        <button class="chip" data-walks-env="urban">Urban</button>
-        <button class="chip" data-walks-env="moorland">Moorland</button>
-        <button class="chip" data-walks-env="heathland">Heathland</button>
-        <button class="chip" data-walks-env="open">Open</button>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Duration</div>
-      <div class="filter-chip-row" id="walks-duration-chips">
-        <button class="chip active" data-walks-duration="any">Any</button>
-        <button class="chip" data-walks-duration="short">Short &lt;1hr</button>
-        <button class="chip" data-walks-duration="medium">Medium 1&#x2013;2hr</button>
-        <button class="chip" data-walks-duration="long">Long 2hr+</button>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Off-lead</div>
-      <div class="filter-chip-row" id="walks-offlead-chips">
-        <button class="chip active" data-walks-offlead="any">Any</button>
-        <button class="chip" data-walks-offlead="full">Full off-lead</button>
-        <button class="chip" data-walks-offlead="partial">Partial</button>
-        <button class="chip" data-walks-offlead="none">On-lead only</button>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Difficulty</div>
-      <div class="filter-chip-row" id="walks-difficulty-chips">
-        <button class="chip active" data-walks-difficulty="any">Any</button>
-        <button class="chip" data-walks-difficulty="easy">Easy</button>
-        <button class="chip" data-walks-difficulty="moderate">Moderate</button>
-        <button class="chip" data-walks-difficulty="hard">Hard</button>
-      </div>
-    </div>
-
-  </div>
-  <div class="filter-footer">
-    <button class="filter-clear-btn" id="walks-filter-clear">Clear all</button>
-    <button class="filter-apply-btn" id="walks-filter-apply">Show walks</button>
-  </div>
-</div>
-
-<!-- Nearby filter sheet -->
-<div class="filter-backdrop" id="nearby-filter-backdrop"></div>
-<div class="filter-sheet" id="nearby-filter-sheet" role="dialog" aria-modal="true" aria-label="Filter nearby places">
-  <div class="filter-handle"></div>
-  <div class="filter-header">
-    <span class="filter-title">Filter &amp; Sort</span>
-    <button class="filter-close-btn" id="nearby-filter-close" aria-label="Close">&#x2715;</button>
-  </div>
-  <div class="filter-body">
-
-    <div class="filter-section">
-      <div class="filter-section-label">Sort by</div>
-      <div class="filter-sort-row" data-sort="distance">
-        <div class="filter-radio selected" id="nearby-sort-distance"></div>
-        <span class="filter-sort-label">Distance</span>
-      </div>
-      <div class="filter-sort-row" data-sort="rating">
-        <div class="filter-radio" id="nearby-sort-rating"></div>
-        <span class="filter-sort-label">Rating</span>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Radius</div>
-      <div class="filter-chip-row" id="nearby-radius-chips">
-        <button class="chip" data-nearby-radius="1">1 km</button>
-        <button class="chip" data-nearby-radius="3">3 km</button>
-        <button class="chip active" data-nearby-radius="5">5 km</button>
-        <button class="chip" data-nearby-radius="10">10 km</button>
-      </div>
-    </div>
-
-  </div>
-  <div class="filter-footer">
-    <button class="filter-clear-btn" id="nearby-filter-clear">Clear all</button>
-    <button class="filter-apply-btn" id="nearby-filter-apply">Show venues</button>
-  </div>
-</div>
 
 </body>
 </html>
