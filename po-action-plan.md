@@ -26,25 +26,40 @@
 
 ---
 
-## Active Developer Session (Pending Implementation)
-
-**All three briefs below should be implemented in a single session:**
+## Completed Developer Sessions
 
 | Brief | Contents | Status |
 |-------|----------|--------|
-| developer-brief-round4.md | FIX 5.1–5.9 (design consistency + dark mode + map fix + trail heart + tag style + label hierarchy) | ⏳ Pending |
-| today-tab-dev-brief.md | State A preview picks section; State B conditions card + hidden gems section; label rename | ⏳ Pending |
-| developer-brief-round5.md | FIX 6.1 remove parks/beaches from Nearby; FIX 6.2 remove "Nearby" pill from gs cards; FIX 6.3 add Google Maps link to gs cards | ⏳ Pending |
+| developer-brief-round4.md | FIX 5.1–5.9 (design consistency, dark mode, map fix, trail heart, tag style, label hierarchy, Sniffout Picks label) | ✅ Done |
+| today-tab-dev-brief.md | State A preview picks section; State B conditions card + hidden gems; label rename | ✅ Done |
+| developer-brief-round5.md | FIX 6.1–6.3 (remove parks/beaches from Nearby; remove Nearby pill; add Google Maps link to gs cards) | ✅ Done |
 
-FIX 5.1 (dark mode `--brand`) must be implemented before Today tab dark mode overrides. Otherwise no strict ordering between briefs.
+**Note:** FIX 5.9 introduced a badge regression — developer changed badge field values to `'Sniffout Picks'` (plural) when they should remain `'Sniffout Pick'` (singular). Corrected in FIX 7.0 in developer-brief-round6.md.
 
 ---
 
-## Active Designer Session (Can Run in Parallel with Dev)
+## Completed Designer Sessions
 
 | Brief | Contents | Status |
 |-------|----------|--------|
-| designer-brief-round3.md | Card sizing hierarchy (trail card larger, gs card slimmer); filter/sort bottom sheet UI for Walks + Nearby | ⏳ Pending |
+| designer-brief-round1.md | Full visual consistency audit (sniffout-v2.html vs mockup + spec) | ✅ Done — 8 issues found, all addressed |
+| designer-brief-round3.md | Card sizing hierarchy + filter/sort bottom sheet | ✅ Done — approved, passed to developer-brief-round6.md |
+
+---
+
+## Active Developer Session
+
+| Brief | Contents | Status |
+|-------|----------|--------|
+| developer-brief-round6.md | FIX 7.0 badge regression; FIX 7.1 trail card resize (240px/180px + description); FIX 7.2 gs-card thumbnail layout; FIX 7.3 `environment` field (25 entries); FIX 7.4 filter/sort bottom sheet (both tabs); FIX 7.5 saveRadius check | ⏳ Pending |
+
+---
+
+## Active Designer Session
+
+| Brief | Contents | Status |
+|-------|----------|--------|
+| designer-brief-round2.md | Verification sweep of FIX 5.1–5.9; focused review of Today tab State B, Weather tab, new components | ⏳ Ready to start — all Round 4/5 fixes confirmed done |
 
 Designer Round 3 does not depend on the developer session completing. Start now.
 
@@ -81,11 +96,10 @@ Filter/sort implementation is now fully unblocked. designer-brief-round3.md upda
 
 ## Next Steps in Order
 
-1. **Owner** to confirm Decisions 1–3 above (unblocks filter/sort Designer spec and subsequent dev brief)
-2. **Developer** to implement current session: Round 4 + Today tab + Round 5 (all in `sniffout-v2.html`)
-3. **Designer** to complete Round 3 (card sizing + filter UI) — in parallel with step 2
-4. **Designer** to complete Round 2 review (verification sweep) — after step 2 completes
-5. **PO** to assess Round 2 + Round 3 design outputs, issue developer-brief-round6.md (filter/sort implementation + card sizing), incorporating owner decisions from step 1
+1. **Developer** to implement Round 6 (developer-brief-round6.md) — card sizing, filter/sort, environment field, badge regression fix
+2. **Designer** to begin Round 2 review (designer-brief-round2.md) — can run in parallel with step 1
+3. **PO** to assess Round 2 design review findings once complete and issue any further briefs
+4. **PO** to assess Round 6 completion and issue developer-brief-round7.md if further fixes found
 
 ---
 

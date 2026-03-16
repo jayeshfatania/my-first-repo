@@ -292,3 +292,92 @@ var mapsUrl = 'https://www.google.com/maps/place/' +
   '/@' + gs.lat + ',' + gs.lon + ',16z';
 ```
 `gs.name` is encoded via `encodeURIComponent()` for the URL context (not `escHtml()` which is for HTML attribute contexts). The link replaces the removed "Nearby" badge in the card body. Added `.gs-maps-link` CSS (`font-size: 12px; font-weight: 500; color: var(--brand); white-space: nowrap`). Link opens in a new tab with `target="_blank" rel="noopener noreferrer"`.
+
+---
+
+## FIX 7.0 — Badge regression revert
+
+FIX 5.9 incorrectly changed WALKS_DB badge values from `'Sniffout Pick'` (singular) to `'Sniffout Picks'` (plural). Individual walk card badges should be singular ("this walk is a Sniffout pick"). Section headings (plural — "a collection of picks") are correctly `"Sniffout Picks"`. All three WALKS_DB badge values reverted to `'Sniffout Pick'`.
+
+Also verified `renderStateAPreviews()` uses the correct `PREVIEW_PICK_IDS` array (`['leith-hill', 'haytor-dartmoor', 'malham-cove']`) — it does not filter on badge value, so no change needed there.
+
+---
+
+## FIX 7.1 — Trail card resize: 240px wide, 180px photo, description
+
+Replaced `.trail-card` and `.trail-card-photo` CSS. Key changes: width `240px` (was `200px`), photo height `180px` (was `140px`). Added `.trail-card-desc` (12px/400, `var(--ink-2)`, 2-line clamp via `-webkit-line-clamp: 2`). `renderTrailCard` updated to append `<div class="trail-card-desc">` with `escHtml(walk.description)` after the tags row.
+
+---
+
+## FIX 7.2 — Green space card: left-thumbnail layout
+
+Replaced full `.gs-card` CSS with horizontal row layout. New `.gs-thumb` class: 64×64px, `border-radius: 10px`, brand-green background when no photo. `.gs-card-body` is column flex with name/distance/Maps link stacked. Total card height ~80px.
+
+`renderGreenSpaceCard` rewritten to output thumbnail + body column. `onclick="event.stopPropagation()"` added to the Maps link to prevent card click interference. `.venue-card-photo-gp` on Nearby tab venue cards is unaffected.
+
+`.gs-maps-link` CSS updated to include `margin-top: 2px` (was `align-self: center`).
+
+---
+
+## FIX 7.3 — `environment` field added to all 25 WALKS_DB entries
+
+Added `environment` field positioned alongside `terrain` on the same line. Approved values: `'woodland'` · `'coastal'` · `'urban'` · `'moorland'` · `'heathland'` · `'open'`.
+
+Assignments (PO review requested):
+
+| Walk ID | Name | environment |
+|---------|------|-------------|
+| `box-hill-loop` | Box Hill Loop | `'open'` |
+| `richmond-park` | Richmond Park | `'urban'` |
+| `leith-hill` | Leith Hill | `'woodland'` |
+| `frensham-common` | Frensham Common | `'heathland'` |
+| `hindhead-common` | Hindhead Common | `'heathland'` |
+| `seven-sisters` | Seven Sisters | `'coastal'` |
+| `devils-dyke` | Devil's Dyke | `'open'` |
+| `ashridge-estate` | Ashridge Estate | `'woodland'` |
+| `hampstead-heath` | Hampstead Heath | `'urban'` |
+| `wimbledon-common` | Wimbledon Common | `'urban'` |
+| `newlands-corner` | Newlands Corner | `'open'` |
+| `ranmore-common` | Ranmore Common | `'woodland'` |
+| `haytor-dartmoor` | Haytor & Hound Tor | `'moorland'` |
+| `burley-new-forest` | Burley Village & Forest | `'woodland'` |
+| `stanage-edge` | Stanage Edge | `'moorland'` |
+| `malham-cove` | Malham Cove | `'open'` |
+| `grasmere-lake` | Grasmere Lake Circuit | `'open'` |
+| `headley-heath` | Headley Heath | `'heathland'` |
+| `bookham-common` | Bookham Common | `'woodland'` |
+| `st-marthas-hill` | St Martha's Hill | `'woodland'` |
+| `the-hurtwood` | The Hurtwood | `'heathland'` |
+| `epsom-common` | Epsom Common | `'woodland'` |
+| `shere-village` | Shere Village | `'woodland'` |
+| `cuckmere-haven` | Cuckmere Haven | `'coastal'` |
+| `cissbury-ring` | Cissbury Ring | `'open'` |
+
+Note: `wimbledon-common` assigned `'urban'` as it's a London common (similar to Richmond Park), though it has heathland character. PO may wish to change to `'heathland'`. `grasmere-lake` assigned `'open'` as the lake circuit is mostly open lakeside path; could be `'moorland'` if preferred.
+
+---
+
+## FIX 7.4 — Filter/sort bottom sheet: replaces inline radius picker
+
+The inline `.radius-picker` pattern is superseded by a bottom sheet modal on both tabs. Old `.radius-picker` CSS and HTML elements are left in place (unused, harmless). The `.radius-chip` chip click handlers are also superseded.
+
+**Functions added:**
+- `openFilterSheet(tab)` — adds `.open` to backdrop and sheet, locks body scroll, calls `syncFilterSheetState`
+- `closeFilterSheet(tab)` — removes `.open`, restores scroll
+- `syncFilterSheetState(tab)` — sets active class on the radius chip matching `getSavedRadius()`
+- `resetWalksFilterSheet()` — resets all filter groups to defaults (Distance sort, Any for all chip groups, saved radius for radius chips)
+- `resetNearbyFilterSheet()` — resets sort to Distance, radius to saved
+- `updateWalksFilterIndicator()` — toggles `has-filter` class on `#walks-radius-btn` when non-default filters are active
+- `renderWalksTabWithResults(result, lat, lon)` — renders the Sniffout Picks section from a supplied walks array; preserves existing green spaces section if already rendered; empty result shows "Nothing matching..." with reset link
+- Walks apply listener on `#walks-filter-apply` — reads lat/lon from `sniffout_location` localStorage (not `restoreSession()` which returns void)
+- Nearby apply listener on `#nearby-filter-apply` — uses globals `nearbyUserLat`, `nearbyUserLon`, `nearbyLocationName`; re-fetches on radius change, re-sorts in place otherwise; calls `renderVenueList()` (no args, uses global `nearbyVenues`)
+
+**FieldMask:** `places.rating` was already present in `fetchNearbyPlaces` FieldMask (line 3072). No change needed.
+
+**`saveRadius(km)`:** Added as thin wrapper — `localStorage.setItem('sniffout_radius', km)` — without the side effects of `setRadius()` (no cache clear, no re-render). Used by both apply listeners.
+
+---
+
+## FIX 7.5 — `saveRadius()` function
+
+Added `saveRadius(km)` as a thin localStorage wrapper alongside `getSavedRadius()`. Does not clear caches or re-render — that is the responsibility of the caller. `setRadius(km)` (the full version with side effects) continues to exist for direct radius changes from settings.

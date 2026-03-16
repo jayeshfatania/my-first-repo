@@ -133,6 +133,193 @@
     .filter-btn:active { color: var(--brand); }
     .radius-picker { display: none; gap: 8px; padding: 4px 16px 10px; }
     .radius-picker.open { display: flex; }
+
+    /* ─── Filter sheet backdrop ─── */
+    .filter-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 200;
+    }
+    .filter-backdrop.open { display: block; }
+
+    /* ─── Filter sheet panel ─── */
+    .filter-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-height: 72vh;
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      z-index: 201;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform 300ms cubic-bezier(0.32,0.72,0,1);
+    }
+    .filter-sheet.open { transform: translateY(0); }
+
+    /* ─── Drag handle ─── */
+    .filter-handle {
+      width: 40px;
+      height: 4px;
+      background: var(--chip-off);
+      border-radius: 2px;
+      margin: 12px auto 4px;
+      flex-shrink: 0;
+    }
+
+    /* ─── Sheet header ─── */
+    .filter-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px 12px;
+      flex-shrink: 0;
+    }
+    .filter-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .filter-close-btn {
+      background: none;
+      border: none;
+      padding: 4px;
+      color: var(--ink-2);
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    /* ─── Scrollable body ─── */
+    .filter-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 16px;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+    .filter-body::-webkit-scrollbar { display: none; }
+
+    /* ─── Section within sheet ─── */
+    .filter-section {
+      padding: 14px 0 6px;
+      border-top: 1px solid var(--border);
+    }
+    .filter-section:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+    .filter-section-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-2);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+
+    /* ─── Sort rows (custom radio-style) ─── */
+    .filter-sort-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      cursor: pointer;
+    }
+    .filter-sort-row + .filter-sort-row {
+      border-top: 1px solid var(--border);
+    }
+    .filter-radio {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--chip-off);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 150ms;
+    }
+    .filter-radio.selected { border-color: var(--brand); }
+    .filter-radio.selected::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--brand);
+    }
+    .filter-sort-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    /* ─── Chip row within sheet ─── */
+    .filter-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-bottom: 8px;
+    }
+
+    /* ─── Sheet footer ─── */
+    .filter-footer {
+      display: flex;
+      gap: 10px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--surface);
+    }
+    .filter-clear-btn {
+      flex: 1;
+      height: 44px;
+      background: none;
+      border: 1.5px solid var(--chip-off);
+      border-radius: 99px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-2);
+      cursor: pointer;
+    }
+    .filter-apply-btn {
+      flex: 2;
+      height: 44px;
+      background: var(--brand);
+      border: none;
+      border-radius: 99px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+    }
+    .filter-apply-btn:active { opacity: 0.85; }
+
+    /* ─── Active filter indicator on funnel button ─── */
+    .filter-btn { position: relative; }
+    .filter-btn.has-filter::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      right: 0;
+      width: 7px;
+      height: 7px;
+      background: var(--brand);
+      border-radius: 50%;
+      border: 1.5px solid var(--bg);
+    }
+
+    /* ─── Walks empty state ─── */
+    .walks-empty {
+      padding: 16px 16px 24px;
+      font-size: 14px;
+      color: var(--ink-2);
+      line-height: 1.5;
+    }
     .tab-subtitle {
       display: flex;
       align-items: center;
@@ -1178,17 +1365,19 @@
     .trail-carousel::-webkit-scrollbar { display: none; }
     .trail-card {
       flex-shrink: 0;
-      width: 200px;
+      width: 240px;
+      min-width: 240px;
       background: var(--surface);
-      border: 1px solid var(--border);
       border-radius: 16px;
+      border: 1px solid var(--border);
       overflow: hidden;
       cursor: pointer;
     }
     .trail-card-photo {
-      height: 120px;
+      height: 180px;
       background: var(--brand);
       position: relative;
+      overflow: hidden;
     }
     .trail-heart {
       position: absolute;
@@ -1216,11 +1405,22 @@
       border-radius: 99px;
       padding: 3px 8px;
     }
-    .trail-card-body { padding: 10px 12px 12px; }
-    .trail-card-name { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; line-height: 1.3; }
+    .trail-card-body { padding: 10px 12px 14px; }
+    .trail-card-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 4px; line-height: 1.3; }
     .trail-card-rating { font-size: 12px; color: #D97706; font-weight: 500; margin-bottom: 4px; }
     .trail-card-meta { font-size: 12px; color: var(--ink-2); margin-bottom: 6px; }
     .trail-card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .trail-card-desc {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--ink-2);
+      line-height: 1.4;
+      margin-top: 6px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
     .trail-tag {
       font-size: 11px;
       font-weight: 500;
@@ -1235,22 +1435,51 @@
     .trail-list { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
     .gs-card {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      align-items: center;
       background: var(--surface);
-      border: 1px solid var(--border);
       border-radius: 16px;
+      border: 1px solid var(--border);
       overflow: hidden;
       margin: 0 16px 8px;
+      padding: 10px 12px;
+      gap: 12px;
+      min-height: 72px;
+    }
+    .gs-thumb {
+      width: 64px;
+      height: 64px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: var(--brand);
+    }
+    .gs-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
     .gs-card-body {
+      flex: 1;
+      min-width: 0;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 14px;
+      flex-direction: column;
+      gap: 2px;
     }
     .gs-card-left { flex: 1; min-width: 0; }
-    .gs-card-name { font-size: 14px; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .gs-card-meta { font-size: 12px; color: var(--ink-2); margin-top: 2px; }
+    .gs-card-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .gs-card-meta {
+      font-size: 12px;
+      color: var(--ink-2);
+    }
     .gs-nearby-badge {
       font-size: 11px; font-weight: 500;
       border-radius: 99px; padding: 3px 8px;
@@ -1261,11 +1490,9 @@
       font-size: 12px;
       font-weight: 500;
       color: var(--brand);
-      text-decoration: none;
+      margin-top: 2px;
       white-space: nowrap;
-      align-self: center;
-      flex-shrink: 0;
-      margin-left: 10px;
+      text-decoration: none;
     }
     .gs-maps-link:hover { text-decoration: underline; }
 
@@ -2268,7 +2495,7 @@
       location: 'Dorking, Surrey',
       lat: 51.2497, lon: -0.3069,
       description: 'A classic Surrey Hills climb with sweeping views across the Weald. The open chalk grassland at the top is great for a run, and the National Trust café is dog-friendly.',
-      distance: 3.2, duration: 90, difficulty: 'moderate', terrain: 'mixed',
+      distance: 3.2, duration: 90, difficulty: 'moderate', terrain: 'mixed', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: true, hasParking: true,
       imageUrl: '', badge: 'Popular', rating: 4.7, reviewCount: 312, source: 'curated'
     },
@@ -2278,7 +2505,7 @@
       location: 'Richmond, London',
       lat: 51.4408, lon: -0.2712,
       description: 'A wide circuit through one of London\'s greatest open spaces. Dogs must be kept on leads near the deer herds, but large sections of the park allow off-lead running.',
-      distance: 4.5, duration: 100, difficulty: 'easy', terrain: 'mixed',
+      distance: 4.5, duration: 100, difficulty: 'easy', terrain: 'mixed', environment: 'urban',
       offLead: 'partial', enclosed: true, livestock: true, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Popular', rating: 4.6, reviewCount: 528, source: 'curated'
     },
@@ -2288,9 +2515,9 @@
       location: 'Dorking, Surrey',
       lat: 51.1789, lon: -0.3726,
       description: 'Surrey\'s highest point at 294m. Dense woodland trails lead to a Gothic tower with views to the sea on clear days. Excellent off-lead running on the open heath.',
-      distance: 4.1, duration: 110, difficulty: 'moderate', terrain: 'muddy',
+      distance: 4.1, duration: 110, difficulty: 'moderate', terrain: 'muddy', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Picks', rating: 4.8, reviewCount: 187, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 187, source: 'curated'
     },
     {
       id: 'frensham-common',
@@ -2298,7 +2525,7 @@
       location: 'Farnham, Surrey',
       lat: 51.1538, lon: -0.7803,
       description: 'Heathland and a large sandy beach on the Great Pond — rare in Surrey. Dogs can swim in the pond in the off-season. Keep leads on near the nesting areas in spring.',
-      distance: 2.8, duration: 65, difficulty: 'easy', terrain: 'mixed',
+      distance: 2.8, duration: 65, difficulty: 'easy', terrain: 'mixed', environment: 'heathland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 143, source: 'curated'
     },
@@ -2308,7 +2535,7 @@
       location: 'Hindhead, Surrey',
       lat: 51.1057, lon: -0.7218,
       description: 'A dramatic heather-covered valley with a circular rim walk. One of the most dog-friendly National Trust sites in Surrey — extensive off-lead access across open heath.',
-      distance: 3.6, duration: 85, difficulty: 'easy', terrain: 'mixed',
+      distance: 3.6, duration: 85, difficulty: 'easy', terrain: 'mixed', environment: 'heathland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.6, reviewCount: 209, source: 'curated'
     },
@@ -2318,7 +2545,7 @@
       location: 'Seaford, East Sussex',
       lat: 50.7677, lon: 0.1344,
       description: 'The most dramatic coastal walk in southern England. Chalk cliffs with big views over the Channel. The valley behind Cuckmere Haven is excellent off-lead territory.',
-      distance: 6.2, duration: 165, difficulty: 'moderate', terrain: 'mixed',
+      distance: 6.2, duration: 165, difficulty: 'moderate', terrain: 'mixed', environment: 'coastal',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
       imageUrl: '', badge: 'Popular', rating: 4.9, reviewCount: 441, source: 'curated'
     },
@@ -2328,7 +2555,7 @@
       location: 'Brighton, West Sussex',
       lat: 50.9091, lon: -0.2260,
       description: 'The South Downs\' most iconic viewpoint. Wide open grassland with 360-degree views. Excellent off-lead running when sheep are not grazing the escarpment.',
-      distance: 4.0, duration: 95, difficulty: 'moderate', terrain: 'paved',
+      distance: 4.0, duration: 95, difficulty: 'moderate', terrain: 'paved', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.5, reviewCount: 276, source: 'curated'
     },
@@ -2338,7 +2565,7 @@
       location: 'Berkhamsted, Hertfordshire',
       lat: 51.8001, lon: -0.5686,
       description: 'Ancient beech woodland managed by the National Trust. The bluebell carpets in late April are exceptional. Well-marked trails with good off-lead access.',
-      distance: 3.4, duration: 80, difficulty: 'easy', terrain: 'muddy',
+      distance: 3.4, duration: 80, difficulty: 'easy', terrain: 'muddy', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Hidden gem', rating: 4.7, reviewCount: 163, source: 'curated'
     },
@@ -2348,7 +2575,7 @@
       location: 'Hampstead, London',
       lat: 51.5624, lon: -0.1637,
       description: 'London\'s best dog walk. Parliament Hill has wide views over the city, and the heath\'s mixed woodland and meadows offer miles of off-lead running.',
-      distance: 3.8, duration: 90, difficulty: 'easy', terrain: 'mixed',
+      distance: 3.8, duration: 90, difficulty: 'easy', terrain: 'mixed', environment: 'urban',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: false,
       imageUrl: '', badge: 'Popular', rating: 4.8, reviewCount: 619, source: 'curated'
     },
@@ -2358,7 +2585,7 @@
       location: 'Wimbledon, London',
       lat: 51.4348, lon: -0.2319,
       description: 'Over 460 hectares of heathland, woodland and horse rides right on the edge of London. The windmill trail is a classic and dogs are welcome everywhere off-lead.',
-      distance: 3.0, duration: 70, difficulty: 'easy', terrain: 'mixed',
+      distance: 3.0, duration: 70, difficulty: 'easy', terrain: 'mixed', environment: 'urban',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.5, reviewCount: 384, source: 'curated'
     },
@@ -2368,7 +2595,7 @@
       location: 'Guildford, Surrey',
       lat: 51.2311, lon: -0.4649,
       description: 'Panoramic chalk grassland high above the Tillingbourne Valley. Short sharp climbs reward you with open views. The connecting Silent Pool trails are excellent for confident dogs.',
-      distance: 3.5, duration: 80, difficulty: 'moderate', terrain: 'mixed',
+      distance: 3.5, duration: 80, difficulty: 'moderate', terrain: 'mixed', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: true, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.4, reviewCount: 118, source: 'curated'
     },
@@ -2378,7 +2605,7 @@
       location: 'Dorking, Surrey',
       lat: 51.2334, lon: -0.3481,
       description: 'Woodland ridge walk above the Mole Valley with views over the North Downs vineyards. Quiet trails, well away from roads. Good all-year walk.',
-      distance: 4.8, duration: 115, difficulty: 'moderate', terrain: 'muddy',
+      distance: 4.8, duration: 115, difficulty: 'moderate', terrain: 'muddy', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'New', rating: 4.3, reviewCount: 42, source: 'curated'
     },
@@ -2388,9 +2615,9 @@
       location: 'Bovey Tracey, Devon',
       lat: 50.5788, lon: -3.7573,
       description: 'The iconic Dartmoor tor circuit. Open moorland with granite outcrops and sweeping views. Completely off-lead territory — but watch the weather, it changes fast on the moor.',
-      distance: 5.5, duration: 140, difficulty: 'hard', terrain: 'rocky',
+      distance: 5.5, duration: 140, difficulty: 'hard', terrain: 'rocky', environment: 'moorland',
       offLead: 'full', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Picks', rating: 4.9, reviewCount: 287, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.9, reviewCount: 287, source: 'curated'
     },
     {
       id: 'burley-new-forest',
@@ -2398,7 +2625,7 @@
       location: 'Burley, Hampshire',
       lat: 50.8270, lon: -1.6726,
       description: 'Ancient forest trails from a charming New Forest village. Ponies and cattle roam freely — leads required when near animals. The heathland sections are completely open.',
-      distance: 3.8, duration: 95, difficulty: 'easy', terrain: 'mixed',
+      distance: 3.8, duration: 95, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.6, reviewCount: 201, source: 'curated'
     },
@@ -2408,7 +2635,7 @@
       location: 'Hathersage, Derbyshire',
       lat: 53.3512, lon: -1.6497,
       description: 'The Peak District\'s most famous gritstone edge. Exposed moorland walk with fantastic views over the Hope Valley. A big day out for an adventurous dog.',
-      distance: 6.8, duration: 175, difficulty: 'hard', terrain: 'rocky',
+      distance: 6.8, duration: 175, difficulty: 'hard', terrain: 'rocky', environment: 'moorland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Popular', rating: 4.8, reviewCount: 334, source: 'curated'
     },
@@ -2418,9 +2645,9 @@
       location: 'Malham, North Yorkshire',
       lat: 54.0699, lon: -2.1586,
       description: 'One of the Yorkshire Dales\' most dramatic landscapes. The limestone pavement above the cove is extraordinary. Good sections of open fell for confident off-lead dogs.',
-      distance: 5.2, duration: 145, difficulty: 'hard', terrain: 'rocky',
+      distance: 5.2, duration: 145, difficulty: 'hard', terrain: 'rocky', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Picks', rating: 4.9, reviewCount: 198, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.9, reviewCount: 198, source: 'curated'
     },
     {
       id: 'grasmere-lake',
@@ -2428,7 +2655,7 @@
       location: 'Grasmere, Cumbria',
       lat: 54.4555, lon: -3.0234,
       description: 'A gentle circuit around one of the Lake District\'s most beautiful lakes. Mostly flat, excellent underfoot, and manageable for dogs of all ages and sizes.',
-      distance: 3.2, duration: 75, difficulty: 'easy', terrain: 'paved',
+      distance: 3.2, duration: 75, difficulty: 'easy', terrain: 'paved', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Popular', rating: 4.7, reviewCount: 421, source: 'curated'
     },
@@ -2438,7 +2665,7 @@
       location: 'Headley, Surrey',
       lat: 51.2843, lon: -0.2513,
       description: 'Open heathland managed by the National Trust, rarely busy even at weekends. Dogs can run freely across the heather. Connects to Nower Wood for a longer woodland loop.',
-      distance: 2.6, duration: 60, difficulty: 'easy', terrain: 'mixed',
+      distance: 2.6, duration: 60, difficulty: 'easy', terrain: 'mixed', environment: 'heathland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 76, source: 'curated'
     },
@@ -2448,7 +2675,7 @@
       location: 'Great Bookham, Surrey',
       lat: 51.2972, lon: -0.3760,
       description: 'A large ancient common with wetland, grassland and oak woodland. The boardwalk trail through the wet carr woodland is excellent year-round. Low foot traffic on weekdays.',
-      distance: 3.1, duration: 72, difficulty: 'easy', terrain: 'mixed',
+      distance: 3.1, duration: 72, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.3, reviewCount: 94, source: 'curated'
     },
@@ -2458,7 +2685,7 @@
       location: 'Guildford, Surrey',
       lat: 51.2131, lon: -0.5002,
       description: 'The Pilgrim\'s Way along the sandy Greensand ridge to a hilltop chapel. Excellent views across the Surrey Hills and largely off-lead access on the sandy woodland paths.',
-      distance: 3.7, duration: 88, difficulty: 'moderate', terrain: 'muddy',
+      distance: 3.7, duration: 88, difficulty: 'moderate', terrain: 'muddy', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 102, source: 'curated'
     },
@@ -2468,7 +2695,7 @@
       location: 'Ewhurst, Surrey',
       lat: 51.1645, lon: -0.4391,
       description: 'The largest area of privately owned open access land in south-east England. Extensive heather and bilberry heath with sweeping ridge views. Exceptionally quiet.',
-      distance: 4.3, duration: 105, difficulty: 'moderate', terrain: 'mixed',
+      distance: 4.3, duration: 105, difficulty: 'moderate', terrain: 'mixed', environment: 'heathland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Hidden gem', rating: 4.7, reviewCount: 58, source: 'curated'
     },
@@ -2478,7 +2705,7 @@
       location: 'Epsom, Surrey',
       lat: 51.3198, lon: -0.2762,
       description: 'Ancient common land with the medieval stew ponds at its heart. Woodpeckers, deer, and extensive off-lead access make this a genuine hidden gem close to London.',
-      distance: 2.4, duration: 55, difficulty: 'easy', terrain: 'muddy',
+      distance: 2.4, duration: 55, difficulty: 'easy', terrain: 'muddy', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'Hidden gem', rating: 4.4, reviewCount: 61, source: 'curated'
     },
@@ -2488,7 +2715,7 @@
       location: 'Shere, Surrey',
       lat: 51.2197, lon: -0.4268,
       description: 'Start from one of Surrey\'s prettiest villages and head into the National Trust woodland of Abinger Roughs. The Tillingbourne stream is a favourite with dogs in summer.',
-      distance: 3.3, duration: 78, difficulty: 'easy', terrain: 'muddy',
+      distance: 3.3, duration: 78, difficulty: 'easy', terrain: 'muddy', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: true, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.5, reviewCount: 127, source: 'curated'
     },
@@ -2498,7 +2725,7 @@
       location: 'Seaford, East Sussex',
       lat: 50.7733, lon: 0.1588,
       description: 'The meandering Cuckmere River through a nature reserve to the sea. A flat, easy walk with the chalk cliffs behind Cuckmere Haven as the backdrop. Good for nervous or older dogs.',
-      distance: 4.6, duration: 110, difficulty: 'easy', terrain: 'paved',
+      distance: 4.6, duration: 110, difficulty: 'easy', terrain: 'paved', environment: 'coastal',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       imageUrl: '', badge: undefined, rating: 4.6, reviewCount: 173, source: 'curated'
     },
@@ -2508,7 +2735,7 @@
       location: 'Worthing, West Sussex',
       lat: 50.8678, lon: -0.3782,
       description: 'An Iron Age hillfort on the South Downs with huge circular earthworks and big views to the sea. The wide rampart path is a perfect run for energetic dogs.',
-      distance: 2.9, duration: 65, difficulty: 'easy', terrain: 'mixed',
+      distance: 2.9, duration: 65, difficulty: 'easy', terrain: 'mixed', environment: 'open',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       imageUrl: '', badge: 'New', rating: 4.4, reviewCount: 39, source: 'curated'
     }
@@ -2708,6 +2935,7 @@
             terrainTag +
             enclosedTag +
           '</div>' +
+          (walk.description ? '<div class="trail-card-desc">' + escHtml(walk.description) + '</div>' : '') +
         '</div>' +
       '</div>'
     );
@@ -2718,22 +2946,19 @@
     var distText = distKm < 1
       ? Math.round(distKm * 1000) + 'm away'
       : distKm.toFixed(1) + ' km away';
-    var photoHtml = gs.photoUrl
-      ? '<div class="venue-card-photo-gp"><img src="' + gs.photoUrl + '" alt="" loading="lazy"></div>'
-      : '<div class="venue-card-photo-gp"></div>';
     var mapsUrl = 'https://www.google.com/maps/place/' +
-      encodeURIComponent(gs.name) +
-      '/@' + gs.lat + ',' + gs.lon + ',16z';
+      encodeURIComponent(gs.name) + '/@' + gs.lat + ',' + gs.lon + ',16z';
+    var thumbHtml = gs.photoUrl
+      ? '<div class="gs-thumb"><img src="' + gs.photoUrl + '" alt="" loading="lazy"></div>'
+      : '<div class="gs-thumb"></div>';
     return (
       '<div class="gs-card">' +
-        photoHtml +
+        thumbHtml +
         '<div class="gs-card-body">' +
-          '<div class="gs-card-left">' +
-            '<div class="gs-card-name">' + escHtml(gs.name) + '</div>' +
-            '<div class="gs-card-meta">' + distText + '</div>' +
-          '</div>' +
-          '<a class="gs-maps-link" href="' + mapsUrl + '" target="_blank" rel="noopener noreferrer">' +
-            'View on Google Maps →' +
+          '<div class="gs-card-name">' + escHtml(gs.name) + '</div>' +
+          '<div class="gs-card-meta">' + distText + '</div>' +
+          '<a class="gs-maps-link" href="' + mapsUrl + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">' +
+            'View on Google Maps \u2192' +
           '</a>' +
         '</div>' +
       '</div>'
@@ -2807,6 +3032,60 @@
         gsSection.style.display = 'none';
       }
     });
+  }
+
+  /* ─── Render walks tab from a pre-filtered/sorted array ─── */
+  function renderWalksTabWithResults(result, lat, lon) {
+    var el = document.getElementById('walks-content');
+    if (!el) return;
+
+    var radiusKm = getSavedRadius();
+    var locationName = '';
+    try {
+      var sess = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}');
+      locationName = (sess && sess.location) ? sess.location : '';
+    } catch(e) {}
+    var locationCtx = locationName
+      ? 'Within ' + radiusKm + ' km of ' + locationName
+      : 'Within ' + radiusKm + ' km';
+
+    var html = '<div class="walks-location-header"><div class="walks-location-text">' + locationCtx + '</div></div>';
+    html += '<div class="walks-section">';
+    html += '<div class="walks-section-label">Sniffout Picks</div>';
+    if (result && result.length) {
+      html += '<div class="trail-carousel">' + result.map(renderTrailCard).join('') + '</div>';
+    } else {
+      html += '<div class="walks-empty">Nothing matching those filters right now. <span style="color:var(--brand);cursor:pointer" onclick="document.getElementById(\'walks-filter-clear\').click();document.getElementById(\'walks-filter-apply\').click()">Show all walks \u2192</span></div>';
+    }
+    html += '</div>';
+
+    // Preserve green spaces section if it exists, otherwise add placeholder
+    var gsSection = el.querySelector('#gs-section');
+    if (!gsSection) {
+      html += '<div class="walks-section" id="gs-section">';
+      html += '<div class="walks-section-label-sm">Other nearby green spaces</div>';
+      html += '<div id="gs-list"><p style="padding:0 16px 16px;font-size:14px;color:var(--ink-2)">Looking for nearby green spaces\u2026</p></div>';
+      html += '</div>';
+      el.innerHTML = html;
+      if (lat && lon) {
+        fetchGreenSpacesForWalks(lat, lon, locationName, function(greenSpaces) {
+          var gsList = document.getElementById('gs-list');
+          var gsEl = document.getElementById('gs-section');
+          if (!gsList) return;
+          if (greenSpaces.length) {
+            gsList.innerHTML = greenSpaces.map(function(gs) {
+              return renderGreenSpaceCard(gs, lat, lon);
+            }).join('');
+          } else if (gsEl) {
+            gsEl.style.display = 'none';
+          }
+        });
+      }
+    } else {
+      // Replace only the picks section; preserve existing gs-section HTML
+      var gsSectionHTML = gsSection.outerHTML;
+      el.innerHTML = html + gsSectionHTML;
+    }
   }
 
   /* ─── Fetch green spaces for Walks tab supplement ─── */
@@ -3297,6 +3576,7 @@
 
   function getSavedUsername()  { try { return localStorage.getItem(USERNAME_KEY)  || ''; } catch(e) { return ''; } }
   function getSavedRadius()    { try { return parseInt(localStorage.getItem(RADIUS_KEY))  || 5; } catch(e) { return 5; } }
+  function saveRadius(km)      { try { localStorage.setItem(RADIUS_KEY, km); } catch(e) {} }
   function getSavedDarkMode()  { try { return localStorage.getItem(DARKMODE_KEY)  || 'auto'; } catch(e) { return 'auto'; } }
 
   /* ─── Dark mode ─── */
@@ -3718,27 +3998,210 @@
     } catch(e) {}
   }
 
-  // Funnel button toggles picker open/close
+  // ─── Filter sheet open/close ───
+  function openFilterSheet(tab) {
+    document.getElementById(tab + '-filter-backdrop').classList.add('open');
+    document.getElementById(tab + '-filter-sheet').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    syncFilterSheetState(tab);
+  }
+
+  function closeFilterSheet(tab) {
+    document.getElementById(tab + '-filter-backdrop').classList.remove('open');
+    document.getElementById(tab + '-filter-sheet').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function syncFilterSheetState(tab) {
+    var r = getSavedRadius();
+    var prefix = tab === 'walks' ? 'walks' : 'nearby';
+    var radiusChips = document.querySelectorAll('[data-' + prefix + '-radius]');
+    radiusChips.forEach(function(btn) {
+      var val = parseInt(btn.getAttribute('data-' + prefix + '-radius'), 10);
+      btn.classList.toggle('active', val === r);
+    });
+  }
+
+  // Funnel buttons open filter sheet
+  document.getElementById('walks-radius-btn').addEventListener('click', function() {
+    openFilterSheet('walks');
+  });
+  document.getElementById('nearby-radius-btn').addEventListener('click', function() {
+    openFilterSheet('nearby');
+  });
+
+  // Close on X button or backdrop tap
   ['walks', 'nearby'].forEach(function(tab) {
-    var btn    = document.getElementById(tab + '-radius-btn');
-    var picker = document.getElementById(tab + '-radius-picker');
-    if (!btn || !picker) return;
-    btn.addEventListener('click', function() {
-      var isOpen = picker.classList.contains('open');
-      // Close all pickers first
-      document.querySelectorAll('.radius-picker').forEach(function(p) { p.classList.remove('open'); });
-      if (!isOpen) { picker.classList.add('open'); syncRadiusChips(); }
+    document.getElementById(tab + '-filter-close').addEventListener('click', function() {
+      closeFilterSheet(tab);
+    });
+    document.getElementById(tab + '-filter-backdrop').addEventListener('click', function() {
+      closeFilterSheet(tab);
     });
   });
 
-  // Chip click handlers
-  document.querySelectorAll('.radius-chip').forEach(function(chip) {
-    chip.addEventListener('click', function() {
-      setRadius(parseInt(chip.dataset.km));
+  // Sort row interaction
+  ['walks', 'nearby'].forEach(function(tab) {
+    var sheet = document.getElementById(tab + '-filter-sheet');
+    sheet.querySelectorAll('.filter-sort-row').forEach(function(row) {
+      row.addEventListener('click', function() {
+        sheet.querySelectorAll('.filter-radio').forEach(function(r) { r.classList.remove('selected'); });
+        row.querySelector('.filter-radio').classList.add('selected');
+      });
     });
   });
 
-  // Sync chips on load
+  // Chip group single-select
+  ['walks', 'nearby'].forEach(function(tab) {
+    var sheet = document.getElementById(tab + '-filter-sheet');
+    sheet.querySelectorAll('.filter-chip-row').forEach(function(row) {
+      row.addEventListener('click', function(e) {
+        var btn = e.target.closest('button.chip');
+        if (!btn) return;
+        row.querySelectorAll('button.chip').forEach(function(c) { c.classList.remove('active'); });
+        btn.classList.add('active');
+      });
+    });
+  });
+
+  // Clear all buttons
+  document.getElementById('walks-filter-clear').addEventListener('click', function() {
+    resetWalksFilterSheet();
+  });
+  document.getElementById('nearby-filter-clear').addEventListener('click', function() {
+    resetNearbyFilterSheet();
+  });
+
+  function resetWalksFilterSheet() {
+    document.getElementById('walks-filter-sheet').querySelectorAll('.filter-radio').forEach(function(r) { r.classList.remove('selected'); });
+    document.getElementById('walks-sort-distance').classList.add('selected');
+    document.getElementById('walks-filter-sheet').querySelectorAll('.filter-chip-row').forEach(function(row) {
+      row.querySelectorAll('button.chip').forEach(function(c) { c.classList.remove('active'); });
+      var anyBtn = row.querySelector('[data-walks-surface="any"],[data-walks-duration="any"],[data-walks-offlead="any"],[data-walks-difficulty="any"],[data-walks-env="any"]');
+      if (anyBtn) anyBtn.classList.add('active');
+    });
+    syncFilterSheetState('walks');
+  }
+
+  function resetNearbyFilterSheet() {
+    document.getElementById('nearby-filter-sheet').querySelectorAll('.filter-radio').forEach(function(r) { r.classList.remove('selected'); });
+    document.getElementById('nearby-sort-distance').classList.add('selected');
+    syncFilterSheetState('nearby');
+  }
+
+  // ─── Walks apply logic ───
+  function updateWalksFilterIndicator() {
+    var sheet = document.getElementById('walks-filter-sheet');
+    var btn = document.getElementById('walks-radius-btn');
+    var isDefault =
+      sheet.querySelector('.filter-radio.selected') === document.getElementById('walks-sort-distance') &&
+      !sheet.querySelector('[data-walks-surface]:not([data-walks-surface="any"]).active') &&
+      !sheet.querySelector('[data-walks-env]:not([data-walks-env="any"]).active') &&
+      !sheet.querySelector('[data-walks-duration]:not([data-walks-duration="any"]).active') &&
+      !sheet.querySelector('[data-walks-offlead]:not([data-walks-offlead="any"]).active') &&
+      !sheet.querySelector('[data-walks-difficulty]:not([data-walks-difficulty="any"]).active');
+    btn.classList.toggle('has-filter', !isDefault);
+  }
+
+  document.getElementById('walks-filter-apply').addEventListener('click', function() {
+    var sheet = document.getElementById('walks-filter-sheet');
+
+    var sortRadio = sheet.querySelector('.filter-radio.selected');
+    var sortRow = sortRadio ? sortRadio.closest('.filter-sort-row') : null;
+    var activeSort = sortRow ? (sortRow.dataset.sort || 'distance') : 'distance';
+
+    var activeRadiusBtn = sheet.querySelector('[data-walks-radius].active');
+    var activeRadius = activeRadiusBtn ? parseInt(activeRadiusBtn.dataset.walksRadius, 10) : getSavedRadius();
+    saveRadius(activeRadius);
+
+    var surfaceBtn    = sheet.querySelector('[data-walks-surface].active');
+    var envBtn        = sheet.querySelector('[data-walks-env].active');
+    var durationBtn   = sheet.querySelector('[data-walks-duration].active');
+    var offleadBtn    = sheet.querySelector('[data-walks-offlead].active');
+    var difficultyBtn = sheet.querySelector('[data-walks-difficulty].active');
+
+    var activeSurface    = surfaceBtn    ? surfaceBtn.dataset.walksSurface    : 'any';
+    var activeEnv        = envBtn        ? envBtn.dataset.walksEnv             : 'any';
+    var activeDuration   = durationBtn   ? durationBtn.dataset.walksDuration   : 'any';
+    var activeOffLead    = offleadBtn    ? offleadBtn.dataset.walksOfflead     : 'any';
+    var activeDifficulty = difficultyBtn ? difficultyBtn.dataset.walksDifficulty : 'any';
+
+    // Get user location from sniffout_location (no TTL)
+    var lat = null, lon = null;
+    try {
+      var locRaw = localStorage.getItem('sniffout_location');
+      if (locRaw) {
+        var loc = JSON.parse(locRaw);
+        if (loc) { lat = loc.lat; lon = loc.lon; }
+      }
+    } catch(e) {}
+
+    var result = WALKS_DB.slice();
+    if (lat && lon) {
+      result = result.filter(function(w) {
+        return haversineKm(lat, lon, w.lat, w.lon) <= activeRadius;
+      });
+    }
+    if (activeSurface !== 'any')    result = result.filter(function(w) { return w.terrain === activeSurface; });
+    if (activeEnv !== 'any')        result = result.filter(function(w) { return w.environment === activeEnv; });
+    if (activeDuration === 'short') result = result.filter(function(w) { return w.duration < 60; });
+    if (activeDuration === 'medium') result = result.filter(function(w) { return w.duration >= 60 && w.duration <= 120; });
+    if (activeDuration === 'long')  result = result.filter(function(w) { return w.duration > 120; });
+    if (activeOffLead !== 'any')    result = result.filter(function(w) { return w.offLead === activeOffLead; });
+    if (activeDifficulty !== 'any') result = result.filter(function(w) { return w.difficulty === activeDifficulty; });
+
+    if (activeSort === 'rating') {
+      result.sort(function(a, b) { return b.rating - a.rating; });
+    } else if (lat && lon) {
+      result.sort(function(a, b) {
+        return haversineKm(lat, lon, a.lat, a.lon) - haversineKm(lat, lon, b.lat, b.lon);
+      });
+    }
+
+    renderWalksTabWithResults(result, lat, lon);
+    updateWalksFilterIndicator();
+    closeFilterSheet('walks');
+  });
+
+  // ─── Nearby apply logic ───
+  document.getElementById('nearby-filter-apply').addEventListener('click', function() {
+    var sheet = document.getElementById('nearby-filter-sheet');
+
+    var sortRadio = sheet.querySelector('.filter-radio.selected');
+    var sortRow = sortRadio ? sortRadio.closest('.filter-sort-row') : null;
+    var activeSort = sortRow ? (sortRow.dataset.sort || 'distance') : 'distance';
+
+    var activeRadiusBtn = sheet.querySelector('[data-nearby-radius].active');
+    var activeRadius = activeRadiusBtn ? parseInt(activeRadiusBtn.dataset.nearbyRadius, 10) : getSavedRadius();
+    var radiusChanged = activeRadius !== getSavedRadius();
+    if (radiusChanged) {
+      saveRadius(activeRadius);
+      NEARBY_GOOGLE_CACHE = {};
+    }
+
+    if (activeSort === 'rating') {
+      nearbyVenues.sort(function(a, b) { return (b.rating || 0) - (a.rating || 0); });
+    } else if (nearbyUserLat && nearbyUserLon) {
+      nearbyVenues.sort(function(a, b) {
+        return haversineKm(nearbyUserLat, nearbyUserLon, a.lat, a.lon) -
+               haversineKm(nearbyUserLat, nearbyUserLon, b.lat, b.lon);
+      });
+    }
+
+    var nearbyBtn = document.getElementById('nearby-radius-btn');
+    var sortIsDistance = sheet.querySelector('.filter-radio.selected') === document.getElementById('nearby-sort-distance');
+    nearbyBtn.classList.toggle('has-filter', !sortIsDistance);
+
+    if (radiusChanged) {
+      renderNearbyTab(nearbyUserLat, nearbyUserLon, nearbyLocationName);
+    } else {
+      renderVenueList();
+    }
+
+    closeFilterSheet('nearby');
+  });
+
+  // Sync radius chips on load
   syncRadiusChips();
 </script>
 
@@ -3791,6 +4254,138 @@
 
   initApp();
 </script>
+
+<!-- Walks filter sheet -->
+<div class="filter-backdrop" id="walks-filter-backdrop"></div>
+<div class="filter-sheet" id="walks-filter-sheet" role="dialog" aria-modal="true" aria-label="Filter walks">
+  <div class="filter-handle"></div>
+  <div class="filter-header">
+    <span class="filter-title">Filter &amp; Sort</span>
+    <button class="filter-close-btn" id="walks-filter-close" aria-label="Close">&#x2715;</button>
+  </div>
+  <div class="filter-body">
+
+    <div class="filter-section">
+      <div class="filter-section-label">Sort by</div>
+      <div class="filter-sort-row" data-sort="distance">
+        <div class="filter-radio selected" id="walks-sort-distance"></div>
+        <span class="filter-sort-label">Distance</span>
+      </div>
+      <div class="filter-sort-row" data-sort="rating">
+        <div class="filter-radio" id="walks-sort-rating"></div>
+        <span class="filter-sort-label">Rating</span>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Radius</div>
+      <div class="filter-chip-row" id="walks-radius-chips">
+        <button class="chip" data-walks-radius="1">1 km</button>
+        <button class="chip" data-walks-radius="3">3 km</button>
+        <button class="chip active" data-walks-radius="5">5 km</button>
+        <button class="chip" data-walks-radius="10">10 km</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Surface</div>
+      <div class="filter-chip-row" id="walks-surface-chips">
+        <button class="chip active" data-walks-surface="any">Any</button>
+        <button class="chip" data-walks-surface="paved">Paved</button>
+        <button class="chip" data-walks-surface="muddy">Muddy</button>
+        <button class="chip" data-walks-surface="mixed">Mixed</button>
+        <button class="chip" data-walks-surface="rocky">Rocky</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Environment</div>
+      <div class="filter-chip-row" id="walks-env-chips">
+        <button class="chip active" data-walks-env="any">Any</button>
+        <button class="chip" data-walks-env="woodland">Woodland</button>
+        <button class="chip" data-walks-env="coastal">Coastal</button>
+        <button class="chip" data-walks-env="urban">Urban</button>
+        <button class="chip" data-walks-env="moorland">Moorland</button>
+        <button class="chip" data-walks-env="heathland">Heathland</button>
+        <button class="chip" data-walks-env="open">Open</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Duration</div>
+      <div class="filter-chip-row" id="walks-duration-chips">
+        <button class="chip active" data-walks-duration="any">Any</button>
+        <button class="chip" data-walks-duration="short">Short &lt;1hr</button>
+        <button class="chip" data-walks-duration="medium">Medium 1&#x2013;2hr</button>
+        <button class="chip" data-walks-duration="long">Long 2hr+</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Off-lead</div>
+      <div class="filter-chip-row" id="walks-offlead-chips">
+        <button class="chip active" data-walks-offlead="any">Any</button>
+        <button class="chip" data-walks-offlead="full">Full off-lead</button>
+        <button class="chip" data-walks-offlead="partial">Partial</button>
+        <button class="chip" data-walks-offlead="none">On-lead only</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Difficulty</div>
+      <div class="filter-chip-row" id="walks-difficulty-chips">
+        <button class="chip active" data-walks-difficulty="any">Any</button>
+        <button class="chip" data-walks-difficulty="easy">Easy</button>
+        <button class="chip" data-walks-difficulty="moderate">Moderate</button>
+        <button class="chip" data-walks-difficulty="hard">Hard</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="filter-footer">
+    <button class="filter-clear-btn" id="walks-filter-clear">Clear all</button>
+    <button class="filter-apply-btn" id="walks-filter-apply">Show walks</button>
+  </div>
+</div>
+
+<!-- Nearby filter sheet -->
+<div class="filter-backdrop" id="nearby-filter-backdrop"></div>
+<div class="filter-sheet" id="nearby-filter-sheet" role="dialog" aria-modal="true" aria-label="Filter nearby places">
+  <div class="filter-handle"></div>
+  <div class="filter-header">
+    <span class="filter-title">Filter &amp; Sort</span>
+    <button class="filter-close-btn" id="nearby-filter-close" aria-label="Close">&#x2715;</button>
+  </div>
+  <div class="filter-body">
+
+    <div class="filter-section">
+      <div class="filter-section-label">Sort by</div>
+      <div class="filter-sort-row" data-sort="distance">
+        <div class="filter-radio selected" id="nearby-sort-distance"></div>
+        <span class="filter-sort-label">Distance</span>
+      </div>
+      <div class="filter-sort-row" data-sort="rating">
+        <div class="filter-radio" id="nearby-sort-rating"></div>
+        <span class="filter-sort-label">Rating</span>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Radius</div>
+      <div class="filter-chip-row" id="nearby-radius-chips">
+        <button class="chip" data-nearby-radius="1">1 km</button>
+        <button class="chip" data-nearby-radius="3">3 km</button>
+        <button class="chip active" data-nearby-radius="5">5 km</button>
+        <button class="chip" data-nearby-radius="10">10 km</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="filter-footer">
+    <button class="filter-clear-btn" id="nearby-filter-clear">Clear all</button>
+    <button class="filter-apply-btn" id="nearby-filter-apply">Show venues</button>
+  </div>
+</div>
 
 </body>
 </html>
