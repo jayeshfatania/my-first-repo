@@ -7,6 +7,8 @@
 
 **Phase 1 build:** Complete. sniffout-v2.html validated and rebuilt from scratch. All core features functional.
 
+**Phase 1 sign-off:** ⏳ NOT YET — blocked on developer-brief-round6.md (FIX 7.0–7.5), Issue 4 partial (trail-tag.partial), and New Issue A (paw safety safe state). See phase1-signoff.md for full checklist and sign-off recommendation.
+
 **Phase 1 fixes (rounds 1–3):** All confirmed complete except two regressions flagged by Design Review (reopened below).
 
 **Round 3 — confirmed done:**
@@ -20,7 +22,7 @@
 
 **Design Review Round 1:** Complete. 8 issues identified. All addressed in developer-brief-round4.md.
 
-**Designer Brief Round 2:** Issued. See designer-brief-round2.md. Verification sweep of Round 4 fixes + focused review of Today tab State B, Weather tab, new components. **Awaiting developer to complete current session before Designer begins.**
+**Designer Brief Round 2:** Issued. See designer-brief-round2.md. Verification sweep of Round 4 fixes + focused review of Today tab State B, Weather tab, new components. **Awaiting developer to complete Round 6 before Designer begins.**
 
 **Today tab:** today-tab-design-proposal.md complete. today-tab-dev-brief.md issued. Approved with two modifications — "No account needed" copy rejected (CLAUDE.md non-negotiable); advisory hero body text not approved.
 
@@ -96,10 +98,49 @@ Filter/sort implementation is now fully unblocked. designer-brief-round3.md upda
 
 ## Next Steps in Order
 
-1. **Developer** to implement Round 6 (developer-brief-round6.md) — card sizing, filter/sort, environment field, badge regression fix
-2. **Designer** to begin Round 2 review (designer-brief-round2.md) — can run in parallel with step 1
-3. **PO** to assess Round 2 design review findings once complete and issue any further briefs
-4. **PO** to assess Round 6 completion and issue developer-brief-round7.md if further fixes found
+1. **Developer** to implement Round 6 (developer-brief-round6.md) — card sizing, filter/sort, environment field, badge regression fix, plus Issue 4 partial (trail-tag.partial) and New Issue A (paw safety safe state) and TA-1 (social proof copy)
+2. **PO** to confirm Round 6 complete → sign off Phase 1 (phase1-signoff.md)
+3. **Designer** to begin Round 2 review (designer-brief-round2.md) — once Phase 1 is signed off
+4. **PO** to assess Round 2 design review findings once complete and issue any further briefs
+5. **Phase 2 planning** — sticky Sniffout Picks UX investigation; Community Engagement research brief (see Phase 2 Planning section below)
+
+---
+
+## Phase 2 Planning
+
+*Items confirmed for Phase 2 scope. Not yet briefed — planning only.*
+
+---
+
+### UX IMPROVEMENT — Sticky Sniffout Picks
+
+**Context:** On the Walks tab, curated Sniffout Picks cards appear above "Other nearby green spaces" (Overpass results). As the user scrolls through green space results, the Sniffout Picks section disappears. The hypothesis is that keeping Sniffout Picks anchored while the green space list scrolls would improve hierarchy and reduce the sense that curated content is buried.
+
+**Investigation required before briefing:**
+- Is sticky section positioning technically achievable given the current single-scroll-container layout of the Walks tab?
+- Does sticky behaviour cause any issues on iOS Safari (the primary target platform)?
+- What is the interaction model when the Sniffout Picks section is fully in-view vs. partially off-screen — does sticky add value or create visual noise?
+
+**Output needed:** UX design exploration. Designer to prototype both a sticky and non-sticky layout, test on device, and present a recommendation to the PO before a developer brief is issued.
+
+**Owner rationale:** Curated content is the product differentiator. Green spaces are supplementary. The visual hierarchy of the Walks tab should reflect this at all scroll positions, not just at load.
+
+---
+
+### PHASE 2 RESEARCH BRIEF — Community Engagement
+
+**Context:** Community features (walk submission, ratings, reviews) are confirmed deferred per CLAUDE.md. Before they are built, the product needs a clear model for what incentivises users to contribute. Community platforms that launch without incentive design typically stagnate — content contribution requires a reason.
+
+**Research questions:**
+1. What motivates dog owners to share walks publicly (status, altruism, local identity, reciprocity)?
+2. What formats lower the barrier to contribution — a star rating is easier than a written review, a photo is easier than a description. What is the minimum viable contribution?
+3. What do successful small-scale community walk apps (AllTrails, WalkiePawie) do to seed and sustain contribution? What fails?
+4. Is there a gamification model appropriate for Sniffout's tone (clean, uncluttered, not gimmicky)? Walk streaks were deprioritised — is there a lighter alternative?
+5. What is the right incentive for early contributors (the users who shape the platform before it has critical mass)?
+
+**Output needed:** A researcher brief summarising findings across the above questions, with a recommendation for the minimum community contribution model to build in Phase 3. The output should be specific enough to inform a UX design brief.
+
+**Owner rationale:** Community content is the long-term moat — user-generated routes in new regions extend the app beyond the 25 curated walks without requiring continuous editorial investment. Getting the incentive model right before building is substantially cheaper than building the wrong system and iterating.
 
 ---
 

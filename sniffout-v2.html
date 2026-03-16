@@ -1429,8 +1429,15 @@
       color: var(--brand);
       background: rgba(30,77,58,0.1);
     }
+    .trail-tag.partial {
+      color: var(--amber);
+      background: rgba(217,119,6,0.08);
+    }
     body.night .trail-tag {
       background: rgba(110,231,183,0.12);
+    }
+    body.night .trail-tag.partial {
+      background: rgba(217,119,6,0.12);
     }
     .trail-list { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
     .gs-card {
@@ -1601,7 +1608,7 @@
 
           <!-- Social proof -->
           <div class="social-proof">
-            25 handpicked UK walks&nbsp;·&nbsp;Live conditions&nbsp;·&nbsp;Dog-specific routes
+            25 handpicked UK walks&nbsp;·&nbsp;Works offline&nbsp;·&nbsp;Dog-specific routes
           </div>
 
         </div><!-- /state-a-scroll -->
@@ -2266,7 +2273,8 @@
     if (temp <= 0) {
       return { state: 'caution', title: '🐾 Paw check needed', body: 'Ice and grit on paths can hurt paws. Rinse and check your dog\'s paws after the walk.' };
     }
-    return null;
+    var t = Math.round(temp);
+    return { state: 'safe', title: '🐾 Paws safe at ' + t + '°C', body: 'At ' + t + '°C, pavement is fine. If it gets above 25°C, press your hand on the tarmac — if you can\'t hold it for 7 seconds, it\'s too hot for your dog\'s paws.' };
   }
 
   /* ─── Rain summary (Section 9) ─── */
@@ -2379,7 +2387,7 @@
 
     var pawHTML = '';
     if (paw) {
-      var pawClass = paw.state === 'danger' ? 'danger' : 'caution';
+      var pawClass = paw.state === 'danger' ? 'danger' : paw.state === 'caution' ? 'caution' : '';
       pawHTML =
         '<div class="paw-safety ' + pawClass + '" style="margin:0 16px 12px">' +
           '<div style="font-size:20px;flex-shrink:0;margin-top:1px;">🐾</div>' +
@@ -2931,7 +2939,7 @@
           ratingHTML +
           '<div class="trail-card-meta">' + walk.duration + ' min · ' + walk.distance.toFixed(1) + ' mi</div>' +
           '<div class="trail-card-tags">' +
-            '<span class="trail-tag">' + ol.text + '</span>' +
+            '<span class="trail-tag' + (ol.cls ? ' ' + ol.cls : '') + '">' + ol.text + '</span>' +
             terrainTag +
             enclosedTag +
           '</div>' +

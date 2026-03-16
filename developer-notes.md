@@ -381,3 +381,80 @@ The inline `.radius-picker` pattern is superseded by a bottom sheet modal on bot
 ## FIX 7.5 — `saveRadius()` function
 
 Added `saveRadius(km)` as a thin localStorage wrapper alongside `getSavedRadius()`. Does not clear caches or re-render — that is the responsibility of the caller. `setRadius(km)` (the full version with side effects) continues to exist for direct radius changes from settings.
+
+---
+
+## Issue A — Paw safety safe state never rendered
+
+**Root cause:** `getPawSafety(temp)` returned `null` for temperatures 0–25°C. The `if (paw)` guard in `renderWeatherTab()` skipped the block entirely for normal UK temperatures, meaning paw safety was never visible in practice.
+
+**Fix:** `getPawSafety` now returns a safe state object for `0 < temp ≤ 25°C`:
+```js
+{ state: 'safe', title: '🐾 Paws safe at Xm°C', body: 'At X°C, pavement is fine...' }
+```
+Returns `danger` state for `temp > 25°C`, `caution` for `temp ≤ 0°C`.
+
+**`pawClass` ternary updated** in `renderWeatherTab` to handle 3 states:
+```js
+var pawClass = paw.state === 'danger' ? 'danger' : paw.state === 'caution' ? 'caution' : '';
+```
+Empty string for safe = base `.paw-safety` styling with brand-green.
+
+Paw safety block now always renders on the Weather tab.
+
+---
+
+## Issue 4 partial — `.trail-tag.partial` CSS and `ol.cls` in `renderTrailCard`
+
+**Root cause 1:** CSS rule `.trail-tag.partial` was missing. Off-lead "Partial" tags rendered with brand-green (default `.trail-tag` style) instead of amber.
+
+**Fix 1:** Added CSS rules after the `.trail-tag` block:
+```css
+.trail-tag.partial {
+  color: var(--amber);
+  background: rgba(217,119,6,0.08);
+}
+body.night .trail-tag.partial {
+  background: rgba(217,119,6,0.12);
+}
+```
+
+**Root cause 2:** `renderTrailCard()` rendered `<span class="trail-tag">` without applying `ol.cls`, so partial walks always got the default class regardless.
+
+**Fix 2:** Updated the span to apply `ol.cls`:
+```js
+'<span class="trail-tag' + (ol.cls ? ' ' + ol.cls : '') + '">' + ol.text + '</span>'
+```
+
+`offLeadLabel()` returns `{ text: 'Partial off-lead', cls: 'partial' }` for partial walks — `cls` is now correctly applied.
+
+---
+
+## TA-1 — Social proof strip: "Live conditions" → "Works offline"
+
+**Change:** Social proof strip on Today tab State A reverted to approved copy string.
+
+```
+Before: 25 handpicked UK walks · Live conditions · Dog-specific routes
+After:  25 handpicked UK walks · Works offline · Dog-specific routes
+```
+
+"Works offline" is factual (session cache provides 8h offline fallback) and durable. "Live conditions" was inaccurate copy that implied always-on connectivity.
+
+---
+
+## Round 6 — Phase 1 sign-off blockers: confirmation
+
+All items identified in `phase1-signoff.md` section 2 (Outstanding) are now resolved:
+
+| Item | Status |
+|------|--------|
+| FIX 7.0 — Badge regression revert | ✅ Done (this session) |
+| FIX 7.1 — Trail card resize | ✅ Done (this session) |
+| FIX 7.2 — Green space card left-thumbnail layout | ✅ Done (this session) |
+| FIX 7.3 — `environment` field on all 25 WALKS_DB entries | ✅ Done (this session) |
+| FIX 7.4 — Filter/sort bottom sheet (Walks + Nearby) | ✅ Done (this session) |
+| FIX 7.5 — `saveRadius()` function confirmed | ✅ Done (this session) |
+| Issue A — paw safety safe state | ✅ Done (this session) |
+| Issue 4 partial — `.trail-tag.partial` CSS + `ol.cls` | ✅ Done (this session) |
+| TA-1 — "Works offline" copy | ✅ Done (this session) |
