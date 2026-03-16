@@ -3035,7 +3035,7 @@
   }
 
   /* ─── Render walks tab from a pre-filtered/sorted array ─── */
-  function renderWalksTabWithResults(result, lat, lon) {
+  function renderWalksTabWithResults(result, lat, lon, activeSort) {
     var el = document.getElementById('walks-content');
     if (!el) return;
 
@@ -3059,32 +3059,35 @@
     }
     html += '</div>';
 
-    // Preserve green spaces section if it exists, otherwise add placeholder
-    var gsSection = el.querySelector('#gs-section');
-    if (!gsSection) {
-      html += '<div class="walks-section" id="gs-section">';
-      html += '<div class="walks-section-label-sm">Other nearby green spaces</div>';
-      html += '<div id="gs-list"><p style="padding:0 16px 16px;font-size:14px;color:var(--ink-2)">Looking for nearby green spaces\u2026</p></div>';
-      html += '</div>';
-      el.innerHTML = html;
-      if (lat && lon) {
-        fetchGreenSpacesForWalks(lat, lon, locationName, function(greenSpaces) {
-          var gsList = document.getElementById('gs-list');
-          var gsEl = document.getElementById('gs-section');
-          if (!gsList) return;
-          if (greenSpaces.length) {
-            gsList.innerHTML = greenSpaces.map(function(gs) {
-              return renderGreenSpaceCard(gs, lat, lon);
-            }).join('');
-          } else if (gsEl) {
-            gsEl.style.display = 'none';
-          }
-        });
-      }
-    } else {
-      // Replace only the picks section; preserve existing gs-section HTML
-      var gsSectionHTML = gsSection.outerHTML;
-      el.innerHTML = html + gsSectionHTML;
+    // Always re-fetch green spaces so radius and sort changes apply to them too
+    html += '<div class="walks-section" id="gs-section">';
+    html += '<div class="walks-section-label-sm">Other nearby green spaces</div>';
+    html += '<div id="gs-list"><p style="padding:0 16px 16px;font-size:14px;color:var(--ink-2)">Looking for nearby green spaces\u2026</p></div>';
+    html += '</div>';
+    el.innerHTML = html;
+
+    if (lat && lon) {
+      fetchGreenSpacesForWalks(lat, lon, locationName, function(greenSpaces) {
+        // Apply the same sort to green spaces
+        var sorted = greenSpaces.slice();
+        if (activeSort === 'rating') {
+          sorted.sort(function(a, b) { return (b.rating || 0) - (a.rating || 0); });
+        } else {
+          sorted.sort(function(a, b) {
+            return haversineKm(lat, lon, a.lat, a.lon) - haversineKm(lat, lon, b.lat, b.lon);
+          });
+        }
+        var gsList = document.getElementById('gs-list');
+        var gsEl   = document.getElementById('gs-section');
+        if (!gsList) return;
+        if (sorted.length) {
+          gsList.innerHTML = sorted.map(function(gs) {
+            return renderGreenSpaceCard(gs, lat, lon);
+          }).join('');
+        } else if (gsEl) {
+          gsEl.style.display = 'none';
+        }
+      });
     }
   }
 
@@ -3112,7 +3115,7 @@
       headers: {
         'Content-Type':     'application/json',
         'X-Goog-Api-Key':   PLACES_API_KEY,
-        'X-Goog-FieldMask': 'places.displayName,places.location,places.photos'
+        'X-Goog-FieldMask': 'places.displayName,places.location,places.photos,places.rating'
       },
       body: JSON.stringify(body)
     })
@@ -3127,7 +3130,7 @@
         var photoUrl = (p.photos && p.photos.length > 0)
           ? 'https://places.googleapis.com/v1/' + p.photos[0].name + '/media?maxWidthPx=400&key=' + PLACES_API_KEY
           : null;
-        return { name: name, lat: plat, lon: plon, photoUrl: photoUrl };
+        return { name: name, lat: plat, lon: plon, photoUrl: photoUrl, rating: p.rating || null };
       }).filter(Boolean);
 
       results.sort(function(a, b) {
@@ -3249,6 +3252,7 @@
 
   var nearbyMap          = null;
   var nearbyVenues       = [];
+  var nearbyPendingSort  = null; // set before renderNearbyTab/renderVenueList to apply a sort after fetch
   var nearbyUserLat      = null;
   var nearbyUserLon      = null;
   var nearbyLocationName = '';
@@ -3438,6 +3442,17 @@
     var el    = document.getElementById('nearby-venues');
     var count = document.getElementById('nearby-count');
     if (!el) return;
+
+    // Apply any pending sort set before the async fetch completed
+    if (nearbyPendingSort === 'rating') {
+      nearbyVenues.sort(function(a, b) { return (b.rating || 0) - (a.rating || 0); });
+    } else if (nearbyPendingSort === 'distance' && nearbyUserLat && nearbyUserLon) {
+      nearbyVenues.sort(function(a, b) {
+        return haversineKm(nearbyUserLat, nearbyUserLon, a.lat, a.lon) -
+               haversineKm(nearbyUserLat, nearbyUserLon, b.lat, b.lon);
+      });
+    }
+    nearbyPendingSort = null;
 
     var venues = nearbyVenues; // already filtered to active category by Google Places query
     if (count) count.textContent = venues.length + ' place' + (venues.length !== 1 ? 's' : '') + ' found';
@@ -4213,12 +4228,24 @@
       if (anyBtn) anyBtn.classList.add('active');
     });
     syncFilterSheetState('walks');
+    document.getElementById('walks-radius-btn').classList.remove('has-filter');
+    // Re-render with defaults
+    var lat = null, lon = null;
+    try {
+      var locRaw = localStorage.getItem('sniffout_location');
+      if (locRaw) { var loc = JSON.parse(locRaw); if (loc) { lat = loc.lat; lon = loc.lon; } }
+    } catch(e) {}
+    if (lat && lon) renderWalksTab(lat, lon);
   }
 
   function resetNearbyFilterSheet() {
     document.getElementById('nearby-filter-sheet').querySelectorAll('.filter-radio').forEach(function(r) { r.classList.remove('selected'); });
     document.getElementById('nearby-sort-distance').classList.add('selected');
     syncFilterSheetState('nearby');
+    document.getElementById('nearby-radius-btn').classList.remove('has-filter');
+    // Re-sort by distance and re-render
+    nearbyPendingSort = 'distance';
+    renderVenueList();
   }
 
   // ─── Walks apply logic ───
@@ -4290,7 +4317,7 @@
       });
     }
 
-    renderWalksTabWithResults(result, lat, lon);
+    renderWalksTabWithResults(result, lat, lon, activeSort);
     updateWalksFilterIndicator();
     closeFilterSheet('walks');
   });
@@ -4311,22 +4338,18 @@
       NEARBY_GOOGLE_CACHE = {};
     }
 
-    if (activeSort === 'rating') {
-      nearbyVenues.sort(function(a, b) { return (b.rating || 0) - (a.rating || 0); });
-    } else if (nearbyUserLat && nearbyUserLon) {
-      nearbyVenues.sort(function(a, b) {
-        return haversineKm(nearbyUserLat, nearbyUserLon, a.lat, a.lon) -
-               haversineKm(nearbyUserLat, nearbyUserLon, b.lat, b.lon);
-      });
-    }
+    // Set pending sort — applied inside renderVenueList() when it runs (sync or after async fetch)
+    nearbyPendingSort = activeSort;
 
     var nearbyBtn = document.getElementById('nearby-radius-btn');
-    var sortIsDistance = sheet.querySelector('.filter-radio.selected') === document.getElementById('nearby-sort-distance');
+    var sortIsDistance = (activeSort === 'distance');
     nearbyBtn.classList.toggle('has-filter', !sortIsDistance);
 
     if (radiusChanged) {
+      // Re-fetch with new radius; nearbyPendingSort will be consumed in the fetch callback
       renderNearbyTab(nearbyUserLat, nearbyUserLon, nearbyLocationName);
     } else {
+      // Re-render current venues with the pending sort applied
       renderVenueList();
     }
 
