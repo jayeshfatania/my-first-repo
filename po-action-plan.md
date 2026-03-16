@@ -1,5 +1,5 @@
 # Sniffout — Product Owner Action Plan
-*Reviewed: March 2026. Covers competitor-research.md, demand-validation.md, feature-recommendations.md, design-brief.md, design-spec.md, weather-research.md, copy-review.md. Updated following mockup review session, copy review, Round 3 developer review, Design Review Round 1, and issuance of Round 4 developer brief and Designer Brief Round 2.*
+*Reviewed: March 2026. Covers competitor-research.md, demand-validation.md, feature-recommendations.md, design-brief.md, design-spec.md, weather-research.md, copy-review.md. Updated following mockup review session, copy review, Rounds 3–5 developer review, Design Reviews Rounds 1–2, Today tab design, and owner phone feedback session.*
 
 ---
 
@@ -15,34 +15,86 @@
 - FIX 4.4 — `enclosed` field added to all 25 WALKS_DB entries; chip renders on cards ✅
 
 **Round 3 — flagged as unresolved by Design Review:**
-- FIX 3.1 — Dark mode `--brand: #6EE7B7` documented as done but absent from file per designer full-file search → **Reopened as FIX 5.1**
-- FIX 4.3 — Map view `filteredVenues()` fix documented as done but function still undefined per designer → **Reopened as FIX 5.2**
+- FIX 3.1 — Dark mode `--brand: #6EE7B7` documented as done but absent from file → **Reopened as FIX 5.1**
+- FIX 4.3 — Map view `filteredVenues()` fix documented as done but function still undefined → **Reopened as FIX 5.2**
 
-**Design Review Round 1:** Complete. 8 issues identified. All 8 addressed in developer-brief-round4.md.
+**Design Review Round 1:** Complete. 8 issues identified. All addressed in developer-brief-round4.md.
 
-**Round 4 developer brief:** Issued. See developer-brief-round4.md. Contains 9 items (FIX 5.1–5.9). Two confirmed critical regressions (5.1, 5.2); two high priority UX issues (5.3, 5.4); two medium (5.5, 5.6); two low polish (5.7, 5.8); one (5.9) pending owner decision. **Awaiting developer implementation.**
+**Designer Brief Round 2:** Issued. See designer-brief-round2.md. Verification sweep of Round 4 fixes + focused review of Today tab State B, Weather tab, new components. **Awaiting developer to complete current session before Designer begins.**
 
-**Designer Brief Round 2:** Issued. See designer-brief-round2.md. Scopes: verification sweep of all 9 Round 4 fixes; focused review of Today tab State B, Weather tab, and new components from Rounds 3–4. **Awaiting developer to complete Round 4 fixes before Designer begins Round 2 review.**
+**Today tab:** today-tab-design-proposal.md complete. today-tab-dev-brief.md issued. Approved with two modifications — "No account needed" copy rejected (CLAUDE.md non-negotiable); advisory hero body text not approved.
 
-**Owner decisions confirmed (March 2026):**
-1. `enclosed: boolean` field — **signed off**. Added to WALKS_DB schema (FIX 4.4). Done.
-2. Walks tab map toggle — **will not add**. Walk routes are not map pins; proximity-sorted list serves the use case better.
-3. Filter chips on Walks tab — **Phase 2 item**. Not in current build.
-4. Community submission features — **Deferred**. `communityWalks` is not part of v2.
-5. Walks tab section label — **"Sniffout Picks"** confirmed. Empty state: "No walks found nearby. Try a wider radius." FIX 5.9 unblocked.
+---
 
-**Today tab:** today-tab-design-proposal.md complete. today-tab-dev-brief.md issued. Approved with two modifications: (1) social proof "No account needed" replaced with "Dog-specific routes" per CLAUDE.md non-negotiable; (2) advisory hero body text copy NOT approved (contained "no account needed") — current body text stands.
+## Active Developer Session (Pending Implementation)
 
-**Next milestones:**
-1. Developer to implement Round 4 fixes (FIX 5.1–5.9) + Today tab changes (today-tab-dev-brief.md) in a **single session** — see bundling rationale below
-2. Designer to run Round 2 review (designer-brief-round2.md) once developer session is complete
-3. PO to assess Round 2 design review findings and issue further briefs as needed
+**All three briefs below should be implemented in a single session:**
 
-**Bundling rationale — why Round 4 + Today tab should be implemented together:**
-- All changes are in `sniffout-v2.html` — two separate sessions risk merge conflicts and double context setup
-- FIX 5.1 (dark mode `--brand`) is a prerequisite for the Today tab conditions card dark mode override — must be implemented first in the same session
-- FIX 5.9 (Sniffout Picks section label on Walks tab) and the Today tab "Sniffout Picks nearby" label are complementary — consistent if done together
-- No dependencies between the two briefs that require sequential sessions
+| Brief | Contents | Status |
+|-------|----------|--------|
+| developer-brief-round4.md | FIX 5.1–5.9 (design consistency + dark mode + map fix + trail heart + tag style + label hierarchy) | ⏳ Pending |
+| today-tab-dev-brief.md | State A preview picks section; State B conditions card + hidden gems section; label rename | ⏳ Pending |
+| developer-brief-round5.md | FIX 6.1 remove parks/beaches from Nearby; FIX 6.2 remove "Nearby" pill from gs cards; FIX 6.3 add Google Maps link to gs cards | ⏳ Pending |
+
+FIX 5.1 (dark mode `--brand`) must be implemented before Today tab dark mode overrides. Otherwise no strict ordering between briefs.
+
+---
+
+## Active Designer Session (Can Run in Parallel with Dev)
+
+| Brief | Contents | Status |
+|-------|----------|--------|
+| designer-brief-round3.md | Card sizing hierarchy (trail card larger, gs card slimmer); filter/sort bottom sheet UI for Walks + Nearby | ⏳ Pending |
+
+Designer Round 3 does not depend on the developer session completing. Start now.
+
+---
+
+## Owner Decisions — Filter Implementation (All Confirmed)
+
+| Decision | Confirmed |
+|----------|-----------|
+| Terrain filter | Both surface (`paved/muddy/mixed/rocky`) AND new environment field (`woodland/coastal/urban/moorland/heathland/open`). New `environment` field approved for WALKS_DB schema. |
+| Duration thresholds | Short <60 min · Medium 60–120 min · Long >120 min ✅ |
+| Nearby category filter | Category stays as chip row only, not in filter sheet ✅ |
+
+Filter/sort implementation is now fully unblocked. designer-brief-round3.md updated with confirmed values.
+
+---
+
+## Owner Decisions Confirmed
+
+1. `enclosed: boolean` field — **signed off**. Done.
+2. Walks tab map toggle — **will not add**.
+3. Filter/sort expansion — **in scope**. All filter decisions confirmed (see table above).
+4. Community submission features — **Deferred**.
+5. Walks tab section label — **"Sniffout Picks"** confirmed.
+6. Parks + beaches removed from Nearby tab — **confirmed** (FIX 6.1).
+7. "Nearby" pill removed from green space cards — **confirmed** (FIX 6.2).
+8. "View on Google Maps →" link on green space cards — **confirmed** (FIX 6.3).
+9. Green space card photos — **must be retained**. Thumbnail repositioned to left side of card.
+10. Terrain filter — both surface type (existing field) AND environment type (new `environment` field) — **confirmed**.
+11. Duration thresholds: Short <60 min, Medium 60–120 min, Long >120 min — **confirmed**.
+12. Nearby category filter stays as chip row only — **confirmed**.
+
+---
+
+## Next Steps in Order
+
+1. **Owner** to confirm Decisions 1–3 above (unblocks filter/sort Designer spec and subsequent dev brief)
+2. **Developer** to implement current session: Round 4 + Today tab + Round 5 (all in `sniffout-v2.html`)
+3. **Designer** to complete Round 3 (card sizing + filter UI) — in parallel with step 2
+4. **Designer** to complete Round 2 review (verification sweep) — after step 2 completes
+5. **PO** to assess Round 2 + Round 3 design outputs, issue developer-brief-round6.md (filter/sort implementation + card sizing), incorporating owner decisions from step 1
+
+---
+
+## Bundling Rationale — Active Developer Session
+
+- All changes are in `sniffout-v2.html` — separate sessions risk conflicts and double context setup
+- FIX 5.1 (dark mode `--brand`) is a prerequisite for Today tab dark mode overrides
+- FIX 5.9 (Sniffout Picks label on Walks tab) and Today tab "Sniffout Picks nearby" are complementary
+- Round 5 fixes are small (3 items) and share context with Round 4 work on the same file
 
 ---
 

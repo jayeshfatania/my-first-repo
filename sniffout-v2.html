@@ -1257,6 +1257,17 @@
       border: 1.5px solid var(--chip-off); color: var(--ink-2);
       flex-shrink: 0; margin-left: 10px;
     }
+    .gs-maps-link {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--brand);
+      text-decoration: none;
+      white-space: nowrap;
+      align-self: center;
+      flex-shrink: 0;
+      margin-left: 10px;
+    }
+    .gs-maps-link:hover { text-decoration: underline; }
 
     /* ── Info modal (weather explainer) ── */
     .modal-overlay {
@@ -2710,6 +2721,9 @@
     var photoHtml = gs.photoUrl
       ? '<div class="venue-card-photo-gp"><img src="' + gs.photoUrl + '" alt="" loading="lazy"></div>'
       : '<div class="venue-card-photo-gp"></div>';
+    var mapsUrl = 'https://www.google.com/maps/place/' +
+      encodeURIComponent(gs.name) +
+      '/@' + gs.lat + ',' + gs.lon + ',16z';
     return (
       '<div class="gs-card">' +
         photoHtml +
@@ -2718,7 +2732,9 @@
             '<div class="gs-card-name">' + escHtml(gs.name) + '</div>' +
             '<div class="gs-card-meta">' + distText + '</div>' +
           '</div>' +
-          '<span class="gs-nearby-badge">Nearby</span>' +
+          '<a class="gs-maps-link" href="' + mapsUrl + '" target="_blank" rel="noopener noreferrer">' +
+            'View on Google Maps →' +
+          '</a>' +
         '</div>' +
       '</div>'
     );
@@ -2968,8 +2984,6 @@
   var CATEGORIES = [
     { id: 'pub',   label: 'Pubs' },
     { id: 'cafe',  label: 'Cafés' },
-    { id: 'park',  label: 'Parks' },
-    { id: 'beach', label: 'Beaches' },
     { id: 'shop',  label: 'Pet Shops' },
     { id: 'vet',   label: 'Vets' }
   ];
@@ -2977,8 +2991,6 @@
   var CATEGORY_ICON = {
     pub:   '🍺',
     cafe:  '☕',
-    park:  '🌳',
-    beach: '🏖️',
     vet:   '🏥',
     shop:  '🛍️',
     other: '📍'
@@ -2987,8 +2999,6 @@
   var CATEGORY_LABEL = {
     pub:   'Dog-friendly pub',
     cafe:  'Dog-friendly café',
-    park:  'Dog park',
-    beach: 'Dog-friendly beach',
     vet:   'Veterinary',
     shop:  'Pet shop',
     other: 'Place'
@@ -2996,12 +3006,10 @@
 
   /* ─── Per-category Google Places queries + tips ─── */
   var CAT_GOOGLE_CONFIG = {
-    pub:   { query: 'dog friendly pubs',              tip: 'Most UK pubs welcome dogs in the bar area. A water bowl outside is usually a good sign.' },
-    cafe:  { query: 'dog friendly cafes',             tip: 'Many cafés welcome dogs on terraces or in dedicated areas. Call ahead — policies vary.' },
-    park:  { query: 'dog parks and nature reserves',  tip: 'Parks and nature reserves are great for off-lead time. Check for seasonal restrictions before you go.' },
-    beach: { query: 'dog friendly beaches',           tip: 'Many UK beaches have seasonal dog restrictions — often Oct–Apr only. Always check local signs.' },
-    shop:  { query: 'pet shops',                      tip: 'Stock up on treats, leads, and poo bags before you head out.' },
-    vet:   { query: 'veterinary clinics',             tip: 'Good to know your nearest vet before heading out, especially on longer walks.' }
+    pub:   { query: 'dog friendly pubs',  tip: 'Most UK pubs welcome dogs in the bar area. A water bowl outside is usually a good sign.' },
+    cafe:  { query: 'dog friendly cafes', tip: 'Many cafés welcome dogs on terraces or in dedicated areas. Call ahead — policies vary.' },
+    shop:  { query: 'pet shops',          tip: 'Stock up on treats, leads, and poo bags before you head out.' },
+    vet:   { query: 'veterinary clinics', tip: 'Good to know your nearest vet before heading out, especially on longer walks.' }
   };
 
   /* ─── Google Places text-search fetch ─── */

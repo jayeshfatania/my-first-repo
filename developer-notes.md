@@ -268,3 +268,27 @@ Prompt click triggers `document.getElementById('btn-use-location').click()` — 
 - **Green spaces via Overpass vs Google Places:** The original `loadNearbyGreenSpaces()` uses Google Places which factors in relevance and reviews. Overpass returns raw OSM data without quality signals. Some results may be small or unnamed green spaces. The `["name"]` tag filter suppresses the worst of these. (This limitation only applies to the Walks tab green spaces supplement — the Nearby tab now uses Google Places.)
 - **Beach results depend on OSM coverage:** Coastal areas are well-tagged; inland areas will return no beach results, which is correct.
 - **Sniffout Picks empty at small radii:** With 25 curated UK walks, a 1 km or 3 km radius will often return zero curated results outside walk hotspots. The "No walks found nearby. Try a wider radius." empty state and green spaces below are the main content at small radii.
+
+---
+
+## FIX 6.1 — Remove parks and beaches from Nearby tab
+
+Removed `park` and `beach` entries from `CATEGORIES`, `CATEGORY_ICON`, `CATEGORY_LABEL`, and `CAT_GOOGLE_CONFIG`. Nearby tab now shows exactly 4 categories: Pubs · Cafés · Pet Shops · Vets. Default category (`nearbyCategory = 'pub'`) was already correct — no change needed.
+
+---
+
+## FIX 6.2 — Remove "Nearby" pill from green space cards
+
+Removed `<span class="gs-nearby-badge">Nearby</span>` from `renderGreenSpaceCard()`. CSS rule `.gs-nearby-badge` left in place as an unused rule (harmless). Cards now show only name and distance metadata.
+
+---
+
+## FIX 6.3 — Add "View on Google Maps →" link to green space cards
+
+Added `mapsUrl` construction in `renderGreenSpaceCard()`:
+```js
+var mapsUrl = 'https://www.google.com/maps/place/' +
+  encodeURIComponent(gs.name) +
+  '/@' + gs.lat + ',' + gs.lon + ',16z';
+```
+`gs.name` is encoded via `encodeURIComponent()` for the URL context (not `escHtml()` which is for HTML attribute contexts). The link replaces the removed "Nearby" badge in the card body. Added `.gs-maps-link` CSS (`font-size: 12px; font-weight: 500; color: var(--brand); white-space: nowrap`). Link opens in a new tab with `target="_blank" rel="noopener noreferrer"`.
