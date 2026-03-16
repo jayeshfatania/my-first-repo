@@ -458,3 +458,67 @@ All items identified in `phase1-signoff.md` section 2 (Outstanding) are now reso
 | Issue A — paw safety safe state | ✅ Done (this session) |
 | Issue 4 partial — `.trail-tag.partial` CSS + `ol.cls` | ✅ Done (this session) |
 | TA-1 — "Works offline" copy | ✅ Done (this session) |
+
+---
+
+## FIX 8.1 — Today tab State B: verdict body before walk scroll
+
+Reordered HTML assembly in `renderTodayStateB()`. New sequence: weather hero card → verdict body (`.today-conditions-card`) → walk scroll (`#today-walks-section`) → hazard cards → hidden gems (`#today-hidden-gems`). Pure ordering change — no new elements, no CSS changes.
+
+---
+
+## FIX 8.2 — Forecast expanded from 3 to 5 days
+
+`buildForecastGrid()`: changed `Math.min(4, daily.time.length)` to `Math.min(6, daily.time.length)`. Loop runs `i = 1` to `limit - 1`, so limit 6 = 5 forecast rows (tomorrow + 4 more). No additional API parameters needed — Open-Meteo already returns 7 days of daily data.
+
+---
+
+## FIX 8.3 — Forecast description text: 11px → 12px
+
+Inline style on forecast description div in `buildForecastGrid()` changed from `font-size:11px` to `font-size:12px`.
+
+---
+
+## FIX 8.4 — Rain Chance replaces Humidity in conditions grid
+
+`renderWeatherTab()`: added `var currentHourIndex = new Date().getHours()` and `var rainChance = hourly.precipitation_probability[currentHourIndex] || 0`. The Humidity cell in `.conditions-grid` replaced with Rain Chance: label `Rain chance`, value `rainChance + '%'`. `humidity` variable removed from `renderWeatherTab` (it is not used there). The `humidity` variable in `renderTodayStateB()` is unaffected — still used for the Today tab pill.
+
+---
+
+## FIX 8.5 — Paw safety: trigger-only thresholds
+
+`getPawSafety(tempC)` rewritten. New thresholds:
+- `tempC >= 35` → `danger` state
+- `tempC >= 25` → `caution` state
+- `tempC <= 0` → `caution` state (ice/gritting)
+- All other temperatures → `null` (no block rendered)
+
+Safe state (0–25°C) removed. The `if (paw)` guard in `renderWeatherTab()` handles the null case — no rendering change needed there.
+
+---
+
+## FIX 8.6 — Verdict block: extracted to `.verdict-card` CSS class
+
+Added `.verdict-card`, `.verdict-card-title`, and `.verdict-card-body` CSS classes to the `<style>` block (positioned before `.hazard-card`). Replaced inline `style=""` attributes on the Weather tab verdict block with these classes. Visual appearance unchanged.
+
+---
+
+## FIX 8.7 — Slide-up animation on weather info modal
+
+`.modal-overlay` CSS updated: `display: flex` always in layout; `transform: translateY(100%)` hides below viewport; `transition: transform 0.3s ease`; `pointer-events: none` when hidden. Added `.modal-overlay.open { transform: translateY(0); pointer-events: auto; }`.
+
+`openWeatherModal()` and `closeWeatherModal()` updated to `classList.add/remove('open')` instead of `el.style.display` toggle. `style="display:none"` removed from `#weather-info-modal` HTML element.
+
+---
+
+## FIX 8.8 — Removed dead `.gs-nearby-badge` CSS rule
+
+Confirmed no HTML or JS references to `gs-nearby-badge` remain (element removed in FIX 6.2). CSS rule deleted.
+
+---
+
+## TB-1 / FIX 8.9 — Third Today tab pill: "Feels X°C" → wind speed
+
+Third pill in `renderTodayStateB()` changed from `'Feels ' + feels + '°C'` to `'💨 ' + wind + ' km/h'`.
+
+**⚠️ Note for PO:** Pill 2 already shows `💨 wind km/h`. This change results in two identical wind pills (pills 2 and 3). Recommend PO review — likely intent is to either (a) remove the "Feels X°C" pill without replacing it (2 pills total), or (b) replace with a different metric such as Rain Chance, consistent with FIX 8.4. Awaiting PO decision before further change.

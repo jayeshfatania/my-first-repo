@@ -5,26 +5,32 @@
 
 ## Current Status — March 2026
 
-**Phase 1 build:** Complete. sniffout-v2.html validated and rebuilt from scratch. All core features functional.
+**Phase 1: ✅ SIGNED OFF — March 2026.** sniffout-v2.html validated and rebuilt from scratch. All core features functional. All Phase 1 blockers resolved. See phase1-signoff.md.
 
-**Phase 1 sign-off:** ⏳ NOT YET — blocked on developer-brief-round6.md (FIX 7.0–7.5), Issue 4 partial (trail-tag.partial), and New Issue A (paw safety safe state). See phase1-signoff.md for full checklist and sign-off recommendation.
+**Phase 2: ACTIVE.**
 
-**Phase 1 fixes (rounds 1–3):** All confirmed complete except two regressions flagged by Design Review (reopened below).
+**Final copy decision at Phase 1 close:** Social proof strip third item changed from "Works offline" → "Just open and explore" (owner-confirmed override). Strip now reads: `25 handpicked UK walks · Just open and explore · Dog-specific routes`.
+
+**Owner decision — W2 paw safety (March 2026):** Paw safety block must only show in extreme or dangerous conditions (very high heat, ice). Must not render at normal everyday temperatures. Confirmed and final. Implemented in FIX 8.5.
+
+---
+
+**Phase 1 fix history (for reference):**
 
 **Round 3 — confirmed done:**
 - FIX 4.1 — "Other nearby green spaces" label text ✅
 - FIX 4.2 — Venue photos on Nearby tab ✅
 - FIX 4.4 — `enclosed` field added to all 25 WALKS_DB entries; chip renders on cards ✅
 
-**Round 3 — flagged as unresolved by Design Review:**
-- FIX 3.1 — Dark mode `--brand: #6EE7B7` documented as done but absent from file → **Reopened as FIX 5.1**
-- FIX 4.3 — Map view `filteredVenues()` fix documented as done but function still undefined → **Reopened as FIX 5.2**
+**Round 3 — regressions reopened and resolved:**
+- FIX 3.1 — Dark mode `--brand: #6EE7B7` → Reopened as FIX 5.1 ✅
+- FIX 4.3 — Map view `filteredVenues()` undefined → Reopened as FIX 5.2 ✅
 
-**Design Review Round 1:** Complete. 8 issues identified. All addressed in developer-brief-round4.md.
+**Design Review Round 1:** Complete. 8 issues identified. All addressed. ✅
 
-**Designer Brief Round 2:** Issued. See designer-brief-round2.md. Verification sweep of Round 4 fixes + focused review of Today tab State B, Weather tab, new components. **Awaiting developer to complete Round 6 before Designer begins.**
+**Designer Brief Round 2:** Issued. See designer-brief-round2.md. Verification sweep of Round 4 fixes + focused review of Today tab State B, Weather tab, new components. **Now unblocked — Designer can begin.**
 
-**Today tab:** today-tab-design-proposal.md complete. today-tab-dev-brief.md issued. Approved with two modifications — "No account needed" copy rejected (CLAUDE.md non-negotiable); advisory hero body text not approved.
+**Today tab:** today-tab-design-proposal.md complete. today-tab-dev-brief.md issued. Approved with two modifications — "No account needed" copy rejected (CLAUDE.md non-negotiable); advisory hero body text not approved. ✅
 
 ---
 
@@ -46,6 +52,7 @@
 |-------|----------|--------|
 | designer-brief-round1.md | Full visual consistency audit (sniffout-v2.html vs mockup + spec) | ✅ Done — 8 issues found, all addressed |
 | designer-brief-round3.md | Card sizing hierarchy + filter/sort bottom sheet | ✅ Done — approved, passed to developer-brief-round6.md |
+| designer-brief-round2.md | Verification sweep V1–V9 (all pass); Today tab T1–T5; Weather tab W1–W4; new components N1–N3 | ✅ Done — findings assessed, developer-brief-round7.md issued |
 
 ---
 
@@ -53,17 +60,13 @@
 
 | Brief | Contents | Status |
 |-------|----------|--------|
-| developer-brief-round6.md | FIX 7.0 badge regression; FIX 7.1 trail card resize (240px/180px + description); FIX 7.2 gs-card thumbnail layout; FIX 7.3 `environment` field (25 entries); FIX 7.4 filter/sort bottom sheet (both tabs); FIX 7.5 saveRadius check | ⏳ Pending |
+| developer-brief-round7.md | FIX 8.1 verdict body order (Today); FIX 8.2 5-day forecast; FIX 8.3 forecast text 12px; FIX 8.4 rain chance replaces humidity; FIX 8.5 paw safety trigger-only; FIX 8.6 verdict card class; FIX 8.7 modal slide animation; FIX 8.8 dead CSS removed; FIX 8.9 wind speed replaces third Today pill | ⏳ Pending |
 
 ---
 
 ## Active Designer Session
 
-| Brief | Contents | Status |
-|-------|----------|--------|
-| designer-brief-round2.md | Verification sweep of FIX 5.1–5.9; focused review of Today tab State B, Weather tab, new components | ⏳ Ready to start — all Round 4/5 fixes confirmed done |
-
-Designer Round 3 does not depend on the developer session completing. Start now.
+No active designer session. Round 2 complete.
 
 ---
 
@@ -93,16 +96,24 @@ Filter/sort implementation is now fully unblocked. designer-brief-round3.md upda
 10. Terrain filter — both surface type (existing field) AND environment type (new `environment` field) — **confirmed**.
 11. Duration thresholds: Short <60 min, Medium 60–120 min, Long >120 min — **confirmed**.
 12. Nearby category filter stays as chip row only — **confirmed**.
+13. Paw safety block — **show only in extreme/dangerous conditions** (≥25°C caution, ≥35°C danger, ≤0°C caution for ice). Must not render at normal temperatures. Confirmed and final (W2 decision, March 2026).
+14. Third Today tab weather pill — **wind speed** replaces "Feels X°C". Confirmed (TB-1 decision, March 2026). Implemented in FIX 8.9.
+
+---
+
+## Open Owner Decisions
+
+No open decisions.
 
 ---
 
 ## Next Steps in Order
 
-1. **Developer** to implement Round 6 (developer-brief-round6.md) — card sizing, filter/sort, environment field, badge regression fix, plus Issue 4 partial (trail-tag.partial) and New Issue A (paw safety safe state) and TA-1 (social proof copy)
-2. **PO** to confirm Round 6 complete → sign off Phase 1 (phase1-signoff.md)
-3. **Designer** to begin Round 2 review (designer-brief-round2.md) — once Phase 1 is signed off
-4. **PO** to assess Round 2 design review findings once complete and issue any further briefs
-5. **Phase 2 planning** — sticky Sniffout Picks UX investigation; Community Engagement research brief (see Phase 2 Planning section below)
+1. **Developer** to implement Round 7 (developer-brief-round7.md) — 8 fixes, all low complexity
+2. **Owner** to confirm TB-1 pill decision (see Open Owner Decisions above)
+3. **PO** to assess Round 7 completion → issue developer-brief-round8.md if further fixes found, or bundle TB-1 decision
+4. **Phase 2 planning** — sticky Sniffout Picks UX investigation; Community Engagement research brief (see Phase 2 Planning section below)
+5. **Walk detail overlay** — designer brief, then developer brief
 
 ---
 

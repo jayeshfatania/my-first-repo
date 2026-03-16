@@ -20,6 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
     /* ─── CSS Tokens ─── */
@@ -697,6 +698,20 @@
     }
 
     /* Hazard card */
+    .verdict-card {
+      padding: 0 16px 12px;
+    }
+    .verdict-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+      padding: 8px 0 6px;
+    }
+    .verdict-card-body {
+      font-size: 13px;
+      color: var(--ink-2);
+      line-height: 1.5;
+    }
     .hazard-card {
       margin: 0 16px 8px;
       background: rgba(220,38,38,0.07);
@@ -1487,12 +1502,6 @@
       font-size: 12px;
       color: var(--ink-2);
     }
-    .gs-nearby-badge {
-      font-size: 11px; font-weight: 500;
-      border-radius: 99px; padding: 3px 8px;
-      border: 1.5px solid var(--chip-off); color: var(--ink-2);
-      flex-shrink: 0; margin-left: 10px;
-    }
     .gs-maps-link {
       font-size: 12px;
       font-weight: 500;
@@ -1509,6 +1518,13 @@
       background: rgba(0,0,0,0.45);
       z-index: 1000;
       display: flex; align-items: flex-end;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      pointer-events: none;
+    }
+    .modal-overlay.open {
+      transform: translateY(0);
+      pointer-events: auto;
     }
     .modal-sheet {
       background: var(--surface);
@@ -1537,6 +1553,8 @@
       display: flex; align-items: center; justify-content: center;
     }
     .weather-hero { position: relative; }
+    /* ─── Lucide icons ─── */
+    [data-lucide] { display:inline-block; vertical-align:middle; flex-shrink:0; }
   </style>
 </head>
 <body>
@@ -2083,9 +2101,9 @@
       + '&longitude=' + lon
       + '&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m,precipitation,relative_humidity_2m,is_day'
       + '&hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m'
-      + '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum'
+      + '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset'
       + '&timezone=auto'
-      + '&forecast_days=4';
+      + '&forecast_days=7';
     fetch(url)
       .then(function(r) { return r.json(); })
       .then(function(data) { cb(data); })
@@ -2144,6 +2162,26 @@
     85:'🌨️', 86:'🌨️',
     95:'⛈️', 96:'⛈️', 99:'⛈️'
   };
+
+  var WMO_ICON = {
+    0:'sun', 1:'sun', 2:'cloud-sun', 3:'cloud',
+    45:'cloud-fog', 48:'cloud-fog',
+    51:'cloud-drizzle', 53:'cloud-drizzle', 55:'cloud-drizzle', 56:'cloud-drizzle', 57:'cloud-drizzle',
+    61:'cloud-rain', 63:'cloud-rain', 65:'cloud-rain', 66:'cloud-snow', 67:'cloud-snow',
+    71:'cloud-snow', 73:'cloud-snow', 75:'cloud-snow', 77:'cloud-snow',
+    80:'cloud-rain', 81:'cloud-rain', 82:'cloud-lightning',
+    85:'cloud-snow', 86:'cloud-snow',
+    95:'cloud-lightning', 96:'cloud-lightning', 99:'cloud-lightning'
+  };
+
+  function luIcon(name, size, extra) {
+    size = size || 16;
+    return '<i data-lucide="' + name + '" style="width:' + size + 'px;height:' + size + 'px;' + (extra || '') + '"></i>';
+  }
+
+  function syncIcons() {
+    if (window.lucide) lucide.createIcons();
+  }
 
   function isRainCode(c) { return [51,53,55,56,57,61,63,65,66,67,80,81,82].indexOf(c) !== -1; }
   function isStormCode(c) { return [95,96,99].indexOf(c) !== -1; }
@@ -2266,15 +2304,17 @@
 
   /* ─── Paw safety (Section 9) ─── */
 
-  function getPawSafety(temp) {
-    if (temp > 25) {
-      return { state: 'danger', title: '🐾 Too hot for paws', body: 'Press your hand on the pavement for 7 seconds — if you can\'t hold it, it\'s too hot for your dog\'s paws.' };
+  function getPawSafety(tempC) {
+    if (tempC >= 35) {
+      return { state: 'danger', title: '🐾 Too hot for paws', body: 'Pavement can reach 70°C in direct sun at this temperature. Use the 7-second test — press your hand on the tarmac. If you can\'t hold it for 7 seconds, it\'s too hot for your dog\'s paws.' };
     }
-    if (temp <= 0) {
-      return { state: 'caution', title: '🐾 Paw check needed', body: 'Ice and grit on paths can hurt paws. Rinse and check your dog\'s paws after the walk.' };
+    if (tempC >= 25) {
+      return { state: 'caution', title: '🐾 Paw check needed', body: 'At ' + Math.round(tempC) + '°C, pavement may be getting warm. Press your hand on the tarmac before setting off — if it\'s uncomfortable to hold for 7 seconds, choose a shaded route or walk on grass.' };
     }
-    var t = Math.round(temp);
-    return { state: 'safe', title: '🐾 Paws safe at ' + t + '°C', body: 'At ' + t + '°C, pavement is fine. If it gets above 25°C, press your hand on the tarmac — if you can\'t hold it for 7 seconds, it\'s too hot for your dog\'s paws.' };
+    if (tempC <= 0) {
+      return { state: 'caution', title: '🐾 Paw check needed', body: 'Freezing temperatures mean ice and grit on paths. Rinse paws when you get back — road salt can irritate skin if licked.' };
+    }
+    return null;
   }
 
   /* ─── Rain summary (Section 9) ─── */
@@ -2325,7 +2365,7 @@
 
   /* ─── Render: Today State B ─── */
 
-  function renderTodayStateB(cur, verdict, hazards) {
+  function renderTodayStateB(cur, verdict, hazards, daily) {
     var content = document.getElementById('state-b-content');
     if (!content) return;
 
@@ -2335,6 +2375,15 @@
     var humidity = Math.round(cur.relative_humidity_2m);
     var emoji    = WMO_EMOJI[cur.weather_code] || '🌤️';
 
+    var sunPillText = '';
+    if (daily && daily.sunrise && daily.sunset && daily.sunrise[0] && daily.sunset[0]) {
+      var nowHour = new Date().getHours();
+      var isMorning = nowHour < 12;
+      var rawTime = isMorning ? daily.sunrise[0] : daily.sunset[0];
+      var timePart = rawTime.indexOf('T') !== -1 ? rawTime.split('T')[1] : rawTime;
+      sunPillText = luIcon(isMorning ? 'sunrise' : 'sunset', 14) + ' ' + (isMorning ? 'Sunrise ' : 'Sunset ') + timePart;
+    }
+
     var hazardHTML = '';
     hazards.forEach(function(hz) {
       hazardHTML += '<div class="hazard-card"><div class="hazard-title">' + hz.title + '</div><div class="hazard-body">' + hz.body + '</div></div>';
@@ -2342,28 +2391,29 @@
 
     content.innerHTML =
       '<div class="weather-hero" onclick="switchTab(\'weather\')">' +
-        '<button class="weather-info-btn" onclick="event.stopPropagation();openWeatherModal()" aria-label="About weather features">ⓘ</button>' +
+        '<button class="weather-info-btn" onclick="event.stopPropagation();openWeatherModal()" aria-label="About weather features">' + luIcon('info', 16) + '</button>' +
         '<div class="weather-hero-top">' +
           '<div>' +
             '<div class="weather-hero-temp">' + temp + '°C</div>' +
             '<div class="weather-hero-feels">Feels like ' + feels + '°C</div>' +
           '</div>' +
-          '<div style="font-size:46px;line-height:1;">' + emoji + '</div>' +
+          '<div style="line-height:1;">' + luIcon(WMO_ICON[cur.weather_code] || 'cloud-sun', 46) + '</div>' +
         '</div>' +
         '<div class="weather-verdict">' + verdict.title + '</div>' +
         '<div class="weather-pills">' +
-          '<span class="weather-pill">💧 ' + humidity + '%</span>' +
-          '<span class="weather-pill">💨 ' + wind + ' km/h</span>' +
-          '<span class="weather-pill">Feels ' + feels + '°C</span>' +
+          '<span class="weather-pill">' + luIcon('droplets', 14) + ' ' + humidity + '%</span>' +
+          '<span class="weather-pill">' + luIcon('wind', 14) + ' ' + wind + ' km/h</span>' +
+          (sunPillText ? '<span class="weather-pill">' + sunPillText + '</span>' : '') +
         '</div>' +
       '</div>' +
-      hazardHTML +
-      '<div id="today-walks-section"></div>' +
       '<div class="today-conditions-card">' +
         '<div class="today-conditions-body">' + verdict.body + '</div>' +
         '<span class="today-conditions-link" onclick="switchTab(\'weather\')">Full forecast →</span>' +
       '</div>' +
+      '<div id="today-walks-section"></div>' +
+      hazardHTML +
       '<div id="today-hidden-gems"></div>';
+    syncIcons();
   }
 
   /* ─── Render: Weather tab ─── */
@@ -2375,7 +2425,8 @@
     var temp     = Math.round(cur.temperature_2m);
     var feels    = Math.round(cur.apparent_temperature);
     var wind     = Math.round(cur.wind_speed_10m);
-    var humidity = Math.round(cur.relative_humidity_2m);
+    var currentHourIndex = new Date().getHours();
+    var rainChance = hourly.precipitation_probability ? (hourly.precipitation_probability[currentHourIndex] || 0) : 0;
 
     var sub = document.getElementById('weather-location-sub');
     if (sub) sub.textContent = 'Near ' + locationName;
@@ -2390,7 +2441,7 @@
       var pawClass = paw.state === 'danger' ? 'danger' : paw.state === 'caution' ? 'caution' : '';
       pawHTML =
         '<div class="paw-safety ' + pawClass + '" style="margin:0 16px 12px">' +
-          '<div style="font-size:20px;flex-shrink:0;margin-top:1px;">🐾</div>' +
+          '<div style="flex-shrink:0;margin-top:1px;">' + luIcon('paw-print', 20) + '</div>' +
           '<div>' +
             '<div class="paw-status">' + paw.title + '</div>' +
             '<div class="paw-body">' + paw.body + '</div>' +
@@ -2404,15 +2455,15 @@
     var forecastHTML = buildForecastGrid(daily);
 
     content.innerHTML =
-      '<div style="padding:0 16px 12px">' +
-        '<div style="font-size:16px;font-weight:600;color:var(--ink);padding:8px 0 6px;">' + verdict.title + '</div>' +
-        '<p style="font-size:13px;color:var(--ink-2);line-height:1.5;">' + verdict.body + '</p>' +
+      '<div class="verdict-card">' +
+        '<div class="verdict-card-title">' + verdict.title + '</div>' +
+        '<p class="verdict-card-body">' + verdict.body + '</p>' +
       '</div>' +
       hazardHTML +
       '<div class="conditions-grid">' +
         '<div class="condition-cell"><div class="condition-value">' + feels + '°C</div><div class="condition-label">Feels like</div></div>' +
         '<div class="condition-cell"><div class="condition-value">' + wind + '</div><div class="condition-label">Wind km/h</div></div>' +
-        '<div class="condition-cell"><div class="condition-value">' + humidity + '%</div><div class="condition-label">Humidity</div></div>' +
+        '<div class="condition-cell"><div class="condition-value">' + rainChance + '%</div><div class="condition-label">Rain chance</div></div>' +
       '</div>' +
       pawHTML +
       '<div style="padding:0 16px 16px">' +
@@ -2428,6 +2479,7 @@
       '</div>' +
       '<div class="section-header"><div class="section-title">3-day forecast</div></div>' +
       '<div class="forecast-grid" style="padding-bottom:16px">' + forecastHTML + '</div>';
+    syncIcons();
   }
 
   function buildHourBar(hourly) {
@@ -2447,7 +2499,7 @@
   function buildForecastGrid(daily) {
     var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     var html = '';
-    var limit = Math.min(4, daily.time.length);
+    var limit = Math.min(6, daily.time.length);
     for (var i = 1; i < limit; i++) {
       var date    = new Date(daily.time[i] + 'T12:00:00');
       var dayName = i === 1 ? 'Tomorrow' : days[date.getDay()];
@@ -2459,9 +2511,9 @@
       html +=
         '<div class="forecast-card">' +
           '<div class="forecast-day">' + dayName + '</div>' +
-          '<div style="font-size:26px;margin-bottom:6px;">' + emoji + '</div>' +
+          '<div style="margin-bottom:6px;">' + luIcon(WMO_ICON[code] || 'cloud-sun', 26) + '</div>' +
           '<div class="forecast-temps">' + hi + '° <span>' + lo + '°</span></div>' +
-          '<div style="font-size:11px;color:var(--ink-2);">' + desc + '</div>' +
+          '<div style="font-size:12px;color:var(--ink-2);">' + desc + '</div>' +
         '</div>';
     }
     return html;
@@ -2484,7 +2536,7 @@
     var hazards = detectHazards(cur);
     var paw     = getPawSafety(cur.temperature_2m);
 
-    renderTodayStateB(cur, verdict, hazards);
+    renderTodayStateB(cur, verdict, hazards, daily);
     renderWeatherTab(cur, hourly, daily, locationName, verdict, hazards, paw);
   }
 
@@ -3474,6 +3526,7 @@
     var tipHtml = tip ? '<div class="venue-cat-tip">' + tip + '</div>' : '';
     el.innerHTML = tipHtml + venues.map(renderVenueCard).join('') +
       '<div class="nearby-disclaimer">Results may not always be up to date. We recommend calling ahead or checking official sources to confirm dogs are welcome and to verify opening times.</div>';
+    syncIcons();
   }
 
   function renderVenueCard(venue) {
@@ -3797,7 +3850,7 @@
     el.innerHTML = all.map(function(entry) {
       var isStarred = starredLabels.indexOf(entry.label) !== -1;
       var canStar   = !isStarred && starred.length < STARRED_MAX;
-      var starIcon  = isStarred ? '★' : '☆';
+      var starIcon  = isStarred ? luIcon('star', 12, 'fill:currentColor;') : luIcon('star', 12);
       var starTitle = isStarred ? 'Unpin' : (canStar ? 'Pin' : 'Max 3 pinned');
       return (
         '<span class="recent-pill' + (isStarred ? ' starred' : '') + '" ' +
@@ -3810,6 +3863,7 @@
         '</span>'
       );
     }).join('');
+    syncIcons();
   }
 
   function escPillLabel(str) {
@@ -3905,11 +3959,11 @@
 
   function openWeatherModal() {
     var el = document.getElementById('weather-info-modal');
-    if (el) el.style.display = 'flex';
+    if (el) el.classList.add('open');
   }
   function closeWeatherModal() {
     var el = document.getElementById('weather-info-modal');
-    if (el) el.style.display = 'none';
+    if (el) el.classList.remove('open');
   }
 </script>
 
@@ -3965,7 +4019,7 @@
 </script>
 
 <!-- Weather info modal -->
-<div class="modal-overlay" id="weather-info-modal" style="display:none" onclick="if(event.target===this)closeWeatherModal()">
+<div class="modal-overlay" id="weather-info-modal" onclick="if(event.target===this)closeWeatherModal()">
   <div class="modal-sheet">
     <div class="modal-header">
       <div class="modal-title">What you'll see here</div>
