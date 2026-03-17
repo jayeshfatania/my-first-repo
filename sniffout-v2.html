@@ -171,6 +171,9 @@
       z-index: 200;
     }
     .filter-backdrop.open { display: block; }
+    /* Condition tag sheet — z-index raised above walk detail overlay (FIX 13.2) */
+    #cond-tag-backdrop { z-index: 400; }
+    #cond-tag-sheet    { z-index: 401; }
 
     /* ─── Filter sheet panel ─── */
     .filter-sheet {
@@ -2100,6 +2103,16 @@
       background: var(--surface);
       border-bottom: 1px solid var(--border);
     }
+    .walked-conditions-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--brand);
+      padding: 10px 0 4px;
+      cursor: pointer;
+      text-decoration: none;
+    }
     .walk-detail-map-section {
       padding: 16px;
       background: var(--surface);
@@ -2133,6 +2146,24 @@
       height: 32px;
       flex-shrink: 0;
     }
+    /* Drag handle */
+    .walk-detail-drag-handle {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 20px;
+      cursor: grab;
+    }
+    .walk-detail-drag-handle::after {
+      content: '';
+      display: block;
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+    }
+
     /* Walk detail — dark mode */
     body.night .walk-detail-overlay   { background: var(--bg); }
     body.night .walk-detail-header     { background: var(--surface); border-color: var(--border); }
@@ -2332,12 +2363,12 @@
           <div class="stat-label">Favourites</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-value" id="stat-explored">0</div>
-          <div class="stat-label">Explored</div>
+          <div class="stat-value" id="stat-walked">0</div>
+          <div class="stat-label">Walks logged</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-value" id="stat-walks">25</div>
-          <div class="stat-label">Walks available</div>
+          <div class="stat-value" id="stat-explored">0</div>
+          <div class="stat-label">Explored</div>
         </div>
       </div>
 
@@ -3238,7 +3269,7 @@
   var HAZARD_KEYS = ['cattle', 'sheep', 'leads', 'access'];
 
   /* ─── Session dismissal tracker ─── */
-  var promptDismissedThisSession = {};
+  /* promptDismissedThisSession removed — FIX 13.2 replaces with hasSubmittedTagsToday() */
 
   /* ─── localStorage helpers ─── */
   function getConditionTags() {
@@ -3247,19 +3278,56 @@
   function saveConditionTags(data) {
     try { localStorage.setItem('sniffout_condition_tags', JSON.stringify(data)); } catch(e) {}
   }
+  /* ─── Walk log (FIX 13.4) — replaces sniffout_walked ─── */
+  function getWalkLog() {
+    try {
+      // One-time migration from old sniffout_walked array
+      var oldWalked = JSON.parse(localStorage.getItem('sniffout_walked') || 'null');
+      if (oldWalked && Array.isArray(oldWalked) && oldWalked.length > 0) {
+        var migratedTs = Date.now() - (7 * 24 * 3600000);
+        var migrated = oldWalked.map(function(id) { return { id: id, ts: migratedTs }; });
+        localStorage.setItem('sniffout_walk_log', JSON.stringify(migrated));
+        localStorage.removeItem('sniffout_walked');
+        return migrated;
+      }
+      return JSON.parse(localStorage.getItem('sniffout_walk_log') || '[]');
+    } catch(e) { return []; }
+  }
+
+  function logWalk(id) {
+    var log = getWalkLog();
+    log.unshift({ id: id, ts: Date.now() });
+    try { localStorage.setItem('sniffout_walk_log', JSON.stringify(log)); } catch(e) {}
+  }
+
+  function isWalked(id) {
+    return getWalkLog().some(function(e) { return e.id === id; });
+  }
+
+  function isWalkedToday(id) {
+    var today = new Date().toDateString();
+    return getWalkLog().some(function(e) {
+      return e.id === id && new Date(e.ts).toDateString() === today;
+    });
+  }
+
+  function getWalkLogCount(id) {
+    return getWalkLog().filter(function(e) { return e.id === id; }).length;
+  }
+
+  function getLastWalkDate(id) {
+    var entry = getWalkLog().find(function(e) { return e.id === id; });
+    return entry ? entry.ts : null;
+  }
+
+  // Backwards-compat alias
+  function hasWalked(id) { return isWalked(id); }
+
+  /* Legacy stubs — kept to avoid any surviving references breaking */
   function getWalkedIds() {
-    try { return JSON.parse(localStorage.getItem('sniffout_walked')) || []; } catch(e) { return []; }
+    return getWalkLog().map(function(e) { return e.id; });
   }
-  function markWalked(walkId) {
-    var ids = getWalkedIds();
-    if (ids.indexOf(walkId) === -1) {
-      ids.push(walkId);
-      try { localStorage.setItem('sniffout_walked', JSON.stringify(ids)); } catch(e) {}
-    }
-  }
-  function hasWalked(walkId) {
-    return getWalkedIds().indexOf(walkId) > -1;
-  }
+  function markWalked(walkId) { logWalk(walkId); }
 
   /* ─── Device fingerprint + rate limit ─── */
   function getDeviceId() {
@@ -3271,6 +3339,18 @@
     var cutoff = Date.now() - 86400000;
     var deviceId = getDeviceId();
     return tags.some(function(t) { return t.device === deviceId && t.ts > cutoff; });
+  }
+
+  /* ─── hasSubmittedTagsToday() — FIX 13.2: replaces session-level suppression ─── */
+  function hasSubmittedTagsToday(walkId) {
+    try {
+      var allTags  = JSON.parse(localStorage.getItem('sniffout_condition_tags') || '{}');
+      var walkTags = allTags[walkId] || [];
+      var today    = new Date().toDateString();
+      return walkTags.some(function(t) {
+        return new Date(t.ts).toDateString() === today;
+      });
+    } catch(e) { return false; }
   }
 
   /* ─── relativeTime() ─── */
@@ -3340,76 +3420,37 @@
     saveConditionTags(all);
   }
 
-  /* ─── onMarkWalked() / onUnmarkWalked() / showUndoToast() ─── */
-  function onMarkWalked(eventOrId, walkIdOrBtn) {
-    // Supports two calling conventions:
-    // (event, walkId) — from carousel onclick handlers
-    // (walkId, btn)   — from detail overlay walkedBtn.onclick
-    var walkId, btn;
-    if (typeof eventOrId === 'string') {
-      walkId = eventOrId;
-      btn = walkIdOrBtn;
-    } else {
-      eventOrId.stopPropagation();
-      btn = eventOrId.currentTarget;
-      walkId = walkIdOrBtn;
-    }
-    // Toggle: if already walked, unmark instead
-    if (btn && btn.classList.contains('confirmed')) {
-      onUnmarkWalked(walkId);
-      return;
-    }
+  /* ─── onMarkWalked() — FIX 13.4: timestamped log, three-state ─── */
+  function onMarkWalked(walkId, btn) {
+    logWalk(walkId);
+
+    // Update button to "Walked today" state immediately
     if (btn) {
-      btn.classList.add('confirmed');
-      var span = btn.querySelector('span');
-      if (span) span.textContent = 'Walked';
+      btn.className = 'walked-btn confirmed';
+      btn.innerHTML = luIcon('check', 15, 'flex-shrink:0;') + '<span>Walked today</span>';
+      btn.style.pointerEvents = 'none';
+      btn.style.fontWeight    = '';
+      btn.style.borderColor   = '';
+      btn.style.color         = '';
+      btn.onclick = null;
+      syncIcons();
     }
-    markWalked(walkId);
-    showUndoToast(walkId);
-    if (!hasSubmittedToday(walkId) && !promptDismissedThisSession[walkId]) {
+
+    // Show "Add or update conditions" link
+    var actionsEl = btn ? btn.closest('.walk-detail-actions') : null;
+    if (actionsEl && !actionsEl.querySelector('.walked-conditions-link')) {
+      var link = document.createElement('a');
+      link.className = 'walked-conditions-link';
+      link.textContent = '+ Add or update conditions →';
+      link.onclick = function() { openCondTagSheet(walkId); };
+      actionsEl.appendChild(link);
+    }
+
+    updateMeStats();
+
+    if (!hasSubmittedTagsToday(walkId)) {
       openCondTagSheet(walkId);
     }
-  }
-
-  function onUnmarkWalked(walkId) {
-    var walked = JSON.parse(localStorage.getItem('sniffout_walked') || '[]');
-    walked = walked.filter(function(id) { return id !== walkId; });
-    localStorage.setItem('sniffout_walked', JSON.stringify(walked));
-    // Dismiss toast if still visible
-    var toast = document.getElementById('undo-toast');
-    if (toast) {
-      clearTimeout(Number(toast.dataset.timer));
-      toast.remove();
-    }
-    // Update button DOM back to unwalked state
-    var btns = document.querySelectorAll('[data-walk-id="' + walkId + '"]');
-    btns.forEach(function(btn) {
-      if (!btn.classList.contains('walked-btn')) return;
-      btn.classList.remove('confirmed');
-      var span = btn.querySelector('span');
-      if (span) span.textContent = 'Mark as walked';
-    });
-  }
-
-  function showUndoToast(walkId) {
-    var existing = document.getElementById('undo-toast');
-    if (existing) {
-      clearTimeout(Number(existing.dataset.timer));
-      existing.remove();
-    }
-    var toast = document.createElement('div');
-    toast.className = 'undo-toast';
-    toast.id = 'undo-toast';
-    toast.innerHTML =
-      luIcon('check', 14) +
-      ' Walk logged ' +
-      '<button class="undo-toast-action" onclick="onUnmarkWalked(\'' + walkId + '\')">Undo</button>';
-    document.body.appendChild(toast);
-    syncIcons();
-    var timer = setTimeout(function() {
-      if (toast.parentNode) toast.remove();
-    }, 5000);
-    toast.dataset.timer = timer;
   }
 
   /* ─── renderCondTagRow() ─── */
@@ -3464,13 +3505,6 @@
   var walkDetailMap = null;
   var currentDetailWalkId = null;
 
-  function isWalked(id) {
-    try {
-      var walked = JSON.parse(localStorage.getItem('sniffout_walked') || '[]');
-      return walked.indexOf(id) > -1;
-    } catch(e) { return false; }
-  }
-
   function openWalkDetail(id) {
     var walk = null;
     for (var i = 0; i < WALKS_DB.length; i++) {
@@ -3487,13 +3521,53 @@
 
   function closeWalkDetail() {
     var overlay = document.getElementById('walk-detail-overlay');
-    if (overlay) overlay.classList.remove('open');
+    if (overlay) {
+      overlay.classList.remove('open');
+      overlay.style.transform = '';
+      overlay.style.transition = '';
+    }
     setTimeout(function() {
       if (walkDetailMap) { walkDetailMap.remove(); walkDetailMap = null; }
       var scroll = document.getElementById('walk-detail-scroll');
       if (scroll) scroll.scrollTop = 0;
       currentDetailWalkId = null;
     }, 310);
+  }
+
+  function initWalkDetailSwipe() {
+    var overlay = document.getElementById('walk-detail-overlay');
+    var scroll  = document.getElementById('walk-detail-scroll');
+    if (!overlay || !scroll) return;
+
+    var startY     = 0;
+    var isDragging = false;
+
+    overlay.addEventListener('touchstart', function(e) {
+      if (scroll.scrollTop > 0) return;
+      startY     = e.touches[0].clientY;
+      isDragging = true;
+      overlay.style.transition = 'none';
+    }, { passive: true });
+
+    overlay.addEventListener('touchmove', function(e) {
+      if (!isDragging) return;
+      if (scroll.scrollTop > 0) { isDragging = false; return; }
+      var deltaY = e.touches[0].clientY - startY;
+      if (deltaY < 0) { isDragging = false; return; }
+      overlay.style.transform = 'translateY(' + deltaY + 'px)';
+    }, { passive: true });
+
+    overlay.addEventListener('touchend', function(e) {
+      if (!isDragging) return;
+      isDragging = false;
+      var deltaY = e.changedTouches[0].clientY - startY;
+      overlay.style.transition = '';
+      if (deltaY > 150) {
+        closeWalkDetail();
+      } else {
+        overlay.style.transform = 'translateY(0)';
+      }
+    });
   }
 
   window.addEventListener('popstate', function() {
@@ -3579,16 +3653,59 @@
     renderDetailConditions(walk.id);
 
     var walkedBtn = document.getElementById('walk-detail-walked-btn');
+    // Reset inline styles from any previous walk
+    if (walkedBtn) {
+      walkedBtn.style.borderColor  = '';
+      walkedBtn.style.color        = '';
+      walkedBtn.style.fontWeight   = '';
+      walkedBtn.style.pointerEvents = '';
+    }
+    // Remove any previously-rendered conditions link
+    var actionsContainer = document.getElementById('walk-detail-walked-btn')
+      ? document.getElementById('walk-detail-walked-btn').closest('.walk-detail-actions')
+      : null;
+    if (actionsContainer) {
+      var oldLink = actionsContainer.querySelector('.walked-conditions-link');
+      if (oldLink) oldLink.remove();
+    }
     if (walkedBtn) {
       walkedBtn.setAttribute('data-walk-id', walk.id);
-      var walked = isWalked(walk.id);
-      walkedBtn.className = 'walked-btn' + (walked ? ' confirmed' : '');
-      walkedBtn.innerHTML = luIcon('check', 15, 'flex-shrink:0;') +
-        '<span>' + (walked ? 'Walked' : 'Mark as walked') + '</span>';
-      walkedBtn.style.width = '100%';
-      walkedBtn.style.height = '44px';
+      walkedBtn.style.width        = '100%';
+      walkedBtn.style.height       = '44px';
       walkedBtn.style.borderRadius = '12px';
-      walkedBtn.onclick = function() { onMarkWalked(walk.id, walkedBtn); };
+
+      if (isWalkedToday(walk.id)) {
+        // State 2 — walked today: non-interactive
+        walkedBtn.className = 'walked-btn confirmed';
+        walkedBtn.innerHTML = luIcon('check', 15, 'flex-shrink:0;') + '<span>Walked today</span>';
+        walkedBtn.style.pointerEvents = 'none';
+        walkedBtn.onclick = null;
+      } else if (isWalked(walk.id)) {
+        // State 3 — walked before, not today
+        walkedBtn.className = 'walked-btn';
+        walkedBtn.style.borderColor = 'rgba(30,77,58,0.25)';
+        walkedBtn.style.color       = 'var(--brand)';
+        walkedBtn.style.fontWeight  = '600';
+        walkedBtn.innerHTML = luIcon('rotate-ccw', 15, 'flex-shrink:0;') + '<span>Walk again</span>';
+        walkedBtn.onclick = function() { onMarkWalked(walk.id, walkedBtn); };
+      } else {
+        // State 1 — never walked
+        walkedBtn.className = 'walked-btn';
+        walkedBtn.innerHTML = luIcon('check', 15, 'flex-shrink:0;') + '<span>Mark as walked</span>';
+        walkedBtn.onclick   = function() { onMarkWalked(walk.id, walkedBtn); };
+      }
+
+      // Show conditions link if walk has any prior log entry
+      if (isWalked(walk.id)) {
+        var actionsEl = walkedBtn.closest('.walk-detail-actions');
+        if (actionsEl && !actionsEl.querySelector('.walked-conditions-link')) {
+          var condLink = document.createElement('a');
+          condLink.className   = 'walked-conditions-link';
+          condLink.textContent = '+ Add or update conditions →';
+          condLink.onclick     = function() { openCondTagSheet(walk.id); };
+          actionsEl.appendChild(condLink);
+        }
+      }
     }
 
     var mapsLink = document.getElementById('walk-detail-maps-link');
@@ -3778,6 +3895,12 @@
     setTimeout(function() { if (toast.parentNode) toast.remove(); }, 2000);
   }
 
+  /* ─── Condition tag conflict map — FIX 13.3 ─── */
+  var COND_CONFLICTS = {
+    busy:  ['quiet'],
+    quiet: ['busy']
+  };
+
   /* ─── Condition tag sheet ─── */
   var _condTagWalkId = null;
 
@@ -3790,7 +3913,6 @@
   }
 
   function closeCondTagSheet() {
-    if (_condTagWalkId) promptDismissedThisSession[_condTagWalkId] = true;
     _condTagWalkId = null;
     document.getElementById('cond-tag-backdrop').classList.remove('open');
     document.getElementById('cond-tag-sheet').classList.remove('open');
@@ -3821,6 +3943,7 @@
   }
 
   function toggleCondTag(btn) {
+    var key = btn.getAttribute('data-tag');
     btn.classList.toggle('selected');
     var check = btn.querySelector('.cond-option-check');
     if (btn.classList.contains('selected')) {
@@ -3831,6 +3954,18 @@
         btn.appendChild(c);
         syncIcons();
       }
+      // Deselect conflicting tags
+      var conflicts = COND_CONFLICTS[key] || [];
+      conflicts.forEach(function(conflictKey) {
+        var conflictBtn = document.querySelector(
+          '#cond-tag-sheet-inner .cond-tag-option[data-tag="' + conflictKey + '"]'
+        );
+        if (conflictBtn && conflictBtn.classList.contains('selected')) {
+          conflictBtn.classList.remove('selected');
+          var conflictCheck = conflictBtn.querySelector('.cond-option-check');
+          if (conflictCheck) conflictCheck.remove();
+        }
+      });
     } else {
       if (check) check.remove();
     }
@@ -4166,10 +4301,13 @@
     var favCount = getFavourites().length;
     var exploredCount = 0;
     try { exploredCount = (JSON.parse(localStorage.getItem(EXPLORED_KEY)) || []).length; } catch(e) {}
-    var favEl = document.getElementById('stat-favs');
-    var expEl = document.getElementById('stat-explored');
-    if (favEl) favEl.textContent = favCount;
-    if (expEl) expEl.textContent = exploredCount;
+    var walkedCount = getWalkLog().length;
+    var favEl     = document.getElementById('stat-favs');
+    var expEl     = document.getElementById('stat-explored');
+    var walkedEl  = document.getElementById('stat-walked');
+    if (favEl)    favEl.textContent    = favCount;
+    if (expEl)    expEl.textContent    = exploredCount;
+    if (walkedEl) walkedEl.textContent = walkedCount;
   }
 
   /* ─── Walk card HTML builders ─── */
@@ -5491,6 +5629,7 @@
 
 <!-- Walk detail overlay — FIX 12.1 -->
 <div id="walk-detail-overlay" class="walk-detail-overlay" role="dialog" aria-modal="true" aria-label="Walk detail">
+  <div class="walk-detail-drag-handle"></div>
   <div class="walk-detail-header">
     <button class="walk-detail-back" onclick="closeWalkDetail()" aria-label="Back"><i data-lucide="arrow-left" style="width:20px;height:20px"></i></button>
     <div class="walk-detail-header-name" id="walk-detail-header-name"></div>
@@ -5846,6 +5985,7 @@
   }
 
   initApp();
+  initWalkDetailSwipe();
 </script>
 
 
