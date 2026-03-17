@@ -1441,127 +1441,318 @@
     /* ═══════════════════════════════
        ME TAB
     ═══════════════════════════════ */
+    /* -- Header ---------------------------------------------------------- */
     .me-header {
-      padding: 16px 16px 0;
-      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 20px 16px 0;
     }
-    .me-title { font-size: 22px; font-weight: 700; color: var(--ink); }
-    .me-subtitle { font-size: 14px; color: var(--ink-2); margin-top: 2px; }
+    .me-header-identity {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      /* Phase 3 hook: 44x44 photo slot prepended here */
+    }
+    .me-name-block { display: flex; flex-direction: column; gap: 3px; }
+    .me-name       { font: 700 20px/1.2 'Inter', sans-serif; color: var(--ink); }
+    .me-name--placeholder { font: 400 20px/1.2 'Inter', sans-serif; color: var(--ink-2); }
+    .me-name-edit-cta {
+      font: 500 13px/1 'Inter', sans-serif;
+      color: var(--brand);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .me-since {
+      font: 400 13px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+      margin-top: 4px;
+    }
+    .me-gear-btn {
+      width: 36px;
+      height: 36px;
+      padding: 8px;
+      background: none;
+      border: none;
+      color: var(--ink-2);
+      cursor: pointer;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+    .me-gear-btn:active { opacity: 0.6; }
+    .me-gear-btn svg { width: 20px; height: 20px; }
 
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      padding: 0 16px 20px;
-    }
-    .stat-cell {
+    /* -- Zone 1 highlights card ----------------------------------------- */
+    .me-highlights {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 12px;
-      text-align: center;
+      border-radius: 16px;
+      padding: 0;
+      overflow: hidden;
+      margin: 20px 16px 0;
     }
-    .stat-value { font-size: 22px; font-weight: 700; color: var(--brand); }
-    .stat-label { font-size: 11px; color: var(--ink-2); margin-top: 3px; }
-
-    .me-section { padding: 0 16px 20px; }
-    .me-section-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--ink);
-      margin-bottom: 12px;
-    }
-    .favs-empty {
-      font-size: 14px;
-      color: var(--ink-2);
-      text-align: center;
-      padding: 20px 0;
-    }
-
-    /* ─── Me tab walk log (FIX 14.5) ─── */
-    .me-log-row {
-      padding: 12px 0;
+    .me-highlights-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
       border-bottom: 1px solid var(--border);
-      cursor: pointer;
     }
-    .me-log-row:last-of-type { border-bottom: none; }
-    .me-log-name {
-      font-size: 15px;
-      font-weight: 500;
+    .me-highlights-row:last-child { border-bottom: none; }
+    .me-highlights-label { font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); }
+    .me-highlights-value {
+      font: 600 13px/1 'Inter', sans-serif;
       color: var(--ink);
-      margin-bottom: 2px;
+      max-width: 55%;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .me-log-meta {
-      font-size: 13px;
-      color: var(--ink-2);
-    }
-    .me-log-empty {
-      font-size: 14px;
-      color: var(--ink-2);
-      text-align: center;
-      padding: 24px 0;
-      margin: 0;
-    }
-    .me-log-seeall {
-      font-size: 13px;
-      font-weight: 500;
+    .me-season-chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    .me-season-chip {
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: rgba(30, 77, 58, 0.1);
+      border: 1px solid rgba(30, 77, 58, 0.2);
+      font: 600 12px/1.4 'Inter', sans-serif;
       color: var(--brand);
-      padding: 12px 0 4px;
-      cursor: pointer;
+      white-space: nowrap;
     }
+    body.night .me-season-chip { background: rgba(30,77,58,0.18); border-color: rgba(30,77,58,0.3); }
 
-    /* ─── Me tab badges (FIX 14.6) ─── */
-    #me-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 4px 0 8px;
+    /* -- Zone 2 progress bar -------------------------------------------- */
+    .me-progress-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin: 16px 16px 0;
     }
-    .me-badge {
+    .me-progress-heading { font: 600 15px/1 'Inter', sans-serif; color: var(--ink); margin-bottom: 14px; }
+    .me-progress-labels  { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .me-progress-current { font: 700 17px/1 'Inter', sans-serif; color: var(--ink); }
+    .me-progress-next    { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); }
+    .me-progress-bar-row { display: flex; align-items: center; gap: 10px; }
+    .me-progress-track {
+      flex: 1;
+      height: 10px;
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+    body.night .me-progress-track { background: rgba(255,255,255,0.1); }
+    .me-progress-fill {
+      height: 100%;
+      border-radius: 5px;
+      background: var(--brand);
+      transition: width 600ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .me-progress-pct { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); width: 32px; text-align: right; flex-shrink: 0; }
+    .me-progress-hint { font: 400 13px/1.4 'Inter', sans-serif; color: var(--ink-2); margin-top: 10px; }
+    .me-progress-complete { display: flex; align-items: center; gap: 14px; padding: 4px 0; }
+    .me-progress-complete-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--brand);
       display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .me-progress-complete-icon svg { width: 20px; height: 20px; color: #fff; }
+    .me-progress-complete-title { font: 700 16px/1.2 'Inter', sans-serif; color: var(--ink); }
+    .me-progress-complete-sub   { font: 400 13px/1.4 'Inter', sans-serif; color: var(--ink-2); margin-top: 2px; }
+
+    /* -- Zone 3 badges -------------------------------------------------- */
+    .me-badges-heading-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 0 16px;
+      margin-bottom: 12px;
+      margin-top: 20px;
+    }
+    .me-badges-heading { font: 600 16px/1 'Inter', sans-serif; color: var(--ink); }
+    .me-badges-count   { font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); }
+    .me-badges-grid { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px; }
+    .me-badge {
+      display: inline-flex;
       align-items: center;
       gap: 6px;
       padding: 6px 12px;
-      background: rgba(30,77,58,0.06);
-      border: 1px solid rgba(30,77,58,0.15);
+      height: 32px;
       border-radius: 20px;
-      font-size: 13px;
-      font-weight: 500;
+      white-space: nowrap;
+      box-sizing: border-box;
+    }
+    .me-badge--earned {
+      background: rgba(30, 77, 58, 0.08);
+      border: 1px solid rgba(30, 77, 58, 0.2);
+      font: 600 13px/1 'Inter', sans-serif;
       color: var(--brand);
+      cursor: default;
     }
-    .me-badges-empty {
-      font-size: 13px;
-      color: var(--ink-2);
-      padding: 4px 0 8px;
-    }
-
-    /* ─── Display mode segmented control ─── */
-    .settings-item-block {
+    body.night .me-badge--earned { background: rgba(30,77,58,0.18); border-color: rgba(30,77,58,0.3); }
+    .me-badge--locked {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      cursor: default;
-      margin-bottom: 8px;
-    }
-    .segment-label {
-      font: 500 13px/1 'Inter', sans-serif;
+      font: 400 13px/1 'Inter', sans-serif;
       color: var(--ink-2);
-      margin-bottom: 10px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
     }
+    .me-badge-icon { width: 13px; height: 13px; color: var(--brand); flex-shrink: 0; }
+    .me-badge-lock { width: 12px; height: 12px; color: var(--ink-2); flex-shrink: 0; opacity: 0.6; }
+    .me-badge-tooltip {
+      padding: 8px 16px;
+      font: 400 12px/1.4 'Inter', sans-serif;
+      color: var(--ink-2);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-top: 4px;
+      animation: fadeIn 150ms ease;
+      box-sizing: border-box;
+    }
+    .me-badges-hint { padding: 10px 16px 0; font: 400 12px/1 'Inter', sans-serif; color: var(--ink-2); }
+
+    /* -- Zone 4 walk history -------------------------------------------- */
+    .me-history-heading { font: 600 16px/1 'Inter', sans-serif; color: var(--ink); padding: 20px 16px 12px; }
+    .me-history-list {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin: 0 16px;
+      overflow: hidden;
+    }
+    .me-history-row {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .me-history-row:last-of-type { border-bottom: none; }
+    .me-history-row:active { background: rgba(0,0,0,0.03); }
+    .me-history-text { flex: 1; }
+    .me-history-name { font: 500 15px/1.3 'Inter', sans-serif; color: var(--ink); }
+    .me-history-meta { font: 400 13px/1.3 'Inter', sans-serif; color: var(--ink-2); margin-top: 2px; }
+    .me-history-chevron { width: 16px; height: 16px; color: var(--ink-2); opacity: 0.5; flex-shrink: 0; margin-left: 8px; }
+    .me-history-see-all {
+      display: block;
+      padding: 14px 16px;
+      font: 500 13px/1 'Inter', sans-serif;
+      color: var(--brand);
+      text-align: left;
+      background: none;
+      border: none;
+      border-top: 1px solid var(--border);
+      width: 100%;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .me-history-empty { font: 400 14px/1.5 'Inter', sans-serif; color: var(--ink-2); text-align: center; padding: 24px 16px; }
+
+    /* -- Settings sheet ------------------------------------------------- */
+    .me-settings-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 300ms;
+    }
+    .me-settings-overlay.is-open { opacity: 1; pointer-events: all; }
+    .me-settings-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-height: 75vh;
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      padding: 12px 16px 40px;
+      z-index: 201;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .me-settings-sheet.is-open { transform: translateY(0); }
+    .me-settings-handle { width: 32px; height: 4px; border-radius: 2px; background: rgba(0,0,0,0.18); margin: 0 auto 20px; }
+    body.night .me-settings-handle { background: rgba(255,255,255,0.22); }
+    .me-settings-title { font: 700 17px/1 'Inter', sans-serif; color: var(--ink); margin-bottom: 20px; }
+    .me-settings-section { margin-top: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .me-settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .me-settings-row-label { font: 500 15px/1 'Inter', sans-serif; color: var(--ink); }
+    .me-settings-row-value { font: 400 15px/1 'Inter', sans-serif; color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
+    .me-settings-row-value svg { width: 14px; height: 14px; color: var(--ink-2); opacity: 0.5; }
+    .me-settings-note { margin-top: 24px; font: 400 12px/1.5 'Inter', sans-serif; color: var(--ink-2); text-align: center; padding: 0 8px; }
+
+    /* -- Empty state ---------------------------------------------------- */
+    .me-empty-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 20px;
+      margin: 20px 16px 0;
+      text-align: center;
+    }
+    .me-empty-title { font: 700 18px/1.3 'Inter', sans-serif; color: var(--ink); margin-bottom: 10px; }
+    .me-empty-body  { font: 400 14px/1.5 'Inter', sans-serif; color: var(--ink-2); margin-bottom: 24px; }
+    .me-empty-cta {
+      display: inline-block;
+      padding: 12px 24px;
+      background: var(--brand);
+      color: #fff;
+      border-radius: 12px;
+      font: 600 15px/1 'Inter', sans-serif;
+      border: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .me-empty-cta:active { opacity: 0.88; }
+
+    /* -- Radius control (4-segment) ------------------------------------- */
+    .me-radius-control { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    .me-radius-control .segment-pill { width: calc((100% - 6px) / 4); }
+    .me-radius-control .segment-pill[data-active="0"] { transform: translateX(0); }
+    .me-radius-control .segment-pill[data-active="1"] { transform: translateX(100%); }
+    .me-radius-control .segment-pill[data-active="2"] { transform: translateX(200%); }
+    .me-radius-control .segment-pill[data-active="3"] { transform: translateX(300%); }
+
+    /* -- Segmented controls (shared) ------------------------------------ */
+    .segment-label { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); margin-bottom: 10px; }
     .segment-control {
       position: relative;
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      background: rgba(0, 0, 0, 0.06);
+      background: rgba(0,0,0,0.06);
       border-radius: 12px;
       padding: 3px;
       height: 44px;
       box-sizing: border-box;
     }
-    body.night .segment-control {
-      background: rgba(255, 255, 255, 0.08);
-    }
+    body.night .segment-control { background: rgba(255,255,255,0.08); }
     .segment-pill {
       position: absolute;
       top: 3px;
@@ -1570,15 +1761,12 @@
       height: calc(100% - 6px);
       background: var(--surface);
       border-radius: 9px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
       transition: transform 200ms ease;
       pointer-events: none;
       z-index: 0;
     }
-    body.night .segment-pill {
-      background: rgba(255, 255, 255, 0.18);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    }
+    body.night .segment-pill { background: rgba(255,255,255,0.18); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
     .segment-pill[data-active="0"] { transform: translateX(0); }
     .segment-pill[data-active="1"] { transform: translateX(calc(100% + 0px)); }
     .segment-pill[data-active="2"] { transform: translateX(calc(200% + 0px)); }
@@ -1599,103 +1787,10 @@
       transition: color 150ms ease;
       -webkit-tap-highlight-color: transparent;
     }
-    body.night .segment-btn {
-      color: rgba(255, 255, 255, 0.45);
-    }
-    .segment-btn.active {
-      font-weight: 600;
-      color: var(--brand);
-    }
-    body.night .segment-btn.active {
-      color: #FFFFFF;
-    }
-    .segment-btn svg {
-      width: 15px;
-      height: 15px;
-      flex-shrink: 0;
-    }
-
-    .missing-coming-soon {
-      margin: 0 16px 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      opacity: 0.9;
-      pointer-events: none;
-    }
-    .missing-coming-soon-icon {
-      width: 44px;
-      height: 44px;
-      background: rgba(30,77,58,0.08);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      color: var(--brand);
-    }
-    .missing-coming-soon-body { flex: 1; min-width: 0; }
-    .missing-coming-soon-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--ink);
-      margin-bottom: 4px;
-    }
-    .missing-coming-soon-desc {
-      font-size: 13px;
-      color: var(--ink-2);
-      line-height: 1.5;
-      margin-bottom: 10px;
-    }
-    .missing-coming-soon-pill {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--ink-2);
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 3px 10px;
-      letter-spacing: 0.02em;
-    }
-    body.night .missing-coming-soon-icon {
-      background: rgba(130,176,154,0.12);
-    }
-
-    .sign-in-banner {
-      margin: 0 16px 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-    }
-    .sign-in-banner-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--ink);
-      margin-bottom: 6px;
-    }
-    .sign-in-banner-body { font-size: 13px; color: var(--ink-2); line-height: 1.5; }
-
-    .settings-list { display: flex; flex-direction: column; gap: 1px; }
-    .settings-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 14px;
-      color: var(--ink);
-      cursor: pointer;
-      margin-bottom: 8px;
-    }
-    .settings-item-right { font-size: 13px; color: var(--ink-2); }
+    body.night .segment-btn { color: rgba(255,255,255,0.45); }
+    .segment-btn.active { font-weight: 600; color: var(--brand); }
+    body.night .segment-btn.active { color: #FFFFFF; }
+    .segment-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
 
     /* ═══════════════════════════════
        DARK MODE
@@ -2698,89 +2793,78 @@
 
     <!-- ══════════ ME TAB ══════════ -->
     <div id="tab-me" class="tab-panel">
-      <div class="me-header">
-        <div class="me-title">Your walks, saved locally</div>
-      </div>
 
-      <div class="stats-row">
-        <div class="stat-cell">
-          <div class="stat-value" id="stat-favs">0</div>
-          <div class="stat-label">Favourites</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-value" id="stat-walked">0</div>
-          <div class="stat-label">Walks logged</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-value" id="stat-explored">0</div>
-          <div class="stat-label">Explored</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-value" id="stat-distance">0 mi</div>
-          <div class="stat-label">Miles walked</div>
-        </div>
-      </div>
-
-      <div class="me-section">
-        <div class="me-section-title">Favourites</div>
-        <div class="favs-empty" id="favs-list">Heart any walk to save it here.</div>
-      </div>
-
-      <div class="me-section" id="me-badges-section">
-        <div class="me-section-title">Badges</div>
-        <div id="me-badges"></div>
-      </div>
-
-      <div class="me-section">
-        <div class="me-section-title">Walk history</div>
-        <div id="me-walk-log"></div>
-      </div>
-
-      <!-- FEATURE FLAG: Missing Dog alerts - hidden until Phase 3 backend is ready
-      <div class="missing-coming-soon">
-        <div class="missing-coming-soon-icon">
-          <i data-lucide="search" style="width:22px;height:22px"></i>
-        </div>
-        <div class="missing-coming-soon-body">
-          <div class="missing-coming-soon-title">Missing Dog Alerts</div>
-          <div class="missing-coming-soon-desc">Alert nearby dog walkers when your dog goes missing — or help find one near you.</div>
-          <span class="missing-coming-soon-pill">Coming soon</span>
-        </div>
-      </div>
-      -->
-
-      <div class="sign-in-banner">
-        <div class="sign-in-banner-title">Saved on this device</div>
-        <div class="sign-in-banner-body">Your favourites and reviews are saved on this device. Sync across devices is coming.</div>
-      </div>
-
-      <div class="me-section">
-        <div class="me-section-title">Settings</div>
-        <div class="settings-list">
-          <div class="settings-item" id="setting-name">
-            <span>Display name</span>
-            <span class="settings-item-right" id="display-name-val">—</span>
+      <!-- Header -->
+      <header class="me-header">
+        <div class="me-header-identity">
+          <!-- Phase 3 hook: profile photo slot here (44x44px circular, not built) -->
+          <div class="me-name-block">
+            <span class="me-name" id="meDisplayName">Sniffout walker</span>
+            <button class="me-name-edit-cta" id="meAddNameCta" style="display:none">Add your name &#8594;</button>
+            <span class="me-since" id="meSince" style="display:none"></span>
+            <!-- Phase 3 hook: following/followers line here (not built) -->
           </div>
-          <div class="settings-item-block" id="setting-dark">
-            <div class="segment-label">Display mode</div>
-            <div class="segment-control" id="segment-control-dark" role="group" aria-label="Display mode">
-              <div class="segment-pill" id="segment-pill-dark" aria-hidden="true"></div>
-              <button class="segment-btn" data-mode="light" aria-pressed="false">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                <span>Light</span>
-              </button>
-              <button class="segment-btn" data-mode="auto" aria-pressed="false">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a9 9 0 0 0 0 18V3z"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-                <span>Auto</span>
-              </button>
-              <button class="segment-btn" data-mode="dark" aria-pressed="false">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                <span>Dark</span>
-              </button>
-            </div>
+        </div>
+        <button class="me-gear-btn" id="meGearBtn" aria-label="Settings">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </header>
+
+      <!-- Empty state (replaces zones 1, 2, 4 when no walk data) -->
+      <div class="me-empty-card" id="meEmptyCard" style="display:none">
+        <div class="me-empty-title">Your walking journey starts here</div>
+        <div class="me-empty-body">Explore walks and mark them as walked to build your personal log.</div>
+        <button class="me-empty-cta" onclick="switchTab('walks')">Explore walks</button>
+      </div>
+
+      <!-- Zone 1 - Personal highlights card -->
+      <div class="me-highlights" id="meHighlights" style="display:none"></div>
+
+      <!-- Zone 2 - Distance progress bar -->
+      <div class="me-progress-card" id="meProgressCard" style="display:none">
+        <div class="me-progress-heading">Miles walked</div>
+        <div class="me-progress-labels">
+          <span class="me-progress-current" id="meProgressCurrent">0 mi</span>
+          <span class="me-progress-next" id="meProgressNext">&#8594; 10 Miles</span>
+        </div>
+        <div class="me-progress-bar-row">
+          <div class="me-progress-track">
+            <div class="me-progress-fill" id="meProgressFill" style="width:0%"></div>
+          </div>
+          <span class="me-progress-pct" id="meProgressPct">0%</span>
+        </div>
+        <div class="me-progress-hint" id="meProgressHint"></div>
+        <div class="me-progress-complete" id="meProgressComplete" style="display:none">
+          <div class="me-progress-complete-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="me-progress-complete-title">100 Miles Club</div>
+            <div class="me-progress-complete-sub">You've walked over 100 miles with Sniffout.</div>
           </div>
         </div>
       </div>
+
+      <!-- Zone 3 - Badge grid (always visible) -->
+      <div class="me-badges-section" id="meBadgesSection">
+        <div class="me-badges-heading-row">
+          <span class="me-badges-heading">Badges</span>
+          <span class="me-badges-count" id="meBadgesCount"></span>
+        </div>
+        <div class="me-badges-grid" id="meBadgesGrid"></div>
+        <div class="me-badge-tooltip" id="meBadgeTooltip" style="display:none;margin:4px 16px 0"></div>
+        <div class="me-badges-hint" id="meBadgesHint">More to unlock</div>
+      </div>
+
+      <!-- Phase 3 hook: Local Legend section between Zone 3 and Zone 4 (not built) -->
+
+      <!-- Zone 4 - Walk history -->
+      <div class="me-history-section" id="meHistorySection" style="display:none">
+        <div class="me-history-heading">Walk history</div>
+        <div class="me-history-list" id="meHistoryList"></div>
+      </div>
+
+      <div style="height:32px"></div>
 
     </div><!-- /tab-me -->
 
@@ -5524,6 +5608,25 @@
     }, 0);
   }
 
+  /* -- All badge definitions (Phase 2) ---------------------------------- */
+  var ALL_BADGES = [
+    { id: '10miles',    label: '10 Miles',         tooltip: 'Walk 10 miles in total to earn this.',                              hasIcon: true  },
+    { id: '25miles',    label: '25 Miles',         tooltip: 'Walk 25 miles in total to earn this.',                              hasIcon: true  },
+    { id: '50miles',    label: '50 Miles',         tooltip: 'Walk 50 miles in total to earn this.',                              hasIcon: true  },
+    { id: '100miles',   label: '100 Miles Club',   tooltip: 'Walk 100 miles in total to earn this.',                             hasIcon: true  },
+    { id: 'explorer',   label: 'Explorer',         tooltip: 'Explore 5 different walks to earn this.',                           hasIcon: false },
+    { id: 'trailblazer',label: 'Trailblazer',      tooltip: 'Explore 10 different walks to earn this.',                          hasIcon: false },
+    { id: 'rambler',    label: 'Regional Rambler', tooltip: 'Explore walks in 3 different regions to earn this.',                hasIcon: false },
+    { id: 'coastal',    label: 'Coastal Walker',   tooltip: 'Log a coastal walk to earn this.',                                  hasIcon: false },
+    { id: 'woodland',   label: 'Woodland Walker',  tooltip: 'Log a woodland walk to earn this.',                                 hasIcon: false },
+    { id: 'moorland',   label: 'Moorland Walker',  tooltip: 'Log a moorland or open-country walk to earn this.',                 hasIcon: false },
+    { id: 'seasonal',   label: 'Seasonal Walker',  tooltip: 'Return to the same walk in a different season to earn this.',       hasIcon: false },
+    { id: 'allweather', label: 'All-Weather',      tooltip: 'Walk in 3 different seasons to earn this.',                        hasIcon: false },
+    { id: 'regular',    label: 'Regular',          tooltip: 'Log the same walk 3 or more times to earn this.',                  hasIcon: false },
+    { id: 'devoted',    label: 'Devoted',          tooltip: 'Log 5 different walks to earn this.',                              hasIcon: false },
+    { id: 'collector',  label: 'Collector',        tooltip: 'Save 5 walks to your favourites to earn this.',                    hasIcon: false }
+  ];
+
   function getEarnedBadges() {
     var badges  = [];
     var log     = getWalkLog();
@@ -5533,27 +5636,21 @@
     var uniqueWalked   = {};
     log.forEach(function(e) { uniqueWalked[e.id] = true; });
     var uniqueWalkedCount = Object.keys(uniqueWalked).length;
+    var loggedIds = Object.keys(uniqueWalked);
 
-    var exploredIds    = Object.keys(explored);
-    var exploredCount  = exploredIds.length;
-    var totalMi        = getTotalDistanceMi();
+    var exploredIds   = Object.keys(explored);
+    var exploredCount = exploredIds.length;
+    var totalMi       = getTotalDistanceMi();
 
-    if (exploredCount >= 5) {
-      badges.push({ id: 'explorer', label: 'Explorer', description: '5 walks explored' });
-    }
-    if (exploredCount >= 10) {
-      badges.push({ id: 'trailblazer', label: 'Trailblazer', description: '10 walks explored' });
-    }
-    if (uniqueWalkedCount >= 5) {
-      badges.push({ id: 'devoted', label: 'Devoted', description: '5 walks completed' });
-    }
+    // Distance track
+    if (totalMi >= 10)  badges.push({ id: '10miles',    label: '10 Miles' });
+    if (totalMi >= 25)  badges.push({ id: '25miles',    label: '25 Miles' });
+    if (totalMi >= 50)  badges.push({ id: '50miles',    label: '50 Miles' });
+    if (totalMi >= 100) badges.push({ id: '100miles',   label: '100 Miles Club' });
 
-    var logCountById = {};
-    log.forEach(function(e) { logCountById[e.id] = (logCountById[e.id] || 0) + 1; });
-    var hasRegular = Object.keys(logCountById).some(function(k) { return logCountById[k] >= 3; });
-    if (hasRegular) {
-      badges.push({ id: 'regular', label: 'Regular', description: 'Same walk 3 times' });
-    }
+    // Exploration track
+    if (exploredCount >= 5)  badges.push({ id: 'explorer',    label: 'Explorer' });
+    if (exploredCount >= 10) badges.push({ id: 'trailblazer', label: 'Trailblazer' });
 
     var walkById = {};
     WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
@@ -5566,52 +5663,383 @@
         regions[region] = true;
       }
     });
-    if (Object.keys(regions).length >= 3) {
-      badges.push({ id: 'rambler', label: 'Regional Rambler', description: '3 regions explored' });
-    }
+    if (Object.keys(regions).length >= 3) badges.push({ id: 'rambler', label: 'Regional Rambler' });
 
+    // Walk character track - keyword matching on walk IDs
+    var COASTAL_KWS  = ['rhossili', 'alnmouth', 'seven-sisters', 'tentsmuir', 'cuckmere', 'baggy-point', 'dunwich'];
+    var WOODLAND_KWS = ['dunkeld', 'hardcastle', 'ashridge', 'ranmore', 'bookham', 'kielder', 'thetford', 'formby', 'hampstead'];
+    var MOORLAND_KWS = ['haytor', 'stanage', 'malham', 'pen-y-fan', 'hindhead', 'cannock'];
+    function hasTerrainWalk(ids, kws) {
+      return ids.some(function(id) {
+        return kws.some(function(kw) { return id.indexOf(kw) !== -1; });
+      });
+    }
+    if (hasTerrainWalk(loggedIds, COASTAL_KWS))  badges.push({ id: 'coastal',  label: 'Coastal Walker' });
+    if (hasTerrainWalk(loggedIds, WOODLAND_KWS)) badges.push({ id: 'woodland', label: 'Woodland Walker' });
+    if (hasTerrainWalk(loggedIds, MOORLAND_KWS)) badges.push({ id: 'moorland', label: 'Moorland Walker' });
+
+    // Seasonal walker - same walk in 2+ different seasons
     var hasSeasonal = exploredIds.some(function(id) {
       var seasons = getExploredSeasons(id);
       var uniqueSeasons = {};
       seasons.forEach(function(s) { uniqueSeasons[s] = true; });
       return Object.keys(uniqueSeasons).length >= 2;
     });
-    if (hasSeasonal) {
-      badges.push({ id: 'seasonal', label: 'Seasonal Walker', description: 'Same walk in 2 seasons' });
-    }
+    if (hasSeasonal) badges.push({ id: 'seasonal', label: 'Seasonal Walker' });
 
-    if (favs.length >= 5) {
-      badges.push({ id: 'collector', label: 'Collector', description: '5 walks favourited' });
-    }
+    // All-Weather - 3+ unique seasons across all explored
+    var allSeasons = {};
+    exploredIds.forEach(function(id) {
+      getExploredSeasons(id).forEach(function(s) { allSeasons[s] = true; });
+    });
+    if (Object.keys(allSeasons).length >= 3) badges.push({ id: 'allweather', label: 'All-Weather' });
+
+    // Loyalty track
+    var logCountById = {};
+    log.forEach(function(e) { logCountById[e.id] = (logCountById[e.id] || 0) + 1; });
+    var hasRegular = Object.keys(logCountById).some(function(k) { return logCountById[k] >= 3; });
+    if (hasRegular)              badges.push({ id: 'regular',   label: 'Regular' });
+    if (uniqueWalkedCount >= 5)  badges.push({ id: 'devoted',   label: 'Devoted' });
+    if (favs.length >= 5)        badges.push({ id: 'collector', label: 'Collector' });
 
     return badges;
   }
 
   function renderBadges() {
-    var container = document.getElementById('me-badges');
-    if (!container) return;
-    var badges = getEarnedBadges();
-    if (badges.length === 0) {
-      container.innerHTML = '<span class="me-badges-empty">Keep exploring to earn badges.</span>';
-      return;
-    }
-    container.innerHTML = badges.map(function(b) {
-      return '<div class="me-badge">' + b.label + '</div>';
+    var grid    = document.getElementById('meBadgesGrid');
+    var countEl = document.getElementById('meBadgesCount');
+    var hintEl  = document.getElementById('meBadgesHint');
+    if (!grid) return;
+
+    var earned    = getEarnedBadges();
+    var earnedIds = {};
+    earned.forEach(function(b) { earnedIds[b.id] = true; });
+    var earnedCount = earned.length;
+    var lockedCount = ALL_BADGES.length - earnedCount;
+
+    if (countEl) countEl.textContent = earnedCount > 0 ? earnedCount + ' earned' : '';
+    if (hintEl)  hintEl.style.display = lockedCount > 0 ? '' : 'none';
+
+    var earnedBadges = ALL_BADGES.filter(function(b) { return  earnedIds[b.id]; });
+    var lockedBadges = ALL_BADGES.filter(function(b) { return !earnedIds[b.id]; });
+    var ordered = earnedBadges.concat(lockedBadges);
+
+    var checkSVG = '<svg class="me-badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+    var lockSVG  = '<svg class="me-badge-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+
+    grid.innerHTML = ordered.map(function(b) {
+      if (earnedIds[b.id]) {
+        return '<div class="me-badge me-badge--earned">' + (b.hasIcon ? checkSVG : '') + b.label + '</div>';
+      }
+      return '<div class="me-badge me-badge--locked" data-badge-id="' + b.id + '" data-tooltip="' + b.tooltip + '">' + lockSVG + b.label + '</div>';
     }).join('');
+
+    // Attach tap handler for locked badge tooltips
+    var tooltip = document.getElementById('meBadgeTooltip');
+    if (tooltip) {
+      grid.querySelectorAll('.me-badge--locked').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var id  = el.getAttribute('data-badge-id');
+          var tip = el.getAttribute('data-tooltip');
+          if (tooltip.style.display !== 'none' && tooltip.getAttribute('data-for') === id) {
+            tooltip.style.display = 'none';
+            tooltip.removeAttribute('data-for');
+          } else {
+            tooltip.textContent = tip;
+            tooltip.setAttribute('data-for', id);
+            tooltip.style.display = 'block';
+          }
+        });
+      });
+    }
   }
 
   function updateMeStats() {
-    var favCount = getFavourites().length;
-    var exploredCount = getExploredCount();
-    var walkedCount = getWalkLog().length;
-    var favEl     = document.getElementById('stat-favs');
-    var expEl     = document.getElementById('stat-explored');
-    var walkedEl  = document.getElementById('stat-walked');
-    if (favEl)    favEl.textContent    = favCount;
-    if (expEl)    expEl.textContent    = exploredCount;
-    if (walkedEl) walkedEl.textContent = walkedCount;
-    var distEl = document.getElementById('stat-distance');
-    if (distEl) distEl.textContent = Math.round(getTotalDistanceMi()) + ' mi';
+    /* Stats row removed in Me tab redesign - no-op stub */
+  }
+
+  /* -- getTotalMiles alias -------------------------------------------- */
+  function getTotalMiles() { return getTotalDistanceMi(); }
+
+  /* -- Me tab data helpers -------------------------------------------- */
+  function getMostExploredWalk() {
+    var explored = getExplored();
+    var walkById = {};
+    WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
+    var bestId = null, bestCount = 0;
+    Object.keys(explored).forEach(function(id) {
+      var count = explored[id].length;
+      if (count > bestCount) { bestCount = count; bestId = id; }
+    });
+    if (!bestId) return null;
+    var walk = walkById[bestId];
+    return walk ? walk.name : null;
+  }
+
+  function getFavouriteRegion() {
+    var explored = getExplored();
+    var walkById = {};
+    WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
+    var regionCount = {};
+    Object.keys(explored).forEach(function(id) {
+      var walk = walkById[id];
+      if (walk && walk.location) {
+        var parts = walk.location.split(',');
+        var region = parts[parts.length - 1].trim();
+        if (region) regionCount[region] = (regionCount[region] || 0) + explored[id].length;
+      }
+    });
+    var best = null, bestCount = 0;
+    Object.keys(regionCount).forEach(function(r) {
+      if (regionCount[r] > bestCount) { bestCount = regionCount[r]; best = r; }
+    });
+    return best;
+  }
+
+  function getWalkedSeasons() {
+    var explored = getExplored();
+    var seasons = {};
+    Object.keys(explored).forEach(function(id) {
+      explored[id].forEach(function(e) { if (e.season) seasons[e.season] = true; });
+    });
+    var ORDER = ['spring', 'summer', 'autumn', 'winter'];
+    return ORDER.filter(function(s) { return seasons[s]; }).map(function(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    });
+  }
+
+  function getSinceLabel() {
+    var log = getWalkLog();
+    if (!log.length) return null;
+    var earliest = log.reduce(function(min, e) { return e.ts < min ? e.ts : min; }, Infinity);
+    if (!isFinite(earliest)) return null;
+    var d = new Date(earliest);
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    return 'Since ' + months[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  function historyTimeLabel(ts) {
+    var diffMs   = Date.now() - ts;
+    var diffDays = Math.floor(diffMs / 86400000);
+    if (diffDays < 1)  return 'today';
+    if (diffDays === 1) return 'yesterday';
+    if (diffDays < 30) return diffDays + ' days ago';
+    return Math.floor(diffDays / 7) + ' weeks ago';
+  }
+
+  function historyCountLabel(n) {
+    if (n === 1) return 'Walked once';
+    if (n === 2) return 'Walked twice';
+    return 'Walked ' + n + ' times';
+  }
+
+  /* -- Zone 1 highlights ------------------------------------------------ */
+  function renderHighlightsCard(container) {
+    var log     = getWalkLog();
+    var totalMi = getTotalDistanceMi();
+    var rows    = [];
+
+    var mostExplored = getMostExploredWalk();
+    if (mostExplored) rows.push({ label: 'Most explored', value: mostExplored, isChips: false });
+
+    var favRegion = getFavouriteRegion();
+    if (favRegion) rows.push({ label: 'Favourite region', value: favRegion, isChips: false });
+
+    if (log.length > 0 && totalMi > 0) {
+      var miStr = (totalMi % 1 === 0) ? Math.round(totalMi) + ' mi' : totalMi.toFixed(1) + ' mi';
+      rows.push({ label: 'Total miles', value: miStr, isChips: false });
+    }
+
+    var uniqueIds = {};
+    log.forEach(function(e) { uniqueIds[e.id] = true; });
+    var uniqueCount = Object.keys(uniqueIds).length;
+    if (uniqueCount > 0) {
+      rows.push({ label: 'Total walks', value: uniqueCount === 1 ? '1 walk' : uniqueCount + ' walks', isChips: false });
+    }
+
+    var seasons = getWalkedSeasons();
+    if (seasons.length > 0) rows.push({ label: 'Seasons walked', value: null, seasons: seasons, isChips: true });
+
+    if (rows.length < 3) { container.style.display = 'none'; return; }
+    container.style.display = '';
+
+    /* Phase 3 hook: Local Legend row would be inserted before seasons row here */
+    container.innerHTML = rows.map(function(row) {
+      var valueHtml;
+      if (row.isChips) {
+        valueHtml = '<div class="me-season-chips">' +
+          row.seasons.map(function(s) { return '<span class="me-season-chip">' + s + '</span>'; }).join('') +
+          '</div>';
+      } else {
+        valueHtml = '<span class="me-highlights-value">' + row.value + '</span>';
+      }
+      return '<div class="me-highlights-row"><span class="me-highlights-label">' + row.label + '</span>' + valueHtml + '</div>';
+    }).join('');
+  }
+
+  /* -- Zone 2 progress bar ---------------------------------------------- */
+  function renderProgressBar() {
+    var totalMi     = getTotalDistanceMi();
+    var MILESTONES  = [10, 25, 50, 100];
+    var currentEl   = document.getElementById('meProgressCurrent');
+    var nextEl      = document.getElementById('meProgressNext');
+    var fillEl      = document.getElementById('meProgressFill');
+    var pctEl       = document.getElementById('meProgressPct');
+    var hintEl      = document.getElementById('meProgressHint');
+    var labelsEl    = document.querySelector('#meProgressCard .me-progress-labels');
+    var barRowEl    = document.querySelector('#meProgressCard .me-progress-bar-row');
+    var completeEl  = document.getElementById('meProgressComplete');
+
+    if (totalMi >= 100) {
+      if (labelsEl)  labelsEl.style.display  = 'none';
+      if (barRowEl)  barRowEl.style.display  = 'none';
+      if (hintEl)    hintEl.style.display    = 'none';
+      if (completeEl) completeEl.style.display = '';
+      return;
+    }
+    if (labelsEl)  labelsEl.style.display  = '';
+    if (barRowEl)  barRowEl.style.display  = '';
+    if (hintEl)    hintEl.style.display    = '';
+    if (completeEl) completeEl.style.display = 'none';
+
+    var prevMilestone = 0, nextMilestone = 10;
+    for (var i = 0; i < MILESTONES.length; i++) {
+      if (totalMi >= MILESTONES[i]) { prevMilestone = MILESTONES[i]; }
+      else { nextMilestone = MILESTONES[i]; break; }
+    }
+    var progress  = (totalMi - prevMilestone) / (nextMilestone - prevMilestone) * 100;
+    var remaining = nextMilestone - totalMi;
+    var pct       = Math.min(100, Math.max(0, Math.round(progress)));
+    var miStr     = (totalMi % 1 === 0) ? Math.round(totalMi) + ' mi' : totalMi.toFixed(1) + ' mi';
+    var remStr    = remaining < 0.05 ? '< 0.1' : remaining.toFixed(1);
+
+    if (currentEl) currentEl.textContent = miStr;
+    if (nextEl)    nextEl.textContent    = '\u2192 ' + nextMilestone + ' Miles';
+    if (pctEl)     pctEl.textContent     = pct + '%';
+    if (hintEl)    hintEl.textContent    = remStr + ' miles to the ' + nextMilestone + ' Miles badge';
+
+    if (fillEl) {
+      fillEl.style.width = '0%';
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() { fillEl.style.width = pct + '%'; });
+      });
+    }
+  }
+
+  /* -- Zone 4 history list ---------------------------------------------- */
+  function renderHistoryList() {
+    var container = document.getElementById('meHistoryList');
+    if (!container) return;
+
+    var log = getWalkLog();
+    if (log.length === 0) {
+      container.innerHTML = '<div class="me-history-empty">Mark a walk as walked to start your log.</div>';
+      return;
+    }
+
+    var seen = {}, unique = [];
+    log.forEach(function(entry) {
+      if (!seen[entry.id]) {
+        seen[entry.id] = { id: entry.id, lastTs: entry.ts, count: 0 };
+        unique.push(seen[entry.id]);
+      }
+      seen[entry.id].count++;
+      if (entry.ts > seen[entry.id].lastTs) seen[entry.id].lastTs = entry.ts;
+    });
+    unique.sort(function(a, b) { return b.lastTs - a.lastTs; });
+
+    var walkById = {};
+    WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
+
+    var chevronSVG = '<svg class="me-history-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
+
+    var html = unique.slice(0, 5).map(function(entry) {
+      var walk = walkById[entry.id];
+      var name = walk ? walk.name : 'Unknown walk';
+      var meta = historyCountLabel(entry.count) + ' \u00B7 ' + historyTimeLabel(entry.lastTs);
+      return '<div class="me-history-row" onclick="openWalkDetail(\'' + entry.id + '\')">' +
+        '<div class="me-history-text">' +
+          '<div class="me-history-name">' + name + '</div>' +
+          '<div class="me-history-meta">' + meta + '</div>' +
+        '</div>' + chevronSVG + '</div>';
+    }).join('');
+
+    if (unique.length > 5) {
+      html += '<button class="me-history-see-all" onclick="openWalkLogSheet()">See all ' + unique.length + ' walks \u2192</button>';
+    }
+
+    container.innerHTML = html;
+  }
+
+  /* -- Main Me tab render ----------------------------------------------- */
+  function renderMeTab() {
+    var log          = getWalkLog();
+    var explored     = getExplored();
+    var exploredCount = Object.keys(explored).length;
+    var hasLog       = log.length > 0;
+    var isEmpty      = !hasLog && exploredCount < 3;
+
+    // Header
+    var nameEl  = document.getElementById('meDisplayName');
+    var addCta  = document.getElementById('meAddNameCta');
+    var sinceEl = document.getElementById('meSince');
+    var name    = getSavedUsername();
+    if (nameEl) {
+      if (name) {
+        nameEl.textContent = name;
+        nameEl.className   = 'me-name';
+        if (addCta) addCta.style.display = 'none';
+      } else {
+        nameEl.textContent = 'Sniffout walker';
+        nameEl.className   = 'me-name me-name--placeholder';
+        if (addCta) addCta.style.display = '';
+      }
+    }
+    if (sinceEl) {
+      var sinceLabel = getSinceLabel();
+      sinceEl.textContent    = sinceLabel || '';
+      sinceEl.style.display  = sinceLabel ? '' : 'none';
+    }
+    var settingsNameEl = document.getElementById('meSettingsNameValue');
+    if (settingsNameEl) settingsNameEl.textContent = name || 'Not set';
+
+    // Zone visibility
+    var emptyCard    = document.getElementById('meEmptyCard');
+    var highlights   = document.getElementById('meHighlights');
+    var progressCard = document.getElementById('meProgressCard');
+    var histSection  = document.getElementById('meHistorySection');
+
+    if (emptyCard)  emptyCard.style.display  = isEmpty ? '' : 'none';
+
+    if (isEmpty) {
+      if (highlights)   highlights.style.display   = 'none';
+      if (progressCard) progressCard.style.display  = 'none';
+      if (histSection)  histSection.style.display   = 'none';
+    } else {
+      if (highlights)   renderHighlightsCard(highlights);
+      if (progressCard) { progressCard.style.display = hasLog ? '' : 'none'; if (hasLog) renderProgressBar(); }
+      if (histSection)  { histSection.style.display = ''; renderHistoryList(); }
+    }
+
+    renderBadges();
+  }
+
+  /* -- Settings sheet open/close --------------------------------------- */
+  function openMeSettingsSheet() {
+    var overlay = document.getElementById('meSettingsOverlay');
+    var sheet   = document.getElementById('meSettingsSheet');
+    if (overlay) overlay.classList.add('is-open');
+    if (sheet)   sheet.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMeSettingsSheet() {
+    var overlay = document.getElementById('meSettingsOverlay');
+    var sheet   = document.getElementById('meSettingsSheet');
+    if (overlay) overlay.classList.remove('is-open');
+    if (sheet)   sheet.classList.remove('is-open');
+    document.body.style.overflow = '';
   }
 
   /* ─── Walk card HTML builders ─── */
@@ -6433,52 +6861,34 @@
   /* ─── Load all Me tab preferences on start ─── */
 
   function loadMePrefs() {
-    // Display name
-    var nameEl = document.getElementById('display-name-val');
-    var name   = getSavedUsername();
-    if (nameEl) nameEl.textContent = name || 'Tap to set';
-
-    // Radius
-    var radiusEl = document.getElementById('radius-val');
-    if (radiusEl) radiusEl.textContent = getSavedRadius() + ' miles';
-
-    // Dark mode
     applyDarkModePreference(getSavedDarkMode());
-
-    // Stats + favourites
-    updateMeStats();
-    renderFavouritesList();
-    renderWalkLogSection();
-    renderBadges();
+    renderMeTab();
   }
 
-  /* ─── Display name — inline edit ─── */
+  /* -- Settings sheet: display name edit -------------------------------- */
 
-  var settingName = document.getElementById('setting-name');
-  if (settingName) {
-    settingName.addEventListener('click', function() {
-      var nameValEl = document.getElementById('display-name-val');
-      if (!nameValEl || nameValEl.querySelector('input')) return; // already editing
-
+  var meNameRow = document.getElementById('meNameRow');
+  if (meNameRow) {
+    meNameRow.addEventListener('click', function() {
+      var nameValEl = document.getElementById('meSettingsNameValue');
+      if (!nameValEl || nameValEl.querySelector('input')) return;
       var current = getSavedUsername();
       var input = document.createElement('input');
       input.type        = 'text';
       input.value       = current;
       input.placeholder = 'Your name';
       input.maxLength   = 32;
-      input.style.cssText = 'border:none;outline:none;font-family:inherit;font-size:13px;color:var(--brand);background:transparent;width:120px;text-align:right;font-weight:500;';
-
+      input.style.cssText = 'border:none;outline:none;font-family:inherit;font-size:15px;color:var(--brand);background:transparent;max-width:140px;text-align:right;font-weight:500;';
       nameValEl.textContent = '';
       nameValEl.appendChild(input);
       input.focus();
       input.select();
-
       function commit() {
         var val = input.value.trim();
         try { localStorage.setItem(USERNAME_KEY, val); } catch(e) {}
-        nameValEl.textContent = val || 'Tap to set';
+        nameValEl.textContent = val || 'Not set';
+        renderMeTab();
       }
-
       input.addEventListener('blur', commit);
       input.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
@@ -6487,21 +6897,27 @@
     });
   }
 
-  /* ─── Search radius — cycle through options ─── */
+  /* -- Settings sheet: gear button -------------------------------------- */
 
-  var settingRadius = document.getElementById('setting-radius');
-  if (settingRadius) {
-    settingRadius.addEventListener('click', function() {
-      var current = getSavedRadius();
-      var idx     = RADIUS_OPTIONS.indexOf(current);
-      var next    = RADIUS_OPTIONS[(idx + 1) % RADIUS_OPTIONS.length];
-      try { localStorage.setItem(RADIUS_KEY, next); } catch(e) {}
-      var el = document.getElementById('radius-val');
-      if (el) el.textContent = next + ' miles';
+  var meGearBtn = document.getElementById('meGearBtn');
+  if (meGearBtn) {
+    meGearBtn.addEventListener('click', function() {
+      openMeSettingsSheet();
+      var _rPill = document.getElementById('segment-pill-radius');
+      if (_rPill) _rPill.style.transition = 'none';
+      applyRadiusPreference(getSavedRadiusMi());
+      if (_rPill) requestAnimationFrame(function() { requestAnimationFrame(function() { if (_rPill) _rPill.style.transition = ''; }); });
     });
   }
 
-  /* ─── Display mode — segmented control ─── */
+  /* -- Settings sheet: add name CTA in header -------------------------- */
+
+  var meAddNameCta = document.getElementById('meAddNameCta');
+  if (meAddNameCta) {
+    meAddNameCta.addEventListener('click', function() { openMeSettingsSheet(); });
+  }
+
+  /* -- Display mode segmented control ----------------------------------- */
 
   document.querySelectorAll('#segment-control-dark .segment-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
@@ -6509,6 +6925,46 @@
       try { localStorage.setItem(DARKMODE_KEY, mode); } catch(e) {}
       applyDarkModePreference(mode);
     });
+  });
+
+  /* -- Radius segmented control ----------------------------------------- */
+
+  var RADIUS_MI_OPTIONS = [1, 3, 5, 10];
+
+  function getSavedRadiusMi() {
+    var saved = parseInt(localStorage.getItem(RADIUS_KEY)) || 5;
+    return RADIUS_MI_OPTIONS.indexOf(saved) >= 0 ? saved : 5;
+  }
+
+  function applyRadiusPreference(mi) {
+    var btns = document.querySelectorAll('#segment-control-radius .segment-btn');
+    var pill = document.getElementById('segment-pill-radius');
+    var idx  = RADIUS_MI_OPTIONS.indexOf(mi);
+    if (idx < 0) idx = 2;
+    btns.forEach(function(btn, i) {
+      btn.classList.toggle('active', i === idx);
+      btn.setAttribute('aria-pressed', i === idx ? 'true' : 'false');
+    });
+    if (pill) pill.setAttribute('data-active', String(idx));
+  }
+
+  document.querySelectorAll('#segment-control-radius .segment-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var mi = parseInt(btn.getAttribute('data-radius'));
+      try { localStorage.setItem(RADIUS_KEY, mi); } catch(e) {}
+      applyRadiusPreference(mi);
+      setRadius(mi);
+    });
+  });
+
+  /* -- Badge tooltip global dismiss ------------------------------------ */
+
+  document.addEventListener('click', function(e) {
+    var tooltip = document.getElementById('meBadgeTooltip');
+    if (tooltip && !e.target.classList.contains('me-badge--locked')) {
+      tooltip.style.display = 'none';
+      tooltip.removeAttribute('data-for');
+    }
   });
 
   /* ─── Patch renderWeather to respect manual dark mode override ─── */
@@ -6520,24 +6976,27 @@
     if (pref !== 'auto') applyDarkModePreference(pref);
   };
 
-  /* ─── Refresh Me tab stats when tab becomes active ─── */
+  /* ─── Refresh Me tab on tab open ─── */
   var meNavBtn = document.getElementById('nav-me');
   if (meNavBtn) {
     meNavBtn.addEventListener('click', function() {
-      updateMeStats();
-      renderFavouritesList();
-      renderWalkLogSection();
-      renderBadges();
+      renderMeTab();
       syncIcons();
     });
   }
 
   /* ─── Init — suppress pill animation on first render ─── */
-  var _initSegPill = document.getElementById('segment-pill-dark');
-  if (_initSegPill) _initSegPill.style.transition = 'none';
+  var _initSegPill   = document.getElementById('segment-pill-dark');
+  var _initRadiusPill = document.getElementById('segment-pill-radius');
+  if (_initSegPill)    _initSegPill.style.transition    = 'none';
+  if (_initRadiusPill) _initRadiusPill.style.transition = 'none';
   loadMePrefs();
+  applyRadiusPreference(getSavedRadiusMi());
   if (_initSegPill) requestAnimationFrame(function() {
-    requestAnimationFrame(function() { _initSegPill.style.transition = ''; });
+    requestAnimationFrame(function() {
+      if (_initSegPill)    _initSegPill.style.transition    = '';
+      if (_initRadiusPill) _initRadiusPill.style.transition = '';
+    });
   });
 </script>
 
@@ -6946,6 +7405,53 @@
     <button class="sheet-btn-ghost" id="cond-tag-skip" onclick="closeCondTagSheet()">Skip</button>
     <button class="sheet-btn-primary" id="cond-tag-done" onclick="submitCondTags()">Done</button>
   </div>
+</div>
+
+<!-- Me tab settings sheet -->
+<div class="me-settings-overlay" id="meSettingsOverlay" onclick="closeMeSettingsSheet()"></div>
+<div class="me-settings-sheet" id="meSettingsSheet">
+  <div class="me-settings-handle"></div>
+  <div class="me-settings-title">Settings</div>
+  <!-- Your name row -->
+  <div class="me-settings-row" id="meNameRow">
+    <span class="me-settings-row-label">Your name</span>
+    <span class="me-settings-row-value">
+      <span id="meSettingsNameValue">Not set</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </span>
+  </div>
+  <!-- Display mode -->
+  <div class="me-settings-section">
+    <div class="segment-label">Display mode</div>
+    <div class="segment-control" id="segment-control-dark" role="group" aria-label="Display mode">
+      <div class="segment-pill" id="segment-pill-dark" aria-hidden="true"></div>
+      <button class="segment-btn" data-mode="light" aria-pressed="false">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <span>Light</span>
+      </button>
+      <button class="segment-btn" data-mode="auto" aria-pressed="false">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a9 9 0 0 0 0 18V3z"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        <span>Auto</span>
+      </button>
+      <button class="segment-btn" data-mode="dark" aria-pressed="false">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span>Dark</span>
+      </button>
+    </div>
+  </div>
+  <!-- Search radius -->
+  <div class="me-settings-section">
+    <div class="segment-label">Search radius</div>
+    <div class="segment-control me-radius-control" id="segment-control-radius" role="group" aria-label="Search radius">
+      <div class="segment-pill" id="segment-pill-radius" aria-hidden="true"></div>
+      <button class="segment-btn" data-radius="1" aria-pressed="false"><span>1 mi</span></button>
+      <button class="segment-btn" data-radius="3" aria-pressed="false"><span>3 mi</span></button>
+      <button class="segment-btn" data-radius="5" aria-pressed="false"><span>5 mi</span></button>
+      <button class="segment-btn" data-radius="10" aria-pressed="false"><span>10 mi</span></button>
+    </div>
+  </div>
+  <!-- Phase 3 hook: following/followers row here (not built) -->
+  <div class="me-settings-note">Your walks, favourites, and reviews are saved on this device. Sync across devices is coming in a future update.</div>
 </div>
 
 <!-- Walk log sheet — FIX 14.5 -->
