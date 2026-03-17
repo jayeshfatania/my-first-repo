@@ -39,6 +39,7 @@
     }
 
     /* ─── Reset + base ─── */
+    html { overscroll-behavior-y: none; }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -2146,6 +2147,21 @@
       height: 32px;
       flex-shrink: 0;
     }
+    .walk-detail-close-btn {
+      display: block;
+      width: calc(100% - 32px);
+      margin: 0 16px 24px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--ink-2);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .walk-detail-close-btn:active { opacity: 0.7; }
     /* Drag handle */
     .walk-detail-drag-handle {
       flex-shrink: 0;
@@ -2164,6 +2180,7 @@
       background: var(--border);
     }
 
+    body.night .walk-detail-close-btn { background: var(--surface); border-color: var(--border); color: var(--ink-2); }
     /* Walk detail — dark mode */
     body.night .walk-detail-overlay   { background: var(--bg); }
     body.night .walk-detail-header     { background: var(--surface); border-color: var(--border); }
@@ -5677,6 +5694,7 @@
       <a class="walk-detail-maps-link" id="walk-detail-maps-link" target="_blank" rel="noopener">Open in Google Maps →</a>
     </div>
     <div class="walk-detail-bottom-pad"></div>
+    <button class="walk-detail-close-btn" onclick="closeWalkDetail()">✕&nbsp;&nbsp;Close</button>
   </div>
 </div>
 
