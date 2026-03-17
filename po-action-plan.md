@@ -13,7 +13,11 @@
 
 **Round 9: ✅ COMPLETE.** FIX 10.1–10.4 all confirmed done. Dark mode colour revision complete. Mark-as-walked undo toast + toggle implemented. "Excellent conditions" tag removed. Condition tag timestamps rendered (two-line chip, "reported X ago").
 
-**Round 10 issued:** developer-brief-round10.md contains FIX 11.1–11.3. Sticky tab title bar (trivial CSS); "↑ Picks" anchor pill on Walks tab (IntersectionObserver, 30 min); Missing Dog "Coming Soon" card in Me tab (static HTML/CSS, no JS).
+**Round 10: ✅ COMPLETE.** FIX 11.1–11.4 all done. Sticky tab title bar; "↑ Picks" anchor pill; Missing Dog Coming Soon card (FIX 11.3 — subsequently feature-flagged and hidden, see note below); Meteocons weather icons.
+
+**Missing Dog Coming Soon card — feature flag:** FIX 11.3 was implemented but the card has been commented out with a feature flag and hidden until Phase 3. The code is in place for when backend conditions are met. No action required.
+
+**Round 11 issued:** developer-brief-round11.md — FIX 12.1 walk detail overlay. Prerequisite CSS from condition-tags-design-spec.md §4 (deferred from Round 8, not yet in build) included. Full overlay: HTML, CSS, 10 JS functions.
 
 **Round 7 fixes:** All confirmed complete (FIX 8.1–8.9). Additional items also completed this cycle: sunrise/sunset pill added to Today tab weather hero (this resolved the FIX 8.9 duplicate wind pill — sunrise/sunset replaced the third pill); all emojis replaced with Lucide icons throughout the app.
 
@@ -69,6 +73,7 @@
 | dark-mode-colour-spec.md | Dark mode token revision (`--brand` #82B09A, `--ink-2`, `--border`); hardcoded rgba substitutions; rgba(30,77,58) overrides | ✅ Done — **approved in full**, added to developer-brief-round9.md as FIX 10.1 |
 | missing-dog-design-spec.md | Coming soon placeholder card (§1 ships now); full reporting flow (5 steps); nearby alert banner; alert management; GDPR + safeguarding spec | ✅ Done — **approved**. §1 coming soon card passes to developer. Full feature spec held for Phase 3 backend build. One flag: Phase 3 spec uses emoji characters (🔔, 🎉) — update to Lucide icons before developer brief is issued for that phase. |
 | sticky-picks-proposal.md | UX exploration: Option A (full sticky), Option B (collapsed sticky), Option C (anchor pill); sticky title bar bonus recommendation | ✅ Done — **Option C + sticky title bar approved**. Passed to developer-brief-round10.md as FIX 11.1 + FIX 11.2. |
+| walk-detail-overlay-spec.md | Full-screen walk detail overlay: hero, info, quick tags, description, condition tags, mark-as-walked, Leaflet map, share | ✅ Done — **approved with 2 corrections** (dark mode rgba + `clear` tag removal). Passed to developer-brief-round11.md as FIX 12.1. |
 
 ---
 
@@ -78,7 +83,8 @@
 |-------|----------|--------|
 | developer-brief-round8.md | FIX 9.1–9.4 (condition tags + mark as walked on carousel cards) | ✅ Done |
 | developer-brief-round9.md | FIX 10.1 dark mode colour revision; FIX 10.2 mark-as-walked undo; FIX 10.3 remove "Excellent conditions" tag; FIX 10.4 condition tag timestamps | ✅ Done |
-| developer-brief-round10.md | FIX 11.1 sticky tab title bar; FIX 11.2 "↑ Picks" anchor pill; FIX 11.3 Missing Dog "Coming Soon" card; FIX 11.4 Meteocons weather icons | ⏳ Pending |
+| developer-brief-round10.md | FIX 11.1 sticky tab title bar; FIX 11.2 "↑ Picks" anchor pill; FIX 11.3 Missing Dog "Coming Soon" card (feature-flagged off, hidden until Phase 3); FIX 11.4 Meteocons weather icons | ✅ Done |
+| developer-brief-round11.md | Prereq: condition detail CSS (§4); FIX 12.1 walk detail overlay — full-screen slide-up, hero/info/tags/conditions/walked/map | ⏳ Pending |
 
 ---
 
@@ -147,9 +153,9 @@ No open decisions.
 
 ## Next Steps in Order
 
-1. **Developer** — implement developer-brief-round10.md (FIX 11.1–11.3: sticky title bar, anchor pill, missing dog card). All trivial/low complexity.
-2. **Designer** — walk detail overlay design. Required to complete the full condition tags + mark-as-walked experience in walk detail context (deferred from Round 8). This is the next design stream.
-3. **PO** — assess Round 10 completion; confirm Designer walk detail overlay brief is ready to issue.
+1. **Developer** — implement developer-brief-round11.md (condition detail CSS prereq + FIX 12.1 walk detail overlay).
+2. **PO** — assess Round 11 completion; determine next design or developer stream.
+3. **Designer** — no active stream. Candidates for next stream: written reviews UX (Phase 2b), further design review sweep of new components, or brand colour exploration (open standing permission).
 
 ---
 

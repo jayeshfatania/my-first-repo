@@ -982,6 +982,11 @@
       flex: 1;
       display: flex; justify-content: center; align-items: center;
     }
+    .forecast-icon img {
+      background: rgba(30,77,58,0.06);
+      border-radius: 50%;
+      padding: 6px;
+    }
     .forecast-right {
       flex: 1;
       display: flex; flex-direction: column; align-items: flex-end;
@@ -2893,7 +2898,7 @@
       html +=
         '<div class="forecast-row">' +
           '<div class="forecast-day">' + dayName + '</div>' +
-          '<div class="forecast-icon">' + meteoconImg(code, 1, 32) + '</div>' +
+          '<div class="forecast-icon">' + meteoconImg(code, 1, 44) + '</div>' +
           '<div class="forecast-right">' +
             '<div class="forecast-temps">' + hi + '°<span>' + lo + '°</span></div>' +
             '<div class="forecast-desc">' + desc + '</div>' +
