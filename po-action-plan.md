@@ -11,7 +11,9 @@
 
 **Round 8 complete:** FIX 9.1–9.4 (condition tags + mark as walked on carousel cards) all confirmed done.
 
-**Round 9 issued:** developer-brief-round9.md contains FIX 10.1–10.4. FIX 10.1 dark mode colour revision (independent of condition tags). FIX 10.2–10.4 are owner feedback on condition tags: mark-as-walked reversible (undo toast + toggle), remove "Excellent conditions" tag (`clear` key), visible timestamps on all condition tag chips.
+**Round 9: ✅ COMPLETE.** FIX 10.1–10.4 all confirmed done. Dark mode colour revision complete. Mark-as-walked undo toast + toggle implemented. "Excellent conditions" tag removed. Condition tag timestamps rendered (two-line chip, "reported X ago").
+
+**Round 10 issued:** developer-brief-round10.md contains FIX 11.1–11.3. Sticky tab title bar (trivial CSS); "↑ Picks" anchor pill on Walks tab (IntersectionObserver, 30 min); Missing Dog "Coming Soon" card in Me tab (static HTML/CSS, no JS).
 
 **Round 7 fixes:** All confirmed complete (FIX 8.1–8.9). Additional items also completed this cycle: sunrise/sunset pill added to Today tab weather hero (this resolved the FIX 8.9 duplicate wind pill — sunrise/sunset replaced the third pill); all emojis replaced with Lucide icons throughout the app.
 
@@ -66,6 +68,7 @@
 | condition-tags-design-spec.md | Condition tags UI, mark-as-walked, post-walk prompt, staleness, community disclaimer | ✅ Done — approved with 1 bug fix, developer-brief-round8.md issued |
 | dark-mode-colour-spec.md | Dark mode token revision (`--brand` #82B09A, `--ink-2`, `--border`); hardcoded rgba substitutions; rgba(30,77,58) overrides | ✅ Done — **approved in full**, added to developer-brief-round9.md as FIX 10.1 |
 | missing-dog-design-spec.md | Coming soon placeholder card (§1 ships now); full reporting flow (5 steps); nearby alert banner; alert management; GDPR + safeguarding spec | ✅ Done — **approved**. §1 coming soon card passes to developer. Full feature spec held for Phase 3 backend build. One flag: Phase 3 spec uses emoji characters (🔔, 🎉) — update to Lucide icons before developer brief is issued for that phase. |
+| sticky-picks-proposal.md | UX exploration: Option A (full sticky), Option B (collapsed sticky), Option C (anchor pill); sticky title bar bonus recommendation | ✅ Done — **Option C + sticky title bar approved**. Passed to developer-brief-round10.md as FIX 11.1 + FIX 11.2. |
 
 ---
 
@@ -74,7 +77,8 @@
 | Brief | Contents | Status |
 |-------|----------|--------|
 | developer-brief-round8.md | FIX 9.1–9.4 (condition tags + mark as walked on carousel cards) | ✅ Done |
-| developer-brief-round9.md | FIX 10.1 dark mode colour revision; FIX 10.2 mark-as-walked undo; FIX 10.3 remove "Excellent conditions" tag; FIX 10.4 condition tag timestamps | ⏳ Pending |
+| developer-brief-round9.md | FIX 10.1 dark mode colour revision; FIX 10.2 mark-as-walked undo; FIX 10.3 remove "Excellent conditions" tag; FIX 10.4 condition tag timestamps | ✅ Done |
+| developer-brief-round10.md | FIX 11.1 sticky tab title bar; FIX 11.2 "↑ Picks" anchor pill; FIX 11.3 Missing Dog "Coming Soon" card; FIX 11.4 Meteocons weather icons | ⏳ Pending |
 
 ---
 
@@ -143,10 +147,9 @@ No open decisions.
 
 ## Next Steps in Order
 
-1. **Developer** — implement developer-brief-round9.md (FIX 10.1–10.4). Suggested order: FIX 10.3 first (trivial), then FIX 10.4, then FIX 10.2, then FIX 10.1.
-2. **Designer** — Stream 3: Sticky Sniffout Picks UX exploration. Missing dog spec (Stream 2) is complete. Walk detail overlay design follows Stream 3.
-3. **Designer** — walk detail overlay design. Required to complete the full condition tags + mark-as-walked experience in detail context (deferred from Round 8).
-4. **PO** — assess Round 9 completion; issue next developer brief for the Coming Soon missing dog card (§1 of missing-dog-design-spec.md) + any Round 9 follow-ons.
+1. **Developer** — implement developer-brief-round10.md (FIX 11.1–11.3: sticky title bar, anchor pill, missing dog card). All trivial/low complexity.
+2. **Designer** — walk detail overlay design. Required to complete the full condition tags + mark-as-walked experience in walk detail context (deferred from Round 8). This is the next design stream.
+3. **PO** — assess Round 10 completion; confirm Designer walk detail overlay brief is ready to issue.
 
 ---
 
@@ -158,14 +161,9 @@ No open decisions.
 
 ### UX IMPROVEMENT — Sticky Sniffout Picks
 
-**Context:** On the Walks tab, curated Sniffout Picks cards appear above "Other nearby green spaces" (Overpass results). As the user scrolls through green space results, the Sniffout Picks section disappears. The hypothesis is that keeping Sniffout Picks anchored while the green space list scrolls would improve hierarchy and reduce the sense that curated content is buried.
+**Status: ✅ Design complete. Developer brief issued (FIX 11.1–11.2, developer-brief-round10.md).**
 
-**Investigation required before briefing:**
-- Is sticky section positioning technically achievable given the current single-scroll-container layout of the Walks tab?
-- Does sticky behaviour cause any issues on iOS Safari (the primary target platform)?
-- What is the interaction model when the Sniffout Picks section is fully in-view vs. partially off-screen — does sticky add value or create visual noise?
-
-**Output needed:** UX design exploration. Designer to prototype both a sticky and non-sticky layout, test on device, and present a recommendation to the PO before a developer brief is issued.
+**Outcome:** Full CSS `position: sticky` on the Picks section ruled out — 50% viewport cost unacceptable. Collapsed sticky variant ruled out — meaningful JS complexity for unvalidated behaviour. **Approved approach:** "↑ Picks" anchor pill (fixed-position, IntersectionObserver) + sticky tab title bar. See sticky-picks-proposal.md for full rationale.
 
 **Owner rationale:** Curated content is the product differentiator. Green spaces are supplementary. The visual hierarchy of the Walks tab should reflect this at all scroll positions, not just at load.
 

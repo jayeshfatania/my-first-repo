@@ -665,3 +665,142 @@ Sheet HTML added after nearby filter sheet (`#nearby-filter-sheet`), before the 
 **`rerenderCondTagRow(walkId)`:** Live DOM update after sheet submission. Targets `.cond-tag-row` inside the relevant `.trail-card` (keyed by `data-walk-id`). Fallback: inserts before `.walked-btn` when `.trail-card-desc` is not present (walk has no description). Calls `syncIcons()` after update.
 
 **Element order in `renderTrailCard()`:** condition tag row → description → walked button.
+
+---
+
+## FIX 10.1 — Dark mode colour revision
+
+Implemented in prior session. See Round 7 and Round 8 notes for context. Token block updated, all `rgba(110,231,183,...)` and `#6EE7B7` hardcoded values replaced with `rgba(130,176,154,...)` and `#82B09A`. New dark mode overrides added for `.venue-icon`, `.walk-tag.full`, `.venue-open-gp.open`, `.chip.active`, `.hazard-card.brand-variant`. See developer-brief-round9.md FIX 10.1 for full substitution table.
+
+---
+
+## FIX 10.2 — Mark as walked: undo toast + toggle
+
+**Root cause:** Accidental taps on the walked button had no recovery path.
+
+**Changes:**
+
+1. **`.walked-btn.confirmed` CSS:** Removed `pointer-events: none` — confirmed state is now interactive (supports toggle-off).
+
+2. **`onMarkWalked()` updated:** Now checks `btn.classList.contains('confirmed')` on entry — if already confirmed, delegates to `onUnmarkWalked(walkId)` and returns. Otherwise marks walked, calls `showUndoToast(walkId)`, then conditionally opens the condition tag sheet.
+
+3. **`showUndoToast(walkId)`:** Creates a `#undo-toast` div appended to `document.body`. Content: check icon + "Walk logged" + "Undo" button calling `onUnmarkWalked(walkId)`. Auto-dismisses after 5s via `setTimeout`. Timer stored in `toast.dataset.timer`. If a toast already exists (rapid double-tap), the previous one is cleared before creating the new one. Calls `syncIcons()` after appending.
+
+4. **`onUnmarkWalked(walkId)`:** Removes `walkId` from `sniffout_walked` localStorage. Clears and removes the toast if still visible. Updates all `[data-walk-id]` walked-btn elements to remove `.confirmed` and restore "Mark as walked" text.
+
+**Toast CSS:** `.undo-toast` (fixed, above bottom nav at `bottom: calc(64px + 12px)`, dark pill, `toastIn` animation), `.undo-toast-action` (brand-coloured "Undo" text button), `body.night .undo-toast` (`#2A3D30` background).
+
+---
+
+## FIX 10.3 — Remove "Excellent conditions" (`clear`) tag
+
+Removed `{ key: 'clear', label: 'Excellent conditions', icon: 'sun', cat: 'Positive' }` from `CONDITION_TAGS`. Array now has 12 tags. Positive category now contains only `water` and `cafe`.
+
+**Prompt:** `renderCondTagSheet()` iterates `CONDITION_TAGS` so removal is automatic — no separate change needed.
+
+**Existing data:** `getDisplayTags()` builds a `tagDef` map from `CONDITION_TAGS`. Any existing `clear` entries in `sniffout_condition_tags` localStorage will silently have no matching `tagDef` entry and will not render. No migration needed.
+
+---
+
+## FIX 10.4 — Condition tag chips show timestamp
+
+**`getDisplayTags()` updated:** `ageText` now prefixed with `"reported "` for non-stale tags:
+```js
+ageText: stale ? 'May be out of date' : 'reported ' + relativeTime(t.ts)
+```
+Produces strings like: `"reported Just now"`, `"reported 2 hours ago"`, `"reported 3 days ago"`, `"May be out of date"`.
+
+**`.cond-chip` CSS updated:** `align-items` changed from `center` to `flex-start` (icon top-aligns with label on two-line chips). `white-space: nowrap` removed from outer chip to allow natural sizing.
+
+**New CSS classes:**
+- `.cond-tag-body` — column flex, `gap: 1px`, wraps label + time
+- `.cond-tag-label` — 11px/500, `color: inherit`, `line-height: 1.3`
+- `.cond-tag-time` — 10px/400, `color: var(--ink-2)`, `line-height: 1.2`
+- `.cond-chip--stale .cond-tag-time` — `color: var(--amber)` (stale timestamp in amber)
+
+**`renderCondTagRow()` updated:** Each chip now renders:
+```html
+<span class="cond-chip [...]">
+  [icon 11px]
+  <span class="cond-tag-body">
+    <span class="cond-tag-label">{label}</span>
+    <span class="cond-tag-time">{ageText}</span>
+  </span>
+</span>
+```
+
+---
+
+## Round 9 — completion confirmation
+
+| Fix | Description | Status |
+|-----|-------------|--------|
+| FIX 10.1 | Dark mode colour revision (tokens + hardcoded rgba) | ✅ Done (prior session) |
+| FIX 10.2 | Mark as walked reversible — undo toast, `onUnmarkWalked`, toggle | ✅ Done |
+| FIX 10.3 | Remove `clear` ("Excellent conditions") tag | ✅ Done |
+| FIX 10.4 | Condition tags show timestamp — two-line chip, "reported X ago" | ✅ Done |
+
+---
+
+## FIX 11.1 — Sticky tab title bar
+
+Added `position: sticky; top: 0; background: var(--bg); z-index: 20;` to the existing single-line `.tab-title-bar` rule. Applies to all tabs (Weather, Walks, Nearby, Me) — no new rule created, no dark mode override needed (`var(--bg)` resolves correctly in both modes).
+
+---
+
+## FIX 11.2 — "↑ Picks" anchor pill on Walks tab
+
+**Problem:** No way to return to the Picks carousel after scrolling into the green spaces list.
+
+**Implementation:**
+
+- **HTML:** `<button class="picks-anchor-btn" id="picks-anchor-btn">` added inside `#tab-walks`, **outside** `#walks-content` so it survives re-renders when the walk list is rebuilt.
+- **CSS:** `.picks-anchor-btn` — fixed position, `top: 16px; right: 16px`, brand-green pill. Hidden by default (`opacity: 0; pointer-events: none; transform: translateY(-6px)`). `.picks-anchor-btn.visible` shows it with fade+slide transition.
+- **`initPicksAnchor()`:** Creates an `IntersectionObserver` watching the `.trail-carousel` element inside `#tab-walks`. `root` is `#tab-walks` (not `null`) because the tab panel is the scroll container, not the document. When the carousel leaves the viewport, adds `.visible` to the anchor btn; when it re-enters, removes it. Sets `onclick` to `scrollTo({ top: 0, behavior: 'smooth' })` on `#tab-walks`.
+- **`var picksObserver = null`** global — allows `initPicksAnchor()` to disconnect a previous observer before attaching a new one (called after every re-render).
+- **Called after:** `renderWalksTab()` and `renderWalksTabWithResults()` both call `initPicksAnchor()` after `el.innerHTML = html`.
+- **Cleanup in `switchTab()`:** Removes `.visible` from the button and disconnects the observer whenever navigating away from the Walks tab.
+
+---
+
+## FIX 11.3 — Missing Dog Alerts "Coming Soon" card in Me tab
+
+**Placement:** Between the Favourites section and the sign-in banner in `#tab-me`.
+
+**HTML:** `.missing-coming-soon` card with `.missing-coming-soon-icon` (Lucide `search` 22px), `.missing-coming-soon-title`, `.missing-coming-soon-desc`, `.missing-coming-soon-pill` ("Coming soon" badge).
+
+**CSS:** Card uses `--surface`/`--border`/`border-radius: 16px`, `pointer-events: none`, `opacity: 0.9`. Icon background `rgba(30,77,58,0.08)` light mode; `rgba(130,176,154,0.12)` dark mode via `body.night .missing-coming-soon-icon`. All other tokens resolve via CSS variables.
+
+**JS:** Static HTML only — no render function. `syncIcons()` added to the Me nav button click handler to ensure the `data-lucide="search"` icon renders when the tab is opened.
+
+---
+
+## FIX 11.4 — Meteocons weather icons
+
+**Problem:** Lucide line icons (generic UI set) replaced with Meteocons illustrated SVG icons (purpose-built weather set, MIT licence).
+
+**Scope:** Today tab hero icon and 5-day forecast row icons only. All other Lucide icons unchanged.
+
+**CDN pattern:** `https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg-static/{name}.svg` — plain `<img>` tags, no `<script>` needed.
+
+**New globals:**
+- `METEOCON_BASE` — CDN base URL string
+- `WMO_METEOCON` — lookup object mapping WMO codes to `{ day: '...', night: '...' }` Meteocon names (23 entries covering all WMO codes used by Open-Meteo)
+- `meteoconImg(code, isDay, size)` — returns `<img>` HTML string. `isDay === 0` → night variant; anything else → day variant. Fallback name: `'not-available'` (valid Meteocon placeholder).
+
+**Render changes:**
+- `renderTodayStateB()`: `luIcon(WMO_ICON[...], 46)` → `meteoconImg(cur.weather_code, cur.is_day, 64)`. Size 46→64px; `line-height:1` wrapper div removed.
+- `buildForecastGrid()`: `luIcon(WMO_ICON[...], 24)` → `meteoconImg(code, 1, 32)`. Size 24→32px; `isDay` hardcoded to `1` (day variants conventional for multi-day forecasts).
+
+**`WMO_ICON`** left in place (not removed). **`WMO_EMOJI`** also left in place.
+
+---
+
+## Round 10 — completion confirmation
+
+| Fix | Description | Status |
+|-----|-------------|--------|
+| FIX 11.1 | Sticky tab title bar | ✅ Done |
+| FIX 11.2 | "↑ Picks" anchor pill — IntersectionObserver, smooth scroll | ✅ Done |
+| FIX 11.3 | Missing Dog Alerts "Coming Soon" card in Me tab | ✅ Done |
+| FIX 11.4 | Meteocons weather icons — `WMO_METEOCON`, `meteoconImg()`, two call sites | ✅ Done |

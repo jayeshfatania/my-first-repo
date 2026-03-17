@@ -128,10 +128,37 @@
     .section-link { font-size: 14px; font-weight: 500; color: var(--brand); }
 
     /* ─── Tab title bar ─── */
-    .tab-title-bar { padding: 12px 16px 8px; display: flex; align-items: center; justify-content: space-between; }
+    .tab-title-bar { padding: 12px 16px 8px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 20; }
     .tab-title { font-size: 22px; font-weight: 700; color: var(--ink); }
     .filter-btn { background: none; border: none; padding: 4px 2px; cursor: pointer; color: var(--ink-2); display: flex; align-items: center; flex-shrink: 0; }
     .filter-btn:active { color: var(--brand); }
+    .picks-anchor-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px 8px 10px;
+      background: var(--brand);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .picks-anchor-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
     .radius-picker { display: none; gap: 8px; padding: 4px 16px 10px; }
     .radius-picker.open { display: flex; }
 
@@ -1271,6 +1298,57 @@
       padding: 20px 0;
     }
 
+    .missing-coming-soon {
+      margin: 0 16px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .missing-coming-soon-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(30,77,58,0.08);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--brand);
+    }
+    .missing-coming-soon-body { flex: 1; min-width: 0; }
+    .missing-coming-soon-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .missing-coming-soon-desc {
+      font-size: 13px;
+      color: var(--ink-2);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .missing-coming-soon-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-2);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      letter-spacing: 0.02em;
+    }
+    body.night .missing-coming-soon-icon {
+      background: rgba(130,176,154,0.12);
+    }
+
     .sign-in-banner {
       margin: 0 16px 16px;
       background: var(--surface);
@@ -1558,7 +1636,6 @@
       background: rgba(30,77,58,0.08);
       border-color: rgba(30,77,58,0.15);
       color: var(--brand);
-      pointer-events: none;
     }
     body.night .walked-btn {
       border-color: rgba(130,176,154,0.20);
@@ -1568,6 +1645,42 @@
       border-color: rgba(130,176,154,0.20);
       color: var(--brand);
     }
+
+    /* ─── Undo toast ─── */
+    .undo-toast {
+      position: fixed;
+      bottom: calc(64px + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #1A1A1A;
+      color: #F0F0ED;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 10px 16px;
+      border-radius: 24px;
+      z-index: 500;
+      white-space: nowrap;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      animation: toastIn 0.2s ease;
+    }
+    .undo-toast-action {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--brand);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      margin-left: 4px;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    body.night .undo-toast { background: #2A3D30; }
 
     /* ─── Condition tag row on carousel card ─── */
     .cond-tag-row {
@@ -1579,17 +1692,35 @@
     }
     .cond-chip {
       display: inline-flex;
-      align-items: center;
-      gap: 3px;
+      align-items: flex-start;
+      gap: 4px;
       font-size: 11px;
       font-weight: 500;
       color: var(--ink);
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 2px 7px;
-      white-space: nowrap;
+      padding: 4px 8px;
     }
+    .cond-tag-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      min-width: 0;
+    }
+    .cond-tag-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: inherit;
+      line-height: 1.3;
+    }
+    .cond-tag-time {
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--ink-2);
+      line-height: 1.2;
+    }
+    .cond-chip--stale .cond-tag-time { color: var(--amber); }
     .cond-chip--hazard {
       color: var(--amber);
       border-color: rgba(217,119,6,0.25);
@@ -1855,6 +1986,11 @@
       <div id="walks-content">
         <div class="empty-state">Set your location on the Today tab to see nearby walks.</div>
       </div>
+      <!-- Anchor button — outside walks-content so it survives re-renders -->
+      <button class="picks-anchor-btn" id="picks-anchor-btn" aria-label="Back to Sniffout Picks">
+        <i data-lucide="arrow-up" style="width:14px;height:14px;flex-shrink:0"></i>
+        Picks
+      </button>
     </div><!-- /tab-walks -->
 
     <!-- ══════════ NEARBY TAB ══════════ -->
@@ -1904,6 +2040,17 @@
       <div class="me-section">
         <div class="me-section-title">Favourites</div>
         <div class="favs-empty" id="favs-list">Heart any walk to save it here.</div>
+      </div>
+
+      <div class="missing-coming-soon">
+        <div class="missing-coming-soon-icon">
+          <i data-lucide="search" style="width:22px;height:22px"></i>
+        </div>
+        <div class="missing-coming-soon-body">
+          <div class="missing-coming-soon-title">Missing Dog Alerts</div>
+          <div class="missing-coming-soon-desc">Alert nearby dog walkers when your dog goes missing — or help find one near you.</div>
+          <span class="missing-coming-soon-pill">Coming soon</span>
+        </div>
       </div>
 
       <div class="sign-in-banner">
@@ -2015,6 +2162,11 @@
 
     currentTab = id;
     try { localStorage.setItem(ACTIVE_TAB_KEY, id); } catch(e) {}
+
+    // Hide picks anchor pill and disconnect observer when leaving Walks tab
+    var anchorBtn = document.getElementById('picks-anchor-btn');
+    if (anchorBtn) anchorBtn.classList.remove('visible');
+    if (id !== 'walks' && picksObserver) { picksObserver.disconnect(); picksObserver = null; }
   }
 
   /* Toggle search expand on Today State A */
@@ -2335,6 +2487,52 @@
     95:'cloud-lightning', 96:'cloud-lightning', 99:'cloud-lightning'
   };
 
+  /* ─── Meteocons weather icon lookup ─── */
+  var METEOCON_BASE = 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg-static/';
+
+  var WMO_METEOCON = {
+    0:  { day: 'clear-day',                night: 'clear-night' },
+    1:  { day: 'clear-day',                night: 'clear-night' },
+    2:  { day: 'partly-cloudy-day',        night: 'partly-cloudy-night' },
+    3:  { day: 'overcast-day',             night: 'overcast-night' },
+    45: { day: 'fog-day',                  night: 'fog-night' },
+    48: { day: 'fog-day',                  night: 'fog-night' },
+    51: { day: 'drizzle',                  night: 'drizzle' },
+    53: { day: 'drizzle',                  night: 'drizzle' },
+    55: { day: 'drizzle',                  night: 'drizzle' },
+    56: { day: 'sleet',                    night: 'sleet' },
+    57: { day: 'sleet',                    night: 'sleet' },
+    61: { day: 'rain',                     night: 'rain' },
+    63: { day: 'rain',                     night: 'rain' },
+    65: { day: 'rain',                     night: 'rain' },
+    66: { day: 'sleet',                    night: 'sleet' },
+    67: { day: 'sleet',                    night: 'sleet' },
+    71: { day: 'snow',                     night: 'snow' },
+    73: { day: 'snow',                     night: 'snow' },
+    75: { day: 'snow',                     night: 'snow' },
+    77: { day: 'snow',                     night: 'snow' },
+    80: { day: 'partly-cloudy-day-rain',   night: 'partly-cloudy-night-rain' },
+    81: { day: 'rain',                     night: 'rain' },
+    82: { day: 'rain',                     night: 'rain' },
+    85: { day: 'partly-cloudy-day-snow',   night: 'partly-cloudy-night-snow' },
+    86: { day: 'snow',                     night: 'snow' },
+    95: { day: 'thunderstorms-day-rain',   night: 'thunderstorms-night-rain' },
+    96: { day: 'thunderstorms-day-rain',   night: 'thunderstorms-night-rain' },
+    99: { day: 'thunderstorms-day-rain',   night: 'thunderstorms-night-rain' }
+  };
+
+  function meteoconImg(code, isDay, size) {
+    var entry = WMO_METEOCON[code];
+    var name  = entry
+      ? (isDay === 0 ? entry.night : entry.day)
+      : 'not-available';
+    var desc  = WMO_DESC[code] || 'Weather';
+    return '<img src="' + METEOCON_BASE + name + '.svg"'
+      + ' alt="' + desc + '"'
+      + ' width="' + size + '" height="' + size + '"'
+      + ' style="display:block;flex-shrink:0;">';
+  }
+
   function luIcon(name, size, extra) {
     size = size || 16;
     return '<i data-lucide="' + name + '" style="width:' + size + 'px;height:' + size + 'px;' + (extra || '') + '"></i>';
@@ -2342,6 +2540,27 @@
 
   function syncIcons() {
     if (window.lucide) lucide.createIcons();
+  }
+
+  /* ─── Picks anchor pill (IntersectionObserver) ─── */
+  var picksObserver = null;
+
+  function initPicksAnchor() {
+    if (picksObserver) { picksObserver.disconnect(); picksObserver = null; }
+    var carousel  = document.querySelector('#tab-walks .trail-carousel');
+    var anchorBtn = document.getElementById('picks-anchor-btn');
+    if (!carousel || !anchorBtn) return;
+    picksObserver = new IntersectionObserver(function(entries) {
+      var isVisible = entries[0].isIntersecting;
+      anchorBtn.classList.toggle('visible', !isVisible);
+    }, {
+      root:      document.getElementById('tab-walks'),
+      threshold: 0
+    });
+    picksObserver.observe(carousel);
+    anchorBtn.onclick = function() {
+      document.getElementById('tab-walks').scrollTo({ top: 0, behavior: 'smooth' });
+    };
   }
 
   function isRainCode(c) { return [51,53,55,56,57,61,63,65,66,67,80,81,82].indexOf(c) !== -1; }
@@ -2558,7 +2777,7 @@
             '<div class="weather-hero-temp">' + temp + '°C</div>' +
             '<div class="weather-hero-feels">Feels like ' + feels + '°C</div>' +
           '</div>' +
-          '<div style="line-height:1;">' + luIcon(WMO_ICON[cur.weather_code] || 'cloud-sun', 46) + '</div>' +
+          '<div>' + meteoconImg(cur.weather_code, cur.is_day, 64) + '</div>' +
         '</div>' +
         '<div class="weather-verdict">' + verdict.title + '</div>' +
         '<div class="weather-pills">' +
@@ -2672,7 +2891,7 @@
       html +=
         '<div class="forecast-row">' +
           '<div class="forecast-day">' + dayName + '</div>' +
-          '<div class="forecast-icon">' + luIcon(WMO_ICON[code] || 'cloud-sun', 24) + '</div>' +
+          '<div class="forecast-icon">' + meteoconImg(code, 1, 32) + '</div>' +
           '<div class="forecast-right">' +
             '<div class="forecast-temps">' + hi + '°<span>' + lo + '°</span></div>' +
             '<div class="forecast-desc">' + desc + '</div>' +
@@ -2723,7 +2942,6 @@
     { key: 'icy',       label: 'Icy / slippery',          icon: 'snowflake',      cat: 'Surface'  },
     { key: 'water',     label: 'Great water point',       icon: 'droplets',       cat: 'Positive' },
     { key: 'cafe',      label: 'Dog-friendly café open',  icon: 'coffee',         cat: 'Positive' },
-    { key: 'clear',     label: 'Excellent conditions',    icon: 'sun',            cat: 'Positive' },
     { key: 'busy',      label: 'Busy / crowded',          icon: 'users',          cat: 'Footfall' },
     { key: 'quiet',     label: 'Quiet today',             icon: 'volume-x',       cat: 'Footfall' }
   ];
@@ -2800,7 +3018,7 @@
           ts:       t.ts,
           isHazard: isHazard,
           stale:    stale,
-          ageText:  stale ? 'May be out of date' : relativeTime(t.ts)
+          ageText:  stale ? 'May be out of date' : 'reported ' + relativeTime(t.ts)
         };
       })
       .sort(function(a, b) {
@@ -2833,17 +3051,64 @@
     saveConditionTags(all);
   }
 
-  /* ─── onMarkWalked() ─── */
+  /* ─── onMarkWalked() / onUnmarkWalked() / showUndoToast() ─── */
   function onMarkWalked(event, walkId) {
     event.stopPropagation();
-    var btn  = event.currentTarget;
+    var btn = event.currentTarget;
+    // Toggle: if already walked, unmark instead
+    if (btn.classList.contains('confirmed')) {
+      onUnmarkWalked(walkId);
+      return;
+    }
     btn.classList.add('confirmed');
     var span = btn.querySelector('span');
     if (span) span.textContent = 'Walked';
     markWalked(walkId);
+    showUndoToast(walkId);
     if (!hasSubmittedToday(walkId) && !promptDismissedThisSession[walkId]) {
       openCondTagSheet(walkId);
     }
+  }
+
+  function onUnmarkWalked(walkId) {
+    var walked = JSON.parse(localStorage.getItem('sniffout_walked') || '[]');
+    walked = walked.filter(function(id) { return id !== walkId; });
+    localStorage.setItem('sniffout_walked', JSON.stringify(walked));
+    // Dismiss toast if still visible
+    var toast = document.getElementById('undo-toast');
+    if (toast) {
+      clearTimeout(Number(toast.dataset.timer));
+      toast.remove();
+    }
+    // Update button DOM back to unwalked state
+    var btns = document.querySelectorAll('[data-walk-id="' + walkId + '"]');
+    btns.forEach(function(btn) {
+      if (!btn.classList.contains('walked-btn')) return;
+      btn.classList.remove('confirmed');
+      var span = btn.querySelector('span');
+      if (span) span.textContent = 'Mark as walked';
+    });
+  }
+
+  function showUndoToast(walkId) {
+    var existing = document.getElementById('undo-toast');
+    if (existing) {
+      clearTimeout(Number(existing.dataset.timer));
+      existing.remove();
+    }
+    var toast = document.createElement('div');
+    toast.className = 'undo-toast';
+    toast.id = 'undo-toast';
+    toast.innerHTML =
+      luIcon('check', 14) +
+      ' Walk logged ' +
+      '<button class="undo-toast-action" onclick="onUnmarkWalked(\'' + walkId + '\')">Undo</button>';
+    document.body.appendChild(toast);
+    syncIcons();
+    var timer = setTimeout(function() {
+      if (toast.parentNode) toast.remove();
+    }, 5000);
+    toast.dataset.timer = timer;
   }
 
   /* ─── renderCondTagRow() ─── */
@@ -2866,7 +3131,10 @@
         (t.stale    ? ' cond-chip--stale'  : '');
       html += '<span class="' + classes + '">' +
         luIcon(def.icon, 11) +
-        escHtml(def.label) +
+        '<span class="cond-tag-body">' +
+          '<span class="cond-tag-label">' + escHtml(def.label) + '</span>' +
+          '<span class="cond-tag-time">' + escHtml(t.ageText) + '</span>' +
+        '</span>' +
       '</span>';
     });
 
@@ -3515,6 +3783,8 @@
     html += '</div>';
 
     el.innerHTML = html;
+    syncIcons();
+    initPicksAnchor();
 
     // Fetch and append green spaces below community trails
     fetchGreenSpacesForWalks(lat, lon, locationName, function(greenSpaces) {
@@ -3567,6 +3837,8 @@
     html += '<div id="gs-list"><p style="padding:0 16px 16px;font-size:14px;color:var(--ink-2)">Looking for nearby green spaces\u2026</p></div>';
     html += '</div>';
     el.innerHTML = html;
+    syncIcons();
+    initPicksAnchor();
 
     if (lat && lon) {
       fetchGreenSpacesForWalks(lat, lon, locationName, function(greenSpaces) {
@@ -4204,6 +4476,7 @@
     meNavBtn.addEventListener('click', function() {
       updateMeStats();
       renderFavouritesList();
+      syncIcons();
     });
   }
 
