@@ -36,7 +36,7 @@ DESCRIPTION: Balmaha sits right on the West Highland Way and the lochshore walk 
 
 WALK ID: pen-y-fan-brecon
 PERSONA: Pete
-DESCRIPTION: The standard ascent from Pont ar Daf is a clear public right of way the whole way to the ridge — well waymarked, heavily used, maintained by the National Trust. Pen y Fan and Corn Du are the highest points in the Brecon Beacons and the views north over the Neuadd Reservoirs and south across the Vale of Neath are exceptional in clear conditions. Dogs must be on leads throughout this route due to sheep — there is no off-lead opportunity on the standard circuit and that should be stated plainly. The ascent gains around 450m; underfoot conditions on the main path are generally good but can be eroded near the summit. Paid NT car park at Pont ar Daf.
+DESCRIPTION: The standard ascent from Pont ar Daf is a clear public right of way the whole way to the ridge — well waymarked, heavily used, maintained by the National Trust. Pen y Fan and Corn Du are the highest points in the Brecon Beacons and the views south over the Neuadd Reservoirs and south across the Vale of Neath are exceptional in clear conditions. Dogs must be on leads throughout this route due to sheep — there is no off-lead opportunity on the standard circuit and that should be stated plainly. The ascent gains around 450m; underfoot conditions on the main path are generally good but can be eroded near the summit. Paid NT car park at Pont ar Daf.
 
 ---
 
