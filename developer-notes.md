@@ -804,3 +804,73 @@ Added `position: sticky; top: 0; background: var(--bg); z-index: 20;` to the exi
 | FIX 11.2 | "↑ Picks" anchor pill — IntersectionObserver, smooth scroll | ✅ Done |
 | FIX 11.3 | Missing Dog Alerts "Coming Soon" card in Me tab | ✅ Done |
 | FIX 11.4 | Meteocons weather icons — `WMO_METEOCON`, `meteoconImg()`, two call sites | ✅ Done |
+
+---
+
+## FIX 12.0 — PREREQ: Condition detail CSS
+
+Added CSS classes for the walk detail overlay's conditions section: `.cond-detail-row`, `.cond-detail-label`, `.cond-detail-age`, `.cond-detail-row--hazard`, `.cond-detail-row--stale`, `.cond-older-toggle`, `.cond-empty`, `.cond-empty-text`. Inserted after `.cond-disclaimer` block.
+
+---
+
+## FIX 12.1 — Walk detail overlay
+
+Full-screen slide-up overlay (`position: fixed; inset: 0; z-index: 300`). One persistent DOM element inside `#app`, after `cond-tag-sheet`. Opened by `.open` class via `transform: translateY(0)`.
+
+**HTML:** `#walk-detail-overlay` with fixed header (back + walk name + share), scrollable body containing: hero image (220px), walk info block (name/location/rating/stats row), quick tags section, description, conditions section, mark-as-walked action, Leaflet map, Google Maps link.
+
+**CSS:** Full overlay, header, hero, info block, stats row, detail-tag variants (positive/warning/neutral), conditions, actions, map section, dark mode overrides. Dark mode `.detail-tag--positive` uses `rgba(130,176,154,0.10)` / `rgba(130,176,154,0.20)` (not old neon mint values).
+
+**JS globals:** `walkDetailMap`, `currentDetailWalkId`.
+
+**JS functions added:**
+- `isWalked(id)` — reads `sniffout_walked` from localStorage
+- `openWalkDetail(id)` — looks up walk, calls `populateWalkDetail`, pushes history state, adds `.open`, defers `initWalkDetailMap` by 320ms
+- `closeWalkDetail()` — removes `.open`, destroys Leaflet map, resets scroll, clears `currentDetailWalkId` after 310ms
+- `populateWalkDetail(walk)` — populates all content: header, hero, badge, heart, name, location, rating, stats, tags, description, conditions, walked button, maps link, share button
+- `renderDetailTags(walk)` — builds `.detail-tag` chips from walk schema (off-lead/difficulty/terrain/environment/enclosed/livestock/stiles/parking)
+- `detailTag(icon, label, variant)` — helper for single detail-tag HTML
+- `renderDetailConditions(walkId)` — reads `getDisplayTags()` + raw older tags, builds `.cond-detail-row` list or empty state; `clear` key excluded from TAG_LABELS/TAG_ICONS
+- `toggleOlderReports(walkId)` — toggles hidden older-reports div
+- `initWalkDetailMap(lat, lon, name)` — Leaflet map in `#walk-detail-map` container, destroys existing instance first
+- `shareWalk(walk)` — Web Share API with clipboard fallback
+- `showShareToast(message)` — 2-second toast, reuses `.undo-toast` CSS, no undo button
+- `popstate` handler — closes overlay on Android back button
+
+**`onWalkTap(id)` updated:** now calls `openWalkDetail(id)` after existing explore tracking logic.
+
+**`onMarkWalked` updated:** dual calling convention — handles both `(event, walkId)` from carousel onclick handlers and `(walkId, btn)` from detail overlay. Detects by `typeof eventOrId === 'string'`.
+
+---
+
+## FIX 12.2 — Yr.no weather icons
+
+Replaced Meteocons (`METEOCON_BASE`, `WMO_METEOCON`, `meteoconImg()`) with Yr.no weather symbols (`YR_BASE`, `WMO_YR`, `yrIcon()`).
+
+- `YR_BASE`: `https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/`
+- `WMO_YR`: maps WMO codes to Yr.no filenames (day/night variants using `{code}d.svg`/`{code}n.svg`; codes without variants use `{code}.svg`)
+- `yrIcon(code, isDay, size)`: returns `<img>` tag
+- Call sites: `renderTodayStateB` → `yrIcon(cur.weather_code, cur.is_day, 64)`; `buildForecastGrid` → `yrIcon(code, 1, 32)` (back to 32px)
+- Removed `.forecast-icon img` circular background CSS (was added for Meteocons readability)
+
+---
+
+## FIX 12.3 — Trail card declutter
+
+Simplified `renderTrailCard()` to 3 elements: name / meta / chips.
+
+- Removed: rating row, description block, mark-as-walked button from trail cards
+- Meta row now shows: `{distance} mi · {difficulty}` (was duration · distance)
+- Chips: off-lead + (enclosed OR terrain, not both) — max 2 chips, `flex-wrap: nowrap; overflow: hidden`
+- Added `.trail-card-condition-dot` — 8px brand-green dot on photo, bottom-right, shown when `getDisplayTags(walk.id).length > 0`
+- `.trail-card-name` gains `display: -webkit-box; -webkit-line-clamp: 2` overflow truncation
+- `rerenderCondTagRow()` simplified: only updates `#walk-detail-cond-tags` if `currentDetailWalkId === walkId`; trail cards no longer have condition tag rows
+
+## Round 11 — completion confirmation
+
+| Fix | Description | Status |
+|-----|-------------|--------|
+| PREREQ | Condition detail CSS block | ✅ Done |
+| FIX 12.1 | Walk detail overlay (HTML, CSS, 12 JS functions) | ✅ Done |
+| FIX 12.2 | Yr.no weather icons replacing Meteocons | ✅ Done |
+| FIX 12.3 | Trail card declutter — 3 elements, condition dot, simplified rerenderCondTagRow | ✅ Done |

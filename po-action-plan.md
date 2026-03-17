@@ -17,7 +17,7 @@
 
 **Missing Dog Coming Soon card — feature flag:** FIX 11.3 was implemented but the card has been commented out with a feature flag and hidden until Phase 3. The code is in place for when backend conditions are met. No action required.
 
-**Round 11 issued:** developer-brief-round11.md — FIX 12.1 walk detail overlay. Prerequisite CSS from condition-tags-design-spec.md §4 (deferred from Round 8, not yet in build) included. Full overlay: HTML, CSS, 10 JS functions.
+**Round 11 issued:** developer-brief-round11.md — three items: FIX 12.1 walk detail overlay (prerequisite CSS from condition-tags-design-spec.md §4 included; HTML, CSS, 10 JS functions); FIX 12.2 Yr.no weather icons replacing Meteocons; FIX 12.3 trail card declutter (3-element card body, dot indicator, `rerenderCondTagRow` update).
 
 **Round 7 fixes:** All confirmed complete (FIX 8.1–8.9). Additional items also completed this cycle: sunrise/sunset pill added to Today tab weather hero (this resolved the FIX 8.9 duplicate wind pill — sunrise/sunset replaced the third pill); all emojis replaced with Lucide icons throughout the app.
 
@@ -84,7 +84,7 @@
 | developer-brief-round8.md | FIX 9.1–9.4 (condition tags + mark as walked on carousel cards) | ✅ Done |
 | developer-brief-round9.md | FIX 10.1 dark mode colour revision; FIX 10.2 mark-as-walked undo; FIX 10.3 remove "Excellent conditions" tag; FIX 10.4 condition tag timestamps | ✅ Done |
 | developer-brief-round10.md | FIX 11.1 sticky tab title bar; FIX 11.2 "↑ Picks" anchor pill; FIX 11.3 Missing Dog "Coming Soon" card (feature-flagged off, hidden until Phase 3); FIX 11.4 Meteocons weather icons | ✅ Done |
-| developer-brief-round11.md | Prereq: condition detail CSS (§4); FIX 12.1 walk detail overlay — full-screen slide-up, hero/info/tags/conditions/walked/map | ⏳ Pending |
+| developer-brief-round11.md | Prereq: condition detail CSS (§4); FIX 12.1 walk detail overlay — full-screen slide-up, hero/info/tags/conditions/walked/map; FIX 12.2 Yr.no weather icons (replace Meteocons); FIX 12.3 trail card declutter — 3 elements, dot indicator, rerenderCondTagRow update | ⏳ Pending |
 
 ---
 
@@ -93,6 +93,7 @@
 | Brief | Contents | Status |
 |-------|----------|--------|
 | missing-dog-designer-brief.md | Full user flows (reporting owner, nearby user, resolution); data model; GDPR/safeguarding spec; "coming soon" placeholder card | ✅ Done — assessed March 2026 |
+| card-design-update.md | Issue 1: Yr.no weather icons to replace Meteocons (flat selective-colour SVGs, WMO-aligned, MIT). Issue 2: trail card declutter — 3-element card body, dot indicator for condition reports. | ✅ Done — both proposals **approved** March 2026. Passed to developer-brief-round11.md as FIX 12.2 and FIX 12.3. |
 
 ---
 
@@ -132,6 +133,8 @@ Filter/sort implementation is now fully unblocked. designer-brief-round3.md upda
 20. **Mark as walked — must be reversible**. Undo toast (5 seconds) shown immediately after marking. Tapping "Undo" reverses the action. Marked state button also re-tappable to toggle off. Owner confirmed (March 2026). (FIX 10.2)
 21. **"Excellent conditions" tag removed**. Condition tags must reflect physical walk observations only, not weather. `clear` key removed from `CONDITION_TAGS`. Owner confirmed (March 2026). (FIX 10.3)
 22. **Condition tags must show visible timestamp**. Each tag chip displays "reported 2 hours ago" / "reported yesterday" / "May be out of date" below the label. `relativeTime()` already in place — display fix only. Owner confirmed (March 2026). (FIX 10.4)
+23. **Yr.no weather icons approved** to replace Meteocons. Flat selective-colour SVG style matches Sniffout's minimal design register; WMO code co-authorship eliminates ambiguous mappings; MIT licence. CDN path confirmed: `dist/svg/`. Option B (Meteocons line variant, one-line swap) approved as same-session fallback. Owner confirmed (March 2026). (FIX 12.2)
+24. **Trail card declutter approved.** Carousel card reduced to 3 elements: name · meta (distance · difficulty) · max 2 chips. Rating, conditions, description excerpt, and walked button moved to detail overlay. Dot indicator (8px `var(--brand)` dot in photo corner) approved — signals fresh condition reports without adding text clutter. Owner confirmed (March 2026). (FIX 12.3)
 
 ---
 
@@ -153,7 +156,7 @@ No open decisions.
 
 ## Next Steps in Order
 
-1. **Developer** — implement developer-brief-round11.md (condition detail CSS prereq + FIX 12.1 walk detail overlay).
+1. **Developer** — implement developer-brief-round11.md: condition detail CSS prereq → FIX 12.1 walk detail overlay → FIX 12.2 Yr.no icons → FIX 12.3 trail card declutter (in that order — 12.3 step 3 depends on `currentDetailWalkId` from 12.1).
 2. **PO** — assess Round 11 completion; determine next design or developer stream.
 3. **Designer** — no active stream. Candidates for next stream: written reviews UX (Phase 2b), further design review sweep of new components, or brand colour exploration (open standing permission).
 

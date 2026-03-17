@@ -982,11 +982,6 @@
       flex: 1;
       display: flex; justify-content: center; align-items: center;
     }
-    .forecast-icon img {
-      background: rgba(30,77,58,0.06);
-      border-radius: 50%;
-      padding: 6px;
-    }
     .forecast-right {
       flex: 1;
       display: flex; flex-direction: column; align-items: flex-end;
@@ -1586,10 +1581,11 @@
       padding: 3px 8px;
     }
     .trail-card-body { padding: 10px 12px 14px; }
-    .trail-card-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 4px; line-height: 1.3; }
+    .trail-card-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 4px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .trail-card-rating { font-size: 12px; color: #D97706; font-weight: 500; margin-bottom: 4px; }
     .trail-card-meta { font-size: 12px; color: var(--ink-2); margin-bottom: 6px; }
-    .trail-card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .trail-card-tags { display: flex; gap: 4px; flex-wrap: nowrap; overflow: hidden; }
+    .trail-card-condition-dot { position: absolute; bottom: 8px; right: 38px; width: 8px; height: 8px; border-radius: 50%; background: var(--brand); border: 1.5px solid white; }
     .trail-card-desc {
       font-size: 12px;
       font-weight: 400;
@@ -1751,6 +1747,24 @@
       font-weight: 400;
     }
 
+    /* --- Condition detail (walk overlay) --- */
+    .cond-detail-row {
+      display: flex; align-items: center; gap: 10px; padding: 10px 0;
+      border-bottom: 1px solid var(--border); font-size: 13px; color: var(--ink);
+    }
+    .cond-detail-label { flex: 1; font-weight: 500; }
+    .cond-detail-age { font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+    .cond-detail-row--hazard .cond-detail-label { color: var(--amber); }
+    .cond-detail-row--stale { opacity: 0.55; }
+    .cond-detail-row--stale .cond-detail-age { color: var(--amber); font-style: italic; opacity: 1; }
+    .cond-older-toggle { display: block; width: 100%; padding: 10px 0; font-size: 12px;
+      color: var(--ink-2); font-weight: 500; text-align: left; background: transparent;
+      border: none; cursor: pointer; }
+    .cond-empty { text-align: center; padding: 20px 16px; display: flex;
+      flex-direction: column; align-items: center; gap: 8px; }
+    .cond-empty-text { font-size: 13px; color: var(--ink-2); font-weight: 400;
+      max-width: 240px; line-height: 1.5; }
+
     .trail-list { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
     .gs-card {
       display: flex;
@@ -1852,6 +1866,291 @@
     .weather-hero { position: relative; }
     /* ─── Lucide icons ─── */
     [data-lucide] { display:inline-block; vertical-align:middle; flex-shrink:0; }
+
+    /* ══════════════════════════════════════
+       WALK DETAIL OVERLAY
+    ══════════════════════════════════════ */
+    .walk-detail-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: var(--bg);
+      transform: translateY(100%);
+      transition: transform 300ms cubic-bezier(0.32,0.72,0,1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .walk-detail-overlay.open {
+      transform: translateY(0);
+    }
+    .walk-detail-header {
+      flex-shrink: 0;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      gap: 4px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+      padding-top: env(safe-area-inset-top);
+    }
+    .walk-detail-back,
+    .walk-detail-share-btn {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: none;
+      border-radius: 50%;
+      cursor: pointer;
+      color: var(--ink);
+      transition: background 120ms;
+    }
+    .walk-detail-back:active,
+    .walk-detail-share-btn:active {
+      background: var(--bg);
+    }
+    .walk-detail-header-name {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+      padding: 0 4px;
+    }
+    .walk-detail-scroll {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .walk-detail-scroll::-webkit-scrollbar { display: none; }
+    .walk-detail-hero {
+      width: 100%;
+      height: 220px;
+      background: var(--brand);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .walk-detail-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .walk-detail-hero-badge {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 99px;
+      padding: 4px 10px;
+      display: none;
+    }
+    .walk-detail-hero-heart {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.92);
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.15);
+    }
+    .walk-detail-info {
+      padding: 16px 16px 14px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .walk-detail-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.3px;
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+    .walk-detail-location {
+      font-size: 13px;
+      color: var(--ink-2);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      margin-bottom: 6px;
+    }
+    .walk-detail-rating {
+      font-size: 14px;
+      color: #D97706;
+      font-weight: 500;
+      margin-bottom: 14px;
+    }
+    .walk-detail-rating .rating-count {
+      color: var(--ink-2);
+      font-weight: 400;
+    }
+    .walk-detail-stats {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .detail-stat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 4px;
+      gap: 3px;
+    }
+    .detail-stat-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+    .detail-stat-label {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--ink-2);
+    }
+    .detail-stat-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .walk-detail-tags-section {
+      padding: 14px 16px 10px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .detail-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 8px;
+      padding: 5px 10px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .detail-tag--positive {
+      color: var(--brand);
+      background: rgba(30,77,58,0.08);
+      border-color: rgba(30,77,58,0.12);
+    }
+    .detail-tag--warning {
+      color: var(--amber);
+      background: rgba(217,119,6,0.08);
+      border-color: rgba(217,119,6,0.18);
+    }
+    .detail-tag--neutral {
+      color: var(--ink-2);
+      background: var(--bg);
+      border-color: var(--border);
+    }
+    .walk-detail-desc {
+      padding: 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--ink-2);
+      line-height: 1.65;
+    }
+    .walk-detail-conditions {
+      padding: 16px 16px 4px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .walk-detail-conditions-heading {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 3px;
+    }
+    .walk-detail-conditions-disclaimer {
+      font-size: 12px;
+      color: var(--ink-2);
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .walk-detail-actions {
+      padding: 20px 16px 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .walk-detail-map-section {
+      padding: 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .walk-detail-map-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .walk-detail-map {
+      width: 100%;
+      height: 180px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--border);
+    }
+    .walk-detail-maps-link {
+      display: block;
+      text-align: right;
+      font-size: 13px;
+      color: var(--brand);
+      font-weight: 500;
+      margin-top: 10px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .walk-detail-maps-link:active { opacity: 0.7; }
+    .walk-detail-bottom-pad {
+      height: 32px;
+      flex-shrink: 0;
+    }
+    /* Walk detail — dark mode */
+    body.night .walk-detail-overlay   { background: var(--bg); }
+    body.night .walk-detail-header     { background: var(--surface); border-color: var(--border); }
+    body.night .walk-detail-back,
+    body.night .walk-detail-share-btn  { color: var(--ink); }
+    body.night .walk-detail-back:active,
+    body.night .walk-detail-share-btn:active { background: var(--bg); }
+    body.night .walk-detail-hero       { background: var(--surface); }
+    body.night .walk-detail-info,
+    body.night .walk-detail-tags-section,
+    body.night .walk-detail-desc,
+    body.night .walk-detail-conditions,
+    body.night .walk-detail-actions,
+    body.night .walk-detail-map-section { background: var(--surface); border-color: var(--border); }
+    body.night .walk-detail-stats       { background: var(--bg); }
+    body.night .detail-tag--positive    { color: var(--brand); background: rgba(130,176,154,0.10); border-color: rgba(130,176,154,0.20); }
+    body.night .detail-tag--warning     { color: var(--amber); background: rgba(217,119,6,0.08); border-color: rgba(217,119,6,0.18); }
+    body.night .detail-tag--neutral     { color: var(--ink-2); background: var(--bg); border-color: var(--border); }
   </style>
 </head>
 <body>
@@ -2495,47 +2794,30 @@
   };
 
   /* ─── Meteocons weather icon lookup ─── */
-  var METEOCON_BASE = 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg-static/';
+  var YR_BASE = 'https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/';
 
-  var WMO_METEOCON = {
-    0:  { day: 'clear-day',                night: 'clear-night' },
-    1:  { day: 'clear-day',                night: 'clear-night' },
-    2:  { day: 'partly-cloudy-day',        night: 'partly-cloudy-night' },
-    3:  { day: 'overcast-day',             night: 'overcast-night' },
-    45: { day: 'fog-day',                  night: 'fog-night' },
-    48: { day: 'fog-day',                  night: 'fog-night' },
-    51: { day: 'drizzle',                  night: 'drizzle' },
-    53: { day: 'drizzle',                  night: 'drizzle' },
-    55: { day: 'drizzle',                  night: 'drizzle' },
-    56: { day: 'sleet',                    night: 'sleet' },
-    57: { day: 'sleet',                    night: 'sleet' },
-    61: { day: 'rain',                     night: 'rain' },
-    63: { day: 'rain',                     night: 'rain' },
-    65: { day: 'rain',                     night: 'rain' },
-    66: { day: 'sleet',                    night: 'sleet' },
-    67: { day: 'sleet',                    night: 'sleet' },
-    71: { day: 'snow',                     night: 'snow' },
-    73: { day: 'snow',                     night: 'snow' },
-    75: { day: 'snow',                     night: 'snow' },
-    77: { day: 'snow',                     night: 'snow' },
-    80: { day: 'partly-cloudy-day-rain',   night: 'partly-cloudy-night-rain' },
-    81: { day: 'rain',                     night: 'rain' },
-    82: { day: 'rain',                     night: 'rain' },
-    85: { day: 'partly-cloudy-day-snow',   night: 'partly-cloudy-night-snow' },
-    86: { day: 'snow',                     night: 'snow' },
-    95: { day: 'thunderstorms-day-rain',   night: 'thunderstorms-night-rain' },
-    96: { day: 'thunderstorms-day-rain',   night: 'thunderstorms-night-rain' },
-    99: { day: 'thunderstorms-day-rain',   night: 'thunderstorms-night-rain' }
+  var WMO_YR = {
+    0:  { day: '01d', night: '01n' }, 1:  { day: '02d', night: '02n' },
+    2:  { day: '03d', night: '03n' }, 3:  { day: '04',  night: '04'  },
+    45: { day: '15',  night: '15'  }, 48: { day: '15',  night: '15'  },
+    51: { day: '46',  night: '46'  }, 53: { day: '46',  night: '46'  },
+    55: { day: '09',  night: '09'  }, 56: { day: '12',  night: '12'  },
+    57: { day: '12',  night: '12'  }, 61: { day: '09',  night: '09'  },
+    63: { day: '09',  night: '09'  }, 65: { day: '10d', night: '10n' },
+    66: { day: '12',  night: '12'  }, 67: { day: '12',  night: '12'  },
+    71: { day: '13',  night: '13'  }, 73: { day: '13',  night: '13'  },
+    75: { day: '14',  night: '14'  }, 77: { day: '13',  night: '13'  },
+    80: { day: '40d', night: '40n' }, 81: { day: '40d', night: '40n' },
+    82: { day: '41d', night: '41n' }, 85: { day: '44d', night: '44n' },
+    86: { day: '45d', night: '45n' }, 95: { day: '22d', night: '22n' },
+    96: { day: '25d', night: '25n' }, 99: { day: '25d', night: '25n' }
   };
 
-  function meteoconImg(code, isDay, size) {
-    var entry = WMO_METEOCON[code];
-    var name  = entry
-      ? (isDay === 0 ? entry.night : entry.day)
-      : 'not-available';
-    var desc  = WMO_DESC[code] || 'Weather';
-    return '<img src="' + METEOCON_BASE + name + '.svg"'
-      + ' alt="' + desc + '"'
+  function yrIcon(code, isDay, size) {
+    var entry = WMO_YR[code];
+    var name  = entry ? (isDay === 0 ? entry.night : entry.day) : '04';
+    return '<img src="' + YR_BASE + name + '.svg"'
+      + ' alt="' + (WMO_DESC[code] || 'Weather') + '"'
       + ' width="' + size + '" height="' + size + '"'
       + ' style="display:block;flex-shrink:0;">';
   }
@@ -2784,7 +3066,7 @@
             '<div class="weather-hero-temp">' + temp + '°C</div>' +
             '<div class="weather-hero-feels">Feels like ' + feels + '°C</div>' +
           '</div>' +
-          '<div>' + meteoconImg(cur.weather_code, cur.is_day, 64) + '</div>' +
+          '<div>' + yrIcon(cur.weather_code, cur.is_day, 64) + '</div>' +
         '</div>' +
         '<div class="weather-verdict">' + verdict.title + '</div>' +
         '<div class="weather-pills">' +
@@ -2898,7 +3180,7 @@
       html +=
         '<div class="forecast-row">' +
           '<div class="forecast-day">' + dayName + '</div>' +
-          '<div class="forecast-icon">' + meteoconImg(code, 1, 44) + '</div>' +
+          '<div class="forecast-icon">' + yrIcon(code, 1, 32) + '</div>' +
           '<div class="forecast-right">' +
             '<div class="forecast-temps">' + hi + '°<span>' + lo + '°</span></div>' +
             '<div class="forecast-desc">' + desc + '</div>' +
@@ -3059,17 +3341,29 @@
   }
 
   /* ─── onMarkWalked() / onUnmarkWalked() / showUndoToast() ─── */
-  function onMarkWalked(event, walkId) {
-    event.stopPropagation();
-    var btn = event.currentTarget;
+  function onMarkWalked(eventOrId, walkIdOrBtn) {
+    // Supports two calling conventions:
+    // (event, walkId) — from carousel onclick handlers
+    // (walkId, btn)   — from detail overlay walkedBtn.onclick
+    var walkId, btn;
+    if (typeof eventOrId === 'string') {
+      walkId = eventOrId;
+      btn = walkIdOrBtn;
+    } else {
+      eventOrId.stopPropagation();
+      btn = eventOrId.currentTarget;
+      walkId = walkIdOrBtn;
+    }
     // Toggle: if already walked, unmark instead
-    if (btn.classList.contains('confirmed')) {
+    if (btn && btn.classList.contains('confirmed')) {
       onUnmarkWalked(walkId);
       return;
     }
-    btn.classList.add('confirmed');
-    var span = btn.querySelector('span');
-    if (span) span.textContent = 'Walked';
+    if (btn) {
+      btn.classList.add('confirmed');
+      var span = btn.querySelector('span');
+      if (span) span.textContent = 'Walked';
+    }
     markWalked(walkId);
     showUndoToast(walkId);
     if (!hasSubmittedToday(walkId) && !promptDismissedThisSession[walkId]) {
@@ -3154,26 +3448,334 @@
     return html;
   }
 
-  /* ─── rerenderCondTagRow() ─── */
+  /* ─── rerenderCondTagRow() — FIX 12.3: condition tags no longer on trail cards ─── */
   function rerenderCondTagRow(walkId) {
-    var btns = document.querySelectorAll('[data-walk-id="' + walkId + '"]');
-    btns.forEach(function(btn) {
-      var card = btn.closest('.trail-card-body');
-      if (!card) return;
-      var existing   = card.querySelector('.cond-tag-row');
-      var disclaimer = card.querySelector('.cond-disclaimer');
-      var newHtml    = renderCondTagRow(walkId);
-      if (existing)   existing.remove();
-      if (disclaimer) disclaimer.remove();
-      var desc = card.querySelector('.trail-card-desc');
-      if (desc && newHtml) {
-        desc.insertAdjacentHTML('beforebegin', newHtml);
-        syncIcons();
-      } else if (!desc && newHtml) {
-        btn.insertAdjacentHTML('beforebegin', newHtml);
-        syncIcons();
+    // Condition tags no longer appear on trail cards (FIX 12.3).
+    // Update the detail overlay if it's open for this walk.
+    if (currentDetailWalkId === walkId) {
+      renderDetailConditions(walkId);
+    }
+  }
+
+  /* ═══════════════════════════════
+     FIX 12.1 — Walk detail overlay
+  ═══════════════════════════════ */
+
+  var walkDetailMap = null;
+  var currentDetailWalkId = null;
+
+  function isWalked(id) {
+    try {
+      var walked = JSON.parse(localStorage.getItem('sniffout_walked') || '[]');
+      return walked.indexOf(id) > -1;
+    } catch(e) { return false; }
+  }
+
+  function openWalkDetail(id) {
+    var walk = null;
+    for (var i = 0; i < WALKS_DB.length; i++) {
+      if (WALKS_DB[i].id === id) { walk = WALKS_DB[i]; break; }
+    }
+    if (!walk) return;
+    currentDetailWalkId = id;
+    populateWalkDetail(walk);
+    history.pushState(null, '', location.href);
+    var overlay = document.getElementById('walk-detail-overlay');
+    if (overlay) overlay.classList.add('open');
+    setTimeout(function() { initWalkDetailMap(walk.lat, walk.lon, walk.name); }, 320);
+  }
+
+  function closeWalkDetail() {
+    var overlay = document.getElementById('walk-detail-overlay');
+    if (overlay) overlay.classList.remove('open');
+    setTimeout(function() {
+      if (walkDetailMap) { walkDetailMap.remove(); walkDetailMap = null; }
+      var scroll = document.getElementById('walk-detail-scroll');
+      if (scroll) scroll.scrollTop = 0;
+      currentDetailWalkId = null;
+    }, 310);
+  }
+
+  window.addEventListener('popstate', function() {
+    var overlay = document.getElementById('walk-detail-overlay');
+    if (overlay && overlay.classList.contains('open')) {
+      closeWalkDetail();
+      history.pushState(null, '', location.href);
+    }
+  });
+
+  function populateWalkDetail(walk) {
+    var headerName = document.getElementById('walk-detail-header-name');
+    if (headerName) headerName.textContent = walk.name;
+
+    var hero = document.getElementById('walk-detail-hero');
+    if (hero) {
+      var oldImg = hero.querySelector('img');
+      if (oldImg) oldImg.remove();
+      if (walk.imageUrl) {
+        var img = document.createElement('img');
+        img.src = walk.imageUrl;
+        img.alt = walk.name;
+        img.loading = 'lazy';
+        hero.insertBefore(img, hero.firstChild);
+        hero.style.background = '';
+      } else {
+        hero.style.background = 'var(--brand)';
       }
+    }
+
+    var badge = document.getElementById('walk-detail-hero-badge');
+    if (badge) {
+      if (walk.badge) {
+        badge.textContent = walk.badge;
+        badge.style.display = '';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    var heart = document.getElementById('walk-detail-hero-heart');
+    if (heart) {
+      heart.innerHTML = heartSVG(isFavourited(walk.id));
+      heart.onclick = function(e) {
+        e.stopPropagation();
+        toggleFavourite(walk.id, heart);
+      };
+    }
+
+    var nameEl = document.getElementById('walk-detail-name');
+    if (nameEl) nameEl.textContent = walk.name;
+
+    var locEl = document.getElementById('walk-detail-location');
+    if (locEl) locEl.innerHTML = luIcon('map-pin', 13, 'color:var(--ink-2);flex-shrink:0;') + escHtml(walk.location);
+
+    var ratingEl = document.getElementById('walk-detail-rating');
+    if (ratingEl) {
+      ratingEl.innerHTML = walk.reviewCount > 0
+        ? '&#9733; ' + walk.rating.toFixed(1) + ' <span class="rating-count">(' + walk.reviewCount + ' reviews)</span>'
+        : '';
+    }
+
+    var distEl = document.getElementById('walk-detail-dist');
+    if (distEl) distEl.textContent = walk.distance.toFixed(1) + ' mi';
+
+    var durEl = document.getElementById('walk-detail-dur');
+    if (durEl) {
+      var hrs  = Math.floor(walk.duration / 60);
+      var mins = walk.duration % 60;
+      durEl.textContent = hrs > 0
+        ? hrs + 'h ' + (mins > 0 ? mins + 'm' : '')
+        : walk.duration + ' min';
+    }
+
+    var diffEl = document.getElementById('walk-detail-diff');
+    if (diffEl) diffEl.textContent = difficultyLabel(walk.difficulty);
+
+    renderDetailTags(walk);
+
+    var descEl = document.getElementById('walk-detail-desc');
+    if (descEl) descEl.textContent = walk.description;
+
+    renderDetailConditions(walk.id);
+
+    var walkedBtn = document.getElementById('walk-detail-walked-btn');
+    if (walkedBtn) {
+      walkedBtn.setAttribute('data-walk-id', walk.id);
+      var walked = isWalked(walk.id);
+      walkedBtn.className = 'walked-btn' + (walked ? ' confirmed' : '');
+      walkedBtn.innerHTML = luIcon('check', 15, 'flex-shrink:0;') +
+        '<span>' + (walked ? 'Walked' : 'Mark as walked') + '</span>';
+      walkedBtn.style.width = '100%';
+      walkedBtn.style.height = '44px';
+      walkedBtn.style.borderRadius = '12px';
+      walkedBtn.onclick = function() { onMarkWalked(walk.id, walkedBtn); };
+    }
+
+    var mapsLink = document.getElementById('walk-detail-maps-link');
+    if (mapsLink) {
+      mapsLink.href = 'https://www.google.com/maps/search/?api=1&query=' + walk.lat + ',' + walk.lon;
+    }
+
+    var shareBtn = document.getElementById('walk-detail-share-btn');
+    if (shareBtn) {
+      shareBtn.onclick = function() { shareWalk(walk); };
+    }
+
+    syncIcons();
+  }
+
+  function renderDetailTags(walk) {
+    var el = document.getElementById('walk-detail-tags-section');
+    if (!el) return;
+    var html = '';
+
+    var ol = offLeadLabel(walk.offLead);
+    var olVariant = walk.offLead === 'full' ? 'positive'
+                  : walk.offLead === 'none' ? 'warning'
+                  : 'neutral';
+    var olIcon = walk.offLead === 'none' ? 'link' : 'dog';
+    html += detailTag(olIcon, ol.text, olVariant);
+
+    var diffVariant = walk.difficulty === 'hard' ? 'warning' : 'neutral';
+    html += detailTag('trending-up', difficultyLabel(walk.difficulty), diffVariant);
+
+    var terrainIcons = { paved: 'road', muddy: 'droplets', rocky: 'mountain', mixed: 'map' };
+    if (walk.terrain) {
+      var terrLabel = walk.terrain.charAt(0).toUpperCase() + walk.terrain.slice(1);
+      html += detailTag(terrainIcons[walk.terrain] || 'map', terrLabel, 'neutral');
+    }
+
+    var envIcons = { woodland:'trees', coastal:'waves', urban:'building-2', moorland:'mountain-snow', heathland:'leaf', open:'wind' };
+    if (walk.environment) {
+      var envLabel = walk.environment.charAt(0).toUpperCase() + walk.environment.slice(1);
+      html += detailTag(envIcons[walk.environment] || 'map', envLabel, 'neutral');
+    }
+
+    if (walk.enclosed)   html += detailTag('lock', 'Enclosed', 'positive');
+    if (walk.livestock)  html += detailTag('triangle-alert', 'Livestock possible', 'warning');
+    if (walk.hasStiles)  html += detailTag('step-forward', 'Has stiles', 'neutral');
+    if (walk.hasParking) html += detailTag('car', 'Parking available', 'positive');
+
+    el.innerHTML = html;
+    syncIcons();
+  }
+
+  function detailTag(icon, label, variant) {
+    return '<span class="detail-tag detail-tag--' + variant + '">' +
+      luIcon(icon, 13) + label + '</span>';
+  }
+
+  function renderDetailConditions(walkId) {
+    var el = document.getElementById('walk-detail-cond-tags');
+    if (!el) return;
+
+    var tags = getDisplayTags(walkId);
+    var allRaw = (JSON.parse(localStorage.getItem('sniffout_condition_tags')) || {})[walkId] || [];
+    var HIDE_LIMIT = 30 * 24 * 3600000;
+    var olderTags = allRaw.filter(function(t) { return (Date.now() - t.ts) >= HIDE_LIMIT; });
+
+    if (tags.length === 0 && olderTags.length === 0) {
+      el.innerHTML =
+        '<div class="cond-empty">' +
+          '<div class="cond-empty-icon">' + luIcon('footprints', 24, 'color:var(--ink-2)') + '</div>' +
+          '<div class="cond-empty-text">Be the first to report conditions on this walk.</div>' +
+        '</div>';
+      syncIcons();
+      return;
+    }
+
+    var TAG_LABELS = {
+      cattle:'Cattle in field', sheep:'Sheep in field', leads:'Dogs on leads here',
+      access:'Access issue', muddy:'Very muddy underfoot', flooded:'Flooded section',
+      overgrown:'Overgrown path', icy:'Icy / slippery', water:'Great water point',
+      cafe:'Dog-friendly café open', busy:'Busy / crowded', quiet:'Quiet today'
+    };
+    var TAG_ICONS = {
+      cattle:'triangle-alert', sheep:'triangle-alert', leads:'dog', access:'triangle-alert',
+      muddy:'footprints', flooded:'waves', overgrown:'leaf', icy:'snowflake',
+      water:'droplets', cafe:'coffee', busy:'users', quiet:'volume-x'
+    };
+
+    var html = '';
+    tags.forEach(function(t) {
+      var label = TAG_LABELS[t.tag] || t.tag;
+      var icon  = TAG_ICONS[t.tag]  || 'circle';
+      var cls   = 'cond-detail-row' +
+                  (t.isHazard ? ' cond-detail-row--hazard' : '') +
+                  (t.stale    ? ' cond-detail-row--stale'  : '');
+      html +=
+        '<div class="' + cls + '">' +
+          luIcon(icon, 16) +
+          '<span class="cond-detail-label">' + label + '</span>' +
+          '<span class="cond-detail-age">' + t.ageText + '</span>' +
+        '</div>';
     });
+
+    if (olderTags.length > 0) {
+      html +=
+        '<button class="cond-older-toggle" id="cond-older-toggle-' + walkId + '" ' +
+          'onclick="toggleOlderReports(\'' + walkId + '\')">' +
+          'Older reports <span id="cond-older-arrow-' + walkId + '">↓</span>' +
+        '</button>' +
+        '<div id="cond-older-rows-' + walkId + '" style="display:none">' +
+          olderTags.map(function(t) {
+            var label = TAG_LABELS[t.tag] || t.tag;
+            var icon  = TAG_ICONS[t.tag]  || 'circle';
+            var weeksAgo = Math.floor((Date.now() - t.ts) / 604800000);
+            var ageText  = weeksAgo < 8 ? weeksAgo + ' week' + (weeksAgo > 1 ? 's' : '') + ' ago'
+                          : Math.floor((Date.now() - t.ts) / (30*24*3600000)) + ' months ago';
+            return '<div class="cond-detail-row" style="opacity:0.35">' +
+              luIcon(icon, 16) +
+              '<span class="cond-detail-label">' + label + '</span>' +
+              '<span class="cond-detail-age" style="font-style:italic">' + ageText + '</span>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+    }
+
+    el.innerHTML = html;
+    syncIcons();
+  }
+
+  function toggleOlderReports(walkId) {
+    var rows  = document.getElementById('cond-older-rows-' + walkId);
+    var arrow = document.getElementById('cond-older-arrow-' + walkId);
+    if (!rows) return;
+    var open = rows.style.display !== 'none';
+    rows.style.display  = open ? 'none' : '';
+    if (arrow) arrow.textContent = open ? '↓' : '↑';
+  }
+
+  function initWalkDetailMap(lat, lon, name) {
+    var container = document.getElementById('walk-detail-map');
+    if (!container) return;
+    if (walkDetailMap) { walkDetailMap.remove(); walkDetailMap = null; }
+
+    walkDetailMap = L.map(container, {
+      zoomControl: false,
+      attributionControl: false,
+      scrollWheelZoom: false
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18
+    }).addTo(walkDetailMap);
+
+    walkDetailMap.setView([lat, lon], 14);
+
+    L.marker([lat, lon])
+      .bindPopup(name || 'Walk start')
+      .addTo(walkDetailMap);
+
+    walkDetailMap.invalidateSize();
+  }
+
+  function shareWalk(walk) {
+    var text = walk.name + ' — ' + walk.distance.toFixed(1) + ' mi, ' +
+               walk.duration + ' min · ' + walk.location;
+    if (navigator.share) {
+      navigator.share({
+        title: walk.name,
+        text: text,
+        url: window.location.href
+      }).catch(function() {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function() {
+        showShareToast('Walk details copied');
+      }).catch(function() {});
+    }
+  }
+
+  function showShareToast(message) {
+    var existing = document.getElementById('undo-toast');
+    if (existing) existing.remove();
+    var toast = document.createElement('div');
+    toast.className = 'undo-toast';
+    toast.id = 'undo-toast';
+    toast.innerHTML = luIcon('check', 14) + ' ' + message;
+    document.body.appendChild(toast);
+    syncIcons();
+    setTimeout(function() { if (toast.parentNode) toast.remove(); }, 2000);
   }
 
   /* ─── Condition tag sheet ─── */
@@ -3674,45 +4276,34 @@
       }
     } catch(e) {}
     updateMeStats();
-    // Walk detail overlay: Phase 2
+    openWalkDetail(id);
   }
 
   /* ─── Render Walks tab ─── */
 
   function renderTrailCard(walk) {
     var badgeHTML = walk.badge ? '<div class="trail-card-badge">' + walk.badge + '</div>' : '';
-    var ratingHTML = walk.reviewCount > 0
-      ? '<div class="trail-card-rating">★ ' + walk.rating.toFixed(1) +
-          ' <span style="color:var(--ink-2);font-weight:400">(' + walk.reviewCount + ')</span></div>'
-      : '';
     var ol = offLeadLabel(walk.offLead);
-    var terrainTag = (walk.terrain && walk.terrain !== 'mixed')
-      ? '<span class="trail-tag">' + walk.terrain.charAt(0).toUpperCase() + walk.terrain.slice(1) + '</span>'
-      : '';
-    var enclosedTag = walk.enclosed ? '<span class="trail-tag">Enclosed</span>' : '';
+    var chips = ['<span class="trail-tag' + (ol.cls ? ' ' + ol.cls : '') + '">' + ol.text + '</span>'];
+    if (walk.enclosed) {
+      chips.push('<span class="trail-tag">Enclosed</span>');
+    } else if (walk.terrain && walk.terrain !== 'mixed') {
+      chips.push('<span class="trail-tag">' + walk.terrain.charAt(0).toUpperCase() + walk.terrain.slice(1) + '</span>');
+    }
+    var condDot = getDisplayTags(walk.id).length > 0 ? '<div class="trail-card-condition-dot"></div>' : '';
+    var metaText = walk.distance.toFixed(1) + ' mi · ' + walk.difficulty.charAt(0).toUpperCase() + walk.difficulty.slice(1);
     return (
       '<div class="trail-card" onclick="onWalkTap(\'' + walk.id + '\')">' +
-        '<div class="trail-card-photo">' +
-          badgeHTML +
-          '<button class="trail-heart" data-heart="' + walk.id + '" onclick="event.stopPropagation();toggleFavourite(\'' + walk.id + '\',this)">' +
+        '<div class="trail-card-photo">' + badgeHTML + condDot +
+          '<button class="trail-heart" data-heart="' + walk.id + '" ' +
+            'onclick="event.stopPropagation();toggleFavourite(\'' + walk.id + '\',this)">' +
             heartSVG(isFavourited(walk.id)) +
           '</button>' +
         '</div>' +
         '<div class="trail-card-body">' +
-          '<div class="trail-card-name">' + walk.name + '</div>' +
-          ratingHTML +
-          '<div class="trail-card-meta">' + walk.duration + ' min · ' + walk.distance.toFixed(1) + ' mi</div>' +
-          '<div class="trail-card-tags">' +
-            '<span class="trail-tag' + (ol.cls ? ' ' + ol.cls : '') + '">' + ol.text + '</span>' +
-            terrainTag +
-            enclosedTag +
-          '</div>' +
-          renderCondTagRow(walk.id) +
-          (walk.description ? '<div class="trail-card-desc">' + escHtml(walk.description) + '</div>' : '') +
-          '<button class="walked-btn' + (hasWalked(walk.id) ? ' confirmed' : '') + '" data-walk-id="' + escHtml(walk.id) + '" onclick="onMarkWalked(event,\'' + escHtml(walk.id) + '\')">' +
-            luIcon('check', 13) +
-            '<span>' + (hasWalked(walk.id) ? 'Walked' : 'Mark as walked') + '</span>' +
-          '</button>' +
+          '<div class="trail-card-name">' + escHtml(walk.name) + '</div>' +
+          '<div class="trail-card-meta">' + metaText + '</div>' +
+          '<div class="trail-card-tags">' + chips.join('') + '</div>' +
         '</div>' +
       '</div>'
     );
@@ -4895,6 +5486,58 @@
   <div style="display:flex; gap:12px; padding:12px 16px 16px; border-top:1px solid var(--border);">
     <button class="sheet-btn-ghost" id="cond-tag-skip" onclick="closeCondTagSheet()">Skip</button>
     <button class="sheet-btn-primary" id="cond-tag-done" onclick="submitCondTags()">Done</button>
+  </div>
+</div>
+
+<!-- Walk detail overlay — FIX 12.1 -->
+<div id="walk-detail-overlay" class="walk-detail-overlay" role="dialog" aria-modal="true" aria-label="Walk detail">
+  <div class="walk-detail-header">
+    <button class="walk-detail-back" onclick="closeWalkDetail()" aria-label="Back"><i data-lucide="arrow-left" style="width:20px;height:20px"></i></button>
+    <div class="walk-detail-header-name" id="walk-detail-header-name"></div>
+    <button class="walk-detail-share-btn" id="walk-detail-share-btn" aria-label="Share this walk"><i data-lucide="share-2" style="width:20px;height:20px"></i></button>
+  </div>
+  <div class="walk-detail-scroll" id="walk-detail-scroll">
+    <div class="walk-detail-hero" id="walk-detail-hero">
+      <div class="walk-detail-hero-badge" id="walk-detail-hero-badge"></div>
+      <button class="walk-detail-hero-heart" id="walk-detail-hero-heart" aria-label="Add to favourites"></button>
+    </div>
+    <div class="walk-detail-info">
+      <h1 class="walk-detail-name" id="walk-detail-name"></h1>
+      <div class="walk-detail-location" id="walk-detail-location"></div>
+      <div class="walk-detail-rating" id="walk-detail-rating"></div>
+      <div class="walk-detail-stats">
+        <div class="detail-stat">
+          <div class="detail-stat-value" id="walk-detail-dist"></div>
+          <div class="detail-stat-label">Distance</div>
+        </div>
+        <div class="detail-stat-divider"></div>
+        <div class="detail-stat">
+          <div class="detail-stat-value" id="walk-detail-dur"></div>
+          <div class="detail-stat-label">Duration</div>
+        </div>
+        <div class="detail-stat-divider"></div>
+        <div class="detail-stat">
+          <div class="detail-stat-value" id="walk-detail-diff"></div>
+          <div class="detail-stat-label">Difficulty</div>
+        </div>
+      </div>
+    </div>
+    <div class="walk-detail-tags-section" id="walk-detail-tags-section"></div>
+    <div class="walk-detail-desc" id="walk-detail-desc"></div>
+    <div class="walk-detail-conditions">
+      <div class="walk-detail-conditions-heading">Current conditions</div>
+      <div class="walk-detail-conditions-disclaimer">Community reported — not verified by Sniffout</div>
+      <div id="walk-detail-cond-tags"></div>
+    </div>
+    <div class="walk-detail-actions">
+      <button class="walked-btn" id="walk-detail-walked-btn" data-walk-id=""></button>
+    </div>
+    <div class="walk-detail-map-section">
+      <div class="walk-detail-map-title">Location</div>
+      <div class="walk-detail-map" id="walk-detail-map"></div>
+      <a class="walk-detail-maps-link" id="walk-detail-maps-link" target="_blank" rel="noopener">Open in Google Maps →</a>
+    </div>
+    <div class="walk-detail-bottom-pad"></div>
   </div>
 </div>
 
