@@ -175,6 +175,8 @@
     /* Condition tag sheet — z-index raised above walk detail overlay (FIX 13.2) */
     #cond-tag-backdrop { z-index: 400; }
     #cond-tag-sheet    { z-index: 401; }
+    #walk-log-backdrop { z-index: 400; }
+    #walk-log-sheet    { z-index: 401; }
 
     /* ─── Filter sheet panel ─── */
     .filter-sheet {
@@ -994,6 +996,60 @@
     .forecast-temps span { color: var(--ink-2); font-weight: 400; margin-left: 4px; }
     .forecast-desc { font-size: 12px; color: var(--ink-2); margin-top: 2px; text-align: right; }
 
+    /* Pollen section (FIX 14.8) */
+    #weather-pollen {
+      margin: 0 16px 16px;
+    }
+    .pollen-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .pollen-current {
+      font-size: 15px;
+      margin-bottom: 12px;
+    }
+    .pollen-type {
+      font-weight: 500;
+      color: var(--ink);
+    }
+    .pollen-level {
+      font-weight: 600;
+    }
+    .pollen-low-msg {
+      font-size: 14px;
+      color: var(--ink-2);
+      margin-bottom: 12px;
+    }
+    .pollen-forecast {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    .pollen-forecast-day {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 6px;
+      text-align: center;
+    }
+    .pollen-forecast-date {
+      font-size: 11px;
+      color: var(--ink-2);
+      margin-bottom: 4px;
+    }
+    .pollen-forecast-type {
+      font-size: 11px;
+      color: var(--ink);
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+    .pollen-forecast-level {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
     /* Rain section */
     .rain-section {
       margin: 0 16px 12px;
@@ -1274,7 +1330,7 @@
 
     .stats-row {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       padding: 0 16px 20px;
     }
@@ -1300,6 +1356,70 @@
       color: var(--ink-2);
       text-align: center;
       padding: 20px 0;
+    }
+
+    /* ─── Me tab walk log (FIX 14.5) ─── */
+    .me-log-row {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .me-log-row:last-of-type { border-bottom: none; }
+    .me-log-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+    .me-log-meta {
+      font-size: 13px;
+      color: var(--ink-2);
+    }
+    .me-log-empty {
+      font-size: 14px;
+      color: var(--ink-2);
+      text-align: center;
+      padding: 24px 0;
+      margin: 0;
+    }
+    .me-log-seeall {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--brand);
+      padding: 12px 0 4px;
+      cursor: pointer;
+    }
+
+    /* ─── Me tab badges (FIX 14.6) ─── */
+    #me-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 4px 0 8px;
+    }
+    .me-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(30,77,58,0.06);
+      border: 1px solid rgba(30,77,58,0.15);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--brand);
+    }
+    .me-badges-empty {
+      font-size: 13px;
+      color: var(--ink-2);
+      padding: 4px 0 8px;
+    }
+
+    /* ─── Dark mode toggle active state (FIX 14.7) ─── */
+    .darkmode-val-on,
+    .darkmode-val-off {
+      color: var(--brand);
+      font-weight: 600;
     }
 
     .missing-coming-soon {
@@ -2143,6 +2263,25 @@
       text-decoration: none;
     }
     .walk-detail-maps-link:active { opacity: 0.7; }
+    .walk-detail-disclaimer {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      background: transparent;
+    }
+    .walk-detail-disclaimer-icon {
+      flex-shrink: 0;
+      color: var(--ink-2);
+      margin-top: 1px;
+    }
+    .walk-detail-disclaimer span {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--ink-2);
+    }
     .walk-detail-bottom-pad {
       height: 32px;
       flex-shrink: 0;
@@ -2387,11 +2526,25 @@
           <div class="stat-value" id="stat-explored">0</div>
           <div class="stat-label">Explored</div>
         </div>
+        <div class="stat-cell">
+          <div class="stat-value" id="stat-distance">0 mi</div>
+          <div class="stat-label">Miles walked</div>
+        </div>
       </div>
 
       <div class="me-section">
         <div class="me-section-title">Favourites</div>
         <div class="favs-empty" id="favs-list">Heart any walk to save it here.</div>
+      </div>
+
+      <div class="me-section" id="me-badges-section">
+        <div class="me-section-title">Badges</div>
+        <div id="me-badges"></div>
+      </div>
+
+      <div class="me-section">
+        <div class="me-section-title">Walk history</div>
+        <div id="me-walk-log"></div>
       </div>
 
       <!-- FEATURE FLAG: Missing Dog alerts - hidden until Phase 3 backend is ready
@@ -2743,6 +2896,107 @@
 
   /* ─── Weather fetch (Open-Meteo) ─── */
 
+  /* ─── Pollen (FIX 14.8) ─── */
+
+  function fetchPollen(lat, lon) {
+    var url = 'https://air-quality-api.open-meteo.com/v1/air-quality' +
+      '?latitude=' + lat + '&longitude=' + lon +
+      '&hourly=alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen' +
+      '&forecast_days=5&timezone=auto';
+    return fetch(url).then(function(r) { return r.json(); });
+  }
+
+  function getPollenLevel(val) {
+    if (val === null || val === undefined) return null;
+    if (val < 10)  return { label: 'Low',       colour: 'var(--ink-2)' };
+    if (val < 50)  return { label: 'Moderate',  colour: 'var(--amber)' };
+    if (val < 200) return { label: 'High',      colour: 'var(--red)'   };
+    return              { label: 'Very High',  colour: 'var(--red)'   };
+  }
+
+  function renderPollen(data) {
+    var container = document.getElementById('weather-pollen');
+    if (!container || !data || !data.hourly) return;
+
+    var types = ['alder_pollen','birch_pollen','grass_pollen','mugwort_pollen','olive_pollen','ragweed_pollen'];
+    var labels = { alder_pollen:'Alder', birch_pollen:'Birch', grass_pollen:'Grass', mugwort_pollen:'Mugwort', olive_pollen:'Olive', ragweed_pollen:'Ragweed' };
+
+    // Current hour index
+    var now = new Date();
+    var times = data.hourly.time || [];
+    var currentIdx = 0;
+    for (var i = 0; i < times.length; i++) {
+      if (new Date(times[i]) <= now) currentIdx = i;
+      else break;
+    }
+
+    // Find dominant pollen type at current hour
+    var dominant = null;
+    var dominantVal = -1;
+    types.forEach(function(t) {
+      var arr = data.hourly[t];
+      if (!arr) return;
+      var val = arr[currentIdx];
+      if (val !== null && val !== undefined && val > dominantVal) {
+        dominantVal = val;
+        dominant = t;
+      }
+    });
+
+    var allLow = dominantVal < 10;
+
+    // Build 5-day daily max per type
+    var dayMap = {};
+    times.forEach(function(t, i) {
+      var day = t.substring(0, 10);
+      if (!dayMap[day]) dayMap[day] = {};
+      types.forEach(function(type) {
+        var arr = data.hourly[type];
+        var val = arr ? arr[i] : null;
+        if (val !== null && val !== undefined) {
+          if (dayMap[day][type] === undefined || val > dayMap[day][type]) {
+            dayMap[day][type] = val;
+          }
+        }
+      });
+    });
+
+    var days = Object.keys(dayMap).slice(0, 5);
+
+    var currentHtml;
+    if (allLow) {
+      currentHtml = '<div class="pollen-low-msg">Pollen levels are low today</div>';
+    } else {
+      var lvl = getPollenLevel(dominantVal);
+      currentHtml = '<div class="pollen-current">' +
+        '<span class="pollen-type">' + labels[dominant] + '</span>' +
+        ' <span class="pollen-level" style="color:' + lvl.colour + '">' + lvl.label + '</span>' +
+      '</div>';
+    }
+
+    var forecastHtml = '<div class="pollen-forecast">' + days.map(function(day) {
+      var dayData = dayMap[day];
+      var domType = null;
+      var domVal = -1;
+      types.forEach(function(t) {
+        var v = dayData[t];
+        if (v !== undefined && v > domVal) { domVal = v; domType = t; }
+      });
+      var lvl = domType ? getPollenLevel(domVal) : null;
+      var dateLabel = new Date(day + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+      return '<div class="pollen-forecast-day">' +
+        '<div class="pollen-forecast-date">' + dateLabel + '</div>' +
+        (lvl && domVal >= 10
+          ? '<div class="pollen-forecast-type">' + labels[domType] + '</div>' +
+            '<div class="pollen-forecast-level" style="color:' + lvl.colour + '">' + lvl.label + '</div>'
+          : '<div class="pollen-forecast-level" style="color:var(--ink-2)">Low</div>'
+        ) +
+      '</div>';
+    }).join('') + '</div>';
+
+    container.innerHTML = currentHtml + forecastHtml;
+  }
+
   function loadWeatherAndShow(lat, lon, locationName) {
     fetchWeather(lat, lon, function(data) {
       if (data) {
@@ -2750,6 +3004,15 @@
         renderWeather(data, locationName);
         showStateB(locationName);
         if (typeof renderWalksNearby === 'function') renderWalksNearby(lat, lon);
+        // Pollen (FIX 14.8) — fetch and render after weather
+        fetchPollen(lat, lon).then(function(pollenData) {
+          renderPollen(pollenData);
+        }).catch(function() {
+          var pc = document.getElementById('weather-pollen');
+          if (pc) pc.style.display = 'none';
+          var pt = document.getElementById('weather-pollen-title');
+          if (pt) pt.style.display = 'none';
+        });
       } else {
         var errEl = document.getElementById('search-error');
         if (errEl) errEl.classList.add('visible');
@@ -2800,6 +3063,17 @@
         renderWeather(s.weather, s.location);
         showStateB(s.location);
         if (typeof renderWalksNearby === 'function') renderWalksNearby(s.lat, s.lon);
+        // Pollen (FIX 14.8) — also fetch on session restore
+        if (s.lat && s.lon) {
+          fetchPollen(s.lat, s.lon).then(function(pollenData) {
+            renderPollen(pollenData);
+          }).catch(function() {
+            var pc = document.getElementById('weather-pollen');
+            if (pc) pc.style.display = 'none';
+            var pt = document.getElementById('weather-pollen-title');
+            if (pt) pt.style.display = 'none';
+          });
+        }
       }
     } catch(e) {}
   }
@@ -3195,7 +3469,9 @@
         '<div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>Poor</div>' +
       '</div>' +
       '<div class="section-header"><div class="section-title">5-day forecast</div></div>' +
-      '<div class="forecast-grid" style="padding-bottom:16px">' + forecastHTML + '</div>';
+      '<div class="forecast-grid" style="padding-bottom:16px">' + forecastHTML + '</div>' +
+      '<div class="weather-section-heading pollen-section-title" id="weather-pollen-title" style="padding: 0 16px; margin-bottom: 8px;">Pollen</div>' +
+      '<div id="weather-pollen"></div>';
     syncIcons();
   }
 
@@ -3340,11 +3616,113 @@
   // Backwards-compat alias
   function hasWalked(id) { return isWalked(id); }
 
+  // Backwards-compat alias (original stub removed for dedup)
+
   /* Legacy stubs — kept to avoid any surviving references breaking */
   function getWalkedIds() {
     return getWalkLog().map(function(e) { return e.id; });
   }
   function markWalked(walkId) { logWalk(walkId); }
+
+  /* ─── Walk log helpers (FIX 14.5) ─── */
+
+  function logDateLabel(ts) {
+    if (!ts) return '';
+    var d       = new Date(ts);
+    var now     = new Date();
+    var diffMs  = now - d;
+    var diffDays = Math.floor(diffMs / 86400000);
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7)  return diffDays + ' days ago';
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  }
+
+  function renderWalkLogSection() {
+    var container = document.getElementById('me-walk-log');
+    if (!container) return;
+
+    var log = getWalkLog();
+    if (log.length === 0) {
+      container.innerHTML = '<p class="me-log-empty">No walks logged yet. Mark a walk as walked to start your log.</p>';
+      return;
+    }
+
+    var seen = {};
+    var unique = [];
+    log.forEach(function(entry) {
+      if (!seen[entry.id]) {
+        seen[entry.id] = { id: entry.id, lastTs: entry.ts, count: 0 };
+        unique.push(seen[entry.id]);
+      }
+      seen[entry.id].count++;
+      if (entry.ts > seen[entry.id].lastTs) seen[entry.id].lastTs = entry.ts;
+    });
+
+    unique.sort(function(a, b) { return b.lastTs - a.lastTs; });
+    var recent = unique.slice(0, 5);
+
+    var walkById = {};
+    WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
+
+    var html = recent.map(function(entry) {
+      var walk = walkById[entry.id];
+      var name = walk ? walk.name : 'Unknown walk';
+      var countStr = entry.count === 1 ? 'Walked once' : 'Walked ' + entry.count + ' times';
+      return '<div class="me-log-row" onclick="openWalkDetail(\'' + entry.id + '\')">' +
+        '<div class="me-log-name">' + name + '</div>' +
+        '<div class="me-log-meta">' + countStr + ' · ' + logDateLabel(entry.lastTs) + '</div>' +
+      '</div>';
+    }).join('');
+
+    if (unique.length > 5) {
+      html += '<div class="me-log-seeall" onclick="openWalkLogSheet()">See all ' + unique.length + ' walks \u2192</div>';
+    }
+
+    container.innerHTML = html;
+  }
+
+  function openWalkLogSheet() {
+    var log = getWalkLog();
+    var seen = {};
+    var unique = [];
+    log.forEach(function(entry) {
+      if (!seen[entry.id]) {
+        seen[entry.id] = { id: entry.id, lastTs: entry.ts, count: 0 };
+        unique.push(seen[entry.id]);
+      }
+      seen[entry.id].count++;
+      if (entry.ts > seen[entry.id].lastTs) seen[entry.id].lastTs = entry.ts;
+    });
+    unique.sort(function(a, b) { return b.lastTs - a.lastTs; });
+
+    var walkById = {};
+    WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
+
+    var rows = unique.map(function(entry) {
+      var walk = walkById[entry.id];
+      var name = walk ? walk.name : 'Unknown walk';
+      var countStr = entry.count === 1 ? 'Walked once' : 'Walked ' + entry.count + ' times';
+      return '<div class="me-log-row" onclick="openWalkDetail(\'' + entry.id + '\');closeWalkLogSheet()">' +
+        '<div class="me-log-name">' + name + '</div>' +
+        '<div class="me-log-meta">' + countStr + ' · ' + logDateLabel(entry.lastTs) + '</div>' +
+      '</div>';
+    }).join('');
+
+    var sheetInner = document.getElementById('walk-log-sheet-inner');
+    var sheetTitle = document.getElementById('walk-log-sheet-title');
+    if (sheetTitle) sheetTitle.textContent = 'Your walks';
+    if (sheetInner) sheetInner.innerHTML = rows;
+    document.getElementById('walk-log-backdrop').classList.add('open');
+    document.getElementById('walk-log-sheet').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeWalkLogSheet() {
+    document.getElementById('walk-log-backdrop').classList.remove('open');
+    document.getElementById('walk-log-sheet').classList.remove('open');
+    document.body.style.overflow = '';
+  }
 
   /* ─── Device fingerprint + rate limit ─── */
   function getDeviceId() {
@@ -3464,6 +3842,8 @@
     }
 
     updateMeStats();
+    renderWalkLogSection();
+    renderBadges();
 
     if (!hasSubmittedTagsToday(walkId)) {
       openCondTagSheet(walkId);
@@ -3868,8 +4248,15 @@
     walkDetailMap = L.map(container, {
       zoomControl: false,
       attributionControl: false,
-      scrollWheelZoom: false
+      dragging: false,
+      scrollWheelZoom: false,
+      touchZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false
     });
+    walkDetailMap.dragging.disable();
+    walkDetailMap.touchZoom.disable();
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18
@@ -4288,6 +4675,48 @@
   var FAVS_KEY = 'sniffout_favs';
   var EXPLORED_KEY = 'sniffout_explored';
 
+  function tsToSeason(ts) {
+    var m = new Date(ts).getMonth();
+    if (m <= 1 || m === 11) return 'winter';
+    if (m <= 4)             return 'spring';
+    if (m <= 7)             return 'summer';
+    return 'autumn';
+  }
+
+  function getExplored() {
+    try {
+      var raw = localStorage.getItem(EXPLORED_KEY);
+      if (!raw) return {};
+      var parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        var migratedTs = Date.now() - (7 * 24 * 3600000);
+        var migrated = {};
+        parsed.forEach(function(id) {
+          migrated[id] = [{ ts: migratedTs, season: tsToSeason(migratedTs) }];
+        });
+        localStorage.setItem(EXPLORED_KEY, JSON.stringify(migrated));
+        return migrated;
+      }
+      return parsed;
+    } catch(e) { return {}; }
+  }
+
+  function markExplored(walkId) {
+    var explored = getExplored();
+    var ts = Date.now();
+    if (!explored[walkId]) explored[walkId] = [];
+    explored[walkId].push({ ts: ts, season: tsToSeason(ts) });
+    try { localStorage.setItem(EXPLORED_KEY, JSON.stringify(explored)); } catch(e) {}
+  }
+
+  function getExploredCount() {
+    return Object.keys(getExplored()).length;
+  }
+
+  function getExploredSeasons(walkId) {
+    return (getExplored()[walkId] || []).map(function(e) { return e.season; });
+  }
+
   function getFavourites() {
     try { return JSON.parse(localStorage.getItem(FAVS_KEY)) || []; } catch(e) { return []; }
   }
@@ -4314,10 +4743,97 @@
     renderFavouritesList();
   }
 
+  /* ─── Gamification helpers (FIX 14.6) ─── */
+
+  function getTotalDistanceMi() {
+    var log = getWalkLog();
+    var walkById = {};
+    WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
+    return log.reduce(function(sum, entry) {
+      var walk = walkById[entry.id];
+      return sum + (walk && walk.distance ? walk.distance : 0);
+    }, 0);
+  }
+
+  function getEarnedBadges() {
+    var badges  = [];
+    var log     = getWalkLog();
+    var explored = getExplored();
+    var favs    = getFavourites();
+
+    var uniqueWalked   = {};
+    log.forEach(function(e) { uniqueWalked[e.id] = true; });
+    var uniqueWalkedCount = Object.keys(uniqueWalked).length;
+
+    var exploredIds    = Object.keys(explored);
+    var exploredCount  = exploredIds.length;
+    var totalMi        = getTotalDistanceMi();
+
+    if (exploredCount >= 5) {
+      badges.push({ id: 'explorer', label: 'Explorer', description: '5 walks explored' });
+    }
+    if (exploredCount >= 10) {
+      badges.push({ id: 'trailblazer', label: 'Trailblazer', description: '10 walks explored' });
+    }
+    if (uniqueWalkedCount >= 5) {
+      badges.push({ id: 'devoted', label: 'Devoted', description: '5 walks completed' });
+    }
+
+    var logCountById = {};
+    log.forEach(function(e) { logCountById[e.id] = (logCountById[e.id] || 0) + 1; });
+    var hasRegular = Object.keys(logCountById).some(function(k) { return logCountById[k] >= 3; });
+    if (hasRegular) {
+      badges.push({ id: 'regular', label: 'Regular', description: 'Same walk 3 times' });
+    }
+
+    var walkById = {};
+    WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
+    var regions = {};
+    exploredIds.forEach(function(id) {
+      var w = walkById[id];
+      if (w && w.location) {
+        var parts = w.location.split(',');
+        var region = parts[parts.length - 1].trim();
+        regions[region] = true;
+      }
+    });
+    if (Object.keys(regions).length >= 3) {
+      badges.push({ id: 'rambler', label: 'Regional Rambler', description: '3 regions explored' });
+    }
+
+    var hasSeasonal = exploredIds.some(function(id) {
+      var seasons = getExploredSeasons(id);
+      var uniqueSeasons = {};
+      seasons.forEach(function(s) { uniqueSeasons[s] = true; });
+      return Object.keys(uniqueSeasons).length >= 2;
+    });
+    if (hasSeasonal) {
+      badges.push({ id: 'seasonal', label: 'Seasonal Walker', description: 'Same walk in 2 seasons' });
+    }
+
+    if (favs.length >= 5) {
+      badges.push({ id: 'collector', label: 'Collector', description: '5 walks favourited' });
+    }
+
+    return badges;
+  }
+
+  function renderBadges() {
+    var container = document.getElementById('me-badges');
+    if (!container) return;
+    var badges = getEarnedBadges();
+    if (badges.length === 0) {
+      container.innerHTML = '<span class="me-badges-empty">Keep exploring to earn badges.</span>';
+      return;
+    }
+    container.innerHTML = badges.map(function(b) {
+      return '<div class="me-badge">' + b.label + '</div>';
+    }).join('');
+  }
+
   function updateMeStats() {
     var favCount = getFavourites().length;
-    var exploredCount = 0;
-    try { exploredCount = (JSON.parse(localStorage.getItem(EXPLORED_KEY)) || []).length; } catch(e) {}
+    var exploredCount = getExploredCount();
     var walkedCount = getWalkLog().length;
     var favEl     = document.getElementById('stat-favs');
     var expEl     = document.getElementById('stat-explored');
@@ -4325,6 +4841,8 @@
     if (favEl)    favEl.textContent    = favCount;
     if (expEl)    expEl.textContent    = exploredCount;
     if (walkedEl) walkedEl.textContent = walkedCount;
+    var distEl = document.getElementById('stat-distance');
+    if (distEl) distEl.textContent = Math.round(getTotalDistanceMi()) + ' mi';
   }
 
   /* ─── Walk card HTML builders ─── */
@@ -4423,14 +4941,9 @@
   /* ─── Walk tap (explore tracking) ─── */
 
   function onWalkTap(id) {
-    try {
-      var explored = JSON.parse(localStorage.getItem(EXPLORED_KEY)) || [];
-      if (explored.indexOf(id) === -1) {
-        explored.push(id);
-        localStorage.setItem(EXPLORED_KEY, JSON.stringify(explored));
-      }
-    } catch(e) {}
+    markExplored(id);
     updateMeStats();
+    renderBadges();
     openWalkDetail(id);
   }
 
@@ -4769,6 +5282,8 @@
   renderWalksTab();
   renderFavouritesList();
   updateMeStats();
+  renderWalkLogSection();
+  renderBadges();
   renderStateAPreviews();
 </script>
 
@@ -5129,7 +5644,10 @@
     if (mode === 'off') document.body.classList.remove('night');
     // 'auto' — leave body.night to be set by weather (Phase C renderWeather)
     var el = document.getElementById('darkmode-val');
-    if (el) el.textContent = DARKMODE_LABELS[mode] || 'Auto';
+    if (el) {
+      el.textContent = DARKMODE_LABELS[mode] || 'Auto';
+      el.className = 'settings-item-right darkmode-val-' + mode;
+    }
   }
 
   /* ─── Load all Me tab preferences on start ─── */
@@ -5150,6 +5668,8 @@
     // Stats + favourites
     updateMeStats();
     renderFavouritesList();
+    renderWalkLogSection();
+    renderBadges();
   }
 
   /* ─── Display name — inline edit ─── */
@@ -5229,6 +5749,8 @@
     meNavBtn.addEventListener('click', function() {
       updateMeStats();
       renderFavouritesList();
+      renderWalkLogSection();
+      renderBadges();
       syncIcons();
     });
   }
@@ -5644,6 +6166,19 @@
   </div>
 </div>
 
+<!-- Walk log sheet — FIX 14.5 -->
+<div class="filter-backdrop" id="walk-log-backdrop" onclick="closeWalkLogSheet()"></div>
+<div class="filter-sheet" id="walk-log-sheet">
+  <div class="filter-handle"></div>
+  <div style="padding:16px 16px 4px; border-bottom:1px solid var(--border);">
+    <div id="walk-log-sheet-title" style="font-size:16px;font-weight:700;color:var(--ink);">Your walks</div>
+  </div>
+  <div id="walk-log-sheet-inner" style="overflow-y:auto; max-height:calc(65vh - 80px); padding:0 16px 8px;"></div>
+  <div style="padding:12px 16px 16px; border-top:1px solid var(--border);">
+    <button class="sheet-btn-ghost" onclick="closeWalkLogSheet()">Close</button>
+  </div>
+</div>
+
 <!-- Walk detail overlay — FIX 12.1 -->
 <div id="walk-detail-overlay" class="walk-detail-overlay" role="dialog" aria-modal="true" aria-label="Walk detail">
   <div class="walk-detail-drag-handle"></div>
@@ -5692,6 +6227,17 @@
       <div class="walk-detail-map-title">Location</div>
       <div class="walk-detail-map" id="walk-detail-map"></div>
       <a class="walk-detail-maps-link" id="walk-detail-maps-link" target="_blank" rel="noopener">Open in Google Maps →</a>
+    </div>
+    <div class="walk-detail-disclaimer">
+      <svg class="walk-detail-disclaimer-icon" aria-hidden="true"
+           xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+           viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="16" x2="12" y2="12"/>
+        <line x1="12" y1="8" x2="12.01" y2="8"/>
+      </svg>
+      <span>Walk details are checked at the time of listing, but conditions, access, and facilities can change. Verify before you go.</span>
     </div>
     <div class="walk-detail-bottom-pad"></div>
     <button class="walk-detail-close-btn" onclick="closeWalkDetail()">✕&nbsp;&nbsp;Close</button>
@@ -5982,6 +6528,17 @@
             if (s && s.weather && Date.now() - s.timestamp <= SESSION_TTL) {
               renderWeather(s.weather, s.location);
               sessionRestored = true;
+              // Pollen (FIX 14.8)
+              if (loc.lat && loc.lon) {
+                fetchPollen(loc.lat, loc.lon).then(function(pollenData) {
+                  renderPollen(pollenData);
+                }).catch(function() {
+                  var pc = document.getElementById('weather-pollen');
+                  if (pc) pc.style.display = 'none';
+                  var pt = document.getElementById('weather-pollen-title');
+                  if (pt) pt.style.display = 'none';
+                });
+              }
             }
           }
         } catch(e) {}
