@@ -9,7 +9,9 @@
 
 **Phase 2: ACTIVE.**
 
-**Round 8 complete:** FIX 9.1–9.4 (condition tags + mark as walked on carousel cards) all confirmed done. developer-brief-round9.md issued — FIX 10.1 dark mode colour revision ready for developer.
+**Round 8 complete:** FIX 9.1–9.4 (condition tags + mark as walked on carousel cards) all confirmed done.
+
+**Round 9 issued:** developer-brief-round9.md contains FIX 10.1–10.4. FIX 10.1 dark mode colour revision (independent of condition tags). FIX 10.2–10.4 are owner feedback on condition tags: mark-as-walked reversible (undo toast + toggle), remove "Excellent conditions" tag (`clear` key), visible timestamps on all condition tag chips.
 
 **Round 7 fixes:** All confirmed complete (FIX 8.1–8.9). Additional items also completed this cycle: sunrise/sunset pill added to Today tab weather hero (this resolved the FIX 8.9 duplicate wind pill — sunrise/sunset replaced the third pill); all emojis replaced with Lucide icons throughout the app.
 
@@ -63,6 +65,7 @@
 | designer-brief-round2.md | Verification sweep V1–V9 (all pass); Today tab T1–T5; Weather tab W1–W4; new components N1–N3 | ✅ Done — findings assessed, developer-brief-round7.md issued |
 | condition-tags-design-spec.md | Condition tags UI, mark-as-walked, post-walk prompt, staleness, community disclaimer | ✅ Done — approved with 1 bug fix, developer-brief-round8.md issued |
 | dark-mode-colour-spec.md | Dark mode token revision (`--brand` #82B09A, `--ink-2`, `--border`); hardcoded rgba substitutions; rgba(30,77,58) overrides | ✅ Done — **approved in full**, added to developer-brief-round9.md as FIX 10.1 |
+| missing-dog-design-spec.md | Coming soon placeholder card (§1 ships now); full reporting flow (5 steps); nearby alert banner; alert management; GDPR + safeguarding spec | ✅ Done — **approved**. §1 coming soon card passes to developer. Full feature spec held for Phase 3 backend build. One flag: Phase 3 spec uses emoji characters (🔔, 🎉) — update to Lucide icons before developer brief is issued for that phase. |
 
 ---
 
@@ -71,7 +74,7 @@
 | Brief | Contents | Status |
 |-------|----------|--------|
 | developer-brief-round8.md | FIX 9.1–9.4 (condition tags + mark as walked on carousel cards) | ✅ Done |
-| developer-brief-round9.md | FIX 10.1 dark mode colour revision (token update + rgba substitutions + new overrides) | ⏳ Pending |
+| developer-brief-round9.md | FIX 10.1 dark mode colour revision; FIX 10.2 mark-as-walked undo; FIX 10.3 remove "Excellent conditions" tag; FIX 10.4 condition tag timestamps | ⏳ Pending |
 
 ---
 
@@ -79,7 +82,7 @@
 
 | Brief | Contents | Status |
 |-------|----------|--------|
-| missing-dog-designer-brief.md | Full user flows (reporting owner, nearby user, resolution); data model; GDPR/safeguarding spec; "coming soon" placeholder card | 🟢 Active — Stream 2 |
+| missing-dog-designer-brief.md | Full user flows (reporting owner, nearby user, resolution); data model; GDPR/safeguarding spec; "coming soon" placeholder card | ✅ Done — assessed March 2026 |
 
 ---
 
@@ -116,6 +119,9 @@ Filter/sort implementation is now fully unblocked. designer-brief-round3.md upda
 17. Accounts — **contextual introduction only**. Prompt when user tries to write a review, never on first open. Display name + email minimum. Confirmed (March 2026).
 18. **Mark as walked** — **Phase 2, include alongside condition tags**. Serves as the primary trigger for the post-walk condition tag prompt. New UI element required on walk cards or walk detail. Owner confirmed (March 2026).
 19. **Star ratings** — **Deferred**. Seeded WALKS_DB ratings to remain as-is for POC. Community ratings not mixed in until post-launch. Owner confirmed (March 2026).
+20. **Mark as walked — must be reversible**. Undo toast (5 seconds) shown immediately after marking. Tapping "Undo" reverses the action. Marked state button also re-tappable to toggle off. Owner confirmed (March 2026). (FIX 10.2)
+21. **"Excellent conditions" tag removed**. Condition tags must reflect physical walk observations only, not weather. `clear` key removed from `CONDITION_TAGS`. Owner confirmed (March 2026). (FIX 10.3)
+22. **Condition tags must show visible timestamp**. Each tag chip displays "reported 2 hours ago" / "reported yesterday" / "May be out of date" below the label. `relativeTime()` already in place — display fix only. Owner confirmed (March 2026). (FIX 10.4)
 
 ---
 
@@ -137,11 +143,10 @@ No open decisions.
 
 ## Next Steps in Order
 
-1. **Developer** — implement developer-brief-round9.md (FIX 10.1 dark mode colour revision)
-2. **Designer** — complete missing dog alerts design (`missing-dog-designer-brief.md`) — Stream 2, active now
-3. **Designer** — walk detail overlay design. Required to complete the full condition tags + mark-as-walked experience (detail panel context deferred from Round 8). Follows missing dog brief.
-4. **Designer** — Sticky Sniffout Picks UX exploration. Follows Step 3.
-5. **PO** — assess Round 9 completion; assess missing dog design output when delivered; issue next developer brief
+1. **Developer** — implement developer-brief-round9.md (FIX 10.1–10.4). Suggested order: FIX 10.3 first (trivial), then FIX 10.4, then FIX 10.2, then FIX 10.1.
+2. **Designer** — Stream 3: Sticky Sniffout Picks UX exploration. Missing dog spec (Stream 2) is complete. Walk detail overlay design follows Stream 3.
+3. **Designer** — walk detail overlay design. Required to complete the full condition tags + mark-as-walked experience in detail context (deferred from Round 8).
+4. **PO** — assess Round 9 completion; issue next developer brief for the Coming Soon missing dog card (§1 of missing-dog-design-spec.md) + any Round 9 follow-ons.
 
 ---
 
@@ -185,14 +190,16 @@ No open decisions.
 - The most time-sensitive, dog-specific information that UK dog owners actively share with each other (cattle, livestock, flooded paths) is captured in a single tap
 - Research finding: condition tags outperform star ratings per unit of user effort, and recency matters more than volume — 3 tags from the last 48 hours makes the app feel alive in a way 50 reviews from last year cannot
 
-**Approved tag taxonomy (from community-engagement-research.md):**
+**Approved tag taxonomy (from community-engagement-research.md, updated March 2026):**
 
 | Category | Tags |
 |----------|------|
 | Hazard | Cattle in field · Sheep in field · Dogs on leads here · Access issue |
 | Surface | Very muddy underfoot · Flooded section · Overgrown path · Icy/slippery |
-| Positive | Great water point for dogs · Dog-friendly café open · Excellent conditions today |
+| Positive | Great water point for dogs · Dog-friendly café open |
 | Footfall | Busy/crowded · Quiet today |
+
+**Note:** "Excellent conditions today" (`clear` key) removed per owner feedback — it reflected weather at submission location, not actual walk conditions. Condition tags must only report what the user physically observed. (FIX 10.3, developer-brief-round9.md)
 
 **Tag rules:**
 - Each tag timestamped at submission
