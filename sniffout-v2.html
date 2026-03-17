@@ -1050,6 +1050,126 @@
       font-weight: 600;
     }
 
+    /* ═══════════════════════════════
+       WEATHER TAB REDESIGN — wx- classes
+    ═══════════════════════════════ */
+
+    /* Hero */
+    .wx-hero { padding: 20px 16px 24px; }
+    .wx-hero-location {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; font: 500 15px/1 'Inter', sans-serif; color: var(--ink-2);
+    }
+    .wx-hero-main {
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .wx-hero-temp-block { display: flex; align-items: flex-start; gap: 2px; }
+    .wx-hero-temp { font: 700 80px/1 'Inter', sans-serif; color: var(--ink); letter-spacing: -3px; }
+    .wx-hero-unit { font: 400 32px/1 'Inter', sans-serif; color: var(--ink-2); margin-top: 8px; }
+    .wx-hero-icon { width: 72px; height: 72px; margin-top: 8px; flex-shrink: 0; }
+    .wx-hero-condition { margin-top: 16px; font: 500 17px/1.2 'Inter', sans-serif; color: var(--ink); }
+    .wx-hero-sub { margin-top: 4px; font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); }
+
+    /* Verdict badge */
+    .wx-verdict {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 20px; height: 48px; border-radius: 12px;
+      font: 600 15px/1 'Inter', sans-serif; color: #fff;
+      transition: background-color 300ms ease;
+    }
+    .wx-verdict svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .wx-verdict--approved  { background: var(--brand); }
+    .wx-verdict--caveat    { background: #2D7A5A; }
+    .wx-verdict--caution   { background: var(--amber); }
+    .wx-verdict--avoid     { background: var(--red); }
+
+    /* Cards zone */
+    .wx-cards { display: flex; flex-direction: column; gap: 12px; padding: 0 16px 32px; }
+    .wx-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+    .wx-card-header { display: flex; align-items: center; justify-content: space-between; }
+    .wx-card-title { font: 600 15px/1 'Inter', sans-serif; color: var(--ink); }
+    .wx-card-divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+    /* Walk window */
+    .wx-walk-window-time { font: 700 15px/1 'Inter', sans-serif; color: var(--brand); }
+    .wx-walk-footer { margin-top: 12px; font: 400 12px/1.4 'Inter', sans-serif; color: var(--ink-2); }
+
+    /* Metric tiles */
+    .wx-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .wx-tile {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 14px; min-height: 130px; display: flex; flex-direction: column;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: opacity 100ms ease;
+    }
+    .wx-tile:active { opacity: 0.82; }
+    .wx-tile-label { display: flex; align-items: center; gap: 6px; }
+    .wx-tile-label svg { width: 15px; height: 15px; color: var(--ink-2); flex-shrink: 0; }
+    .wx-tile-name { font: 500 12px/1 'Inter', sans-serif; color: var(--ink-2); flex: 1; }
+    .wx-tile-chevron { font-size: 14px; color: var(--ink-2); line-height: 1; }
+    .wx-tile-value { font: 700 32px/1 'Inter', sans-serif; color: var(--ink); margin-top: 10px; letter-spacing: -1px; }
+    .wx-tile-value small { font: 400 16px/1 'Inter', sans-serif; color: var(--ink-2); letter-spacing: 0; }
+    .wx-tile-desc { font: 500 13px/1.2 'Inter', sans-serif; color: var(--ink-2); margin-top: 3px; }
+    .wx-tile-desc--good    { color: var(--brand); }
+    .wx-tile-desc--caution { color: var(--amber); }
+    .wx-tile-desc--bad     { color: var(--red); }
+    .wx-tile-detail { font: 400 11px/1 'Inter', sans-serif; color: var(--ink-2); margin-top: auto; padding-top: 8px; }
+
+    /* Forecast card */
+    .wx-forecast-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+    .wx-forecast-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .wx-forecast-day { font: 500 12px/1 'Inter', sans-serif; color: var(--ink-2); }
+    .wx-forecast-day--today { font-weight: 600; color: var(--brand); }
+    .wx-forecast-icon { width: 32px; height: 32px; }
+    .wx-forecast-high { font: 600 14px/1 'Inter', sans-serif; color: var(--ink); }
+    .wx-forecast-low { font: 400 14px/1 'Inter', sans-serif; color: var(--ink-2); }
+
+    /* Pollen card */
+    .wx-pollen-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .wx-pollen-type { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .wx-pollen-label { font: 500 12px/1 'Inter', sans-serif; color: var(--ink-2); }
+    .wx-pollen-dots { display: flex; gap: 4px; }
+    .wx-pollen-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,0,0,0.12); }
+    .wx-pollen-dot--filled { background: var(--brand); }
+    .wx-pollen-level { font: 500 12px/1 'Inter', sans-serif; color: var(--ink); }
+
+    /* Metric detail sheet */
+    .wx-sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; }
+    .wx-sheet {
+      position: fixed; bottom: 0; left: 0; right: 0; max-height: 60vh;
+      background: var(--surface); border-radius: 20px 20px 0 0;
+      padding: 12px 16px 32px; z-index: 201; overflow-y: auto;
+      transform: translateY(100%); transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .wx-sheet.is-open { transform: translateY(0); }
+    .wx-sheet-overlay[hidden], .wx-sheet[hidden] { display: none; }
+    .wx-sheet-handle { width: 32px; height: 4px; border-radius: 2px; background: rgba(0,0,0,0.18); margin: 0 auto 20px; }
+    .wx-sheet-title { font: 700 17px/1 'Inter', sans-serif; color: var(--ink); margin-bottom: 16px; }
+    .wx-sheet-row { display: flex; align-items: center; gap: 10px; height: 36px; }
+    .wx-sheet-time { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); width: 36px; flex-shrink: 0; }
+    .wx-sheet-val { font: 700 13px/1 'Inter', sans-serif; color: var(--ink); width: 36px; flex-shrink: 0; text-align: right; }
+    .wx-sheet-bar-track { flex: 1; height: 8px; border-radius: 4px; background: rgba(0,0,0,0.08); overflow: hidden; }
+    .wx-sheet-bar-fill { height: 100%; border-radius: 4px; background: var(--brand); }
+    .wx-sheet-bar-fill--caution { background: var(--amber); }
+    .wx-sheet-bar-fill--bad     { background: var(--red); }
+    .wx-sheet-badge { padding: 2px 8px; border-radius: 6px; font: 500 12px/1.4 'Inter', sans-serif; }
+    .wx-sheet-badge--low      { background: rgba(30,77,58,0.12); color: var(--brand); }
+    .wx-sheet-badge--moderate { background: rgba(245,158,11,0.12); color: #B45309; }
+    .wx-sheet-badge--high     { background: rgba(239,68,68,0.12); color: var(--red); }
+    .wx-sheet-note { margin-top: 16px; font: 400 13px/1.4 'Inter', sans-serif; color: var(--ink-2); border-top: 1px solid var(--border); padding-top: 12px; }
+
+    /* Walk window legend (reused in new card) */
+    .wx-window-legend { display: flex; gap: 14px; margin-top: 10px; font: 400 11px/1 'Inter', sans-serif; color: var(--ink-2); }
+    .wx-window-legend-item { display: flex; align-items: center; gap: 4px; }
+    .wx-window-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+    /* Dark mode weather overrides */
+    body.night .wx-hero-temp      { color: #fff; }
+    body.night .wx-hero-condition { color: rgba(255,255,255,0.9); }
+    body.night .wx-sheet-handle   { background: rgba(255,255,255,0.25); }
+    body.night .wx-sheet-bar-track { background: rgba(255,255,255,0.1); }
+    body.night .wx-pollen-dot     { background: rgba(255,255,255,0.15); }
+
     /* Rain section */
     .rain-section {
       margin: 0 16px 12px;
@@ -2524,12 +2644,8 @@
 
     <!-- ══════════ WEATHER TAB ══════════ -->
     <div id="tab-weather" class="tab-panel">
-      <div class="tab-title-bar">
-        <h2 class="tab-title">Weather</h2>
-        <div class="tab-subtitle" id="weather-location-sub"></div>
-      </div>
       <div id="weather-content">
-        <div class="empty-state">Set your location on the Today tab to see live weather.</div>
+        <div class="empty-state" style="padding-top:80px;">Set your location on the Today tab to see live weather.</div>
       </div>
     </div><!-- /tab-weather -->
 
@@ -3002,13 +3118,15 @@
   }
 
   function renderPollen(data) {
-    var container = document.getElementById('weather-pollen');
-    if (!container || !data || !data.hourly) return;
+    var body = document.getElementById('weather-pollen-body');
+    var card = document.getElementById('weather-pollen');
+    if (!body || !card || !data || !data.hourly) return;
 
-    var types = ['alder_pollen','birch_pollen','grass_pollen','mugwort_pollen','olive_pollen','ragweed_pollen'];
-    var labels = { alder_pollen:'Alder', birch_pollen:'Birch', grass_pollen:'Grass', mugwort_pollen:'Mugwort', olive_pollen:'Olive', ragweed_pollen:'Ragweed' };
+    // Group pollen into 3 display types: Tree, Grass, Weed
+    var treeTypes = ['alder_pollen','birch_pollen','olive_pollen'];
+    var grassTypes = ['grass_pollen'];
+    var weedTypes = ['mugwort_pollen','ragweed_pollen'];
 
-    // Current hour index
     var now = new Date();
     var times = data.hourly.time || [];
     var currentIdx = 0;
@@ -3017,71 +3135,45 @@
       else break;
     }
 
-    // Find dominant pollen type at current hour
-    var dominant = null;
-    var dominantVal = -1;
-    types.forEach(function(t) {
-      var arr = data.hourly[t];
-      if (!arr) return;
-      var val = arr[currentIdx];
-      if (val !== null && val !== undefined && val > dominantVal) {
-        dominantVal = val;
-        dominant = t;
-      }
-    });
-
-    var allLow = dominantVal < 10;
-
-    // Build 5-day daily max per type
-    var dayMap = {};
-    times.forEach(function(t, i) {
-      var day = t.substring(0, 10);
-      if (!dayMap[day]) dayMap[day] = {};
-      types.forEach(function(type) {
-        var arr = data.hourly[type];
-        var val = arr ? arr[i] : null;
-        if (val !== null && val !== undefined) {
-          if (dayMap[day][type] === undefined || val > dayMap[day][type]) {
-            dayMap[day][type] = val;
-          }
-        }
+    function maxVal(typeArr) {
+      var max = 0;
+      typeArr.forEach(function(t) {
+        var arr = data.hourly[t];
+        if (!arr) return;
+        var v = arr[currentIdx];
+        if (v !== null && v !== undefined && v > max) max = v;
       });
-    });
-
-    var days = Object.keys(dayMap).slice(0, 5);
-
-    var currentHtml;
-    if (allLow) {
-      currentHtml = '<div class="pollen-low-msg">Pollen levels are low today</div>';
-    } else {
-      var lvl = getPollenLevel(dominantVal);
-      currentHtml = '<div class="pollen-current">' +
-        '<span class="pollen-type">' + labels[dominant] + '</span>' +
-        ' <span class="pollen-level" style="color:' + lvl.colour + '">' + lvl.label + '</span>' +
-      '</div>';
+      return max;
     }
 
-    var forecastHtml = '<div class="pollen-forecast">' + days.map(function(day) {
-      var dayData = dayMap[day];
-      var domType = null;
-      var domVal = -1;
-      types.forEach(function(t) {
-        var v = dayData[t];
-        if (v !== undefined && v > domVal) { domVal = v; domType = t; }
-      });
-      var lvl = domType ? getPollenLevel(domVal) : null;
-      var dateLabel = new Date(day + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
-      return '<div class="pollen-forecast-day">' +
-        '<div class="pollen-forecast-date">' + dateLabel + '</div>' +
-        (lvl && domVal >= 10
-          ? '<div class="pollen-forecast-type">' + labels[domType] + '</div>' +
-            '<div class="pollen-forecast-level" style="color:' + lvl.colour + '">' + lvl.label + '</div>'
-          : '<div class="pollen-forecast-level" style="color:var(--ink-2)">Low</div>'
-        ) +
-      '</div>';
-    }).join('') + '</div>';
+    var treeVal  = maxVal(treeTypes);
+    var grassVal = maxVal(grassTypes);
+    var weedVal  = maxVal(weedTypes);
 
-    container.innerHTML = currentHtml + forecastHtml;
+    var treeLevel  = getPollenLevel(treeVal);
+    var grassLevel = getPollenLevel(grassVal);
+    var weedLevel  = getPollenLevel(weedVal);
+
+    var html =
+      '<div class="wx-pollen-grid">' +
+        '<div class="wx-pollen-type">' +
+          '<span class="wx-pollen-label">Tree</span>' +
+          '<div class="wx-pollen-dots">' + pollenDots(treeLevel ? treeLevel.label : 'Low') + '</div>' +
+          '<span class="wx-pollen-level">' + (treeLevel ? treeLevel.label : 'Low') + '</span>' +
+        '</div>' +
+        '<div class="wx-pollen-type">' +
+          '<span class="wx-pollen-label">Grass</span>' +
+          '<div class="wx-pollen-dots">' + pollenDots(grassLevel ? grassLevel.label : 'Low') + '</div>' +
+          '<span class="wx-pollen-level">' + (grassLevel ? grassLevel.label : 'Low') + '</span>' +
+        '</div>' +
+        '<div class="wx-pollen-type">' +
+          '<span class="wx-pollen-label">Weed</span>' +
+          '<div class="wx-pollen-dots">' + pollenDots(weedLevel ? weedLevel.label : 'Low') + '</div>' +
+          '<span class="wx-pollen-level">' + (weedLevel ? weedLevel.label : 'Low') + '</span>' +
+        '</div>' +
+      '</div>';
+
+    body.innerHTML = html;
   }
 
   function loadWeatherAndShow(lat, lon, locationName) {
@@ -3097,8 +3189,6 @@
         }).catch(function() {
           var pc = document.getElementById('weather-pollen');
           if (pc) pc.style.display = 'none';
-          var pt = document.getElementById('weather-pollen-title');
-          if (pt) pt.style.display = 'none';
         });
       } else {
         var errEl = document.getElementById('search-error');
@@ -3117,7 +3207,7 @@
       + '?latitude=' + lat
       + '&longitude=' + lon
       + '&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m,precipitation,relative_humidity_2m,is_day'
-      + '&hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m'
+      + '&hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,uv_index,wind_direction_10m,relative_humidity_2m'
       + '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset'
       + '&timezone=auto'
       + '&forecast_days=7';
@@ -3157,8 +3247,6 @@
           }).catch(function() {
             var pc = document.getElementById('weather-pollen');
             if (pc) pc.style.display = 'none';
-            var pt = document.getElementById('weather-pollen-title');
-            if (pt) pt.style.display = 'none';
           });
         }
       }
@@ -3276,61 +3364,71 @@
 
     if (isStormCode(code)) {
       return {
+        type: 'avoid',
         title: '⛈️ Not a walk day',
-        body: 'There\'s a thunderstorm. Stay in — your dog would rather be safe than soggy.'
+        body: 'There\'s a thunderstorm. Stay in - your dog would rather be safe than soggy.'
       };
     }
     if (gusts >= 60) {
       return {
+        type: 'avoid',
         title: '💨 Too gusty to be out',
-        body: 'Gusts of ' + Math.round(gusts) + ' km/h today — enough to cause problems on exposed routes. Worth waiting for it to ease.'
+        body: 'Gusts of ' + Math.round(gusts) + ' km/h today - enough to cause problems on exposed routes. Worth waiting for it to ease.'
       };
     }
     if (temp > 28) {
       return {
-        title: '🌡️ Warm today — timing matters',
+        type: 'caution',
+        title: '🌡️ Warm today - timing matters',
         body: 'At this temperature, pavement can get hot enough to burn paws. Walk in the morning or evening, bring water, and do the 7-second test before setting off.'
       };
     }
     if (isFogCode(code)) {
       return {
+        type: 'caution',
         title: '🌁 Foggy out there',
         body: 'Stick to familiar routes and keep your dog close. Low visibility means less reaction time for drivers on lanes and bridleways.'
       };
     }
     if (isRainCode(code) && temp < 8) {
       return {
-        title: '🥶 Wet and cold — make it a quick one',
+        type: 'caution',
+        title: '🥶 Wet and cold - make it a quick one',
         body: 'Rain plus cold is hard going. A short loop is fine, but wrap up and don\'t hang about.'
       };
     }
     if (isRainCode(code)) {
       return {
-        title: '☔ It\'s raining — but walkable',
+        type: 'caution',
+        title: '☔ It\'s raining - but walkable',
         body: 'Not ideal, but fine if you\'re dressed for it. Stick to shorter routes and dry off your dog when you\'re back.'
       };
     }
     if (hourly && rainArrivingSoon(hourly)) {
       return {
-        title: '🌂 Dry for now — rain arriving',
+        type: 'caution',
+        title: '🌂 Dry for now - rain arriving',
         body: 'Good window right now, but heavy rain is forecast within 3 hours. If you\'re going, go soon.'
       };
     }
     if (hourly && rainLikelyToday(hourly)) {
       return {
+        type: 'caution',
         title: '🌧️ Showers on the way',
         body: 'Dry now, but worth a jacket. A shorter walk while the window\'s open.'
       };
     }
     if (feels < 2) {
       return {
+        type: 'caveat',
         title: '❄️ Brisk walk day',
-        body: 'Feels like ' + Math.round(feels) + '°C. Fine for a quick outing — just watch for ice on paths, and rinse paws when you\'re home if there\'s been gritting.'
+        body: 'Feels like ' + Math.round(feels) + '°C. Fine for a quick outing - just watch for ice on paths, and rinse paws when you\'re home if there\'s been gritting.'
       };
     }
     return {
+      type: 'approved',
       title: '🌤️ Lovely walking weather',
-      body: Math.round(temp) + '°C and ' + cond + '. About as good as it gets — get out there.'
+      body: Math.round(temp) + '°C and ' + cond + '. About as good as it gets - get out there.'
     };
   }
 
@@ -3494,31 +3592,181 @@
     syncIcons();
   }
 
+  /* ─── Weather tab helpers ─── */
+
+  var wxHourlyData = null; // Set by renderWeatherTab, read by openWxSheet
+
+  function kmhToMph(kmh) { return Math.round(kmh * 0.6214); }
+
+  function degreesToCompass(deg) {
+    var dirs = ['N','NE','E','SE','S','SW','W','NW'];
+    return dirs[Math.round(deg / 45) % 8];
+  }
+
+  function getBestWindowTime(hourly) {
+    var h = new Date().getHours();
+    var bestIdx = h, bestScore = -1;
+    var limit = Math.min(h + 12, hourly.time.length);
+    for (var i = h; i < limit; i++) {
+      var prob = hourly.precipitation_probability[i] || 0;
+      var t    = hourly.temperature_2m[i] || 10;
+      var score = (100 - prob) + (t > 5 && t < 25 ? 20 : 0);
+      if (score > bestScore) { bestScore = score; bestIdx = i; }
+    }
+    var startH = bestIdx % 24;
+    var endH   = (startH + 3) % 24;
+    return formatHour(startH) + ' - ' + formatHour(endH);
+  }
+
+  function getVerdictClass(type) {
+    if (type === 'avoid')   return 'wx-verdict--avoid';
+    if (type === 'caution') return 'wx-verdict--caution';
+    if (type === 'caveat')  return 'wx-verdict--caveat';
+    return 'wx-verdict--approved';
+  }
+
+  function getVerdictIcon(type) {
+    if (type === 'avoid') {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+    }
+    if (type === 'caution') {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+    }
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+  }
+
+  function pollenDots(level) {
+    var filled = 0;
+    if (level === 'Low')       filled = 1;
+    else if (level === 'Moderate') filled = 2;
+    else if (level === 'High')     filled = 3;
+    else if (level === 'Very High') filled = 4;
+    var html = '';
+    for (var i = 0; i < 5; i++) {
+      html += '<div class="wx-pollen-dot' + (i < filled ? ' wx-pollen-dot--filled' : '') + '"></div>';
+    }
+    return html;
+  }
+
+  function getHourlyFromNow(hourly) {
+    var h = new Date().getHours();
+    var result = [];
+    var limit = Math.min(24, hourly.time ? hourly.time.length : 0);
+    for (var i = h; i < limit; i++) {
+      var uvVal = (hourly.uv_index && hourly.uv_index[i] !== null) ? Math.round(hourly.uv_index[i] || 0) : 0;
+      var windDir = (hourly.wind_direction_10m && hourly.wind_direction_10m[i] !== null)
+        ? degreesToCompass(hourly.wind_direction_10m[i] || 0) : '';
+      result.push({
+        label:      formatHour(i % 24),
+        precipProb: hourly.precipitation_probability ? (hourly.precipitation_probability[i] || 0) : 0,
+        precip:     hourly.precipitation ? (hourly.precipitation[i] || 0) : 0,
+        windSpeed:  hourly.wind_speed_10m ? kmhToMph(hourly.wind_speed_10m[i] || 0) : 0,
+        windDir:    windDir,
+        uvIndex:    uvVal,
+        humidity:   hourly.relative_humidity_2m ? (hourly.relative_humidity_2m[i] || 0) : 0
+      });
+    }
+    return result;
+  }
+
   /* ─── Render: Weather tab ─── */
 
   function renderWeatherTab(cur, hourly, daily, locationName, verdict, hazards, paw) {
     var content = document.getElementById('weather-content');
     if (!content) return;
 
+    wxHourlyData = hourly;
+
     var temp     = Math.round(cur.temperature_2m);
     var feels    = Math.round(cur.apparent_temperature);
-    var wind     = Math.round(cur.wind_speed_10m);
-    var currentHourIndex = new Date().getHours();
-    var rainChance = hourly.precipitation_probability ? (hourly.precipitation_probability[currentHourIndex] || 0) : 0;
+    var windKmh  = cur.wind_speed_10m || 0;
+    var windMph  = kmhToMph(windKmh);
+    var humidity = Math.round(cur.relative_humidity_2m || 0);
+    var currentH = new Date().getHours();
+    var isDay    = cur.is_day !== 0;
 
-    var sub = document.getElementById('weather-location-sub');
-    if (sub) sub.textContent = 'Near ' + locationName;
+    // Rain tile values
+    var maxRainProb = 0;
+    var totalPrecip = 0;
+    if (hourly.precipitation_probability) {
+      for (var i = currentH; i < Math.min(24, hourly.precipitation_probability.length); i++) {
+        var rp = hourly.precipitation_probability[i] || 0;
+        if (rp > maxRainProb) maxRainProb = rp;
+        if (hourly.precipitation) totalPrecip += (hourly.precipitation[i] || 0);
+      }
+    }
+    totalPrecip = Math.round(totalPrecip * 10) / 10;
 
-    var hazardHTML = '';
-    hazards.forEach(function(hz) {
-      hazardHTML += '<div class="hazard-card" style="margin:0 16px 8px"><div class="hazard-title">' + hz.title + '</div><div class="hazard-body">' + hz.body + '</div></div>';
-    });
+    // UV tile values
+    var currentUV = 0;
+    var peakUV = 0, peakUVHour = -1;
+    if (hourly.uv_index) {
+      currentUV = Math.round(hourly.uv_index[currentH] || 0);
+      for (var j = currentH; j < Math.min(24, hourly.uv_index.length); j++) {
+        var uv = hourly.uv_index[j] || 0;
+        if (uv > peakUV) { peakUV = uv; peakUVHour = j; }
+      }
+    }
+    peakUV = Math.round(peakUV);
 
+    // Wind compass
+    var windDir = '';
+    if (hourly.wind_direction_10m && hourly.wind_direction_10m[currentH] !== null) {
+      windDir = degreesToCompass(hourly.wind_direction_10m[currentH] || 0);
+    }
+
+    // Rain tile label
+    function rainLabel(p) {
+      if (p <= 20) return { text: 'Low chance today',      cls: 'wx-tile-desc--good' };
+      if (p <= 50) return { text: 'Possible later',         cls: 'wx-tile-desc--caution' };
+      if (p <= 80) return { text: 'Likely this afternoon',  cls: 'wx-tile-desc--caution' };
+      return               { text: 'Rain expected',          cls: 'wx-tile-desc--bad' };
+    }
+
+    // Wind tile label
+    function windLabel(mph) {
+      if (mph <= 7)  return { text: 'Calm / Light air', cls: 'wx-tile-desc--good' };
+      if (mph <= 18) return { text: 'Light breeze',     cls: 'wx-tile-desc--good' };
+      if (mph <= 28) return { text: 'Gentle breeze',    cls: '' };
+      if (mph <= 38) return { text: 'Moderate breeze',  cls: 'wx-tile-desc--caution' };
+      if (mph <= 49) return { text: 'Fresh breeze',     cls: 'wx-tile-desc--caution' };
+      return                { text: 'Strong / Gale',   cls: 'wx-tile-desc--bad' };
+    }
+
+    // UV tile label
+    function uvLabel(uv) {
+      if (uv <= 2) return { text: 'Low',       cls: 'wx-tile-desc--good' };
+      if (uv <= 5) return { text: 'Moderate',  cls: '' };
+      if (uv <= 7) return { text: 'High',      cls: 'wx-tile-desc--caution' };
+      if (uv <= 10) return { text: 'Very high', cls: 'wx-tile-desc--bad' };
+      return               { text: 'Extreme',   cls: 'wx-tile-desc--bad' };
+    }
+
+    // Humidity tile label
+    function humidityLabel(h) {
+      if (h <= 30) return { text: 'Very dry',    cls: 'wx-tile-desc--caution' };
+      if (h <= 50) return { text: 'Comfortable', cls: 'wx-tile-desc--good' };
+      if (h <= 65) return { text: 'Moderate',    cls: '' };
+      if (h <= 80) return { text: 'Humid',       cls: 'wx-tile-desc--caution' };
+      return               { text: 'Very humid',  cls: 'wx-tile-desc--bad' };
+    }
+
+    var rl = rainLabel(maxRainProb);
+    var wl = windLabel(windMph);
+    var ul = uvLabel(currentUV);
+    var hl = humidityLabel(humidity);
+
+    var rainDetail = (totalPrecip > 0) ? totalPrecip + 'mm expected' : '';
+    var uvDetail   = (peakUVHour > currentH && peakUV > currentUV)
+      ? 'Peak at ' + formatHour(peakUVHour % 24) + ': UV ' + peakUV
+      : '';
+
+    // Paw safety block
     var pawHTML = '';
     if (paw) {
-      var pawClass = paw.state === 'danger' ? 'danger' : paw.state === 'caution' ? 'caution' : '';
+      var pawClass = paw.state === 'danger' ? 'danger' : 'caution';
       pawHTML =
-        '<div class="paw-safety ' + pawClass + '" style="margin:0 16px 12px">' +
+        '<div class="paw-safety ' + pawClass + '">' +
           '<div style="flex-shrink:0;margin-top:1px;">' + luIcon('paw-print', 20) + '</div>' +
           '<div>' +
             '<div class="paw-status">' + paw.title + '</div>' +
@@ -3527,38 +3775,170 @@
         '</div>';
     }
 
-    var rainSum    = getRainSummary(hourly);
-    var bestWindow = getBestWindow(hourly);
-    var barHTML    = buildHourBar(hourly);
+    // Hazard cards
+    var hazardHTML = '';
+    hazards.forEach(function(hz) {
+      hazardHTML += '<div class="hazard-card"><div class="hazard-title">' + hz.title + '</div><div class="hazard-body">' + hz.body + '</div></div>';
+    });
+
+    // Date string
+    var now = new Date();
+    var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var monNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var dateStr = dayNames[now.getDay()] + ', ' + now.getDate() + ' ' + monNames[now.getMonth()];
+
+    // Daily high/low for today
+    var todayHigh = daily && daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[0]) : temp;
+    var todayLow  = daily && daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[0]) : temp;
+
+    // Walk window time
+    var walkWindowTime = getBestWindowTime(hourly);
+
+    // Yr.no icon HTML for hero (72px)
+    var heroIconSrc = '';
+    if (WMO_YR[cur.weather_code]) {
+      var entry = WMO_YR[cur.weather_code];
+      var iconName = isDay ? entry.day : entry.night;
+      heroIconSrc = YR_BASE + iconName + '.svg';
+    }
+
+    // Verdict badge
+    var verdictCls  = getVerdictClass(verdict.type);
+    var verdictIcon = getVerdictIcon(verdict.type);
+    // Strip emoji from verdict title for the badge
+    var verdictText = verdict.title.replace(/[^\x00-\x7F\s\-'.,!?:;]/g, '').trim();
+
+    // Hour bar for walk window card
+    var barHTML = buildHourBar(hourly);
+    var rainSum = getRainSummary(hourly);
+
+    // Forecast (5-col including today)
     var forecastHTML = buildForecastGrid(daily);
 
-    content.innerHTML =
-      '<div class="verdict-card">' +
-        '<div class="verdict-card-title">' + verdict.title + '</div>' +
-        '<p class="verdict-card-body">' + verdict.body + '</p>' +
-      '</div>' +
-      hazardHTML +
-      '<div class="conditions-grid">' +
-        '<div class="condition-cell"><div class="condition-value">' + feels + '°C</div><div class="condition-label">Feels like</div></div>' +
-        '<div class="condition-cell"><div class="condition-value">' + wind + '</div><div class="condition-label">Wind km/h</div></div>' +
-        '<div class="condition-cell"><div class="condition-value">' + rainChance + '%</div><div class="condition-label">Rain chance</div></div>' +
-      '</div>' +
-      pawHTML +
-      '<div style="padding:0 16px 16px">' +
-        '<div class="walk-window-title">Today\'s walk window</div>' +
-        barHTML +
-        '<div class="walk-window-summary" style="margin-bottom:4px;">' + rainSum + '</div>' +
-        '<div class="walk-window-summary">' + bestWindow + '</div>' +
-      '</div>' +
-      '<div class="window-legend">' +
-        '<div class="legend-item"><div class="legend-dot" style="background:var(--brand)"></div>Good</div>' +
-        '<div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Marginal</div>' +
-        '<div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>Poor</div>' +
-      '</div>' +
-      '<div class="section-header"><div class="section-title">5-day forecast</div></div>' +
-      '<div class="forecast-grid" style="padding-bottom:16px">' + forecastHTML + '</div>' +
-      '<div class="weather-section-heading pollen-section-title" id="weather-pollen-title" style="padding: 0 16px; margin-bottom: 8px;">Pollen</div>' +
-      '<div id="weather-pollen"></div>';
+    var html =
+      // Hero
+      '<section class="wx-hero">' +
+        '<div class="wx-hero-location">' +
+          '<span>' + locationName + '</span>' +
+          '<span>' + dateStr + '</span>' +
+        '</div>' +
+        '<div class="wx-hero-main">' +
+          '<div class="wx-hero-temp-block">' +
+            '<span class="wx-hero-temp">' + temp + '</span>' +
+            '<span class="wx-hero-unit">&#176;C</span>' +
+          '</div>' +
+          (heroIconSrc ? '<img class="wx-hero-icon" src="' + heroIconSrc + '" alt="' + (WMO_DESC[cur.weather_code] || 'Weather') + '" width="72" height="72">' : '') +
+        '</div>' +
+        '<div class="wx-hero-condition">' + (WMO_DESC[cur.weather_code] || '') + '</div>' +
+        '<div class="wx-hero-sub">Feels like ' + feels + '&#176; &nbsp;&#183;&nbsp; H ' + todayHigh + '&#176; &nbsp; L ' + todayLow + '&#176;</div>' +
+        '<div class="wx-verdict ' + verdictCls + '">' +
+          verdictIcon +
+          '<span>' + verdictText + '</span>' +
+        '</div>' +
+      '</section>' +
+
+      // Cards zone
+      '<div class="wx-cards">' +
+
+        // Hazards + paw (inside cards zone for consistent spacing)
+        (hazardHTML ? '<div>' + hazardHTML + '</div>' : '') +
+        (pawHTML || '') +
+
+        // Walk window card
+        '<div class="wx-card">' +
+          '<div class="wx-card-header">' +
+            '<span class="wx-card-title">Walk window</span>' +
+            '<span class="wx-walk-window-time">' + walkWindowTime + '</span>' +
+          '</div>' +
+          '<div class="wx-card-divider"></div>' +
+          barHTML +
+          '<div class="wx-window-legend">' +
+            '<div class="wx-window-legend-item"><div class="wx-window-legend-dot" style="background:var(--brand)"></div>Good</div>' +
+            '<div class="wx-window-legend-item"><div class="wx-window-legend-dot" style="background:var(--amber)"></div>Marginal</div>' +
+            '<div class="wx-window-legend-item"><div class="wx-window-legend-dot" style="background:var(--border)"></div>Poor</div>' +
+          '</div>' +
+          '<div class="wx-walk-footer">' + rainSum.replace(/<\/?strong>/g, '') + '</div>' +
+        '</div>' +
+
+        // Metric tiles 2x2
+        '<div class="wx-tiles">' +
+
+          // Rain chance
+          '<div class="wx-tile" data-sheet="rain" role="button" tabindex="0" aria-label="Rain chance detail">' +
+            '<div class="wx-tile-label">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="19" x2="8" y2="21"/><line x1="8" y1="13" x2="8" y2="15"/><line x1="16" y1="19" x2="16" y2="21"/><line x1="16" y1="13" x2="16" y2="15"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="12" y1="15" x2="12" y2="17"/><path d="M20 16.58A5 5 0 0018 7h-1.26A8 8 0 104 15.25"/></svg>' +
+              '<span class="wx-tile-name">Rain chance</span>' +
+              '<span class="wx-tile-chevron" aria-hidden="true">&#8250;</span>' +
+            '</div>' +
+            '<div class="wx-tile-value">' + maxRainProb + '<small>%</small></div>' +
+            '<div class="wx-tile-desc ' + rl.cls + '">' + rl.text + '</div>' +
+            (rainDetail ? '<div class="wx-tile-detail">' + rainDetail + '</div>' : '') +
+          '</div>' +
+
+          // Wind
+          '<div class="wx-tile" data-sheet="wind" role="button" tabindex="0" aria-label="Wind detail">' +
+            '<div class="wx-tile-label">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.59 4.59A2 2 0 1111 8H2m10.59 11.41A2 2 0 1014 16H2m15.73-8.27A2.5 2.5 0 1119.5 12H2"/></svg>' +
+              '<span class="wx-tile-name">Wind</span>' +
+              '<span class="wx-tile-chevron" aria-hidden="true">&#8250;</span>' +
+            '</div>' +
+            '<div class="wx-tile-value">' + windMph + '<small> mph</small></div>' +
+            '<div class="wx-tile-desc ' + wl.cls + '">' + wl.text + '</div>' +
+            (windDir ? '<div class="wx-tile-detail">' + windDir + '</div>' : '') +
+          '</div>' +
+
+          // UV index
+          '<div class="wx-tile" data-sheet="uv" role="button" tabindex="0" aria-label="UV index detail">' +
+            '<div class="wx-tile-label">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' +
+              '<span class="wx-tile-name">UV index</span>' +
+              '<span class="wx-tile-chevron" aria-hidden="true">&#8250;</span>' +
+            '</div>' +
+            '<div class="wx-tile-value">' + currentUV + '</div>' +
+            '<div class="wx-tile-desc ' + ul.cls + '">' + ul.text + '</div>' +
+            (uvDetail ? '<div class="wx-tile-detail">' + uvDetail + '</div>' : '') +
+          '</div>' +
+
+          // Humidity
+          '<div class="wx-tile" data-sheet="humidity" role="button" tabindex="0" aria-label="Humidity detail">' +
+            '<div class="wx-tile-label">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>' +
+              '<span class="wx-tile-name">Humidity</span>' +
+              '<span class="wx-tile-chevron" aria-hidden="true">&#8250;</span>' +
+            '</div>' +
+            '<div class="wx-tile-value">' + humidity + '<small>%</small></div>' +
+            '<div class="wx-tile-desc ' + hl.cls + '">' + hl.text + '</div>' +
+          '</div>' +
+
+        '</div>' +
+
+        // 5-day forecast card
+        '<div class="wx-card">' +
+          '<div class="wx-card-header">' +
+            '<span class="wx-card-title">5-day forecast</span>' +
+          '</div>' +
+          '<div class="wx-card-divider"></div>' +
+          '<div class="wx-forecast-grid">' + forecastHTML + '</div>' +
+        '</div>' +
+
+        // Pollen card
+        '<div class="wx-card" id="weather-pollen">' +
+          '<div class="wx-card-header">' +
+            '<span class="wx-card-title">Pollen</span>' +
+          '</div>' +
+          '<div class="wx-card-divider"></div>' +
+          '<div id="weather-pollen-body"><div style="font:400 13px/1 Inter,sans-serif;color:var(--ink-2)">Loading pollen data...</div></div>' +
+        '</div>' +
+
+      '</div>';
+
+    content.innerHTML = html;
+
+    // Wire up tile tap handlers
+    content.querySelectorAll('.wx-tile[data-sheet]').forEach(function(tile) {
+      tile.addEventListener('click', function() { openWxSheet(tile.dataset.sheet); });
+    });
+
     syncIcons();
   }
 
@@ -3577,28 +3957,124 @@
   }
 
   function buildForecastGrid(daily) {
-    var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    var dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     var html = '';
-    var limit = Math.min(6, daily.time.length);
-    for (var i = 1; i < limit; i++) {
+    var limit = Math.min(5, daily.time.length);
+    for (var i = 0; i < limit; i++) {
       var date    = new Date(daily.time[i] + 'T12:00:00');
-      var dayName = i === 1 ? 'Tomorrow' : days[date.getDay()];
+      var dayLabel = i === 0 ? 'Today' : dayNames[date.getDay()];
+      var isToday  = i === 0;
       var code    = daily.weather_code[i];
       var hi      = Math.round(daily.temperature_2m_max[i]);
       var lo      = Math.round(daily.temperature_2m_min[i]);
-      var emoji   = WMO_EMOJI[code] || '🌤️';
-      var desc    = WMO_DESC[code] || '';
+      var iconEntry = WMO_YR[code];
+      var iconName  = iconEntry ? iconEntry.day : '04';
       html +=
-        '<div class="forecast-row">' +
-          '<div class="forecast-day">' + dayName + '</div>' +
-          '<div class="forecast-icon">' + yrIcon(code, 1, 32) + '</div>' +
-          '<div class="forecast-right">' +
-            '<div class="forecast-temps">' + hi + '°<span>' + lo + '°</span></div>' +
-            '<div class="forecast-desc">' + desc + '</div>' +
-          '</div>' +
+        '<div class="wx-forecast-col">' +
+          '<span class="wx-forecast-day' + (isToday ? ' wx-forecast-day--today' : '') + '">' + dayLabel + '</span>' +
+          '<img class="wx-forecast-icon" src="' + YR_BASE + iconName + '.svg" alt="' + (WMO_DESC[code] || '') + '" width="32" height="32">' +
+          '<span class="wx-forecast-high">' + hi + '&#176;</span>' +
+          '<span class="wx-forecast-low">' + lo + '&#176;</span>' +
         '</div>';
     }
     return html;
+  }
+
+  /* ─── Metric detail sheets ─── */
+
+  function openWxSheet(type) {
+    var overlay = document.getElementById('wxSheetOverlay');
+    var sheet   = document.getElementById('wxSheet');
+    var titleEl = document.getElementById('wxSheetTitle');
+    var rowsEl  = document.getElementById('wxSheetRows');
+    var noteEl  = document.getElementById('wxSheetNote');
+    if (!overlay || !sheet) return;
+
+    var hourly = wxHourlyData;
+    if (!hourly) return;
+
+    var rows = getHourlyFromNow(hourly);
+    rowsEl.innerHTML = '';
+    noteEl.textContent = '';
+
+    var titles = { rain: 'Rain chance - today', wind: 'Wind - today', uv: 'UV index - today', humidity: 'Humidity - today' };
+    titleEl.textContent = titles[type] || '';
+
+    rows.forEach(function(h) {
+      var row = document.createElement('div');
+      row.className = 'wx-sheet-row';
+
+      var timeEl = document.createElement('span');
+      timeEl.className = 'wx-sheet-time';
+      timeEl.textContent = h.label;
+
+      var valEl = document.createElement('span');
+      valEl.className = 'wx-sheet-val';
+
+      row.appendChild(timeEl);
+      row.appendChild(valEl);
+
+      if (type === 'rain') {
+        valEl.textContent = h.precipProb + '%';
+        var modCls = h.precipProb > 50 ? ' wx-sheet-bar-fill--bad' : h.precipProb > 20 ? ' wx-sheet-bar-fill--caution' : '';
+        var track = document.createElement('div'); track.className = 'wx-sheet-bar-track';
+        var fill  = document.createElement('div'); fill.className = 'wx-sheet-bar-fill' + modCls;
+        fill.style.width = h.precipProb + '%';
+        track.appendChild(fill); row.appendChild(track);
+      } else if (type === 'wind') {
+        valEl.textContent = h.windSpeed + ' mph';
+        var modCls2 = h.windSpeed > 38 ? ' wx-sheet-bar-fill--bad' : h.windSpeed > 19 ? ' wx-sheet-bar-fill--caution' : '';
+        var track2 = document.createElement('div'); track2.className = 'wx-sheet-bar-track';
+        var fill2  = document.createElement('div'); fill2.className = 'wx-sheet-bar-fill' + modCls2;
+        fill2.style.width = Math.min(h.windSpeed * 1.5, 100) + '%';
+        track2.appendChild(fill2);
+        row.appendChild(track2);
+        if (h.windDir) {
+          var dirEl = document.createElement('span');
+          dirEl.style.cssText = 'font:500 12px/1 Inter,sans-serif;color:var(--ink-2);width:24px;flex-shrink:0;text-align:right;';
+          dirEl.textContent = h.windDir;
+          row.appendChild(dirEl);
+        }
+      } else if (type === 'uv') {
+        valEl.textContent = h.uvIndex;
+        var uvCls = h.uvIndex >= 6 ? 'wx-sheet-badge--high' : h.uvIndex >= 3 ? 'wx-sheet-badge--moderate' : 'wx-sheet-badge--low';
+        var uvLbl = h.uvIndex >= 8 ? 'Very high' : h.uvIndex >= 6 ? 'High' : h.uvIndex >= 3 ? 'Moderate' : 'Low';
+        var badge = document.createElement('span');
+        badge.className = 'wx-sheet-badge ' + uvCls;
+        badge.textContent = uvLbl;
+        row.appendChild(badge);
+      } else if (type === 'humidity') {
+        valEl.textContent = h.humidity + '%';
+        var humLbl = h.humidity > 80 ? 'Very humid' : h.humidity > 65 ? 'Humid' : h.humidity > 50 ? 'Moderate' : h.humidity > 30 ? 'Comfortable' : 'Very dry';
+        var lbl = document.createElement('span');
+        lbl.style.cssText = 'font:400 13px/1 Inter,sans-serif;color:var(--ink-2);flex:1;';
+        lbl.textContent = humLbl;
+        row.appendChild(lbl);
+      }
+
+      rowsEl.appendChild(row);
+    });
+
+    var notes = {
+      uv: 'UV above 3 - consider sun protection for long outdoor sessions.',
+      humidity: 'High humidity can make dogs overheat faster on longer walks.'
+    };
+    if (notes[type]) noteEl.textContent = notes[type];
+
+    overlay.hidden = false;
+    sheet.hidden = false;
+    requestAnimationFrame(function() { sheet.classList.add('is-open'); });
+  }
+
+  function closeWxSheet() {
+    var sheet   = document.getElementById('wxSheet');
+    var overlay = document.getElementById('wxSheetOverlay');
+    if (!sheet) return;
+    sheet.classList.remove('is-open');
+    sheet.addEventListener('transitionend', function() {
+      sheet.hidden = true;
+      overlay.hidden = true;
+    }, { once: true });
   }
 
   /* ─── Main render entry point ─── */
@@ -3621,6 +4097,12 @@
     renderTodayStateB(cur, verdict, hazards, daily);
     renderWeatherTab(cur, hourly, daily, locationName, verdict, hazards, paw);
   }
+
+  /* ─── Wx sheet overlay click to close ─── */
+  document.addEventListener('DOMContentLoaded', function() {
+    var overlay = document.getElementById('wxSheetOverlay');
+    if (overlay) overlay.addEventListener('click', closeWxSheet);
+  });
 
   /* ─── Init: session restore is handled by initApp() at end of all phases ─── */
 </script>
@@ -6835,8 +7317,6 @@
                 }).catch(function() {
                   var pc = document.getElementById('weather-pollen');
                   if (pc) pc.style.display = 'none';
-                  var pt = document.getElementById('weather-pollen-title');
-                  if (pt) pt.style.display = 'none';
                 });
               }
             }
@@ -6863,6 +7343,14 @@
   initWalkDetailSwipe();
 </script>
 
+<!-- Metric detail bottom sheet -->
+<div class="wx-sheet-overlay" id="wxSheetOverlay" hidden></div>
+<div class="wx-sheet" id="wxSheet" hidden>
+  <div class="wx-sheet-handle"></div>
+  <div class="wx-sheet-title" id="wxSheetTitle"></div>
+  <div class="wx-sheet-rows" id="wxSheetRows"></div>
+  <div class="wx-sheet-note" id="wxSheetNote"></div>
+</div>
 
 </body>
 </html>
