@@ -1079,7 +1079,8 @@
     .wx-hero-temp { font: 700 80px/1 'Inter', sans-serif; color: var(--ink); letter-spacing: -3px; }
     .wx-hero-unit { font: 400 32px/1 'Inter', sans-serif; color: var(--ink-2); margin-top: 8px; }
     .wx-hero-icon { width: 96px; height: 96px; margin-top: 14px; flex-shrink: 0; }
-    .weather-hero-top img { width: 80px; height: 80px; margin-top: 8px; flex-shrink: 0; margin-right: 4px; filter: brightness(0) invert(1); }
+    .weather-hero-icon-wrap { width: 96px; height: 96px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .weather-hero-top img { width: 80px; height: 80px; }
     .wx-hero-condition { margin-top: 16px; font: 500 17px/1.2 'Inter', sans-serif; color: var(--ink); }
     .wx-hero-sub { margin-top: 4px; font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); }
 
@@ -1879,7 +1880,7 @@
     .dog-tags-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
     .dog-tag-chip { padding: 8px 14px; font: 500 13px/1 'Inter', sans-serif; background: var(--bg); color: var(--ink-2); border: 1.5px solid var(--border); border-radius: 20px; cursor: pointer; -webkit-tap-highlight-color: transparent; white-space: nowrap; }
     .dog-tag-chip.active { background: var(--brand); color: #fff; border-color: var(--brand); }
-    .dog-birthday-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .dog-birthday-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
     .dog-settings-save-btn { width: 100%; height: 48px; background: var(--brand); color: #fff; font: 600 15px/1 'Inter', sans-serif; border: none; border-radius: 12px; cursor: pointer; margin-top: 16px; -webkit-tap-highlight-color: transparent; }
     .dog-settings-save-btn:active { opacity: 0.85; }
     .dog-settings-remove-link { display: block; text-align: center; font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); background: none; border: none; padding: 14px 0 0; cursor: pointer; width: 100%; -webkit-tap-highlight-color: transparent; }
@@ -3101,7 +3102,7 @@
       <button class="me-add-dog-link" id="meAddDogLink" style="display:none" onclick="showDogSetupCard()">Add your dog</button>
 
       <!-- Hidden file input for photo uploads -->
-      <input type="file" id="journalPhotoInput" accept="image/*" capture="environment" style="display:none">
+      <input type="file" id="journalPhotoInput" accept="image/*" style="display:none">
 
       <div style="height:32px"></div>
 
@@ -3895,7 +3896,7 @@
             '<div class="weather-hero-temp">' + temp + '°C</div>' +
             '<div class="weather-hero-feels">Feels like ' + feels + '°C</div>' +
           '</div>' +
-          '<div>' + yrIcon(cur.weather_code, cur.is_day, 80) + '</div>' +
+          '<div class="weather-hero-icon-wrap">' + yrIcon(cur.weather_code, cur.is_day, 80) + '</div>' +
         '</div>' +
         '<div class="weather-verdict">' + verdict.title + '</div>' +
         '<div class="weather-pills">' +
@@ -7016,9 +7017,12 @@
   function checkBirthdayBanner() {
     var dog = getDog();
     if (!dog || !dog.birthday || !dog.birthday.month) return;
-    var now         = new Date();
-    var todayMonth  = now.getMonth() + 1;
-    if (parseInt(dog.birthday.month) !== todayMonth) return;
+    var now        = new Date();
+    var todayDay   = now.getDate();
+    var todayMonth = now.getMonth() + 1;
+    var bdDay      = dog.birthday.day ? parseInt(dog.birthday.day) : 1; // migration: no day = treat as day 1
+    var bdMonth    = parseInt(dog.birthday.month);
+    if (bdDay !== todayDay || bdMonth !== todayMonth) return;
     var currentYear = now.getFullYear();
     var shownYear   = null;
     try { shownYear = parseInt(localStorage.getItem('sniffout_birthday_shown')); } catch(e) {}
@@ -7338,6 +7342,16 @@
     chips.forEach(function(chip) {
       chip.classList.toggle('active', activeTags.indexOf(chip.getAttribute('data-tag')) !== -1);
     });
+    // Birthday - populate day dropdown if needed
+    var bdDay = document.getElementById('dogSettingsBdDay');
+    if (bdDay && bdDay.options.length <= 1) {
+      for (var d = 1; d <= 31; d++) {
+        var dOpt = document.createElement('option');
+        dOpt.value       = String(d);
+        dOpt.textContent = String(d);
+        bdDay.appendChild(dOpt);
+      }
+    }
     // Birthday - populate year dropdown if needed
     var bdYear = document.getElementById('dogSettingsBdYear');
     if (bdYear && bdYear.options.length <= 1) {
@@ -7351,6 +7365,7 @@
     }
     var bdMonth = document.getElementById('dogSettingsBdMonth');
     var bd = dog && dog.birthday ? dog.birthday : null;
+    if (bdDay)   bdDay.value   = bd && bd.day   ? String(bd.day)   : '';
     if (bdMonth) bdMonth.value = bd && bd.month ? String(bd.month) : '';
     if (bdYear)  bdYear.value  = bd && bd.year  ? String(bd.year)  : '';
     // Remove link
@@ -7383,6 +7398,7 @@
     var nameEl       = document.getElementById('dogSettingsName');
     var breedEl      = document.getElementById('dogSettingsBreed');
     var breedOtherEl = document.getElementById('dogSettingsBreedOther');
+    var bdDayEl      = document.getElementById('dogSettingsBdDay');
     var bdMonthEl    = document.getElementById('dogSettingsBdMonth');
     var bdYearEl     = document.getElementById('dogSettingsBdYear');
     var name = nameEl ? nameEl.value.trim() : '';
@@ -7403,9 +7419,10 @@
     document.querySelectorAll('#dogTagsRow .dog-tag-chip.active').forEach(function(chip) {
       activeTags.push(chip.getAttribute('data-tag'));
     });
+    var bdDay    = bdDayEl   && bdDayEl.value   ? parseInt(bdDayEl.value)   : null;
     var bdMonth  = bdMonthEl && bdMonthEl.value ? parseInt(bdMonthEl.value) : null;
     var bdYear   = bdYearEl  && bdYearEl.value  ? parseInt(bdYearEl.value)  : null;
-    var birthday = (bdMonth || bdYear) ? { month: bdMonth, year: bdYear } : null;
+    var birthday = (bdDay || bdMonth || bdYear) ? { day: bdDay, month: bdMonth, year: bdYear } : null;
     saveDogProfile({ name: name, breed: breed || null, size: size, tags: activeTags, birthday: birthday });
     var saveBtn = document.querySelector('.dog-settings-save-btn');
     if (saveBtn) {
@@ -9138,6 +9155,9 @@
     <div class="dog-settings-field">
       <div class="dog-settings-label">Birthday (optional)</div>
       <div class="dog-birthday-row">
+        <select class="dog-settings-select" id="dogSettingsBdDay">
+          <option value="">Day</option>
+        </select>
         <select class="dog-settings-select" id="dogSettingsBdMonth">
           <option value="">Month</option>
           <option value="1">January</option>
