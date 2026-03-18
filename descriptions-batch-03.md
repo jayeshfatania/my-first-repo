@@ -19,7 +19,7 @@ DESCRIPTION: A really lovely walk through some of the most beautiful woodland in
 WALK ID: white-park-bay
 PERSONA: Morag
 USERNAME: morag83
-DESCRIPTION: A braw wee bay on the Causeway Coast - white sand, sea views across to Scotland on a clear day, and a clifftop path with some proper exposure above the limestone cliffs. The beach is off the lead year-round apart from the western section between May and September when it's restricted (signed on site), and the car park is wee - get there early or you'll be turning back down the road. Mind there's a cafe in Ballycastle a few miles along if you need warming up after the clifftop stretch.
+DESCRIPTION: A braw sweep of white sand on the Causeway Coast - sea views across to Scotland on a clear day, and a clifftop path with proper exposure above the limestone cliffs. A formal Dog Control Order has been in place since April 2024 requiring leads at all times across the whole bay - £80 fixed penalty, and worth knowing before you arrive if you were expecting a run-free beach. The NT car park is wee so early is essential on summer weekends, and there's a decent cafe in Ballycastle a few miles along if you need warming up after the clifftop stretch.
 
 ---
 
@@ -103,7 +103,7 @@ DESCRIPTION: The Ridgeway runs along the top of the Berkshire Downs here - a nat
 WALK ID: dovestone-reservoir
 PERSONA: Jamie
 USERNAME: jamieok
-DESCRIPTION: Half of Greater Manchester has found this one, which means arrive early on weekends or parking becomes a faff. That said it's genuinely good - the reservoir sits right on the edge of the moors above Greenfield and the hills above look properly dramatic when the weather cooperates. Ghost gets decent off-lead stretches on the quieter sections of the circuit away from the picnic area, small charge at Bank Lane, even cheaper if you're RSPB.
+DESCRIPTION: Half of Greater Manchester has found this one, which means arrive early on weekends or parking becomes a faff. That said it's genuinely good - the reservoir sits right on the edge of the moors above Greenfield and the hills above look properly dramatic when the weather cooperates. Ghost gets decent off-lead stretches on the quieter moor sections, though clip on near the sheep that graze parts of the upper circuit - Bank Lane car park, small charge, even cheaper if you're RSPB.
 
 ---
 

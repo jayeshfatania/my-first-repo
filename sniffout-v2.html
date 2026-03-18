@@ -1963,6 +1963,411 @@
     .segment-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
 
     /* ═══════════════════════════════
+       ME TAB — v3 subpage layout
+    ═══════════════════════════════ */
+    /* Header identity group */
+    .me-header-identity {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .me-dog-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(59, 92, 42, 0.08);
+      border: 1px solid rgba(59, 92, 42, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--brand);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .me-dog-avatar img {
+      width: 100%; height: 100%;
+      object-fit: cover; border-radius: 50%;
+    }
+    /* Stats dashboard */
+    .me-stats-dashboard {
+      padding: 0 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .me-stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .me-stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .me-stat-card--secondary {
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+    }
+    .me-stat-number {
+      font: 700 48px/1 'Inter', sans-serif;
+      color: var(--ink);
+      letter-spacing: -2px;
+    }
+    .me-stat-number--sm {
+      font: 700 32px/1 'Inter', sans-serif;
+      letter-spacing: -1px;
+      color: var(--ink);
+    }
+    /* Entry rows */
+    .me-entries {
+      padding: 0 16px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .me-entry-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .me-entry-row:last-child { border-bottom: none; }
+    .me-entry-row:active { opacity: 0.6; }
+    .me-entry-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ink-2);
+      flex-shrink: 0;
+    }
+    .me-entry-text {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .me-entry-label {
+      font: 500 14px/1 'Inter', sans-serif;
+      color: var(--ink);
+    }
+    .me-entry-preview {
+      font: 400 12px/1.3 'Inter', sans-serif;
+      color: var(--ink-2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .me-entry-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .me-entry-count {
+      font: 500 13px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+    }
+    .me-entry-chevron { color: var(--ink-2); opacity: 0.5; }
+    /* Subpage overlay shell */
+    .me-subpage {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: var(--bg);
+      transform: translateY(100%);
+      transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+      display: flex;
+      flex-direction: column;
+      overscroll-behavior: contain;
+    }
+    .me-subpage.is-open { transform: translateY(0); }
+    .me-subpage-handle {
+      width: 36px; height: 4px;
+      background: rgba(0,0,0,0.15);
+      border-radius: 2px;
+      margin: 10px auto 0;
+      flex-shrink: 0;
+    }
+    .me-subpage-header {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px 12px;
+      flex-shrink: 0;
+    }
+    .me-subpage-back {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border: none; background: none;
+      color: var(--ink);
+      border-radius: 50%;
+      cursor: pointer;
+      margin-left: -8px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .me-subpage-title {
+      font: 600 17px/1 'Inter', sans-serif;
+      color: var(--ink);
+      letter-spacing: -0.2px;
+      flex: 1;
+      text-align: center;
+      margin: 0;
+    }
+    .me-subpage-header-spacer { width: 36px; }
+    .me-subpage-content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 16px 40px;
+    }
+    /* Subpage empty states */
+    .me-subpage-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 48px 24px;
+      gap: 12px;
+    }
+    .me-subpage-empty-icon {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ink-2);
+      margin-bottom: 4px;
+    }
+    .me-subpage-empty-head {
+      font: 600 16px/1.3 'Inter', sans-serif;
+      color: var(--ink);
+      margin: 0;
+    }
+    .me-subpage-empty-body {
+      font: 400 14px/1.5 'Inter', sans-serif;
+      color: var(--ink-2);
+      margin: 0;
+      max-width: 280px;
+    }
+    /* Journal subpage rows */
+    .journal-row {
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .journal-row:last-child { border-bottom: none; }
+    .journal-row-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+    }
+    .journal-row-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .journal-row-name {
+      font: 500 14px/1 'Inter', sans-serif;
+      color: var(--ink);
+    }
+    .journal-row-meta {
+      font: 400 12px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+    }
+    .journal-row-chevron {
+      color: var(--ink-2);
+      opacity: 0.5;
+      transition: transform 200ms ease;
+      flex-shrink: 0;
+    }
+    .journal-row.is-expanded .journal-row-chevron { transform: rotate(180deg); }
+    .journal-row-detail {
+      padding: 0 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .journal-row-note {
+      font: 400 14px/1.5 'Inter', sans-serif;
+      color: var(--ink);
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .journal-row-note-empty {
+      font: 400 14px/1.5 'Inter', sans-serif;
+      color: var(--ink-2);
+      font-style: italic;
+      margin: 0;
+    }
+    .journal-row-photo img {
+      width: 100%;
+      border-radius: 12px;
+      object-fit: cover;
+      max-height: 200px;
+    }
+    /* Badge cards subpage */
+    .badge-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .badge-card-summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+    }
+    .badge-card-icon {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      background: rgba(59, 92, 42, 0.08);
+      border: 1px solid rgba(59, 92, 42, 0.15);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--brand);
+      flex-shrink: 0;
+    }
+    .badge-card-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .badge-card-name {
+      font: 600 14px/1 'Inter', sans-serif;
+      color: var(--ink);
+    }
+    .badge-card-date {
+      font: 400 12px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+    }
+    .badge-card-chevron {
+      color: var(--ink-2);
+      opacity: 0.5;
+      transition: transform 200ms ease;
+      flex-shrink: 0;
+    }
+    .badge-card.is-expanded .badge-card-chevron { transform: rotate(180deg); }
+    .badge-card-detail {
+      padding: 0 14px 14px;
+      border-top: 1px solid var(--border);
+    }
+    .badge-card-detail[hidden] { display: none; }
+    .badge-card-desc {
+      font: 400 14px/1.5 'Inter', sans-serif;
+      color: var(--ink-2);
+      margin: 12px 0 0;
+    }
+    /* Saved Walks subpage rows */
+    .saved-walk-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .saved-walk-row:last-child { border-bottom: none; }
+    .saved-walk-row:active { opacity: 0.6; }
+    .saved-walk-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+    .saved-walk-name {
+      font: 500 14px/1 'Inter', sans-serif;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .saved-walk-meta {
+      font: 400 12px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+    }
+    .saved-walk-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      margin-left: 12px;
+    }
+    .saved-walk-diff {
+      font: 500 11px/1 'Inter', sans-serif;
+      padding: 3px 7px;
+      border-radius: 20px;
+      text-transform: lowercase;
+    }
+    .saved-walk-diff--easy   { background: rgba(34,197,94,0.12);  color: #15803d; }
+    .saved-walk-diff--moderate { background: rgba(245,158,11,0.12); color: #b45309; }
+    .saved-walk-diff--hard   { background: rgba(239,68,68,0.12);  color: #b91c1c; }
+    .saved-walk-chevron { color: var(--ink-2); opacity: 0.5; }
+    /* Saved Places subpage rows */
+    .saved-place-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .saved-place-row:last-child { border-bottom: none; }
+    .saved-place-row:active { opacity: 0.6; }
+    .saved-place-type-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ink-2);
+      flex-shrink: 0;
+    }
+    .saved-place-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .saved-place-name {
+      font: 500 14px/1 'Inter', sans-serif;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .saved-place-meta {
+      font: 400 12px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+    }
+    .saved-place-external { color: var(--ink-2); opacity: 0.4; flex-shrink: 0; }
+
+    /* ═══════════════════════════════
        DARK MODE
     ═══════════════════════════════ */
     body.night {
@@ -2863,6 +3268,8 @@
     body.night .walk-detail-close-btn { background: var(--surface); border-color: var(--border); color: var(--ink-2); }
     /* Walk detail — dark mode */
     body.night .walk-detail-overlay   { background: var(--bg); }
+    body.night .me-subpage            { background: var(--bg); }
+    body.night .me-subpage-handle     { background: rgba(255,255,255,0.2); }
     body.night .walk-detail-header     { background: var(--surface); border-color: var(--border); }
     body.night .walk-detail-back,
     body.night .walk-detail-share-btn  { color: var(--ink); }
@@ -3057,49 +3464,118 @@
     <!-- ══════════ ME TAB ══════════ -->
     <div id="tab-me" class="tab-panel">
 
-      <!-- Zone 1: Header -->
+      <!-- Header -->
       <header class="me-header">
-        <div id="meHeaderLeft" class="me-header-left"><span class="me-name" id="meDisplayName"></span></div>
+        <div class="me-header-identity">
+          <div class="me-dog-avatar" id="meDogAvatar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+              <path d="M10 3C8.5 3 7 4 7 6v1H5a2 2 0 00-2 2v2c0 1.1.9 2 2 2h.5L5 17h2l1-3h4l1 3h2l-.5-4H15a2 2 0 002-2V9a2 2 0 00-2-2h-2V6c0-2-1.5-3-3-3z"/>
+            </svg>
+          </div>
+          <span class="me-name" id="meDisplayName"></span>
+        </div>
         <button class="me-gear-btn" id="meGearBtn" aria-label="Settings">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </button>
       </header>
 
-      <!-- Zone 2: Hero (populated by JS) -->
-      <div id="meHero"></div>
-
-      <!-- Zone 3: Badges (hidden until earned) -->
-      <div class="me-badges-section" id="meBadgesSection" style="display:none">
-        <span class="me-section-label">Your badges</span>
-        <div class="me-badges-scroll" id="meBadgesScroll"></div>
-        <div class="me-badge-detail" id="meBadgeDetail" style="display:none" aria-live="polite"></div>
-      </div>
-
-      <!-- Zone 4: Favourites (hidden until at least one is saved) -->
-      <div class="me-favs-section" id="meFavsSection" style="display:none">
-        <span class="me-section-label">Saved walks</span>
-        <div id="favs-list"></div>
-      </div>
-
-      <!-- Zone 5: Walk log (below fold, hidden until walks exist) -->
-      <div class="me-walks-section" id="meWalksSection" style="display:none">
-        <div class="me-walks-header">
-          <span class="me-section-label">Recent walks</span>
-          <button class="me-walks-see-all" id="meWalksSeeAll" style="display:none" onclick="meExpandWalkLog()"></button>
+      <!-- Stats dashboard -->
+      <div class="me-stats-dashboard" id="meStatsDashboard">
+        <div class="me-stats-row">
+          <div class="me-stat-card me-stat-card--primary">
+            <span class="me-stat-number" id="statMiles">0</span>
+            <span class="me-stat-label">miles walked</span>
+          </div>
+          <div class="me-stat-card">
+            <span class="me-stat-number" id="statWalks">0</span>
+            <span class="me-stat-label">walks logged</span>
+          </div>
         </div>
-        <div class="me-walk-list" id="meWalkList"></div>
+        <div class="me-stat-card me-stat-card--secondary">
+          <span class="me-stat-number me-stat-number--sm" id="statContribs">0</span>
+          <span class="me-stat-label">contributions</span>
+        </div>
       </div>
 
-      <!-- Zone 6: Walk journal (hidden until walks exist) -->
-      <div class="me-journal-section" id="meJournalSection" style="display:none">
-        <span class="me-section-label">Walk journal</span>
-        <div id="meJournalList"></div>
-      </div>
+      <!-- Entry rows -->
+      <div class="me-entries" id="meEntries">
 
-      <!-- Add your dog link (shown after skip, until dog is set) -->
-      <button class="me-add-dog-link" id="meAddDogLink" style="display:none" onclick="showDogSetupCard()">Add your dog</button>
+        <!-- Walk Journal -->
+        <button class="me-entry-row" onclick="openMeSubpage('journal')" id="entryJournal">
+          <div class="me-entry-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+              <line x1="8" y1="7" x2="16" y2="7"/>
+              <line x1="8" y1="11" x2="14" y2="11"/>
+            </svg>
+          </div>
+          <div class="me-entry-text">
+            <span class="me-entry-label">Walk Journal</span>
+            <span class="me-entry-preview" id="journalPreview">No walks logged yet</span>
+          </div>
+          <div class="me-entry-right">
+            <span class="me-entry-count" id="journalCount"></span>
+            <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </button>
 
-      <!-- Hidden file input for photo uploads -->
+        <!-- Badges — hidden until first badge earned -->
+        <button class="me-entry-row" onclick="openMeSubpage('badges')" id="entryBadges" hidden>
+          <div class="me-entry-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+              <circle cx="12" cy="8" r="6"/>
+              <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+            </svg>
+          </div>
+          <div class="me-entry-text">
+            <span class="me-entry-label">Badges</span>
+            <span class="me-entry-preview" id="badgesPreview"></span>
+          </div>
+          <div class="me-entry-right">
+            <span class="me-entry-count" id="badgesCount"></span>
+            <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </button>
+
+        <!-- Saved Walks -->
+        <button class="me-entry-row" onclick="openMeSubpage('savedwalks')" id="entrySavedWalks">
+          <div class="me-entry-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+            </svg>
+          </div>
+          <div class="me-entry-text">
+            <span class="me-entry-label">Saved Walks</span>
+            <span class="me-entry-preview" id="savedWalksPreview">None saved yet</span>
+          </div>
+          <div class="me-entry-right">
+            <span class="me-entry-count" id="savedWalksCount"></span>
+            <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </button>
+
+        <!-- Saved Places -->
+        <button class="me-entry-row" onclick="openMeSubpage('savedplaces')" id="entrySavedPlaces">
+          <div class="me-entry-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+              <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          <div class="me-entry-text">
+            <span class="me-entry-label">Saved Places</span>
+            <span class="me-entry-preview" id="savedPlacesPreview">None saved yet</span>
+          </div>
+          <div class="me-entry-right">
+            <span class="me-entry-count" id="savedPlacesCount"></span>
+            <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </button>
+
+      </div><!-- /me-entries -->
+
+      <!-- Hidden file input for photo uploads (kept for compatibility) -->
       <input type="file" id="journalPhotoInput" accept="image/*" style="display:none">
 
       <div style="height:32px"></div>
@@ -5126,6 +5602,15 @@
       closeWalkDetail();
       return true;
     }
+    // Me tab subpages
+    var subpageIds = ['journal', 'badges', 'savedwalks', 'savedplaces'];
+    for (var s = 0; s < subpageIds.length; s++) {
+      var sp = document.getElementById('subpage' + subpageIds[s].charAt(0).toUpperCase() + subpageIds[s].slice(1));
+      if (sp && sp.classList.contains('is-open')) {
+        closeMeSubpage(subpageIds[s]);
+        return true;
+      }
+    }
     return false;
   }
 
@@ -6964,7 +7449,15 @@
   }
 
   function updateMeStats() {
-    /* Stats row removed in Me tab redesign - no-op stub */
+    var log = getWalkLog();
+    var totalMiles = getTotalDistanceMi();
+    var milesStr = totalMiles === 0 ? '0' : (totalMiles % 1 === 0 ? Math.round(totalMiles).toString() : totalMiles.toFixed(1));
+    var milesEl = document.getElementById('statMiles');
+    if (milesEl) milesEl.textContent = milesStr;
+    var walksEl = document.getElementById('statWalks');
+    if (walksEl) walksEl.textContent = log.length;
+    var contribsEl = document.getElementById('statContribs');
+    if (contribsEl) contribsEl.textContent = getContributionCount();
   }
 
   /* -- getTotalMiles alias -------------------------------------------- */
@@ -7177,130 +7670,103 @@
 
   /* -- Main Me tab render ----------------------------------------------- */
   function renderMeTab() {
-    var log       = getWalkLog();
-    var name      = getSavedUsername();
-    var dog       = getDog();
-    var dismissed = localStorage.getItem(DOG_DISMISSED_KEY);
-    var dogName   = getDogName();
+    var log  = getWalkLog();
+    var name = getSavedUsername();
+    var dog  = getDog();
 
-    // Header - dog avatar or plain name
-    var headerLeftEl = document.getElementById('meHeaderLeft');
-    if (headerLeftEl) {
-      if (dog) {
-        var metaParts = [];
-        if (dog.breed) metaParts.push(dog.breed);
-        if (name) metaParts.push(name);
-        var metaStr = metaParts.join(' - ');
-        var headerNoseSvg = '<svg width="22" height="16" viewBox="0 0 48 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M24 2C30 2 43 8 43 18C43 28 35 36 24 36C13 36 5 28 5 18C5 8 18 2 24 2Z" fill="var(--brand)"/><ellipse cx="15.5" cy="21" rx="5.5" ry="5.5" fill="#FFFFFF"/><ellipse cx="32.5" cy="21" rx="5.5" ry="5.5" fill="#FFFFFF"/><rect x="22" y="7" width="4" height="9" rx="2" fill="#FFFFFF"/></svg>';
-        headerLeftEl.innerHTML =
-          '<div class="dog-avatar" onclick="showDogPicker()" style="cursor:pointer;" aria-label="Switch dog">' + headerNoseSvg + '</div>' +
-          '<div class="me-header-text">' +
-            '<span class="me-dog-name">' + (dog.name || '') + '</span>' +
-            (metaStr ? '<span class="me-dog-meta">' + metaStr + '</span>' : '') +
-          '</div>';
+    // Header: display name
+    var nameEl = document.getElementById('meDisplayName');
+    if (nameEl) {
+      if (dog && dog.name) {
+        nameEl.textContent = dog.name;
       } else {
-        headerLeftEl.innerHTML = '<span class="me-name" id="meDisplayName">' + (name || '') + '</span>';
+        nameEl.textContent = name || '';
       }
+    }
+
+    // Header: dog avatar — show initial if dog name set
+    var avatarEl = document.getElementById('meDogAvatar');
+    if (avatarEl && dog && dog.name) {
+      avatarEl.innerHTML = '<span style="font:700 16px/1 \'Inter\',sans-serif;color:var(--brand);">' +
+        dog.name.charAt(0).toUpperCase() + '</span>';
     }
 
     // Settings sheet name
     var settingsNameEl = document.getElementById('meSettingsNameValue');
     if (settingsNameEl) settingsNameEl.textContent = name || 'Not set';
 
-    // "Add your dog" link — visible only when dismissed and no dog set
-    var addDogLink = document.getElementById('meAddDogLink');
-    if (addDogLink) {
-      addDogLink.style.display = (!dog && dismissed) ? '' : 'none';
+    // Stats
+    updateMeStats();
+
+    // Entry rows: previews and counts
+    var walkLog = log;
+    var badges  = getEarnedBadges();
+    var favs    = getFavourites();
+    var savedPlaces = [];
+    try { savedPlaces = JSON.parse(localStorage.getItem('sniffout_saved_places') || '[]'); } catch(e) {}
+
+    // Walk Journal row
+    var journalCount   = document.getElementById('journalCount');
+    var journalPreview = document.getElementById('journalPreview');
+    if (journalCount && journalPreview) {
+      if (walkLog.length > 0) {
+        var lastEntry = walkLog[0]; // log is stored most-recent first (unshift)
+        var walkById = {};
+        WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
+        var lastWalkId = lastEntry.walkId || lastEntry.id;
+        var lastWalk = walkById[lastWalkId];
+        var lastName = lastWalk ? lastWalk.name : lastWalkId;
+        journalCount.textContent = walkLog.length;
+        journalPreview.textContent = lastName + ' \u00b7 ' + formatRelativeDate(lastEntry.date || lastEntry.ts);
+      }
     }
 
-    // Hero
-    var heroEl = document.getElementById('meHero');
-    if (heroEl) {
-      if (log.length === 0) {
-        if (!dog && !dismissed) {
-          // First visit, no dog, no walks: show dog setup card
-          showDogSetupCard();
-        } else {
-          // Dog set or dismissed: placeholder stats + hint text
-          var emptyLine = dogName
-            ? 'Where will you take ' + dogName + ' first?'
-            : 'Start exploring walks to build your story here.';
-          var emptyCta = dogName
-            ? 'Find a walk for ' + dogName + ' \u2192'
-            : 'Find a walk \u2192';
-          heroEl.innerHTML =
-            '<div class="me-hero me-hero--empty">' +
-              '<div class="me-stats-row" style="opacity:0.25;">' +
-                '<div class="me-stat-cell">' +
-                  '<span class="me-stat-value">0</span>' +
-                  '<span class="me-stat-label">' + (dogName ? 'approx miles with ' + dogName : 'approx miles walked') + '</span>' +
-                '</div>' +
-                '<div class="me-stat-cell">' +
-                  '<span class="me-stat-value">0</span>' +
-                  '<span class="me-stat-label">places found</span>' +
-                '</div>' +
-                '<div class="me-stat-cell">' +
-                  '<span class="me-stat-value">0</span>' +
-                  '<span class="me-stat-label">contributions</span>' +
-                '</div>' +
-              '</div>' +
-              '<p class="me-empty-line" style="margin-top:12px;">' + emptyLine + '</p>' +
-              '<button class="me-empty-cta" onclick="switchTab(\'walks\')">' + emptyCta + '</button>' +
-            '</div>';
+    // Badges row — hidden until first badge earned
+    var entryBadges   = document.getElementById('entryBadges');
+    var badgesCount   = document.getElementById('badgesCount');
+    var badgesPreview = document.getElementById('badgesPreview');
+    if (entryBadges) {
+      if (badges.length > 0) {
+        entryBadges.hidden = false;
+        if (badgesCount) badgesCount.textContent = badges.length;
+        if (badgesPreview) {
+          var latestBadge = badges[badges.length - 1];
+          badgesPreview.textContent = (latestBadge.label || latestBadge.name || '') + ' earned';
         }
       } else {
-        var totalMiles = getTotalDistanceMi();
-        var milesStr = (totalMiles % 1 === 0)
-          ? Math.round(totalMiles).toString()
-          : totalMiles.toFixed(1);
-        var placesFound    = getExploredCount();
-        var contributions  = getContributionCount();
-        heroEl.innerHTML =
-          '<div class="me-hero">' +
-            '<div class="me-stats-row">' +
-              '<div class="me-stat-cell">' +
-                '<span class="me-stat-value">' + milesStr + '</span>' +
-                '<span class="me-stat-label">' + heroLabel(dogName) + '</span>' +
-              '</div>' +
-              '<div class="me-stat-cell">' +
-                '<span class="me-stat-value">' + placesFound + '</span>' +
-                '<span class="me-stat-label">places found</span>' +
-              '</div>' +
-              '<div class="me-stat-cell">' +
-                '<span class="me-stat-value">' + contributions + '</span>' +
-                '<span class="me-stat-label">contributions</span>' +
-              '</div>' +
-            '</div>' +
-            '<div style="padding:8px 20px 4px; font:400 13px/1 \'Inter\',sans-serif; color:var(--ink-2); text-align:center;">' + heroSub(log.length, dogName) + '</div>' +
-            '<div style="padding:4px 20px 16px; font:400 11px/1.3 \'Inter\',sans-serif; color:var(--ink-2); opacity:0.55; text-align:center;">Updates when you mark walks as done</div>' +
-          '</div>';
+        entryBadges.hidden = true;
       }
     }
 
-    // Check for newly earned badges and render
-    checkBadgeEarned();
-    renderMeBadges();
-
-    // Favourites
-    renderFavouritesList();
-    var favsSection = document.getElementById('meFavsSection');
-    if (favsSection) {
-      favsSection.style.display = getFavourites().length > 0 ? '' : 'none';
-    }
-
-    // Walk log
-    var walksSection = document.getElementById('meWalksSection');
-    if (walksSection) {
-      if (log.length === 0) {
-        walksSection.style.display = 'none';
+    // Saved Walks row
+    var savedWalksCount   = document.getElementById('savedWalksCount');
+    var savedWalksPreview = document.getElementById('savedWalksPreview');
+    if (savedWalksCount && savedWalksPreview) {
+      if (favs.length > 0) {
+        savedWalksCount.textContent = favs.length;
+        savedWalksPreview.textContent = favs.length + ' walk' + (favs.length !== 1 ? 's' : '') + ' saved';
       } else {
-        walksSection.style.display = '';
-        renderMeWalkLog(log);
+        savedWalksCount.textContent = '';
+        savedWalksPreview.textContent = 'None saved yet';
       }
     }
 
-    // Walk journal
-    renderMeJournal();
+    // Saved Places row
+    var savedPlacesCount   = document.getElementById('savedPlacesCount');
+    var savedPlacesPreview = document.getElementById('savedPlacesPreview');
+    if (savedPlacesCount && savedPlacesPreview) {
+      if (savedPlaces.length > 0) {
+        savedPlacesCount.textContent = savedPlaces.length;
+        savedPlacesPreview.textContent = savedPlaces.length + ' place' + (savedPlaces.length !== 1 ? 's' : '') + ' saved';
+      } else {
+        savedPlacesCount.textContent = '';
+        savedPlacesPreview.textContent = 'None saved yet';
+      }
+    }
+
+    // Check for newly earned badges (badge logic)
+    checkBadgeEarned();
+    renderFavouritesList();
   }
 
   /* ─── Dog setup card functions ─── */
@@ -7623,6 +8089,261 @@
       meJournalOpenKey = rowKey;
     }
     renderMeJournal();
+  }
+
+  /* ─── Me tab subpage open/close ─── */
+
+  function capitalizeSub(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  function openMeSubpage(id) {
+    var el = document.getElementById('subpage' + capitalizeSub(id));
+    if (!el) return;
+    renderMeSubpageContent(id);
+    el.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMeSubpage(id) {
+    var el = document.getElementById('subpage' + capitalizeSub(id));
+    if (!el) return;
+    el.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  function renderMeSubpageContent(id) {
+    if (id === 'journal')     renderSubpageJournal();
+    else if (id === 'badges')     renderSubpageBadges();
+    else if (id === 'savedwalks') renderSubpageSavedWalks();
+    else if (id === 'savedplaces') renderSubpageSavedPlaces();
+  }
+
+  /* ─── Walk Journal subpage ─── */
+
+  function renderSubpageJournal() {
+    var el = document.getElementById('journalContent');
+    if (!el) return;
+    var log = getWalkLog();
+    if (log.length === 0) {
+      el.innerHTML =
+        '<div class="me-subpage-empty">' +
+          '<div class="me-subpage-empty-icon">' +
+            '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true">' +
+              '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>' +
+              '<path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' +
+            '</svg>' +
+          '</div>' +
+          '<p class="me-subpage-empty-head">Your walks will appear here</p>' +
+          '<p class="me-subpage-empty-body">After any walk, tap Log this walk on the walk card to add it to your journal.</p>' +
+        '</div>';
+      return;
+    }
+    var walkById = {};
+    WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
+    var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var html = '';
+    log.forEach(function(entry) {
+      var walkId = entry.walkId || entry.id;
+      var walk   = walkById[walkId];
+      var name   = walk ? walk.name : walkId;
+      var dist   = walk ? walk.distance.toFixed(1) + ' mi' : '';
+      var ts     = entry.date ? new Date(entry.date) : (entry.ts ? new Date(entry.ts) : null);
+      var dateStr = ts ? ts.getDate() + ' ' + MONTHS[ts.getMonth()] + ' ' + ts.getFullYear() : '';
+      var note    = entry.note || '';
+      var photo   = entry.photoDataUrl || null;
+      var rowKey  = walkId + '_' + (entry.ts || '');
+      html +=
+        '<div class="journal-row" data-key="' + escHtml(rowKey) + '" onclick="toggleSubpageJournalRow(this)">' +
+          '<div class="journal-row-summary">' +
+            '<div class="journal-row-left">' +
+              '<span class="journal-row-name">' + escHtml(name) + '</span>' +
+              '<span class="journal-row-meta">' + (dist ? dist + (dateStr ? ' \u00b7 ' + dateStr : '') : dateStr) + '</span>' +
+            '</div>' +
+            '<svg class="journal-row-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>' +
+          '</div>' +
+          '<div class="journal-row-detail" hidden>' +
+            (note
+              ? '<p class="journal-row-note">' + escHtml(note) + '</p>'
+              : '<p class="journal-row-note-empty">No note added.</p>'
+            ) +
+            (photo ? '<div class="journal-row-photo"><img src="' + photo + '" alt="Walk photo"></div>' : '') +
+          '</div>' +
+        '</div>';
+    });
+    el.innerHTML = html;
+  }
+
+  function toggleSubpageJournalRow(el) {
+    var detail = el.querySelector('.journal-row-detail');
+    var isExpanded = el.classList.contains('is-expanded');
+    document.querySelectorAll('#journalContent .journal-row.is-expanded').forEach(function(r) {
+      r.classList.remove('is-expanded');
+      var d = r.querySelector('.journal-row-detail');
+      if (d) d.hidden = true;
+    });
+    if (!isExpanded) {
+      el.classList.add('is-expanded');
+      if (detail) detail.hidden = false;
+    }
+  }
+
+  /* ─── Badges subpage ─── */
+
+  function renderSubpageBadges() {
+    var el = document.getElementById('badgesContent');
+    if (!el) return;
+    var earned = getEarnedBadges();
+    if (earned.length === 0) {
+      el.innerHTML = '';
+      return;
+    }
+    var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var badgeSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>';
+    var html = '';
+    earned.forEach(function(b) {
+      var earnedAt = b.earnedAt ? new Date(b.earnedAt) : null;
+      var dateStr = earnedAt
+        ? 'Earned ' + earnedAt.getDate() + ' ' + MONTHS[earnedAt.getMonth()] + ' ' + earnedAt.getFullYear()
+        : '';
+      html +=
+        '<div class="badge-card" data-id="' + escHtml(b.id) + '" onclick="toggleSubpageBadgeCard(this)">' +
+          '<div class="badge-card-summary">' +
+            '<div class="badge-card-icon">' + badgeSvg + '</div>' +
+            '<div class="badge-card-text">' +
+              '<span class="badge-card-name">' + escHtml(b.label || b.name || '') + '</span>' +
+              (dateStr ? '<span class="badge-card-date">' + dateStr + '</span>' : '') +
+            '</div>' +
+            '<svg class="badge-card-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>' +
+          '</div>' +
+          '<div class="badge-card-detail" hidden>' +
+            '<p class="badge-card-desc">' + escHtml(b.desc || '') + '</p>' +
+          '</div>' +
+        '</div>';
+    });
+    el.innerHTML = html;
+  }
+
+  function toggleSubpageBadgeCard(el) {
+    var detail = el.querySelector('.badge-card-detail');
+    var isExpanded = el.classList.contains('is-expanded');
+    document.querySelectorAll('#badgesContent .badge-card.is-expanded').forEach(function(r) {
+      r.classList.remove('is-expanded');
+      var d = r.querySelector('.badge-card-detail');
+      if (d) d.hidden = true;
+    });
+    if (!isExpanded) {
+      el.classList.add('is-expanded');
+      if (detail) detail.hidden = false;
+    }
+  }
+
+  /* ─── Saved Walks subpage ─── */
+
+  function renderSubpageSavedWalks() {
+    var el = document.getElementById('savedWalksContent');
+    if (!el) return;
+    var favIds = getFavourites();
+    if (favIds.length === 0) {
+      el.innerHTML =
+        '<div class="me-subpage-empty">' +
+          '<div class="me-subpage-empty-icon">' +
+            '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true">' +
+              '<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>' +
+            '</svg>' +
+          '</div>' +
+          '<p class="me-subpage-empty-head">Heart any walk to save it here</p>' +
+          '<p class="me-subpage-empty-body">Saved walks are stored on this device and don\'t need a connection to view.</p>' +
+        '</div>';
+      return;
+    }
+    var html = '';
+    favIds.forEach(function(id) {
+      var walk = WALKS_DB.find(function(w) { return w.id === id; });
+      if (!walk) return;
+      var diffClass = 'saved-walk-diff--' + (walk.difficulty || 'easy');
+      html +=
+        '<div class="saved-walk-row" onclick="closeMeSubpage(\'savedwalks\');onWalkTap(\'' + walk.id + '\')">' +
+          '<div class="saved-walk-info">' +
+            '<span class="saved-walk-name">' + escHtml(walk.name) + '</span>' +
+            '<span class="saved-walk-meta">' + (walk.distance ? walk.distance + ' mi' : '') + (walk.location ? ' \u00b7 ' + escHtml(walk.location) : '') + '</span>' +
+          '</div>' +
+          '<div class="saved-walk-right">' +
+            '<span class="saved-walk-diff ' + diffClass + '">' + (walk.difficulty || 'easy') + '</span>' +
+            '<svg class="saved-walk-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>' +
+          '</div>' +
+        '</div>';
+    });
+    el.innerHTML = html || '<div class="me-subpage-empty"><p class="me-subpage-empty-head">No saved walks found</p></div>';
+  }
+
+  /* ─── Saved Places subpage ─── */
+
+  function renderSubpageSavedPlaces() {
+    var el = document.getElementById('savedPlacesContent');
+    if (!el) return;
+    var places = [];
+    try { places = JSON.parse(localStorage.getItem('sniffout_saved_places') || '[]'); } catch(e) {}
+    if (places.length === 0) {
+      el.innerHTML =
+        '<div class="me-subpage-empty">' +
+          '<div class="me-subpage-empty-icon">' +
+            '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true">' +
+              '<path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/>' +
+              '<circle cx="12" cy="10" r="3"/>' +
+            '</svg>' +
+          '</div>' +
+          '<p class="me-subpage-empty-head">Save cafes and green spaces</p>' +
+          '<p class="me-subpage-empty-body">Tap the bookmark icon on any venue in the Nearby tab to save it here.</p>' +
+        '</div>';
+      return;
+    }
+    var CATEGORY_ICONS = {
+      cafe:     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>',
+      pub:      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M8 2h8l1 7H7L8 2z"/><path d="M7 9v11h10V9"/><line x1="12" y1="9" x2="12" y2="20"/></svg>',
+      park:     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M17 8C8 10 5.9 16.17 3.82 22"/><path d="M9.1 15C9.1 15 10.47 10.8 16 11"/><path d="M22 22c0-4.42-3.07-8-7-8"/></svg>',
+      pet_shop: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 015 5v3.5a3.5 3.5 0 01-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 018 13.5V10z"/></svg>'
+    };
+    var html = '';
+    places.forEach(function(place) {
+      var icon = CATEGORY_ICONS[place.category] || CATEGORY_ICONS['cafe'];
+      var categoryLabel = place.category ? (place.category.charAt(0).toUpperCase() + place.category.slice(1).replace('_', ' ')) : '';
+      html +=
+        '<div class="saved-place-row" onclick="openSavedPlaceInMaps(\'' + escHtml(place.placeId || '') + '\')">' +
+          '<div class="saved-place-type-icon">' + icon + '</div>' +
+          '<div class="saved-place-info">' +
+            '<span class="saved-place-name">' + escHtml(place.name || '') + '</span>' +
+            '<span class="saved-place-meta">' + (categoryLabel ? categoryLabel + ' \u00b7 ' : '') + escHtml(place.address || '') + '</span>' +
+          '</div>' +
+          '<svg class="saved-place-external" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+        '</div>';
+    });
+    el.innerHTML = html;
+  }
+
+  function openSavedPlaceInMaps(placeId) {
+    var places = [];
+    try { places = JSON.parse(localStorage.getItem('sniffout_saved_places') || '[]'); } catch(e) {}
+    var place = places.find(function(p) { return p.placeId === placeId; });
+    if (place && place.mapsUrl) window.open(place.mapsUrl, '_blank');
+  }
+
+  /* ─── Relative date helper ─── */
+
+  function formatRelativeDate(dateOrTs) {
+    if (!dateOrTs) return '';
+    var d = typeof dateOrTs === 'number' ? new Date(dateOrTs) : new Date(dateOrTs);
+    if (isNaN(d.getTime())) return '';
+    var now = Date.now();
+    var diff = now - d.getTime();
+    var days = Math.floor(diff / 86400000);
+    if (days === 0) return 'today';
+    if (days === 1) return '1 day ago';
+    if (days < 7) return days + ' days ago';
+    if (days < 14) return '1 week ago';
+    if (days < 30) return Math.floor(days / 7) + ' weeks ago';
+    var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return d.getDate() + ' ' + MONTHS[d.getMonth()];
   }
 
   function saveJournalNote(walkId, ts) {
@@ -9697,6 +10418,60 @@
   </div>
 </div>
 
+<!-- ══════════ ME TAB SUBPAGES ══════════ -->
+
+<!-- Walk Journal subpage -->
+<div class="me-subpage" id="subpageJournal" role="dialog" aria-modal="true" aria-label="Walk Journal">
+  <div class="me-subpage-handle"></div>
+  <div class="me-subpage-header">
+    <button class="me-subpage-back" onclick="closeMeSubpage('journal')" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 class="me-subpage-title">Walk Journal</h2>
+    <div class="me-subpage-header-spacer"></div>
+  </div>
+  <div class="me-subpage-content" id="journalContent"></div>
+</div>
+
+<!-- Badges subpage -->
+<div class="me-subpage" id="subpageBadges" role="dialog" aria-modal="true" aria-label="Badges">
+  <div class="me-subpage-handle"></div>
+  <div class="me-subpage-header">
+    <button class="me-subpage-back" onclick="closeMeSubpage('badges')" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 class="me-subpage-title">Badges</h2>
+    <div class="me-subpage-header-spacer"></div>
+  </div>
+  <div class="me-subpage-content" id="badgesContent"></div>
+</div>
+
+<!-- Saved Walks subpage -->
+<div class="me-subpage" id="subpageSavedwalks" role="dialog" aria-modal="true" aria-label="Saved Walks">
+  <div class="me-subpage-handle"></div>
+  <div class="me-subpage-header">
+    <button class="me-subpage-back" onclick="closeMeSubpage('savedwalks')" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 class="me-subpage-title">Saved Walks</h2>
+    <div class="me-subpage-header-spacer"></div>
+  </div>
+  <div class="me-subpage-content" id="savedWalksContent"></div>
+</div>
+
+<!-- Saved Places subpage -->
+<div class="me-subpage" id="subpageSavedplaces" role="dialog" aria-modal="true" aria-label="Saved Places">
+  <div class="me-subpage-handle"></div>
+  <div class="me-subpage-header">
+    <button class="me-subpage-back" onclick="closeMeSubpage('savedplaces')" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 class="me-subpage-title">Saved Places</h2>
+    <div class="me-subpage-header-spacer"></div>
+  </div>
+  <div class="me-subpage-content" id="savedPlacesContent"></div>
+</div>
+
 <script>
   /* ═══════════════════════════════
      FIX 2.2 — Radius filter UI (Walks + Nearby tabs)
@@ -10038,6 +10813,28 @@
     document.getElementById('walk-log-sheet'),
     document.getElementById('walk-log-sheet-inner'),
     closeWalkLogSheet
+  );
+
+  // Me tab subpage swipe-to-dismiss
+  addSheetSwipe(
+    document.getElementById('subpageJournal'),
+    document.getElementById('journalContent'),
+    function() { closeMeSubpage('journal'); }
+  );
+  addSheetSwipe(
+    document.getElementById('subpageBadges'),
+    document.getElementById('badgesContent'),
+    function() { closeMeSubpage('badges'); }
+  );
+  addSheetSwipe(
+    document.getElementById('subpageSavedwalks'),
+    document.getElementById('savedWalksContent'),
+    function() { closeMeSubpage('savedwalks'); }
+  );
+  addSheetSwipe(
+    document.getElementById('subpageSavedplaces'),
+    document.getElementById('savedPlacesContent'),
+    function() { closeMeSubpage('savedplaces'); }
   );
 </script>
 

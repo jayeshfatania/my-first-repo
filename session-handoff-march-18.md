@@ -94,7 +94,7 @@ Then open `http://localhost:8000/sniffout-v2.html` in Chrome. No build step need
 
 ### API key security warning
 
-The Google Places API key is currently hardcoded in `sniffout-v2.html`. This is a live billing risk — anyone who views source can extract and abuse the key. A Cloudflare Worker proxy is in progress (Developer working on this). **Do not share the app URL publicly until the proxy is deployed.** This is pre-launch checklist item T1 — a hard blocker.
+Cloudflare Worker proxy deployed at `places-proxy.sniffout.app` — Developer updating HTML to use proxy URL. This is pre-launch checklist item T1.
 
 ---
 
@@ -629,10 +629,10 @@ All files are in `~/Desktop/my-first-repo/`.
 | `descriptions-batch-03.md` | Copywriter descriptions for Batch 03. **Completed today.** Awaiting Editor review. |
 | `editor-review-batch-01.md` | Editor-reviewed Batch 01 descriptions. |
 | `editor-review-batch-02.md` | Editor-reviewed Batch 02 descriptions. |
-| `editor-review-batch-03.md` | Editor-reviewed Batch 03 descriptions. **IN PROGRESS.** |
+| `editor-review-batch-03.md` | Editor-reviewed Batch 03 descriptions. **COMPLETE.** |
 | `validation-report-batch-01.md` | Validator sign-off Batch 01. |
 | `validation-report-batch-02.md` | Validator sign-off Batch 02 (tehidy fixed, lickey-hills duplicate resolved). |
-| `validation-report-batch-03.md` | Validator sign-off Batch 03. **NOT YET STARTED.** |
+| `validation-report-batch-03.md` | Validator sign-off Batch 03. **COMPLETE — all issues resolved, ready for Developer content update.** |
 
 ### Developer briefs (for reference)
 
@@ -785,7 +785,7 @@ Confirm the push worked by checking: `https://sniffout.app/sniffout-v2.html` —
 2. **API key is hardcoded** — do not share app URL publicly until Cloudflare Worker proxy is deployed
 3. **Round 22 is in progress** — check Developer status before issuing new work
 4. **Batch 03 content pipeline is in progress** — Editor → Validator → Developer content update
-5. **Brand colour is `#3B5C2A` (Meadow Green)** — confirmed today, not yet implemented in code (still `#1E4D3A`)
+5. **Brand colour is `#3B5C2A` (Meadow Green)** — confirmed and implemented today
 6. **Firebase first in Phase 3** — personal data (journal, notes, photos) cannot safely live in localStorage long-term
 7. **GDPR is a hard blocker** — owner must engage solicitor before any public launch
 8. **Multiple dogs is Phase 2** — already in the build. Not deferred.
