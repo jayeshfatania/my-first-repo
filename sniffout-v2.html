@@ -1078,8 +1078,8 @@
     .wx-hero-temp-block { display: flex; align-items: flex-start; gap: 2px; }
     .wx-hero-temp { font: 700 80px/1 'Inter', sans-serif; color: var(--ink); letter-spacing: -3px; }
     .wx-hero-unit { font: 400 32px/1 'Inter', sans-serif; color: var(--ink-2); margin-top: 8px; }
-    .wx-hero-icon { width: 80px; height: 80px; margin-top: 14px; flex-shrink: 0; }
-    .weather-hero-top img { width: 80px; height: 80px; margin-top: 8px; flex-shrink: 0; margin-right: 4px; }
+    .wx-hero-icon { width: 96px; height: 96px; margin-top: 14px; flex-shrink: 0; }
+    .weather-hero-top img { width: 80px; height: 80px; margin-top: 8px; flex-shrink: 0; margin-right: 4px; filter: brightness(0) invert(1); }
     .wx-hero-condition { margin-top: 16px; font: 500 17px/1.2 'Inter', sans-serif; color: var(--ink); }
     .wx-hero-sub { margin-top: 4px; font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); }
 
@@ -1685,6 +1685,95 @@
     .me-walk-name { font: 500 14px/1 'Inter', sans-serif; color: var(--ink); }
     .me-walk-meta { font: 400 12px/1 'Inter', sans-serif; color: var(--ink-2); }
     .me-walk-date { font: 400 12px/1 'Inter', sans-serif; color: var(--ink-2); }
+    /* Walk journal */
+    .me-journal-section { padding: 0 16px 16px; }
+    .me-journal-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .me-journal-row:last-child { border-bottom: none; }
+    .me-journal-row-left { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+    .me-journal-walk-name { font: 500 14px/1 'Inter', sans-serif; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .me-journal-meta { font: 400 12px/1 'Inter', sans-serif; color: var(--ink-2); }
+    .me-journal-note-preview { font: 400 12px/1.4 'Inter', sans-serif; color: var(--ink-2); opacity: 0.7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; max-width: 100%; }
+    .me-journal-chevron { color: var(--ink-2); opacity: 0.4; flex-shrink: 0; margin-left: 8px; }
+    .me-journal-detail {
+      padding: 12px 0 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .me-journal-detail-note {
+      font: 400 14px/1.6 'Inter', sans-serif;
+      color: var(--ink-2);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .me-journal-detail-note-empty {
+      font: 400 14px/1.6 'Inter', sans-serif;
+      color: var(--ink-2);
+      opacity: 0.45;
+      font-style: italic;
+    }
+    .me-journal-detail-textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      outline: none;
+      resize: none;
+      font: 400 14px/1.6 'Inter', sans-serif;
+      color: var(--ink-2);
+      padding: 12px 16px;
+      box-sizing: border-box;
+      display: block;
+    }
+    .me-journal-detail-textarea::placeholder { color: var(--ink-2); opacity: 0.5; }
+    .me-journal-detail-save {
+      align-self: flex-end;
+      padding: 6px 14px;
+      font: 500 13px/1 'Inter', sans-serif;
+      color: var(--brand);
+      background: none;
+      border: 1.5px solid var(--brand);
+      border-radius: 8px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .me-journal-photo-thumb {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .me-journal-photo-add {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      border: 1.5px dashed var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      color: var(--ink-2);
+      opacity: 0.5;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .me-journal-empty {
+      padding: 24px 0;
+      text-align: center;
+      font: 400 14px/1.5 'Inter', sans-serif;
+      color: var(--ink-2);
+      opacity: 0.55;
+    }
     /* Favourites section on Me tab */
     .me-favs-section { padding: 0 16px 16px; }
     .me-fav-row {
@@ -2664,9 +2753,20 @@
       text-decoration: none;
     }
     /* Walk note */
-    .walk-note-container { border-top: 1px solid var(--border); margin-top: 8px; }
-    .walk-note-area { width: 100%; background: transparent; border: none; outline: none; resize: none; font: 400 14px/1.6 'Inter', sans-serif; color: var(--ink-2); padding: 12px 0; box-sizing: border-box; display: block; }
+    .walk-note-container { margin: 12px 16px; }
+    .walk-note-area { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; outline: none; resize: none; font: 400 14px/1.6 'Inter', sans-serif; color: var(--ink-2); padding: 12px 16px; box-sizing: border-box; display: block; }
     .walk-note-area::placeholder { color: var(--ink-2); opacity: 0.5; }
+    /* Walk photo */
+    .walk-photo-container { margin: 0 16px 12px; display: flex; flex-direction: column; gap: 8px; }
+    .walk-photo-thumb { width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; display: block; }
+    .walk-photo-add-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; height: 44px;
+      background: var(--bg); border: 1.5px dashed var(--border); border-radius: 12px;
+      font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); opacity: 0.7;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .walk-photo-disclaimer { font: 400 11px/1.4 'Inter', sans-serif; color: var(--ink-2); opacity: 0.5; text-align: center; padding: 0 4px; }
     /* Wishlist button */
     .wishlist-btn { width: 100%; height: 44px; background: transparent; border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font: 500 14px/1 'Inter', sans-serif; cursor: pointer; -webkit-tap-highlight-color: transparent; margin-top: 8px; box-sizing: border-box; }
     .wishlist-btn:active { opacity: 0.7; }
@@ -2991,8 +3091,17 @@
         <div class="me-walk-list" id="meWalkList"></div>
       </div>
 
+      <!-- Zone 6: Walk journal (hidden until walks exist) -->
+      <div class="me-journal-section" id="meJournalSection" style="display:none">
+        <span class="me-section-label">Walk journal</span>
+        <div id="meJournalList"></div>
+      </div>
+
       <!-- Add your dog link (shown after skip, until dog is set) -->
       <button class="me-add-dog-link" id="meAddDogLink" style="display:none" onclick="showDogSetupCard()">Add your dog</button>
+
+      <!-- Hidden file input for photo uploads -->
+      <input type="file" id="journalPhotoInput" accept="image/*" capture="environment" style="display:none">
 
       <div style="height:32px"></div>
 
@@ -4041,7 +4150,7 @@
             '<span class="wx-hero-temp">' + temp + '</span>' +
             '<span class="wx-hero-unit">&#176;C</span>' +
           '</div>' +
-          (heroIconSrc ? '<img class="wx-hero-icon" src="' + heroIconSrc + '" alt="' + (WMO_DESC[cur.weather_code] || 'Weather') + '" width="80" height="80">' : '') +
+          (heroIconSrc ? '<img class="wx-hero-icon" src="' + heroIconSrc + '" alt="' + (WMO_DESC[cur.weather_code] || 'Weather') + '" width="96" height="96">' : '') +
         '</div>' +
         '<div class="wx-hero-condition">' + (WMO_DESC[cur.weather_code] || '') + '</div>' +
         '<div class="wx-hero-sub">Feels like ' + feels + '&#176; &nbsp;&#183;&nbsp; H ' + todayHigh + '&#176; &nbsp; L ' + todayLow + '&#176;</div>' +
@@ -4402,6 +4511,46 @@
     checkBadgeEarned();
   }
 
+  /* ─── Walk photos ─── */
+
+  function getWalkPhotos() {
+    try { return JSON.parse(localStorage.getItem('sniffout_walk_photos') || '{}'); } catch(e) { return {}; }
+  }
+
+  function saveWalkPhoto(walkId, ts, base64) {
+    var photos = getWalkPhotos();
+    photos[walkId + '_' + ts] = base64;
+    try { localStorage.setItem('sniffout_walk_photos', JSON.stringify(photos)); } catch(e) {}
+  }
+
+  function getWalkPhoto(walkId, ts) {
+    var photos = getWalkPhotos();
+    return photos[walkId + '_' + ts] || null;
+  }
+
+  function compressPhoto(file, callback) {
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var img = new Image();
+      img.onload = function() {
+        var MAX = 800;
+        var w = img.width;
+        var h = img.height;
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+          else       { w = Math.round(w * MAX / h); h = MAX; }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width  = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        callback(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
   function isWalked(id) {
     return getWalkLog().some(function(e) { return e.id === id; });
   }
@@ -4681,6 +4830,41 @@
       })(latestEntry));
       noteDiv.appendChild(ta);
       actionsEl.appendChild(noteDiv);
+
+      // Photo section
+      if (!actionsEl.querySelector('.walk-photo-container')) {
+        var photoDiv = document.createElement('div');
+        photoDiv.className = 'walk-photo-container';
+        var photoTs = latestEntry ? latestEntry.ts : null;
+        var existingPhoto = photoTs ? getWalkPhoto(walkId, photoTs) : null;
+        if (existingPhoto) {
+          var img = document.createElement('img');
+          img.className = 'walk-photo-thumb';
+          img.src = existingPhoto;
+          img.alt = 'Walk photo';
+          photoDiv.appendChild(img);
+        } else {
+          var photoBtn = document.createElement('button');
+          photoBtn.className = 'walk-photo-add-btn';
+          photoBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Add a photo';
+          photoBtn.onclick = (function(wId, wTs) {
+            return function() {
+              var inp = document.getElementById('journalPhotoInput');
+              if (!inp) return;
+              inp.setAttribute('data-walk-id', wId);
+              inp.setAttribute('data-ts', String(wTs));
+              inp.value = '';
+              inp.click();
+            };
+          })(walkId, photoTs);
+          photoDiv.appendChild(photoBtn);
+        }
+        var disclaimer = document.createElement('div');
+        disclaimer.className = 'walk-photo-disclaimer';
+        disclaimer.textContent = 'Photos are saved on this device only until you create an account';
+        photoDiv.appendChild(disclaimer);
+        actionsEl.appendChild(photoDiv);
+      }
     }
 
     // Show "Add or update conditions" link
@@ -5067,10 +5251,12 @@
       var oldWishBtn = actionsContainer.querySelector('.wishlist-btn');
       var oldNote    = actionsContainer.querySelector('.walk-note-container');
       var oldPrompt  = actionsContainer.querySelector('.wishlist-prompt');
+      var oldPhoto   = actionsContainer.querySelector('.walk-photo-container');
       if (oldLink)    oldLink.remove();
       if (oldWishBtn) oldWishBtn.remove();
       if (oldNote)    oldNote.remove();
       if (oldPrompt)  oldPrompt.remove();
+      if (oldPhoto)   oldPhoto.remove();
     }
     if (walkedBtn) {
       walkedBtn.setAttribute('data-walk-id', walk.id);
@@ -5125,6 +5311,41 @@
           })(latestEntry));
           noteDiv.appendChild(ta);
           actionsEl.appendChild(noteDiv);
+
+          // Photo section
+          if (!actionsEl.querySelector('.walk-photo-container')) {
+            var photoDiv2 = document.createElement('div');
+            photoDiv2.className = 'walk-photo-container';
+            var photoTs2 = latestEntry ? latestEntry.ts : null;
+            var existingPhoto2 = photoTs2 ? getWalkPhoto(walk.id, photoTs2) : null;
+            if (existingPhoto2) {
+              var img2 = document.createElement('img');
+              img2.className = 'walk-photo-thumb';
+              img2.src = existingPhoto2;
+              img2.alt = 'Walk photo';
+              photoDiv2.appendChild(img2);
+            } else {
+              var photoBtn2 = document.createElement('button');
+              photoBtn2.className = 'walk-photo-add-btn';
+              photoBtn2.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Add a photo';
+              photoBtn2.onclick = (function(wId, wTs) {
+                return function() {
+                  var inp = document.getElementById('journalPhotoInput');
+                  if (!inp) return;
+                  inp.setAttribute('data-walk-id', wId);
+                  inp.setAttribute('data-ts', String(wTs));
+                  inp.value = '';
+                  inp.click();
+                };
+              })(walk.id, photoTs2);
+              photoDiv2.appendChild(photoBtn2);
+            }
+            var disclaimer2 = document.createElement('div');
+            disclaimer2.className = 'walk-photo-disclaimer';
+            disclaimer2.textContent = 'Photos are saved on this device only until you create an account';
+            photoDiv2.appendChild(disclaimer2);
+            actionsEl.appendChild(photoDiv2);
+          }
         }
         if (actionsEl && !actionsEl.querySelector('.walked-conditions-link')) {
           var condLink = document.createElement('a');
@@ -6050,12 +6271,20 @@
     favs.forEach(function(f, i) { if (f.id === gsId) idx = i; });
     if (idx !== -1) {
       favs.splice(idx, 1);
-      if (btn) btn.innerHTML = luIcon('heart', 16, '');
+      if (btn) {
+        btn.innerHTML = luIcon('heart', 16, '');
+        btn.setAttribute('aria-label', 'Save');
+        syncIcons();
+      }
     } else {
       if (gs) {
         favs.unshift({ id: gsId, name: gs.name, lat: gs.lat, lon: gs.lon, savedAt: Date.now() });
       }
-      if (btn) btn.innerHTML = luIcon('heart', 16, 'fill:var(--red);stroke:var(--red);');
+      if (btn) {
+        btn.innerHTML = luIcon('heart', 16, 'fill:var(--red);stroke:var(--red);');
+        btn.setAttribute('aria-label', 'Saved');
+        syncIcons();
+      }
     }
     saveGreenspaceFavourites(favs);
     if (nearbyCategory === 'saved') renderSavedVenueList();
@@ -6603,7 +6832,7 @@
           // First visit, no dog, no walks: show dog setup card
           showDogSetupCard();
         } else {
-          // Dog set or dismissed: personalised empty state
+          // Dog set or dismissed: placeholder stats + hint text
           var emptyLine = dogName
             ? 'Where will you take ' + dogName + ' first?'
             : 'Start exploring walks to build your story here.';
@@ -6612,7 +6841,21 @@
             : 'Find a walk \u2192';
           heroEl.innerHTML =
             '<div class="me-hero me-hero--empty">' +
-              '<p class="me-empty-line">' + emptyLine + '</p>' +
+              '<div class="me-stats-row" style="opacity:0.25;">' +
+                '<div class="me-stat-cell">' +
+                  '<span class="me-stat-value">0</span>' +
+                  '<span class="me-stat-label">' + (dogName ? 'approx miles with ' + dogName : 'approx miles walked') + '</span>' +
+                '</div>' +
+                '<div class="me-stat-cell">' +
+                  '<span class="me-stat-value">0</span>' +
+                  '<span class="me-stat-label">places found</span>' +
+                '</div>' +
+                '<div class="me-stat-cell">' +
+                  '<span class="me-stat-value">0</span>' +
+                  '<span class="me-stat-label">contributions</span>' +
+                '</div>' +
+              '</div>' +
+              '<p class="me-empty-line" style="margin-top:12px;">' + emptyLine + '</p>' +
               '<button class="me-empty-cta" onclick="switchTab(\'walks\')">' + emptyCta + '</button>' +
             '</div>';
         }
@@ -6639,7 +6882,8 @@
                 '<span class="me-stat-label">contributions</span>' +
               '</div>' +
             '</div>' +
-            '<div style="padding:8px 20px 16px; font:400 13px/1 \'Inter\',sans-serif; color:var(--ink-2); text-align:center;">' + heroSub(log.length, dogName) + '</div>' +
+            '<div style="padding:8px 20px 4px; font:400 13px/1 \'Inter\',sans-serif; color:var(--ink-2); text-align:center;">' + heroSub(log.length, dogName) + '</div>' +
+            '<div style="padding:4px 20px 16px; font:400 11px/1.3 \'Inter\',sans-serif; color:var(--ink-2); opacity:0.55; text-align:center;">Updates when you mark walks as done</div>' +
           '</div>';
       }
     }
@@ -6665,6 +6909,9 @@
         renderMeWalkLog(log);
       }
     }
+
+    // Walk journal
+    renderMeJournal();
   }
 
   /* ─── Dog setup card functions ─── */
@@ -6771,7 +7018,7 @@
     if (!dog || !dog.birthday || !dog.birthday.month) return;
     var now         = new Date();
     var todayMonth  = now.getMonth() + 1;
-    if (dog.birthday.month !== todayMonth) return;
+    if (parseInt(dog.birthday.month) !== todayMonth) return;
     var currentYear = now.getFullYear();
     var shownYear   = null;
     try { shownYear = parseInt(localStorage.getItem('sniffout_birthday_shown')); } catch(e) {}
@@ -6904,6 +7151,108 @@
     }).join('');
 
     if (seeAllEl) seeAllEl.style.display = 'none';
+  }
+
+  /* -- Walk journal ----------------------------------------------------- */
+
+  var meJournalOpenKey = null; // walkId_ts of currently expanded row
+
+  function renderMeJournal() {
+    var section = document.getElementById('meJournalSection');
+    var listEl  = document.getElementById('meJournalList');
+    if (!section || !listEl) return;
+
+    var log = getWalkLog();
+    if (log.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = '';
+
+    var walkById = {};
+    WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
+
+    var reversed = log.slice().reverse();
+    var html = '';
+
+    if (reversed.length === 0) {
+      html = '<div class="me-journal-empty">Your walk notes will appear here once you start marking walks as done.</div>';
+    } else {
+      reversed.forEach(function(entry) {
+        var rowKey = entry.id + '_' + entry.ts;
+        var walk   = walkById[entry.id];
+        var name   = walk ? walk.name : entry.id;
+        var dist   = walk ? walk.distance.toFixed(1) + ' mi' : '';
+        var loc    = walk ? walk.location : '';
+        var meta   = [dist, loc].filter(Boolean).join(' - ');
+        var ts     = entry.ts ? new Date(entry.ts) : null;
+        var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var dateStr = ts ? ts.getDate() + ' ' + MONTHS[ts.getMonth()] + ' ' + ts.getFullYear() : '';
+        var notePreview = (entry.note || '').replace(/\n/g, ' ').slice(0, 60);
+        var isOpen = (meJournalOpenKey === rowKey);
+
+        html +=
+          '<div class="me-journal-row" onclick="toggleJournalRow(\'' + rowKey + '\')">' +
+            '<div class="me-journal-row-left">' +
+              '<span class="me-journal-walk-name">' + escHtml(name) + '</span>' +
+              (meta ? '<span class="me-journal-meta">' + escHtml(meta) + '</span>' : '') +
+              (dateStr ? '<span class="me-journal-meta">' + dateStr + '</span>' : '') +
+              (notePreview && !isOpen ? '<span class="me-journal-note-preview">' + escHtml(notePreview) + '</span>' : '') +
+            '</div>' +
+            '<span class="me-journal-chevron">' + (isOpen ? '&#x25B2;' : '&#x25BC;') + '</span>' +
+          '</div>';
+
+        if (isOpen) {
+          var photoData = getWalkPhoto(entry.id, entry.ts);
+          var noteVal = entry.note || '';
+          html +=
+            '<div class="me-journal-detail">' +
+              '<textarea class="me-journal-detail-textarea" id="journalTextarea_' + rowKey + '" rows="4" placeholder="Add a note about this walk...">' + escHtml(noteVal) + '</textarea>' +
+              (photoData
+                ? '<img class="me-journal-photo-thumb" src="' + photoData + '" alt="Walk photo">'
+                : '<div class="me-journal-photo-add" onclick="triggerJournalPhotoUpload(\'' + escHtml(entry.id) + '\',\'' + entry.ts + '\');event.stopPropagation();">' +
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' +
+                  '</div>'
+              ) +
+              '<button class="me-journal-detail-save" onclick="saveJournalNote(\'' + escHtml(entry.id) + '\',\'' + entry.ts + '\');event.stopPropagation();">Save note</button>' +
+            '</div>';
+        }
+      });
+    }
+
+    listEl.innerHTML = html;
+  }
+
+  function toggleJournalRow(rowKey) {
+    if (meJournalOpenKey === rowKey) {
+      meJournalOpenKey = null;
+    } else {
+      meJournalOpenKey = rowKey;
+    }
+    renderMeJournal();
+  }
+
+  function saveJournalNote(walkId, ts) {
+    var rowKey = walkId + '_' + ts;
+    var textarea = document.getElementById('journalTextarea_' + rowKey);
+    if (!textarea) return;
+    var note = textarea.value;
+    var log = getWalkLog();
+    var entry = log.find(function(e) { return e.id === walkId && String(e.ts) === String(ts); });
+    if (entry) {
+      entry.note = note;
+      try { localStorage.setItem('sniffout_walk_log', JSON.stringify(log)); } catch(e) {}
+    }
+    renderMeJournal();
+  }
+
+  function triggerJournalPhotoUpload(walkId, ts) {
+    var input = document.getElementById('journalPhotoInput');
+    if (!input) return;
+    input.setAttribute('data-walk-id', walkId);
+    input.setAttribute('data-ts', ts);
+    input.value = '';
+    input.click();
   }
 
   /* -- Settings sheet open/close --------------------------------------- */
@@ -7102,7 +7451,7 @@
   /* ─── heroLabel / heroSub ─── */
 
   function heroLabel(dogName) {
-    return dogName ? 'miles with ' + dogName : 'miles walked';
+    return dogName ? 'approx miles with ' + dogName : 'approx miles walked';
   }
 
   function heroSub(count, dogName) {
@@ -8038,9 +8387,35 @@
   /* ─── Dark mode ─── */
 
   function applyDarkModePreference(mode) {
-    if (mode === 'dark')  document.body.classList.add('night');
-    if (mode === 'light') document.body.classList.remove('night');
-    // 'auto' — leave body.night to be set by weather (Phase C renderWeather)
+    if (mode === 'dark') {
+      document.body.classList.add('night');
+    } else if (mode === 'light') {
+      document.body.classList.remove('night');
+    } else {
+      // 'auto' - match device system preference
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (prefersDark) {
+        document.body.classList.add('night');
+      } else {
+        document.body.classList.remove('night');
+      }
+      // Listen for system preference changes while in auto mode
+      if (window.matchMedia) {
+        var mq = window.matchMedia('(prefers-color-scheme: dark)');
+        if (!mq._sniffoutListener) {
+          mq._sniffoutListener = true;
+          mq.addEventListener('change', function(e) {
+            if (getSavedDarkMode() === 'auto') {
+              if (e.matches) {
+                document.body.classList.add('night');
+              } else {
+                document.body.classList.remove('night');
+              }
+            }
+          });
+        }
+      }
+    }
     var btns = document.querySelectorAll('#segment-control-dark .segment-btn');
     var pill = document.getElementById('segment-pill-dark');
     var modes = ['light', 'auto', 'dark'];
@@ -8166,6 +8541,25 @@
         applyDogSizePreference(btn.getAttribute('data-size'));
       });
     });
+  });
+
+  /* -- Walk photo input handler ---------------------------------------- */
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var photoInput = document.getElementById('journalPhotoInput');
+    if (photoInput) {
+      photoInput.addEventListener('change', function() {
+        var file = photoInput.files && photoInput.files[0];
+        if (!file) return;
+        var walkId = photoInput.getAttribute('data-walk-id');
+        var ts     = photoInput.getAttribute('data-ts');
+        if (!walkId || !ts) return;
+        compressPhoto(file, function(base64) {
+          saveWalkPhoto(walkId, ts, base64);
+          renderMeJournal();
+        });
+      });
+    }
   });
 
   /* -- Badge tooltip global dismiss ------------------------------------ */
@@ -8785,7 +9179,7 @@
       </button>
       <button class="segment-btn" data-mode="auto" aria-pressed="false">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a9 9 0 0 0 0 18V3z"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-        <span>Auto</span>
+        <span>Match device</span>
       </button>
       <button class="segment-btn" data-mode="dark" aria-pressed="false">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
