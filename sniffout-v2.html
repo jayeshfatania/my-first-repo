@@ -1079,8 +1079,6 @@
     .wx-hero-temp { font: 700 80px/1 'Inter', sans-serif; color: var(--ink); letter-spacing: -3px; }
     .wx-hero-unit { font: 400 32px/1 'Inter', sans-serif; color: var(--ink-2); margin-top: 8px; }
     .wx-hero-icon { width: 96px; height: 96px; margin-top: 14px; flex-shrink: 0; }
-    .weather-hero-icon-wrap { width: 96px; height: 96px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .weather-hero-top img { width: 80px; height: 80px; }
     .wx-hero-condition { margin-top: 16px; font: 500 17px/1.2 'Inter', sans-serif; color: var(--ink); }
     .wx-hero-sub { margin-top: 4px; font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); }
 
@@ -3896,7 +3894,7 @@
             '<div class="weather-hero-temp">' + temp + '°C</div>' +
             '<div class="weather-hero-feels">Feels like ' + feels + '°C</div>' +
           '</div>' +
-          '<div class="weather-hero-icon-wrap">' + yrIcon(cur.weather_code, cur.is_day, 80) + '</div>' +
+          luIcon(WMO_ICON[cur.weather_code] || 'cloud', 48, 'color:white;flex-shrink:0;') +
         '</div>' +
         '<div class="weather-verdict">' + verdict.title + '</div>' +
         '<div class="weather-pills">' +
@@ -7020,19 +7018,20 @@
     var now        = new Date();
     var todayDay   = now.getDate();
     var todayMonth = now.getMonth() + 1;
-    var bdDay      = dog.birthday.day ? parseInt(dog.birthday.day) : 1; // migration: no day = treat as day 1
+    var bdDay      = dog.birthday.day ? parseInt(dog.birthday.day) : 1;
     var bdMonth    = parseInt(dog.birthday.month);
     if (bdDay !== todayDay || bdMonth !== todayMonth) return;
     var currentYear = now.getFullYear();
-    var shownYear   = null;
-    try { shownYear = parseInt(localStorage.getItem('sniffout_birthday_shown')); } catch(e) {}
-    if (shownYear === currentYear) return;
+    var shownKey    = currentYear + '-' + bdMonth + '-' + bdDay;
+    var storedShown = null;
+    try { storedShown = localStorage.getItem('sniffout_birthday_shown'); } catch(e) {}
+    if (storedShown === shownKey) return;
     var banner = document.getElementById('todayBirthdayBanner');
     var msgEl  = document.getElementById('todayBirthdayMsg');
     if (banner && msgEl) {
       msgEl.textContent = 'Happy birthday, ' + (dog.name || 'your dog') + '!';
       banner.style.display = 'flex';
-      try { localStorage.setItem('sniffout_birthday_shown', String(currentYear)); } catch(e) {}
+      try { localStorage.setItem('sniffout_birthday_shown', shownKey); } catch(e) {}
     }
   }
 
@@ -7787,11 +7786,10 @@
       languageCode:   'en-GB'
     };
 
-    fetch('https://places.googleapis.com/v1/places:searchText', {
+    fetch(PLACES_PROXY + '/v1/places:searchText', {
       method: 'POST',
       headers: {
         'Content-Type':     'application/json',
-        'X-Goog-Api-Key':   PLACES_API_KEY,
         'X-Goog-FieldMask': 'places.displayName,places.location,places.photos,places.rating'
       },
       body: JSON.stringify(body)
@@ -7805,7 +7803,7 @@
         var name = (p.displayName && p.displayName.text) || null;
         if (!name) return null;
         var photoUrl = (p.photos && p.photos.length > 0)
-          ? 'https://places.googleapis.com/v1/' + p.photos[0].name + '/media?maxWidthPx=400&key=' + PLACES_API_KEY
+          ? PLACES_PROXY + '/v1/' + p.photos[0].name + '/media?maxWidthPx=400'
           : null;
         return { name: name, lat: plat, lon: plon, photoUrl: photoUrl, rating: p.rating || null };
       }).filter(Boolean);
@@ -7986,8 +7984,8 @@
   var nearbyView         = 'list';
   var NEARBY_GOOGLE_CACHE = {};
 
-  /* ─── Google Places API key ─── */
-  var PLACES_API_KEY = 'AIzaSyCXKhkeAN3HdhmCc7_czGo3QzVIT34caT4';
+  /* ─── Google Places proxy endpoint ─── */
+  var PLACES_PROXY = 'https://places-proxy.sniffout.app';
 
   /* ─── Category config — mirrors dog-walk-dashboard.html CAT_CONFIG ─── */
   var CATEGORIES = [
@@ -8036,11 +8034,10 @@
       languageCode:  'en-GB'
     };
 
-    fetch('https://places.googleapis.com/v1/places:searchText', {
+    fetch(PLACES_PROXY + '/v1/places:searchText', {
       method: 'POST',
       headers: {
         'Content-Type':     'application/json',
-        'X-Goog-Api-Key':   PLACES_API_KEY,
         'X-Goog-FieldMask': 'places.name,places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.googleMapsUri,places.location,places.photos'
       },
       body: JSON.stringify(body)
@@ -8057,7 +8054,7 @@
                   : p.regularOpeningHours.openNow === false ? false : null;
         }
         var photoUrl = (p.photos && p.photos.length > 0)
-          ? 'https://places.googleapis.com/v1/' + p.photos[0].name + '/media?maxWidthPx=400&key=' + PLACES_API_KEY
+          ? PLACES_PROXY + '/v1/' + p.photos[0].name + '/media?maxWidthPx=400'
           : null;
         return {
           placeId:     p.name || null,
