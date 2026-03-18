@@ -678,8 +678,12 @@
       font-weight: 600;
       color: var(--brand);
       margin-bottom: 2px;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .weather-preview-sub { font-size: 13px; color: var(--ink-2); }
+    .weather-preview-sub { font-size: 13px; color: var(--ink-2); min-width: 0; }
 
     .social-proof {
       text-align: center;
@@ -1473,16 +1477,37 @@
     }
     .me-gear-btn svg { width: 20px; height: 20px; }
     .me-gear-btn:active { opacity: 0.6; }
-    /* Hero card */
+    /* Hero stats card */
     .me-hero {
       margin: 8px 16px 20px;
-      padding: 28px 20px 24px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px;
+      overflow: hidden;
+    }
+    .me-stats-row {
+      display: flex;
+    }
+    .me-stat-cell {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 8px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+      gap: 5px;
+    }
+    .me-stat-cell:last-child { border-right: none; }
+    .me-stat-value {
+      font: 700 26px/1 'Inter', sans-serif;
+      color: var(--brand);
+      letter-spacing: -1px;
+    }
+    .me-stat-label {
+      font: 400 11px/1.2 'Inter', sans-serif;
+      color: var(--ink-2);
     }
     .me-hero--empty {
       margin: 8px 16px;
@@ -1493,21 +1518,6 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
-    }
-    .me-miles-number {
-      font: 700 72px/1 'Inter', sans-serif;
-      color: var(--ink);
-      letter-spacing: -3px;
-    }
-    .me-miles-label {
-      font: 500 16px/1 'Inter', sans-serif;
-      color: var(--ink-2);
-      margin-top: 4px;
-    }
-    .me-walks-sub {
-      font: 400 13px/1 'Inter', sans-serif;
-      color: var(--ink-2);
-      opacity: 0.7;
     }
     .me-empty-line {
       font: 400 16px/1.5 'Inter', sans-serif;
@@ -1613,8 +1623,8 @@
       -webkit-tap-highlight-color: transparent;
     }
     .me-fav-row:last-of-type { border-bottom: none; }
-    .me-fav-name { font: 500 14px/1 'Inter', sans-serif; color: var(--ink); }
-    .me-fav-dist { font: 400 12px/1 'Inter', sans-serif; color: var(--ink-2); }
+    .me-fav-name { font: 500 14px/1 'Inter', sans-serif; color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .me-fav-dist { font: 400 12px/1 'Inter', sans-serif; color: var(--ink-2); flex-shrink: 0; margin-left: 8px; }
     /* Badge toast */
     .badge-toast {
       position: fixed;
@@ -1720,6 +1730,10 @@
     .segment-pill[data-active="0"] { transform: translateX(0); }
     .segment-pill[data-active="1"] { transform: translateX(calc(100% + 0px)); }
     .segment-pill[data-active="2"] { transform: translateX(calc(200% + 0px)); }
+    .segment-pill[data-active="3"] { transform: translateX(calc(300% + 0px)); }
+    /* 4-option radius control override */
+    .me-radius-control { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    .me-radius-control .segment-pill { width: calc((100% - 6px) / 4); }
     .segment-btn {
       position: relative;
       z-index: 1;
@@ -1883,6 +1897,23 @@
       line-height: 1.5;
       text-align: center;
     }
+
+    /* ── Saved places list ── */
+    .saved-place-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .saved-place-card:last-child { border-bottom: none; }
+    .saved-place-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .saved-place-name { font: 500 14px/1 'Inter', sans-serif; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .saved-place-meta { font: 400 12px/1 'Inter', sans-serif; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .saved-place-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .saved-place-maps { font: 500 12px/1 'Inter', sans-serif; color: var(--brand); text-decoration: none; -webkit-tap-highlight-color: transparent; }
+    .saved-place-unsave { background: none; border: none; padding: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 
     /* ── Walks tab — sections layout ── */
     .walks-location-header {
@@ -2158,7 +2189,12 @@
       padding: 10px 12px;
       gap: 12px;
       min-height: 72px;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      -webkit-tap-highlight-color: rgba(0,0,0,0.04);
     }
+    .gs-card:active { opacity: 0.85; }
     .gs-thumb {
       width: 64px;
       height: 64px;
@@ -2237,11 +2273,15 @@
     .modal-body p { font-size: 14px; color: var(--ink-2); line-height: 1.6; margin-bottom: 12px; }
     .modal-body p:last-child { margin-bottom: 0; }
     .weather-info-btn {
-      background: rgba(255,255,255,0.2); border: none;
-      border-radius: 50%; width: 36px; height: 36px;
-      color: white; cursor: pointer;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.28);
+      border-radius: 99px;
+      padding: 3px 10px;
+      color: rgba(255,255,255,0.9);
+      cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
+      font: 500 12px/1 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
     .weather-hero { position: relative; }
     /* ─── Lucide icons ─── */
@@ -3589,16 +3629,14 @@
             '<div class="weather-hero-temp">' + temp + '°C</div>' +
             '<div class="weather-hero-feels">Feels like ' + feels + '°C</div>' +
           '</div>' +
-          '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">' +
-            '<button class="weather-info-btn" onclick="event.stopPropagation();openWeatherModal()" aria-label="About weather features">' + luIcon('info', 16) + '</button>' +
-            '<div>' + yrIcon(cur.weather_code, cur.is_day, 72) + '</div>' +
-          '</div>' +
+          '<div>' + yrIcon(cur.weather_code, cur.is_day, 72) + '</div>' +
         '</div>' +
         '<div class="weather-verdict">' + verdict.title + '</div>' +
         '<div class="weather-pills">' +
           '<span class="weather-pill">' + luIcon('droplets', 14) + ' ' + humidity + '%</span>' +
           '<span class="weather-pill">' + luIcon('wind', 14) + ' ' + wind + ' km/h</span>' +
           (sunPillText ? '<span class="weather-pill">' + sunPillText + '</span>' : '') +
+          '<button class="weather-pill weather-info-btn" onclick="event.stopPropagation();openWeatherModal()" aria-label="About weather features">' + luIcon('info', 14) + '</button>' +
         '</div>' +
       '</div>' +
       '<div class="today-conditions-card">' +
@@ -4122,6 +4160,18 @@
   document.addEventListener('DOMContentLoaded', function() {
     var overlay = document.getElementById('wxSheetOverlay');
     if (overlay) overlay.addEventListener('click', closeWxSheet);
+    /* wxSheet is declared after this script block in the HTML, so
+       addSheetSwipe must be deferred to DOMContentLoaded */
+    addSheetSwipe(
+      document.getElementById('wxSheet'),
+      null,
+      function() {
+        var sheet = document.getElementById('wxSheet');
+        var ov    = document.getElementById('wxSheetOverlay');
+        if (sheet) { sheet.classList.remove('is-open'); sheet.hidden = true; }
+        if (ov)    { ov.hidden = true; }
+      }
+    );
   });
 
   /* ─── Init: session restore is handled by initApp() at end of all phases ─── */
@@ -4558,10 +4608,19 @@
   }
 
   /* ─── Generic swipe-to-dismiss for bottom sheets ─── */
+  /*
+   * Inline transforms override class-based transforms, so we cannot
+   * rely on clearing the inline transform and letting CSS take over.
+   * Instead: on dismiss we manually animate to off-screen via inline
+   * style, then call closeFn() after the animation completes.
+   * On snap-back we animate back to translateY(0) inline, then clear.
+   */
   function addSheetSwipe(sheet, scrollEl, closeFn) {
     if (!sheet) return;
     var startY     = 0;
     var isDragging = false;
+    var THRESHOLD  = 100;
+    var ANIM_MS    = 200;
 
     sheet.addEventListener('touchstart', function(e) {
       var scroller = scrollEl || sheet;
@@ -4593,12 +4652,23 @@
       if (!isDragging) return;
       isDragging = false;
       var deltaY = e.changedTouches[0].clientY - startY;
-      sheet.style.transition = '';
-      if (deltaY > 120) {
-        sheet.style.transform = '';
-        closeFn();
+      if (deltaY > THRESHOLD) {
+        /* Animate off-screen then invoke closeFn to clean up class state */
+        sheet.style.transition = 'transform ' + ANIM_MS + 'ms ease-out';
+        sheet.style.transform  = 'translateY(120%)';
+        setTimeout(function() {
+          sheet.style.transition = '';
+          sheet.style.transform  = '';
+          closeFn();
+        }, ANIM_MS + 10);
       } else {
-        sheet.style.transform = '';
+        /* Snap back to open */
+        sheet.style.transition = 'transform ' + ANIM_MS + 'ms cubic-bezier(0.32,0.72,0,1)';
+        sheet.style.transform  = 'translateY(0)';
+        setTimeout(function() {
+          sheet.style.transition = '';
+          sheet.style.transform  = '';
+        }, ANIM_MS + 10);
       }
     });
   }
@@ -5559,14 +5629,14 @@
   }
 
   function togglePlaceFavourite(placeId) {
-    var venue = nearbyVenues.find(function(v) { return v.placeId === placeId; });
-    if (!venue) return;
     var favs = getPlaceFavourites();
     var idx  = -1;
     favs.forEach(function(f, i) { if (f.placeId === placeId) idx = i; });
     if (idx !== -1) {
       favs.splice(idx, 1);
     } else {
+      var venue = nearbyVenues.find(function(v) { return v.placeId === placeId; });
+      if (!venue) return;
       favs.unshift({
         placeId: placeId,
         name:    venue.name,
@@ -5577,7 +5647,11 @@
       });
     }
     savePlaceFavourites(favs);
-    renderVenueList();
+    if (nearbyCategory === 'saved') {
+      renderSavedVenueList();
+    } else {
+      renderVenueList();
+    }
   }
   var EXPLORED_KEY = 'sniffout_explored';
 
@@ -5617,6 +5691,15 @@
 
   function getExploredCount() {
     return Object.keys(getExplored()).length;
+  }
+
+  function getContributionCount() {
+    var all = getConditionTags();
+    var total = 0;
+    Object.keys(all).forEach(function(walkId) {
+      total += (all[walkId] || []).length;
+    });
+    return total;
   }
 
   function getExploredSeasons(walkId) {
@@ -6046,15 +6129,28 @@
             '<button class="me-empty-cta" onclick="switchTab(\'walks\')">Find a walk \u2192</button>' +
           '</div>';
       } else {
-        var totalMiles = log.reduce(function(sum, w) { return sum + (w.distance || 0); }, 0);
+        var totalMiles = getTotalDistanceMi();
         var milesStr = (totalMiles % 1 === 0)
           ? Math.round(totalMiles).toString()
           : totalMiles.toFixed(1);
+        var placesFound    = getExploredCount();
+        var contributions  = getContributionCount();
         heroEl.innerHTML =
           '<div class="me-hero">' +
-            '<span class="me-miles-number">' + milesStr + '</span>' +
-            '<span class="me-miles-label">miles walked</span>' +
-            '<span class="me-walks-sub">across ' + log.length + ' walk' + (log.length === 1 ? '' : 's') + '</span>' +
+            '<div class="me-stats-row">' +
+              '<div class="me-stat-cell">' +
+                '<span class="me-stat-value">' + milesStr + '</span>' +
+                '<span class="me-stat-label">miles walked</span>' +
+              '</div>' +
+              '<div class="me-stat-cell">' +
+                '<span class="me-stat-value">' + placesFound + '</span>' +
+                '<span class="me-stat-label">places found</span>' +
+              '</div>' +
+              '<div class="me-stat-cell">' +
+                '<span class="me-stat-value">' + contributions + '</span>' +
+                '<span class="me-stat-label">contributions</span>' +
+              '</div>' +
+            '</div>' +
           '</div>';
       }
     }
@@ -6365,16 +6461,14 @@
       ? '<div class="gs-thumb"><img src="' + gs.photoUrl + '" alt="" loading="lazy"></div>'
       : '<div class="gs-thumb"></div>';
     return (
-      '<div class="gs-card">' +
+      '<a class="gs-card" href="' + mapsUrl + '" target="_blank" rel="noopener noreferrer">' +
         thumbHtml +
         '<div class="gs-card-body">' +
           '<div class="gs-card-name">' + escHtml(gs.name) + '</div>' +
           '<div class="gs-card-meta">' + distText + '</div>' +
-          '<a class="gs-maps-link" href="' + mapsUrl + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">' +
-            'View on Google Maps \u2192' +
-          '</a>' +
+          '<span class="gs-maps-link">View on Google Maps \u2192</span>' +
         '</div>' +
-      '</div>'
+      '</a>'
     );
   }
 
@@ -6731,9 +6825,10 @@
   /* ─── Category config — mirrors dog-walk-dashboard.html CAT_CONFIG ─── */
   var CATEGORIES = [
     { id: 'pub',   label: 'Pubs' },
-    { id: 'cafe',  label: 'Cafés' },
+    { id: 'cafe',  label: 'Cafes' },
     { id: 'shop',  label: 'Pet Shops' },
-    { id: 'vet',   label: 'Vets' }
+    { id: 'vet',   label: 'Vets' },
+    { id: 'saved', label: 'Saved' }
   ];
 
   var CATEGORY_ICON = {
@@ -6865,14 +6960,18 @@
         document.querySelectorAll('[data-nearby-cat]').forEach(function(b) { b.classList.remove('active'); });
         this.classList.add('active');
         var venuesEl = document.getElementById('nearby-venues');
-        if (venuesEl) venuesEl.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding ' + CATEGORIES.find(function(c){return c.id===cat;}).label.toLowerCase() + ' near you…</div></div>';
         var countEl  = document.getElementById('nearby-count');
-        if (countEl) countEl.textContent = 'Loading…';
-        fetchNearbyPlaces(cat, nearbyUserLat, nearbyUserLon, nearbyLocationName, function(venues) {
-          nearbyVenues = venues;
-          renderVenueList();
-          if (nearbyView === 'map') updateMapMarkers();
-        });
+        if (cat === 'saved') {
+          renderSavedVenueList();
+        } else {
+          if (venuesEl) venuesEl.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding ' + CATEGORIES.find(function(c){return c.id===cat;}).label.toLowerCase() + ' near you…</div></div>';
+          if (countEl) countEl.textContent = 'Loading…';
+          fetchNearbyPlaces(cat, nearbyUserLat, nearbyUserLon, nearbyLocationName, function(venues) {
+            nearbyVenues = venues;
+            renderVenueList();
+            if (nearbyView === 'map') updateMapMarkers();
+          });
+        }
       });
     });
 
@@ -6897,11 +6996,15 @@
       setTimeout(function() { initNearbyMap(lat, lon); }, 50);
     });
 
-    // Initial load — fetch default category (pubs)
-    fetchNearbyPlaces(nearbyCategory, lat, lon, nearbyLocationName, function(venues) {
-      nearbyVenues = venues;
-      renderVenueList();
-    });
+    // Initial load
+    if (nearbyCategory === 'saved') {
+      renderSavedVenueList();
+    } else {
+      fetchNearbyPlaces(nearbyCategory, lat, lon, nearbyLocationName, function(venues) {
+        nearbyVenues = venues;
+        renderVenueList();
+      });
+    }
   }
 
   function renderVenueList() {
@@ -6985,6 +7088,39 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  /* ─── Saved places list ─── */
+  function renderSavedVenueList() {
+    var el    = document.getElementById('nearby-venues');
+    var count = document.getElementById('nearby-count');
+    if (!el) return;
+    var saved = getPlaceFavourites();
+    if (count) count.textContent = saved.length + ' saved place' + (saved.length !== 1 ? 's' : '');
+    if (saved.length === 0) {
+      el.innerHTML =
+        '<div class="empty-state" style="padding:40px 24px;text-align:center;font:400 14px/1.5 Inter,sans-serif;color:var(--ink-2);">' +
+        'Tap the heart on any place to save it for later.</div>';
+      return;
+    }
+    el.innerHTML = saved.map(function(p) {
+      var mapsHref = p.mapsUrl ? p.mapsUrl : '#';
+      return (
+        '<div class="saved-place-card">' +
+          '<div class="saved-place-body">' +
+            '<div class="saved-place-name">' + escHtml(p.name || '') + '</div>' +
+            (p.address ? '<div class="saved-place-meta">' + escHtml(p.address) + '</div>' : '') +
+          '</div>' +
+          '<div class="saved-place-actions">' +
+            (mapsHref !== '#' ? '<a class="saved-place-maps" href="' + mapsHref + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Maps -></a>' : '') +
+            '<button class="saved-place-unsave" onclick="togglePlaceFavourite(\'' + (p.placeId || '').replace(/'/g, "\\'") + '\')" aria-label="Remove from saved">' +
+              luIcon('heart', 16, 'fill:var(--red);stroke:var(--red);') +
+            '</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+    syncIcons();
   }
 
   /* ─── Leaflet map ─── */
@@ -8099,12 +8235,9 @@
   initApp();
   initWalkDetailSwipe();
 
-  /* ─── Swipe-to-dismiss: all bottom sheets ─── */
-  addSheetSwipe(
-    document.getElementById('wxSheet'),
-    null,
-    closeWxSheet
-  );
+  /* ─── Swipe-to-dismiss: filter-type bottom sheets ─── */
+  /* Note: wxSheet is initialised in DOMContentLoaded (Phase C) because
+     its HTML element is declared after this script block. */
   addSheetSwipe(
     document.getElementById('cond-tag-sheet'),
     document.getElementById('cond-tag-sheet-inner'),
