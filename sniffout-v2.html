@@ -1460,6 +1460,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 16px 16px 8px;
+      position: relative;
     }
     .me-name {
       font: 700 22px/1 'Inter', sans-serif;
@@ -1530,6 +1531,79 @@
       padding: 0; text-align: left;
       cursor: pointer;
     }
+    /* Dog setup card */
+    .dog-setup-card {
+      margin: 24px 16px;
+      padding: 28px 24px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+    .dog-setup-avatar {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: rgba(30,77,58,0.10);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 4px;
+    }
+    .dog-setup-heading {
+      font: 700 18px/1.2 'Inter', sans-serif;
+      color: var(--ink);
+      letter-spacing: -0.2px;
+    }
+    .dog-setup-sub {
+      font: 400 14px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+      margin-top: -4px;
+    }
+    .dog-setup-input {
+      width: 100%;
+      height: 48px;
+      padding: 0 14px;
+      font: 500 16px/1 'Inter', sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .dog-setup-input:focus { border-color: var(--brand); }
+    .dog-setup-btn {
+      width: 100%;
+      height: 48px;
+      background: var(--brand);
+      color: #fff;
+      font: 600 15px/1 'Inter', sans-serif;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 4px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .dog-setup-skip {
+      font: 400 13px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+      background: none; border: none;
+      padding: 4px 0;
+      cursor: pointer;
+    }
+    .me-add-dog-link {
+      display: block;
+      text-align: center;
+      font: 400 13px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+      padding: 4px 0 20px;
+      cursor: pointer;
+      background: none; border: none;
+      width: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
     /* Badges */
     .me-badges-section { padding: 0 16px 16px; }
     .me-section-label {
@@ -1581,9 +1655,9 @@
       gap: 4px;
       animation: fadeIn 160ms ease;
     }
-    .me-badge-detail-name { font: 600 13px/1 'Inter', sans-serif; color: var(--ink); }
-    .me-badge-detail-desc { font: 400 13px/1.4 'Inter', sans-serif; color: var(--ink-2); }
-    .me-badge-detail-date { font: 400 12px/1 'Inter', sans-serif; color: var(--ink-2); opacity: 0.65; }
+    .me-badge-detail-name { font: 600 14px/1 'Inter', sans-serif; color: var(--ink); }
+    .me-badge-detail-desc { font: 400 14px/1.45 'Inter', sans-serif; color: var(--ink-2); }
+    .me-badge-detail-date { font: 400 12px/1 'Inter', sans-serif; color: var(--ink-2); opacity: 0.6; }
     /* Walk log */
     .me-walks-section { padding: 0 16px 32px; }
     .me-walks-header {
@@ -1692,7 +1766,49 @@
     .me-settings-row-value svg { width: 14px; height: 14px; color: var(--ink-2); opacity: 0.5; }
     .me-settings-note { margin-top: 24px; font: 400 12px/1.5 'Inter', sans-serif; color: var(--ink-2); text-align: center; padding: 0 8px; }
 
-
+    /* -- Today tab birthday banner -------------------------------------- */
+    .today-birthday-banner { height: 44px; background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; flex-shrink: 0; }
+    .today-birthday-text { display: flex; align-items: center; gap: 8px; font: 600 14px/1 'Inter', sans-serif; color: #fff; }
+    .today-birthday-dismiss { width: 24px; height: 24px; background: none; border: none; color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; -webkit-tap-highlight-color: transparent; opacity: 0.8; }
+    .today-birthday-dismiss:active { opacity: 0.5; }
+    /* -- Dog picker dropdown -------------------------------------------- */
+    .dog-picker { position: absolute; top: 100%; left: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; min-width: 180px; z-index: 50; box-shadow: 0 4px 16px rgba(0,0,0,0.10); overflow: hidden; }
+    .dog-picker-row { display: flex; align-items: center; gap: 8px; padding: 12px 14px; cursor: pointer; -webkit-tap-highlight-color: transparent; border-bottom: 1px solid var(--border); }
+    .dog-picker-row:last-child { border-bottom: none; }
+    .dog-picker-row:active { background: var(--bg); }
+    .dog-picker-check { width: 16px; height: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .dog-picker-name { font: 500 14px/1 'Inter', sans-serif; color: var(--ink); }
+    .dog-picker-add .dog-picker-name { color: var(--ink-2); font-weight: 400; }
+    /* -- Dog settings in settings sheet --------------------------------- */
+    .dog-settings-section-label { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.5px; margin: 4px 0 14px; }
+    .dog-settings-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    .dog-settings-label { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); }
+    .dog-settings-input, .dog-settings-select { width: 100%; height: 44px; padding: 0 12px; font: 400 15px/1 'Inter', sans-serif; color: var(--ink); background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; outline: none; box-sizing: border-box; -webkit-appearance: none; appearance: none; }
+    .dog-settings-input:focus, .dog-settings-select:focus { border-color: var(--brand); }
+    .dog-settings-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6B6B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+    .dog-settings-other-input { margin-top: 8px; }
+    .dog-tags-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .dog-tag-chip { padding: 8px 14px; font: 500 13px/1 'Inter', sans-serif; background: var(--bg); color: var(--ink-2); border: 1.5px solid var(--border); border-radius: 20px; cursor: pointer; -webkit-tap-highlight-color: transparent; white-space: nowrap; }
+    .dog-tag-chip.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+    .dog-birthday-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .dog-settings-save-btn { width: 100%; height: 48px; background: var(--brand); color: #fff; font: 600 15px/1 'Inter', sans-serif; border: none; border-radius: 12px; cursor: pointer; margin-top: 16px; -webkit-tap-highlight-color: transparent; }
+    .dog-settings-save-btn:active { opacity: 0.85; }
+    .dog-settings-remove-link { display: block; text-align: center; font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); background: none; border: none; padding: 14px 0 0; cursor: pointer; width: 100%; -webkit-tap-highlight-color: transparent; }
+    .dog-settings-confirm { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); text-align: center; }
+    .dog-settings-confirm-text { font: 400 13px/1.4 'Inter', sans-serif; color: var(--ink-2); margin-bottom: 10px; }
+    .dog-settings-confirm-row { display: flex; gap: 8px; justify-content: center; }
+    .dog-settings-confirm-yes { padding: 8px 18px; font: 600 13px/1 'Inter', sans-serif; color: var(--red); background: none; border: 1.5px solid var(--red); border-radius: 8px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .dog-settings-confirm-no { padding: 8px 18px; font: 600 13px/1 'Inter', sans-serif; color: var(--ink-2); background: none; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    /* -- Me tab header with dog avatar ---------------------------------- */
+    .me-header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .dog-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(30,77,58,0.10); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .me-header-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .me-dog-name { font: 700 22px/1 'Inter', sans-serif; color: var(--ink); letter-spacing: -0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .me-dog-meta { font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    /* -- Size segment pill track (3-col) -------------------------------- */
+    .me-size-control .segment-pill[data-active="0"] { transform: translateX(0); }
+    .me-size-control .segment-pill[data-active="1"] { transform: translateX(100%); }
+    .me-size-control .segment-pill[data-active="2"] { transform: translateX(200%); }
 
     /* -- Radius control (4-segment) ------------------------------------- */
     .me-radius-control { grid-template-columns: 1fr 1fr 1fr 1fr; }
@@ -2547,6 +2663,19 @@
       cursor: pointer;
       text-decoration: none;
     }
+    /* Walk note */
+    .walk-note-container { border-top: 1px solid var(--border); margin-top: 8px; }
+    .walk-note-area { width: 100%; background: transparent; border: none; outline: none; resize: none; font: 400 14px/1.6 'Inter', sans-serif; color: var(--ink-2); padding: 12px 0; box-sizing: border-box; display: block; }
+    .walk-note-area::placeholder { color: var(--ink-2); opacity: 0.5; }
+    /* Wishlist button */
+    .wishlist-btn { width: 100%; height: 44px; background: transparent; border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font: 500 14px/1 'Inter', sans-serif; cursor: pointer; -webkit-tap-highlight-color: transparent; margin-top: 8px; box-sizing: border-box; }
+    .wishlist-btn:active { opacity: 0.7; }
+    /* Wishlist to fav prompt */
+    .wishlist-prompt { padding: 10px 0 4px; text-align: center; }
+    .wishlist-prompt-text { font: 400 13px/1.4 'Inter', sans-serif; color: var(--ink-2); margin-bottom: 8px; }
+    .wishlist-prompt-btns { display: flex; gap: 8px; justify-content: center; }
+    .wishlist-prompt-yes { padding: 7px 16px; font: 600 13px/1 'Inter', sans-serif; color: var(--brand); background: none; border: 1.5px solid var(--brand); border-radius: 8px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .wishlist-prompt-no { padding: 7px 16px; font: 600 13px/1 'Inter', sans-serif; color: var(--ink-2); background: none; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
     .walk-detail-map-section {
       padding: 16px;
       background: var(--surface);
@@ -2661,6 +2790,15 @@
 
     <!-- ══════════ TODAY TAB ══════════ -->
     <div id="tab-today" class="tab-panel active">
+
+      <!-- Birthday banner (hidden until checkBirthdayBanner shows it) -->
+      <div id="todayBirthdayBanner" class="today-birthday-banner" style="display:none">
+        <div class="today-birthday-text">
+          <svg width="16" height="12" viewBox="0 0 48 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M24 2C30 2 43 8 43 18C43 28 35 36 24 36C13 36 5 28 5 18C5 8 18 2 24 2Z" fill="#FFFFFF"/><ellipse cx="15.5" cy="21" rx="5.5" ry="5.5" fill="#1E4D3A"/><ellipse cx="32.5" cy="21" rx="5.5" ry="5.5" fill="#1E4D3A"/><rect x="22" y="7" width="4" height="9" rx="2" fill="#1E4D3A"/></svg>
+          <span id="todayBirthdayMsg"></span>
+        </div>
+        <button class="today-birthday-dismiss" aria-label="Dismiss" onclick="document.getElementById('todayBirthdayBanner').style.display='none'">&#x2715;</button>
+      </div>
 
       <!-- State A: No location -->
       <div id="state-a">
@@ -2822,8 +2960,7 @@
 
       <!-- Zone 1: Header -->
       <header class="me-header">
-        <!-- Phase 3 hook: profile photo slot before name -->
-        <span class="me-name" id="meDisplayName"></span>
+        <div id="meHeaderLeft" class="me-header-left"><span class="me-name" id="meDisplayName"></span></div>
         <button class="me-gear-btn" id="meGearBtn" aria-label="Settings">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </button>
@@ -2853,6 +2990,9 @@
         </div>
         <div class="me-walk-list" id="meWalkList"></div>
       </div>
+
+      <!-- Add your dog link (shown after skip, until dog is set) -->
+      <button class="me-add-dog-link" id="meAddDogLink" style="display:none" onclick="showDogSetupCard()">Add your dog</button>
 
       <div style="height:32px"></div>
 
@@ -4244,9 +4384,22 @@
   }
 
   function logWalk(id) {
-    var log = getWalkLog();
-    log.unshift({ id: id, ts: Date.now() });
+    var log          = getWalkLog();
+    var weather_code = null;
+    var is_day       = null;
+    var wind_speed   = null;
+    try {
+      var sess = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+      if (sess && sess.weather && sess.weather.current) {
+        var wc = sess.weather.current;
+        weather_code = wc.weather_code  != null ? wc.weather_code  : null;
+        is_day       = wc.is_day        != null ? wc.is_day        : null;
+        wind_speed   = wc.wind_speed_10m != null ? wc.wind_speed_10m : null;
+      }
+    } catch(e) {}
+    log.unshift({ id: id, ts: Date.now(), weather_code: weather_code, is_day: is_day, wind_speed: wind_speed, note: null });
     try { localStorage.setItem('sniffout_walk_log', JSON.stringify(log)); } catch(e) {}
+    checkBadgeEarned();
   }
 
   function isWalked(id) {
@@ -4262,6 +4415,13 @@
 
   function getWalkLogCount(id) {
     return getWalkLog().filter(function(e) { return e.id === id; }).length;
+  }
+
+  function getLatestLogEntry(walkId) {
+    var entries = getWalkLog().filter(function(e) { return e.id === walkId; });
+    if (!entries.length) return null;
+    entries.sort(function(a, b) { return b.ts - a.ts; });
+    return entries[0];
   }
 
   function getLastWalkDate(id) {
@@ -4488,8 +4648,42 @@
       syncIcons();
     }
 
-    // Show "Add or update conditions" link
     var actionsEl = btn ? btn.closest('.walk-detail-actions') : null;
+
+    // Show wishlist-to-fav prompt if walk was wishlisted (and prompt not yet dismissed)
+    if (actionsEl && isWishlisted(walkId) && !_wishlistPromptDismissed) {
+      if (!actionsEl.querySelector('.wishlist-prompt')) {
+        var prompt = document.createElement('div');
+        prompt.className = 'wishlist-prompt';
+        prompt.innerHTML =
+          '<p class="wishlist-prompt-text">You have explored this one - move it to saved walks?</p>' +
+          '<div class="wishlist-prompt-btns">' +
+            '<button class="wishlist-prompt-yes" onclick="onWishlistSaveIt(\'' + walkId + '\')">Save it</button>' +
+            '<button class="wishlist-prompt-no" onclick="onWishlistNotYet()">Not yet</button>' +
+          '</div>';
+        actionsEl.appendChild(prompt);
+      }
+    }
+
+    // Add note area if not already present
+    if (actionsEl && !actionsEl.querySelector('.walk-note-container')) {
+      var latestEntry = getLatestLogEntry(walkId);
+      var dogFallback = getDogName() || 'your dog';
+      var noteDiv     = document.createElement('div');
+      noteDiv.className = 'walk-note-container';
+      var ta = document.createElement('textarea');
+      ta.className   = 'walk-note-area';
+      ta.rows        = 3;
+      ta.placeholder = 'Add a note from today\'s walk with ' + dogFallback + '...';
+      ta.value       = '';
+      ta.addEventListener('blur', (function(entry) {
+        return function() { if (entry) updateWalkNote(walkId, entry.ts, ta.value); };
+      })(latestEntry));
+      noteDiv.appendChild(ta);
+      actionsEl.appendChild(noteDiv);
+    }
+
+    // Show "Add or update conditions" link
     if (actionsEl && !actionsEl.querySelector('.walked-conditions-link')) {
       var link = document.createElement('a');
       link.className = 'walked-conditions-link';
@@ -4501,10 +4695,35 @@
     updateMeStats();
     renderWalkLogSection();
     renderBadges();
+    checkBadgeEarned();
 
     if (!hasSubmittedTagsToday(walkId)) {
       openCondTagSheet(walkId);
     }
+  }
+
+  function onWishlistSaveIt(walkId) {
+    if (!isFavourited(walkId)) toggleFavourite(walkId);
+    if (isWishlisted(walkId)) toggleWishlist(walkId);
+    // Update wishlist button and remove prompt
+    var old = document.getElementById('walk-wishlist-btn');
+    if (old) {
+      var parent = old.parentNode;
+      var next   = old.nextSibling;
+      var tmp    = document.createElement('div');
+      tmp.innerHTML = renderWishlistBtn(walkId);
+      parent.insertBefore(tmp.firstChild, next);
+      old.remove();
+    }
+    var prompt = document.querySelector('.walk-detail-actions .wishlist-prompt');
+    if (prompt) prompt.remove();
+    _wishlistPromptDismissed = true;
+  }
+
+  function onWishlistNotYet() {
+    var prompt = document.querySelector('.walk-detail-actions .wishlist-prompt');
+    if (prompt) prompt.remove();
+    _wishlistPromptDismissed = true;
   }
 
   /* ─── renderCondTagRow() ─── */
@@ -4559,12 +4778,15 @@
   var walkDetailMap = null;
   var currentDetailWalkId = null;
 
+  var _wishlistPromptDismissed = false;
+
   function openWalkDetail(id) {
     var walk = null;
     for (var i = 0; i < WALKS_DB.length; i++) {
       if (WALKS_DB[i].id === id) { walk = WALKS_DB[i]; break; }
     }
     if (!walk) return;
+    _wishlistPromptDismissed = false;
     currentDetailWalkId = id;
     populateWalkDetail(walk);
     history.pushState(null, '', location.href);
@@ -4730,6 +4952,29 @@
     }
   });
 
+  function renderWishlistBtn(walkId) {
+    var wishlisted = isWishlisted(walkId);
+    var icon = wishlisted
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="var(--brand)" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
+    var label  = wishlisted ? 'On your list' : 'Add to list';
+    var color  = wishlisted ? 'var(--brand)' : 'var(--ink-2)';
+    return '<button class="wishlist-btn" id="walk-wishlist-btn" data-walk-id="' + walkId + '" style="color:' + color + ';" onclick="onWishlistTap(\'' + walkId + '\')">' + icon + '<span>' + label + '</span></button>';
+  }
+
+  function onWishlistTap(walkId) {
+    toggleWishlist(walkId);
+    var old = document.getElementById('walk-wishlist-btn');
+    if (old) {
+      var parent = old.parentNode;
+      var next   = old.nextSibling;
+      var tmp    = document.createElement('div');
+      tmp.innerHTML = renderWishlistBtn(walkId);
+      parent.insertBefore(tmp.firstChild, next);
+      old.remove();
+    }
+  }
+
   function populateWalkDetail(walk) {
     var headerName = document.getElementById('walk-detail-header-name');
     if (headerName) headerName.textContent = walk.name;
@@ -4813,13 +5058,19 @@
       walkedBtn.style.fontWeight   = '';
       walkedBtn.style.pointerEvents = '';
     }
-    // Remove any previously-rendered conditions link
+    // Remove any previously-rendered dynamic elements
     var actionsContainer = document.getElementById('walk-detail-walked-btn')
       ? document.getElementById('walk-detail-walked-btn').closest('.walk-detail-actions')
       : null;
     if (actionsContainer) {
-      var oldLink = actionsContainer.querySelector('.walked-conditions-link');
-      if (oldLink) oldLink.remove();
+      var oldLink    = actionsContainer.querySelector('.walked-conditions-link');
+      var oldWishBtn = actionsContainer.querySelector('.wishlist-btn');
+      var oldNote    = actionsContainer.querySelector('.walk-note-container');
+      var oldPrompt  = actionsContainer.querySelector('.wishlist-prompt');
+      if (oldLink)    oldLink.remove();
+      if (oldWishBtn) oldWishBtn.remove();
+      if (oldNote)    oldNote.remove();
+      if (oldPrompt)  oldPrompt.remove();
     }
     if (walkedBtn) {
       walkedBtn.setAttribute('data-walk-id', walk.id);
@@ -4848,9 +5099,33 @@
         walkedBtn.onclick   = function() { onMarkWalked(walk.id, walkedBtn); };
       }
 
-      // Show conditions link if walk has any prior log entry
+      // Add wishlist button (always shown)
+      var actionsEl = walkedBtn.closest('.walk-detail-actions');
+      if (actionsEl && !actionsEl.querySelector('.wishlist-btn')) {
+        var wlTmp = document.createElement('div');
+        wlTmp.innerHTML = renderWishlistBtn(walk.id);
+        actionsEl.appendChild(wlTmp.firstChild);
+      }
+
+      // Show note area and conditions link if walk has any prior log entry
       if (isWalked(walk.id)) {
-        var actionsEl = walkedBtn.closest('.walk-detail-actions');
+        if (actionsEl && !actionsEl.querySelector('.walk-note-container')) {
+          var latestEntry = getLatestLogEntry(walk.id);
+          var noteVal     = latestEntry && latestEntry.note ? latestEntry.note : '';
+          var dogFallback = getDogName() || 'your dog';
+          var noteDiv     = document.createElement('div');
+          noteDiv.className = 'walk-note-container';
+          var ta = document.createElement('textarea');
+          ta.className   = 'walk-note-area';
+          ta.rows        = 3;
+          ta.placeholder = 'Add a note from today\'s walk with ' + dogFallback + '...';
+          ta.value       = noteVal;
+          ta.addEventListener('blur', (function(entry) {
+            return function() { if (entry) updateWalkNote(walk.id, entry.ts, ta.value); };
+          })(latestEntry));
+          noteDiv.appendChild(ta);
+          actionsEl.appendChild(noteDiv);
+        }
         if (actionsEl && !actionsEl.querySelector('.walked-conditions-link')) {
           var condLink = document.createElement('a');
           condLink.className   = 'walked-conditions-link';
@@ -5148,6 +5423,7 @@
     if (keys.length > 0) {
       saveTagsForWalk(_condTagWalkId, keys);
       rerenderCondTagRow(_condTagWalkId);
+      checkBadgeEarned();
     }
     closeCondTagSheet();
   }
@@ -5632,6 +5908,9 @@
   var FAVS_KEY             = 'sniffout_favs';
   var PLACE_FAVS_KEY       = 'sniffout_place_favs';
   var GREENSPACE_FAVS_KEY  = 'sniffout_greenspace_favs';
+  var DOGS_KEY             = 'sniffout_dogs';
+  var DOG_DISMISSED_KEY    = 'sniffout_dog_dismissed';
+  var WISHLIST_KEY         = 'sniffout_wishlist';
 
   function getPlaceFavourites() {
     try { return JSON.parse(localStorage.getItem(PLACE_FAVS_KEY)) || []; } catch(e) { return []; }
@@ -5647,6 +5926,117 @@
 
   function saveGreenspaceFavourites(favs) {
     try { localStorage.setItem(GREENSPACE_FAVS_KEY, JSON.stringify(favs)); } catch(e) {}
+  }
+
+  /* ─── Dog profile migration: sniffout_dog (old) -> sniffout_dogs (array) ─── */
+  (function() {
+    try {
+      var oldRaw = localStorage.getItem('sniffout_dog');
+      if (oldRaw) {
+        var oldDog = JSON.parse(oldRaw);
+        if (oldDog && typeof oldDog === 'object') {
+          var existing = localStorage.getItem(DOGS_KEY);
+          if (!existing) {
+            oldDog.id     = oldDog.id || 'dog_1';
+            oldDog.active = true;
+            localStorage.setItem(DOGS_KEY, JSON.stringify([oldDog]));
+          }
+        }
+        localStorage.removeItem('sniffout_dog');
+      }
+    } catch(e) {}
+  })();
+
+  /* ─── Dog profile helpers ─── */
+
+  function getDog() {
+    try {
+      var dogs = JSON.parse(localStorage.getItem(DOGS_KEY) || 'null');
+      if (!dogs || !Array.isArray(dogs) || !dogs.length) return null;
+      var active = null;
+      dogs.forEach(function(d) { if (d.active) active = d; });
+      return active || dogs[0] || null;
+    } catch(e) { return null; }
+  }
+
+  function saveDogProfile(updates, addNew) {
+    try {
+      var dogs = JSON.parse(localStorage.getItem(DOGS_KEY) || 'null') || [];
+      if (addNew) {
+        // Deactivate all existing dogs and append a new one with a unique id
+        var maxNum = 0;
+        dogs.forEach(function(d) {
+          d.active = false;
+          var num = parseInt((d.id || '').replace('dog_', '')) || 0;
+          if (num > maxNum) maxNum = num;
+        });
+        var newDog = { id: 'dog_' + (maxNum + 1), name: '', breed: null, size: null, tags: [], birthday: null, photoUrl: null, active: true };
+        Object.keys(updates).forEach(function(k) { newDog[k] = updates[k]; });
+        dogs.push(newDog);
+      } else {
+        var idx = -1;
+        dogs.forEach(function(d, i) { if (d.active) idx = i; });
+        if (idx === -1) {
+          var newDog = { id: 'dog_1', name: '', breed: null, size: null, tags: [], birthday: null, photoUrl: null, active: true };
+          Object.keys(updates).forEach(function(k) { newDog[k] = updates[k]; });
+          dogs.push(newDog);
+        } else {
+          Object.keys(updates).forEach(function(k) { dogs[idx][k] = updates[k]; });
+        }
+      }
+      localStorage.setItem(DOGS_KEY, JSON.stringify(dogs));
+    } catch(e) {}
+  }
+
+  function getDogName() {
+    var dog = getDog();
+    return dog && dog.name ? dog.name : null;
+  }
+
+  function dogOrYou() {
+    return getDogName() || 'you';
+  }
+
+  function dogOrYour() {
+    var name = getDogName();
+    return name ? name + '\'s' : 'your';
+  }
+
+  /* ─── Wishlist helpers ─── */
+
+  function getWishlist() {
+    try { return JSON.parse(localStorage.getItem(WISHLIST_KEY) || '[]') || []; } catch(e) { return []; }
+  }
+
+  function isWishlisted(walkId) {
+    return getWishlist().indexOf(walkId) !== -1;
+  }
+
+  function toggleWishlist(walkId) {
+    var list = getWishlist();
+    var idx  = list.indexOf(walkId);
+    if (idx !== -1) {
+      list.splice(idx, 1);
+    } else {
+      list.unshift(walkId);
+    }
+    try { localStorage.setItem(WISHLIST_KEY, JSON.stringify(list)); } catch(e) {}
+  }
+
+  /* ─── Walk note helper ─── */
+
+  function updateWalkNote(walkId, ts, note) {
+    try {
+      var log   = getWalkLog();
+      var found = false;
+      log.forEach(function(entry) {
+        if (entry.id === walkId && entry.ts === ts) {
+          entry.note = note;
+          found = true;
+        }
+      });
+      if (found) localStorage.setItem('sniffout_walk_log', JSON.stringify(log));
+    } catch(e) {}
   }
 
   function isGreenspaceFavourited(id) {
@@ -5814,17 +6204,26 @@
       toast.className = 'badge-toast';
       document.body.appendChild(toast);
     }
-    toast.textContent = 'Earned: ' + label;
+    toast.textContent = label;
     toast.classList.add('visible');
     setTimeout(function() { toast.classList.remove('visible'); }, 3000);
   }
 
+  function isoWeekStr(date) {
+    var d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    var day = d.getUTCDay() || 7; // Monday=1 ... Sunday=7
+    d.setUTCDate(d.getUTCDate() + 4 - day); // Thursday of ISO week
+    var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    var wk = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    return d.getUTCFullYear() + '-W' + (wk < 10 ? '0' : '') + wk;
+  }
+
   function checkBadgeEarned() {
-    var storage = getBadgeStorage();
-    var log     = getWalkLog();
+    var storage   = getBadgeStorage();
+    var log       = getWalkLog();
     var newBadges = [];
 
-    // Helper: count condition reports
+    // Helper: condition report data
     var condData = (function() {
       try { return JSON.parse(localStorage.getItem('sniffout_condition_tags')) || {}; } catch(e) { return {}; }
     })();
@@ -5838,49 +6237,43 @@
       }
     });
 
-    // 1. Leads On: entries on 3 distinct calendar dates
+    // 1. Leads On: entries on 3+ distinct calendar dates (YYYY-MM-DD)
     if (!storage['leads-on']) {
-      var dates = {};
+      var dateSet = {};
       log.forEach(function(e) {
         if (e.ts) {
           var d = new Date(e.ts);
-          dates[d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate()] = true;
+          dateSet[d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate()] = true;
         }
       });
-      if (Object.keys(dates).length >= 3) newBadges.push('leads-on');
+      if (Object.keys(dateSet).length >= 3) newBadges.push('leads-on');
     }
 
     // 2. Good Mileage: 25+ cumulative miles
     if (!storage['good-mileage']) {
-      var totalMi = getTotalDistanceMi();
+      var walkById = {};
+      WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
+      var totalMi = 0;
+      log.forEach(function(e) {
+        var w = walkById[e.id];
+        totalMi += (w && w.distance) ? w.distance : 0;
+      });
       if (totalMi >= 25) newBadges.push('good-mileage');
     }
 
-    // 3. Creature of Habit: at least one walk every week for 4 consecutive ISO weeks
+    // 3. Creature of Habit: at least one entry in each of the 4 most recent consecutive ISO weeks
     if (!storage['creature-of-habit']) {
       var weekSet = {};
       log.forEach(function(e) {
-        if (e.ts) {
-          var d   = new Date(e.ts);
-          var jan1 = new Date(d.getFullYear(), 0, 1);
-          var week = Math.ceil(((d - jan1) / 86400000 + jan1.getDay() + 1) / 7);
-          weekSet[d.getFullYear() + '-W' + week] = true;
-        }
+        if (e.ts) weekSet[isoWeekStr(new Date(e.ts))] = true;
       });
-      var weeks = Object.keys(weekSet).sort();
-      var streak = 1;
-      for (var wi = 1; wi < weeks.length; wi++) {
-        var parts = weeks[wi - 1].split('-W');
-        var pYear = parseInt(parts[0], 10);
-        var pWeek = parseInt(parts[1], 10);
-        var cParts = weeks[wi].split('-W');
-        var cYear  = parseInt(cParts[0], 10);
-        var cWeek  = parseInt(cParts[1], 10);
-        var consecutive = (cYear === pYear && cWeek === pWeek + 1) ||
-                          (cYear === pYear + 1 && pWeek >= 52 && cWeek === 1);
-        if (consecutive) { streak++; if (streak >= 4) { newBadges.push('creature-of-habit'); break; } }
-        else { streak = 1; }
+      var now = new Date();
+      var allFour = true;
+      for (var w = 0; w < 4; w++) {
+        var d = new Date(now.getTime() - w * 7 * 86400000);
+        if (!weekSet[isoWeekStr(d)]) { allFour = false; break; }
       }
+      if (allFour) newBadges.push('creature-of-habit');
     }
 
     // 4. Good Report: first condition report
@@ -5898,28 +6291,38 @@
       newBadges.push('trail-keeper');
     }
 
-    // Write newly earned badges to storage and show toast
+    // Write newly earned badges and show toast
     if (newBadges.length > 0) {
       newBadges.forEach(function(id) {
         storage[id] = { earned: true, earnedAt: new Date().toISOString() };
         var def = ALL_BADGES.filter(function(b) { return b.id === id; })[0];
-        if (def) showBadgeToast(def.label);
+        if (def) showBadgeToast(def.name);
       });
       saveBadgeStorage(storage);
     }
   }
 
   var ALL_BADGES = [
-    { id: 'leads-on',          label: 'Leads On',          desc: 'You went on your first three walks on different days.',                                        phase: 1 },
-    { id: 'good-mileage',      label: 'Good Mileage',      desc: 'You\'ve logged 25 miles with Sniffout.',                                                       phase: 1 },
-    { id: 'creature-of-habit', label: 'Creature of Habit', desc: 'You\'ve logged at least one walk every week for four weeks running.',                           phase: 1 },
-    { id: 'good-report',       label: 'Good Report',       desc: 'You filed your first trail condition report. Other walkers will thank you.',                     phase: 1 },
-    { id: 'reliable-scout',    label: 'Reliable Scout',    desc: 'You\'ve filed 5 condition reports. You\'re one of the people who keeps Sniffout accurate.',     phase: 1 },
-    { id: 'trail-keeper',      label: 'Trail Keeper',      desc: 'You\'ve filed 10 condition reports across 5 different walks. The trails you walk are better documented because of you.', phase: 1 },
-    { id: 'honest-bark',       label: 'Honest Bark',       desc: 'You wrote your first walk review. Reviews like yours help other dog owners decide where to go.', phase: 3 },
-    { id: 'discerning-nose',   label: 'Discerning Nose',   desc: 'You\'ve rated 10 different walks. Your ratings help other walkers find the best routes.',        phase: 3 },
-    { id: 'found-a-good-one',  label: 'Found a Good One',  desc: 'You suggested a walk that made it onto Sniffout. You\'ve helped make the app better for every dog owner who uses it.', phase: 3 },
-    { id: 'voice-of-the-pack', label: 'Voice of the Pack', desc: 'You\'ve written 5 walk reviews with genuine detail. Other walkers rely on people like you.',     phase: 3 }
+    // Trigger: walk log entries on 3+ distinct calendar dates
+    { id: 'leads-on',          name: 'Leads On',          category: 'explorer',    phase: 1, earnedMoment: 'You kept coming back. The lead was always on.' },
+    // Trigger: sum of walk distances >= 25 miles
+    { id: 'good-mileage',      name: 'Good Mileage',      category: 'explorer',    phase: 1, earnedMoment: 'Twenty-five miles. Real ground covered, real paths walked.' },
+    // Trigger: at least one walk in each of the 4 most recent consecutive ISO weeks
+    { id: 'creature-of-habit', name: 'Creature of Habit', category: 'explorer',    phase: 1, earnedMoment: 'Dogs love a routine. Turns out their owners do too.' },
+    // Trigger: first condition report submitted (>= 1 tag entry total)
+    { id: 'good-report',       name: 'Good Report',       category: 'contributor', phase: 1, earnedMoment: 'Someone is choosing the right path today because of you.' },
+    // Trigger: 5+ condition reports across 3+ distinct walk IDs
+    { id: 'reliable-scout',    name: 'Reliable Scout',    category: 'contributor', phase: 1, earnedMoment: 'You have become someone other walkers quietly rely on.' },
+    // Trigger: 10+ condition reports across 5+ distinct walk IDs
+    { id: 'trail-keeper',      name: 'Trail Keeper',      category: 'contributor', phase: 1, earnedMoment: 'The trails you walk are better documented because you were there.' },
+    // Trigger: first walk review >= 75 characters (phase 3)
+    { id: 'honest-bark',       name: 'Honest Bark',       category: 'contributor', phase: 3, earnedMoment: 'Your words are out there. Someone will choose their next walk because of them.' },
+    // Trigger: 10 unique walk ratings submitted (phase 3)
+    { id: 'discerning-nose',   name: 'Discerning Nose',   category: 'community',   phase: 3, earnedMoment: 'You have shaped what other walkers will discover next.' },
+    // Trigger: walk submission approved by curator (phase 3)
+    { id: 'found-a-good-one',  name: 'Found a Good One',  category: 'community',   phase: 3, earnedMoment: 'You found something worth sharing - and it made it in. Every dog who walks it has you to thank.' },
+    // Trigger: 5 walk reviews totalling >= 600 chars (phase 3)
+    { id: 'voice-of-the-pack', name: 'Voice of the Pack', category: 'community',   phase: 3, earnedMoment: 'Other walkers plan their routes around reviews like yours. You have earned that.' }
   ];
 
   function getEarnedBadges() {
@@ -5928,10 +6331,10 @@
     ALL_BADGES.forEach(function(def) {
       if (storage[def.id] && storage[def.id].earned) {
         result.push({
-          id:       def.id,
-          label:    def.label,
-          desc:     def.desc,
-          earnedAt: storage[def.id].earnedAt || null
+          id:           def.id,
+          label:        def.name,
+          desc:         def.earnedMoment,
+          earnedAt:     storage[def.id].earnedAt || null
         });
       }
     });
@@ -6156,26 +6559,63 @@
 
   /* -- Main Me tab render ----------------------------------------------- */
   function renderMeTab() {
-    var log  = getWalkLog();
-    var name = getSavedUsername();
+    var log       = getWalkLog();
+    var name      = getSavedUsername();
+    var dog       = getDog();
+    var dismissed = localStorage.getItem(DOG_DISMISSED_KEY);
+    var dogName   = getDogName();
 
-    // Header name
-    var nameEl = document.getElementById('meDisplayName');
-    if (nameEl) nameEl.textContent = name || '';
+    // Header - dog avatar or plain name
+    var headerLeftEl = document.getElementById('meHeaderLeft');
+    if (headerLeftEl) {
+      if (dog) {
+        var metaParts = [];
+        if (dog.breed) metaParts.push(dog.breed);
+        if (name) metaParts.push(name);
+        var metaStr = metaParts.join(' - ');
+        var headerNoseSvg = '<svg width="22" height="16" viewBox="0 0 48 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M24 2C30 2 43 8 43 18C43 28 35 36 24 36C13 36 5 28 5 18C5 8 18 2 24 2Z" fill="var(--brand)"/><ellipse cx="15.5" cy="21" rx="5.5" ry="5.5" fill="#FFFFFF"/><ellipse cx="32.5" cy="21" rx="5.5" ry="5.5" fill="#FFFFFF"/><rect x="22" y="7" width="4" height="9" rx="2" fill="#FFFFFF"/></svg>';
+        headerLeftEl.innerHTML =
+          '<div class="dog-avatar" onclick="showDogPicker()" style="cursor:pointer;" aria-label="Switch dog">' + headerNoseSvg + '</div>' +
+          '<div class="me-header-text">' +
+            '<span class="me-dog-name">' + (dog.name || '') + '</span>' +
+            (metaStr ? '<span class="me-dog-meta">' + metaStr + '</span>' : '') +
+          '</div>';
+      } else {
+        headerLeftEl.innerHTML = '<span class="me-name" id="meDisplayName">' + (name || '') + '</span>';
+      }
+    }
 
     // Settings sheet name
     var settingsNameEl = document.getElementById('meSettingsNameValue');
     if (settingsNameEl) settingsNameEl.textContent = name || 'Not set';
 
+    // "Add your dog" link — visible only when dismissed and no dog set
+    var addDogLink = document.getElementById('meAddDogLink');
+    if (addDogLink) {
+      addDogLink.style.display = (!dog && dismissed) ? '' : 'none';
+    }
+
     // Hero
     var heroEl = document.getElementById('meHero');
     if (heroEl) {
       if (log.length === 0) {
-        heroEl.innerHTML =
-          '<div class="me-hero me-hero--empty">' +
-            '<p class="me-empty-line">Start exploring walks to build your story here.</p>' +
-            '<button class="me-empty-cta" onclick="switchTab(\'walks\')">Find a walk \u2192</button>' +
-          '</div>';
+        if (!dog && !dismissed) {
+          // First visit, no dog, no walks: show dog setup card
+          showDogSetupCard();
+        } else {
+          // Dog set or dismissed: personalised empty state
+          var emptyLine = dogName
+            ? 'Where will you take ' + dogName + ' first?'
+            : 'Start exploring walks to build your story here.';
+          var emptyCta = dogName
+            ? 'Find a walk for ' + dogName + ' \u2192'
+            : 'Find a walk \u2192';
+          heroEl.innerHTML =
+            '<div class="me-hero me-hero--empty">' +
+              '<p class="me-empty-line">' + emptyLine + '</p>' +
+              '<button class="me-empty-cta" onclick="switchTab(\'walks\')">' + emptyCta + '</button>' +
+            '</div>';
+        }
       } else {
         var totalMiles = getTotalDistanceMi();
         var milesStr = (totalMiles % 1 === 0)
@@ -6188,7 +6628,7 @@
             '<div class="me-stats-row">' +
               '<div class="me-stat-cell">' +
                 '<span class="me-stat-value">' + milesStr + '</span>' +
-                '<span class="me-stat-label">miles walked</span>' +
+                '<span class="me-stat-label">' + heroLabel(dogName) + '</span>' +
               '</div>' +
               '<div class="me-stat-cell">' +
                 '<span class="me-stat-value">' + placesFound + '</span>' +
@@ -6199,6 +6639,7 @@
                 '<span class="me-stat-label">contributions</span>' +
               '</div>' +
             '</div>' +
+            '<div style="padding:8px 20px 16px; font:400 13px/1 \'Inter\',sans-serif; color:var(--ink-2); text-align:center;">' + heroSub(log.length, dogName) + '</div>' +
           '</div>';
       }
     }
@@ -6223,6 +6664,124 @@
         walksSection.style.display = '';
         renderMeWalkLog(log);
       }
+    }
+  }
+
+  /* ─── Dog setup card functions ─── */
+
+  var DOG_NOSE_SVG = '<svg width="28" height="20" viewBox="0 0 48 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<path d="M24 2C30 2 43 8 43 18C43 28 35 36 24 36C13 36 5 28 5 18C5 8 18 2 24 2Z" fill="var(--brand)"/>' +
+    '<ellipse cx="15.5" cy="21" rx="5.5" ry="5.5" fill="#FFFFFF"/>' +
+    '<ellipse cx="32.5" cy="21" rx="5.5" ry="5.5" fill="#FFFFFF"/>' +
+    '<rect x="22" y="7" width="4" height="9" rx="2" fill="#FFFFFF"/>' +
+    '</svg>';
+
+  function showDogSetupCard(addNew) {
+    var heroEl = document.getElementById('meHero');
+    if (!heroEl) return;
+    var addNewFlag = addNew ? 'true' : 'false';
+    heroEl.innerHTML =
+      '<div class="dog-setup-card" id="dogSetupCard">' +
+        '<div class="dog-setup-avatar">' + DOG_NOSE_SVG + '</div>' +
+        '<p class="dog-setup-heading">What\'s your dog\'s name?</p>' +
+        '<p class="dog-setup-sub">So we can make this yours.</p>' +
+        '<input class="dog-setup-input" id="dogNameInput" type="text" placeholder="e.g. Luna"' +
+          ' maxlength="24" autocomplete="off" autocapitalize="words">' +
+        '<button class="dog-setup-btn" onclick="saveDogName(' + addNewFlag + ')">Continue \u2192</button>' +
+        '<button class="dog-setup-skip" onclick="dismissDogSetup()">Skip for now</button>' +
+      '</div>';
+  }
+
+  function saveDogName(addNew) {
+    var input = document.getElementById('dogNameInput');
+    if (!input) return;
+    var raw  = input.value.trim();
+    var name = raw.replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+    if (!name) { input.focus(); return; }
+    saveDogProfile({ name: name }, addNew);
+    var card = document.getElementById('dogSetupCard');
+    if (card) {
+      card.style.transition = 'opacity 200ms ease';
+      card.style.opacity    = '0';
+      setTimeout(function() { renderMeTab(); }, 220);
+    } else {
+      renderMeTab();
+    }
+  }
+
+  function dismissDogSetup() {
+    try { localStorage.setItem(DOG_DISMISSED_KEY, 'true'); } catch(e) {}
+    renderMeTab();
+  }
+
+  /* ─── Multi-dog picker ─── */
+
+  function hideDogPicker() {
+    var picker = document.getElementById('dog-picker');
+    if (picker) picker.remove();
+  }
+
+  function setActiveDog(dogId) {
+    try {
+      var dogs = JSON.parse(localStorage.getItem(DOGS_KEY) || '[]') || [];
+      dogs.forEach(function(d) { d.active = (d.id === dogId); });
+      localStorage.setItem(DOGS_KEY, JSON.stringify(dogs));
+    } catch(e) {}
+    hideDogPicker();
+    renderMeTab();
+  }
+
+  function showDogPicker() {
+    hideDogPicker();
+    var dogs = [];
+    try { dogs = JSON.parse(localStorage.getItem(DOGS_KEY) || '[]') || []; } catch(e) {}
+
+    var checkSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+    var plusSvg  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+
+    var html = '';
+    dogs.forEach(function(dog) {
+      html +=
+        '<div class="dog-picker-row" onclick="setActiveDog(\'' + dog.id + '\')">' +
+          '<span class="dog-picker-check">' + (dog.active ? checkSvg : '') + '</span>' +
+          '<span class="dog-picker-name">' + escHtml(dog.name || 'Dog') + '</span>' +
+        '</div>';
+    });
+    if (dogs.length < 5) {
+      html +=
+        '<div class="dog-picker-row dog-picker-add" onclick="hideDogPicker(); showDogSetupCard(true)">' +
+          '<span class="dog-picker-check">' + plusSvg + '</span>' +
+          '<span class="dog-picker-name">Add another dog</span>' +
+        '</div>';
+    }
+
+    var picker = document.createElement('div');
+    picker.id        = 'dog-picker';
+    picker.className = 'dog-picker';
+    picker.innerHTML = html;
+
+    var header = document.querySelector('#tab-me .me-header');
+    if (header) header.appendChild(picker);
+  }
+
+  /* ─── Birthday banner ─── */
+
+  function checkBirthdayBanner() {
+    var dog = getDog();
+    if (!dog || !dog.birthday || !dog.birthday.month) return;
+    var now         = new Date();
+    var todayMonth  = now.getMonth() + 1;
+    if (dog.birthday.month !== todayMonth) return;
+    var currentYear = now.getFullYear();
+    var shownYear   = null;
+    try { shownYear = parseInt(localStorage.getItem('sniffout_birthday_shown')); } catch(e) {}
+    if (shownYear === currentYear) return;
+    var banner = document.getElementById('todayBirthdayBanner');
+    var msgEl  = document.getElementById('todayBirthdayMsg');
+    if (banner && msgEl) {
+      msgEl.textContent = 'Happy birthday, ' + (dog.name || 'your dog') + '!';
+      banner.style.display = 'flex';
+      try { localStorage.setItem('sniffout_birthday_shown', String(currentYear)); } catch(e) {}
     }
   }
 
@@ -6355,6 +6914,7 @@
     if (sheet)   sheet.classList.add('is-open');
     document.body.style.overflow = 'hidden';
     history.pushState(null, '', location.href);
+    populateDogSettings();
   }
 
   function closeMeSettingsSheet() {
@@ -6363,6 +6923,190 @@
     if (overlay) overlay.classList.remove('is-open');
     if (sheet)   sheet.classList.remove('is-open');
     document.body.style.overflow = '';
+  }
+
+  /* ─── Dog settings sheet functions ─── */
+
+  var DOG_SIZE_OPTIONS = ['small', 'medium', 'large'];
+
+  function applyDogSizePreference(size) {
+    var btns = document.querySelectorAll('#segment-control-size .segment-btn');
+    var pill = document.getElementById('segment-pill-size');
+    var idx  = DOG_SIZE_OPTIONS.indexOf(size);
+    btns.forEach(function(btn, i) {
+      btn.classList.toggle('active', i === idx);
+      btn.setAttribute('aria-pressed', i === idx ? 'true' : 'false');
+    });
+    if (pill) {
+      if (idx >= 0) {
+        pill.setAttribute('data-active', String(idx));
+      } else {
+        pill.removeAttribute('data-active');
+      }
+    }
+  }
+
+  function populateDogSettings() {
+    var dog = getDog();
+    // Name
+    var nameEl = document.getElementById('dogSettingsName');
+    if (nameEl) nameEl.value = dog && dog.name ? dog.name : '';
+    // Breed
+    var breedEl      = document.getElementById('dogSettingsBreed');
+    var breedOtherEl = document.getElementById('dogSettingsBreedOther');
+    if (breedEl && breedOtherEl) {
+      var storedBreed = dog && dog.breed ? dog.breed : '';
+      var isOther = false;
+      if (storedBreed) {
+        var found = false;
+        for (var i = 0; i < breedEl.options.length; i++) {
+          if (breedEl.options[i].value === storedBreed) { found = true; break; }
+        }
+        if (found) {
+          breedEl.value = storedBreed;
+          isOther = (storedBreed === 'Other (please specify)');
+        } else {
+          breedEl.value        = 'Other (please specify)';
+          breedOtherEl.value   = storedBreed;
+          isOther = true;
+        }
+      } else {
+        breedEl.value = '';
+      }
+      breedOtherEl.style.display = isOther ? '' : 'none';
+    }
+    // Size
+    applyDogSizePreference(dog && dog.size ? dog.size : null);
+    // Tags label
+    var tagsLabel = document.getElementById('dogTagsLabel');
+    if (tagsLabel) {
+      var dn = getDogName();
+      tagsLabel.textContent = dn ? 'About ' + dn : 'About your dog';
+    }
+    // Tags chips
+    var activeTags = dog && dog.tags ? dog.tags : [];
+    var chips = document.querySelectorAll('#dogTagsRow .dog-tag-chip');
+    chips.forEach(function(chip) {
+      chip.classList.toggle('active', activeTags.indexOf(chip.getAttribute('data-tag')) !== -1);
+    });
+    // Birthday - populate year dropdown if needed
+    var bdYear = document.getElementById('dogSettingsBdYear');
+    if (bdYear && bdYear.options.length <= 1) {
+      var currentYear = new Date().getFullYear();
+      for (var y = currentYear; y >= 1990; y--) {
+        var opt = document.createElement('option');
+        opt.value       = String(y);
+        opt.textContent = String(y);
+        bdYear.appendChild(opt);
+      }
+    }
+    var bdMonth = document.getElementById('dogSettingsBdMonth');
+    var bd = dog && dog.birthday ? dog.birthday : null;
+    if (bdMonth) bdMonth.value = bd && bd.month ? String(bd.month) : '';
+    if (bdYear)  bdYear.value  = bd && bd.year  ? String(bd.year)  : '';
+    // Remove link
+    var removeBtn = document.getElementById('dogSettingsRemoveBtn');
+    if (removeBtn) removeBtn.style.display = dog ? '' : 'none';
+    // Hide confirm
+    var confirmEl = document.getElementById('dogSettingsConfirm');
+    if (confirmEl) confirmEl.style.display = 'none';
+  }
+
+  function handleDogBreedChange() {
+    var breedEl = document.getElementById('dogSettingsBreed');
+    var otherEl = document.getElementById('dogSettingsBreedOther');
+    if (!breedEl || !otherEl) return;
+    var isOther = breedEl.value === 'Other (please specify)';
+    otherEl.style.display = isOther ? '' : 'none';
+    if (isOther) otherEl.focus();
+  }
+
+  function toggleDogTag(chip) {
+    var isActive = chip.classList.contains('active');
+    if (!isActive) {
+      var activeChips = document.querySelectorAll('#dogTagsRow .dog-tag-chip.active');
+      if (activeChips.length >= 3) return;
+    }
+    chip.classList.toggle('active', !isActive);
+  }
+
+  function saveDogSettings() {
+    var nameEl       = document.getElementById('dogSettingsName');
+    var breedEl      = document.getElementById('dogSettingsBreed');
+    var breedOtherEl = document.getElementById('dogSettingsBreedOther');
+    var bdMonthEl    = document.getElementById('dogSettingsBdMonth');
+    var bdYearEl     = document.getElementById('dogSettingsBdYear');
+    var name = nameEl ? nameEl.value.trim() : '';
+    name = name.replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+    var breed = '';
+    if (breedEl) {
+      if (breedEl.value === 'Other (please specify)') {
+        breed = breedOtherEl ? breedOtherEl.value.trim() : '';
+      } else {
+        breed = breedEl.value;
+      }
+    }
+    var size = null;
+    document.querySelectorAll('#segment-control-size .segment-btn').forEach(function(btn) {
+      if (btn.classList.contains('active')) size = btn.getAttribute('data-size');
+    });
+    var activeTags = [];
+    document.querySelectorAll('#dogTagsRow .dog-tag-chip.active').forEach(function(chip) {
+      activeTags.push(chip.getAttribute('data-tag'));
+    });
+    var bdMonth  = bdMonthEl && bdMonthEl.value ? parseInt(bdMonthEl.value) : null;
+    var bdYear   = bdYearEl  && bdYearEl.value  ? parseInt(bdYearEl.value)  : null;
+    var birthday = (bdMonth || bdYear) ? { month: bdMonth, year: bdYear } : null;
+    saveDogProfile({ name: name, breed: breed || null, size: size, tags: activeTags, birthday: birthday });
+    var saveBtn = document.querySelector('.dog-settings-save-btn');
+    if (saveBtn) {
+      saveBtn.textContent  = 'Saved';
+      saveBtn.style.opacity = '0.75';
+      setTimeout(function() {
+        saveBtn.textContent   = 'Save dog profile';
+        saveBtn.style.opacity = '';
+        closeMeSettingsSheet();
+        renderMeTab();
+      }, 900);
+    } else {
+      closeMeSettingsSheet();
+      renderMeTab();
+    }
+  }
+
+  function showDogRemoveConfirm() {
+    var confirmEl  = document.getElementById('dogSettingsConfirm');
+    var confirmTxt = document.getElementById('dogSettingsConfirmText');
+    if (!confirmEl) return;
+    var dn = getDogName();
+    if (confirmTxt) confirmTxt.textContent = 'Remove ' + (dn || 'your dog') + '? This will not delete your walks.';
+    confirmEl.style.display = '';
+    var removeBtn = document.getElementById('dogSettingsRemoveBtn');
+    if (removeBtn) removeBtn.style.display = 'none';
+  }
+
+  function cancelDogRemove() {
+    var confirmEl = document.getElementById('dogSettingsConfirm');
+    if (confirmEl) confirmEl.style.display = 'none';
+    var removeBtn = document.getElementById('dogSettingsRemoveBtn');
+    if (removeBtn) removeBtn.style.display = '';
+  }
+
+  function executeDogRemove() {
+    try { localStorage.removeItem(DOGS_KEY); } catch(e) {}
+    try { localStorage.removeItem(DOG_DISMISSED_KEY); } catch(e) {}
+    closeMeSettingsSheet();
+    renderMeTab();
+  }
+
+  /* ─── heroLabel / heroSub ─── */
+
+  function heroLabel(dogName) {
+    return dogName ? 'miles with ' + dogName : 'miles walked';
+  }
+
+  function heroSub(count, dogName) {
+    return dogName ? 'across ' + count + ' walks together' : 'across ' + count + ' walks';
   }
 
   /* ─── Walk card HTML builders ─── */
@@ -7414,6 +8158,16 @@
     });
   });
 
+  /* -- Dog size segmented control --------------------------------------- */
+
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#segment-control-size .segment-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        applyDogSizePreference(btn.getAttribute('data-size'));
+      });
+    });
+  });
+
   /* -- Badge tooltip global dismiss ------------------------------------ */
 
   document.addEventListener('click', function(e) {
@@ -7421,6 +8175,17 @@
     if (tooltip && !e.target.classList.contains('me-badge--locked')) {
       tooltip.style.display = 'none';
       tooltip.removeAttribute('data-for');
+    }
+  });
+
+  /* -- Dog picker global dismiss --------------------------------------- */
+
+  document.addEventListener('click', function(e) {
+    var picker = document.getElementById('dog-picker');
+    if (!picker) return;
+    var avatar = document.querySelector('#tab-me .dog-avatar');
+    if (!picker.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
+      hideDogPicker();
     }
   });
 
@@ -7878,6 +8643,137 @@
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
     </span>
   </div>
+  <!-- Your dog -->
+  <div class="me-settings-section" id="dogSettingsSection">
+    <div class="dog-settings-section-label">Your dog</div>
+    <div class="dog-settings-field">
+      <label class="dog-settings-label" for="dogSettingsName">Name</label>
+      <input class="dog-settings-input" id="dogSettingsName" type="text" maxlength="24" placeholder="e.g. Luna" autocomplete="off" autocapitalize="words">
+    </div>
+    <div class="dog-settings-field">
+      <label class="dog-settings-label" for="dogSettingsBreed">Breed</label>
+      <select class="dog-settings-select" id="dogSettingsBreed" onchange="handleDogBreedChange()">
+        <option value="">Select breed</option>
+        <option>Labrador</option>
+        <option>Cocker Spaniel</option>
+        <option>Springer Spaniel</option>
+        <option>Golden Retriever</option>
+        <option>French Bulldog</option>
+        <option>Border Collie</option>
+        <option>German Shepherd</option>
+        <option>Staffordshire Bull Terrier</option>
+        <option>Cavalier King Charles Spaniel</option>
+        <option>Pug</option>
+        <option>Beagle</option>
+        <option>Boxer</option>
+        <option>Dachshund</option>
+        <option>Shih Tzu</option>
+        <option>Jack Russell Terrier</option>
+        <option>Yorkshire Terrier</option>
+        <option>Whippet</option>
+        <option>Greyhound</option>
+        <option>Vizsla</option>
+        <option>Weimaraner</option>
+        <option>Dalmatian</option>
+        <option>Border Terrier</option>
+        <option>West Highland Terrier</option>
+        <option>Scottish Terrier</option>
+        <option>Cairn Terrier</option>
+        <option>Schnauzer</option>
+        <option>Dobermann</option>
+        <option>Rottweiler</option>
+        <option>Great Dane</option>
+        <option>Hungarian Vizsla</option>
+        <option>Pointer</option>
+        <option>Setter</option>
+        <option>Brittany Spaniel</option>
+        <option>Basset Hound</option>
+        <option>Bloodhound</option>
+        <option>Shar Pei</option>
+        <option>Chow Chow</option>
+        <option>Samoyed</option>
+        <option>Husky</option>
+        <option>Alaskan Malamute</option>
+        <option>Bernese Mountain Dog</option>
+        <option>St Bernard</option>
+        <option>Newfoundland</option>
+        <option>Irish Wolfhound</option>
+        <option>Lurcher</option>
+        <option>Saluki</option>
+        <option>Afghan Hound</option>
+        <option>Borzoi</option>
+        <option>Italian Greyhound</option>
+        <option>Maltese</option>
+        <option>Pomeranian</option>
+        <option>Chihuahua</option>
+        <option>Cockapoo</option>
+        <option>Labradoodle</option>
+        <option>Cavapoo</option>
+        <option>Goldendoodle</option>
+        <option>Sprocker</option>
+        <option>Jackapoo</option>
+        <option>Schnoodle</option>
+        <option value="Mixed breed / crossbreed">Mixed breed / crossbreed</option>
+        <option value="Not sure / rescue">Not sure / rescue</option>
+        <option value="Other (please specify)">Other (please specify)</option>
+      </select>
+      <input class="dog-settings-input dog-settings-other-input" id="dogSettingsBreedOther" type="text" maxlength="48" placeholder="Please specify" style="display:none">
+    </div>
+    <div class="dog-settings-field">
+      <div class="dog-settings-label">Size</div>
+      <div class="segment-control me-size-control" id="segment-control-size" role="group" aria-label="Dog size">
+        <div class="segment-pill" id="segment-pill-size" aria-hidden="true"></div>
+        <button class="segment-btn" data-size="small" aria-pressed="false"><span>Small</span></button>
+        <button class="segment-btn" data-size="medium" aria-pressed="false"><span>Medium</span></button>
+        <button class="segment-btn" data-size="large" aria-pressed="false"><span>Large</span></button>
+      </div>
+    </div>
+    <div class="dog-settings-field">
+      <div class="dog-settings-label" id="dogTagsLabel">About your dog</div>
+      <div class="dog-tags-row" id="dogTagsRow">
+        <button class="dog-tag-chip" data-tag="Energetic" onclick="toggleDogTag(this)">Energetic</button>
+        <button class="dog-tag-chip" data-tag="Nervous" onclick="toggleDogTag(this)">Nervous</button>
+        <button class="dog-tag-chip" data-tag="Elderly" onclick="toggleDogTag(this)">Elderly</button>
+        <button class="dog-tag-chip" data-tag="Good recall" onclick="toggleDogTag(this)">Good recall</button>
+        <button class="dog-tag-chip" data-tag="Reactive" onclick="toggleDogTag(this)">Reactive</button>
+        <button class="dog-tag-chip" data-tag="Loves water" onclick="toggleDogTag(this)">Loves water</button>
+        <button class="dog-tag-chip" data-tag="Mud-happy" onclick="toggleDogTag(this)">Mud-happy</button>
+        <button class="dog-tag-chip" data-tag="Sociable" onclick="toggleDogTag(this)">Sociable</button>
+      </div>
+    </div>
+    <div class="dog-settings-field">
+      <div class="dog-settings-label">Birthday (optional)</div>
+      <div class="dog-birthday-row">
+        <select class="dog-settings-select" id="dogSettingsBdMonth">
+          <option value="">Month</option>
+          <option value="1">January</option>
+          <option value="2">February</option>
+          <option value="3">March</option>
+          <option value="4">April</option>
+          <option value="5">May</option>
+          <option value="6">June</option>
+          <option value="7">July</option>
+          <option value="8">August</option>
+          <option value="9">September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
+        </select>
+        <select class="dog-settings-select" id="dogSettingsBdYear">
+          <option value="">Year</option>
+        </select>
+      </div>
+    </div>
+    <button class="dog-settings-save-btn" onclick="saveDogSettings()">Save dog profile</button>
+    <button class="dog-settings-remove-link" id="dogSettingsRemoveBtn" onclick="showDogRemoveConfirm()" style="display:none">Remove dog profile</button>
+    <div class="dog-settings-confirm" id="dogSettingsConfirm">
+      <p class="dog-settings-confirm-text" id="dogSettingsConfirmText">Remove your dog? This will not delete your walks.</p>
+      <div class="dog-settings-confirm-row">
+        <button class="dog-settings-confirm-yes" onclick="executeDogRemove()">Remove</button>
+        <button class="dog-settings-confirm-no" onclick="cancelDogRemove()">Cancel</button>
+      </div>
+    </div>
+  </div>
   <!-- Display mode -->
   <div class="me-settings-section">
     <div class="segment-label">Display mode</div>
@@ -8311,6 +9207,9 @@
 
     // 2. Restore the last active tab (after location so tabs render correctly)
     restoreTab();
+
+    // 3. Birthday banner check
+    checkBirthdayBanner();
   }
 
   initApp();
