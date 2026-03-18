@@ -5,7 +5,7 @@
   "start_url": "/my-first-repo/dog-walk-dashboard.html",
   "display": "standalone",
   "background_color": "#62a37d",
-  "theme_color": "#7ba86f",
+  "theme_color": "#3B5C2A",
   "orientation": "portrait",
   "icons": [
     {
