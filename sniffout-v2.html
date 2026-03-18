@@ -1558,6 +1558,7 @@
     }
     .me-progress-pct { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); width: 32px; text-align: right; flex-shrink: 0; }
     .me-progress-hint { font: 400 13px/1.4 'Inter', sans-serif; color: var(--ink-2); margin-top: 10px; }
+    .me-progress-note { font: 400 12px/1 'Inter', sans-serif; color: var(--ink-2); margin-top: 6px; opacity: 0.7; }
     .me-progress-complete { display: flex; align-items: center; gap: 14px; padding: 4px 0; }
     .me-progress-complete-icon {
       width: 40px;
@@ -1663,6 +1664,20 @@
       -webkit-tap-highlight-color: transparent;
     }
     .me-history-empty { font: 400 14px/1.5 'Inter', sans-serif; color: var(--ink-2); text-align: center; padding: 24px 16px; }
+    /* -- Favourites compact list ----------------------------------------- */
+    .me-fav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .me-fav-row:last-of-type,
+    .me-fav-row:has(+ .me-history-see-all) { border-bottom: none; }
+    .me-fav-name { font: 500 15px/1.3 'Inter', sans-serif; color: var(--ink); }
+    .me-fav-dist { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); flex-shrink: 0; margin-left: 10px; }
 
     /* -- Settings sheet ------------------------------------------------- */
     .me-settings-overlay {
@@ -1687,9 +1702,11 @@
       z-index: 201;
       overflow-y: auto;
       transform: translateY(100%);
+      -webkit-transform: translateY(100%);
+      will-change: transform;
       transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
     }
-    .me-settings-sheet.is-open { transform: translateY(0); }
+    .me-settings-sheet.is-open { transform: translateY(0); -webkit-transform: translateY(0); }
     .me-settings-handle { width: 32px; height: 4px; border-radius: 2px; background: rgba(0,0,0,0.18); margin: 0 auto 20px; }
     body.night .me-settings-handle { background: rgba(255,255,255,0.22); }
     .me-settings-title { font: 700 17px/1 'Inter', sans-serif; color: var(--ink); margin-bottom: 20px; }
@@ -2822,7 +2839,7 @@
 
       <!-- Zone 2 - Distance progress bar -->
       <div class="me-progress-card" id="meProgressCard" style="display:none">
-        <div class="me-progress-heading">Miles walked</div>
+        <div class="me-progress-heading">Miles explored</div>
         <div class="me-progress-labels">
           <span class="me-progress-current" id="meProgressCurrent">0 mi</span>
           <span class="me-progress-next" id="meProgressNext">&#8594; 10 Miles</span>
@@ -2834,6 +2851,7 @@
           <span class="me-progress-pct" id="meProgressPct">0%</span>
         </div>
         <div class="me-progress-hint" id="meProgressHint"></div>
+        <div class="me-progress-note" id="meProgressNote">Based on each walk's listed distance.</div>
         <div class="me-progress-complete" id="meProgressComplete" style="display:none">
           <div class="me-progress-complete-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -2857,6 +2875,12 @@
       </div>
 
       <!-- Phase 3 hook: Local Legend section between Zone 3 and Zone 4 (not built) -->
+
+      <!-- Favourites -->
+      <div class="me-favs-section" id="meFavsSection">
+        <div class="me-history-heading">Favourites</div>
+        <div class="me-history-list" id="favs-list"></div>
+      </div>
 
       <!-- Zone 4 - Walk history -->
       <div class="me-history-section" id="meHistorySection" style="display:none">
@@ -4147,6 +4171,7 @@
 
     overlay.hidden = false;
     sheet.hidden = false;
+    history.pushState(null, '', location.href);
     requestAnimationFrame(function() { sheet.classList.add('is-open'); });
   }
 
@@ -4369,6 +4394,7 @@
     document.getElementById('walk-log-backdrop').classList.add('open');
     document.getElementById('walk-log-sheet').classList.add('open');
     document.body.style.overflow = 'hidden';
+    history.pushState(null, '', location.href);
   }
 
   function closeWalkLogSheet() {
@@ -4620,10 +4646,42 @@
     });
   }
 
-  window.addEventListener('popstate', function() {
+  function closeTopSheet() {
+    var condSheet = document.getElementById('cond-tag-sheet');
+    if (condSheet && condSheet.classList.contains('open')) {
+      closeCondTagSheet();
+      return true;
+    }
+    var wxSheet = document.getElementById('wxSheet');
+    if (wxSheet && !wxSheet.hidden && wxSheet.classList.contains('is-open')) {
+      closeWxSheet();
+      return true;
+    }
+    var meSettings = document.getElementById('meSettingsSheet');
+    if (meSettings && meSettings.classList.contains('is-open')) {
+      closeMeSettingsSheet();
+      return true;
+    }
+    var walkLog = document.getElementById('walk-log-sheet');
+    if (walkLog && walkLog.classList.contains('open')) {
+      closeWalkLogSheet();
+      return true;
+    }
+    var favsSheet = document.getElementById('favs-sheet');
+    if (favsSheet && favsSheet.classList.contains('is-open')) {
+      closeFavsSheet();
+      return true;
+    }
     var overlay = document.getElementById('walk-detail-overlay');
     if (overlay && overlay.classList.contains('open')) {
       closeWalkDetail();
+      return true;
+    }
+    return false;
+  }
+
+  window.addEventListener('popstate', function() {
+    if (closeTopSheet()) {
       history.pushState(null, '', location.href);
     }
   });
@@ -4967,6 +5025,7 @@
     document.getElementById('cond-tag-backdrop').classList.add('open');
     document.getElementById('cond-tag-sheet').classList.add('open');
     document.body.style.overflow = 'hidden';
+    history.pushState(null, '', location.href);
   }
 
   function closeCondTagSheet() {
@@ -5848,7 +5907,7 @@
 
     if (log.length > 0 && totalMi > 0) {
       var miStr = (totalMi % 1 === 0) ? Math.round(totalMi) + ' mi' : totalMi.toFixed(1) + ' mi';
-      rows.push({ label: 'Total miles', value: miStr, isChips: false });
+      rows.push({ label: 'Miles explored', value: '~' + miStr, isChips: false });
     }
 
     var uniqueIds = {};
@@ -5914,7 +5973,7 @@
     var miStr     = (totalMi % 1 === 0) ? Math.round(totalMi) + ' mi' : totalMi.toFixed(1) + ' mi';
     var remStr    = remaining < 0.05 ? '< 0.1' : remaining.toFixed(1);
 
-    if (currentEl) currentEl.textContent = miStr;
+    if (currentEl) currentEl.textContent = '~' + miStr;
     if (nextEl)    nextEl.textContent    = '\u2192 ' + nextMilestone + ' Miles';
     if (pctEl)     pctEl.textContent     = pct + '%';
     if (hintEl)    hintEl.textContent    = remStr + ' miles to the ' + nextMilestone + ' Miles badge';
@@ -6023,6 +6082,7 @@
     }
 
     renderBadges();
+    renderFavouritesList();
   }
 
   /* -- Settings sheet open/close --------------------------------------- */
@@ -6032,6 +6092,7 @@
     if (overlay) overlay.classList.add('is-open');
     if (sheet)   sheet.classList.add('is-open');
     document.body.style.overflow = 'hidden';
+    history.pushState(null, '', location.href);
   }
 
   function closeMeSettingsSheet() {
@@ -6434,15 +6495,60 @@
   function renderFavouritesList() {
     var el = document.getElementById('favs-list');
     if (!el) return;
-    var favIds = getFavourites();
+    var favIds   = getFavourites();
     if (favIds.length === 0) {
-      el.innerHTML = '<div class="favs-empty">Heart any walk to save it here.</div>';
+      el.innerHTML =
+        '<div style="padding:16px;font:400 13px/1.4 Inter,sans-serif;color:var(--ink-2);">' +
+        'Heart any walk to save it here.</div>';
       return;
     }
     var favWalks = favIds.map(function(id) {
       return WALKS_DB.find(function(w) { return w.id === id; });
     }).filter(Boolean);
-    el.innerHTML = favWalks.map(renderWalkCard).join('');
+
+    var VISIBLE_MAX = 5;
+    var visible  = favWalks.slice(0, VISIBLE_MAX);
+    var hasMore  = favWalks.length > VISIBLE_MAX;
+
+    var rows = visible.map(function(w) {
+      return '<div class="me-fav-row" onclick="onWalkTap(\'' + w.id + '\')">' +
+        '<span class="me-fav-name">' + w.name + '</span>' +
+        '<span class="me-fav-dist">' + (w.distance ? w.distance + ' mi' : '') + '</span>' +
+      '</div>';
+    }).join('');
+
+    var seeAll = hasMore
+      ? '<button class="me-history-see-all" onclick="openFavsSheet()">See all ' + favWalks.length + ' favourites &#8594;</button>'
+      : '';
+
+    el.innerHTML = rows + seeAll;
+  }
+
+  function openFavsSheet() {
+    var inner = document.getElementById('favs-sheet-inner');
+    if (!inner) return;
+    var favIds   = getFavourites();
+    var favWalks = favIds.map(function(id) {
+      return WALKS_DB.find(function(w) { return w.id === id; });
+    }).filter(Boolean);
+    inner.innerHTML = favWalks.map(function(w) {
+      return '<div class="me-fav-row" onclick="closeFavsSheet();onWalkTap(\'' + w.id + '\')">' +
+        '<span class="me-fav-name">' + w.name + '</span>' +
+        '<span class="me-fav-dist">' + (w.distance ? w.distance + ' mi' : '') + '</span>' +
+      '</div>';
+    }).join('');
+    var backdrop = document.getElementById('favs-sheet-backdrop');
+    var sheet    = document.getElementById('favs-sheet');
+    if (backdrop) backdrop.classList.add('is-open');
+    if (sheet)    sheet.classList.add('is-open');
+    history.pushState(null, '', location.href);
+  }
+
+  function closeFavsSheet() {
+    var backdrop = document.getElementById('favs-sheet-backdrop');
+    var sheet    = document.getElementById('favs-sheet');
+    if (backdrop) backdrop.classList.remove('is-open');
+    if (sheet)    sheet.classList.remove('is-open');
   }
 
   /* ─── Heart icon CSS ─── */
@@ -7452,6 +7558,19 @@
   </div>
   <!-- Phase 3 hook: following/followers row here (not built) -->
   <div class="me-settings-note">Your walks, favourites, and reviews are saved on this device. Sync across devices is coming in a future update.</div>
+</div>
+
+<!-- Favourites sheet -->
+<div class="filter-backdrop" id="favs-sheet-backdrop" onclick="closeFavsSheet()"></div>
+<div class="filter-sheet" id="favs-sheet">
+  <div class="filter-handle"></div>
+  <div style="padding:16px 16px 4px; border-bottom:1px solid var(--border);">
+    <div style="font-size:16px;font-weight:700;color:var(--ink);">Favourites</div>
+  </div>
+  <div id="favs-sheet-inner" style="overflow-y:auto; max-height:calc(65vh - 80px); padding:0;"></div>
+  <div style="padding:12px 16px 16px; border-top:1px solid var(--border);">
+    <button class="sheet-btn-ghost" onclick="closeFavsSheet()">Close</button>
+  </div>
 </div>
 
 <!-- Walk log sheet — FIX 14.5 -->
