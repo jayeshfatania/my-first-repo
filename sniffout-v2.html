@@ -1079,7 +1079,7 @@
     .wx-hero-temp { font: 700 80px/1 'Inter', sans-serif; color: var(--ink); letter-spacing: -3px; }
     .wx-hero-unit { font: 400 32px/1 'Inter', sans-serif; color: var(--ink-2); margin-top: 8px; }
     .wx-hero-icon { width: 80px; height: 80px; margin-top: 14px; flex-shrink: 0; }
-    .weather-hero-top img { width: 72px; height: 72px; margin-top: 6px; flex-shrink: 0; }
+    .weather-hero-top img { width: 80px; height: 80px; margin-top: 8px; flex-shrink: 0; margin-right: 4px; }
     .wx-hero-condition { margin-top: 16px; font: 500 17px/1.2 'Inter', sans-serif; color: var(--ink); }
     .wx-hero-sub { margin-top: 4px; font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); }
 
@@ -1621,9 +1621,11 @@
       border-bottom: 1px solid var(--border);
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
+      overflow: hidden;
+      min-width: 0;
     }
     .me-fav-row:last-of-type { border-bottom: none; }
-    .me-fav-name { font: 500 14px/1 'Inter', sans-serif; color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .me-fav-name { font: 500 14px/1 'Inter', sans-serif; color: var(--ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .me-fav-dist { font: 400 12px/1 'Inter', sans-serif; color: var(--ink-2); flex-shrink: 0; margin-left: 8px; }
     /* Badge toast */
     .badge-toast {
@@ -2181,6 +2183,7 @@
       display: flex;
       flex-direction: row;
       align-items: center;
+      position: relative;
       background: var(--surface);
       border-radius: 16px;
       border: 1px solid var(--border);
@@ -2195,6 +2198,20 @@
       -webkit-tap-highlight-color: rgba(0,0,0,0.04);
     }
     .gs-card:active { opacity: 0.85; }
+    .gs-fav-btn {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.88);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      z-index: 1;
+    }
     .gs-thumb {
       width: 64px;
       height: 64px;
@@ -3629,7 +3646,7 @@
             '<div class="weather-hero-temp">' + temp + '°C</div>' +
             '<div class="weather-hero-feels">Feels like ' + feels + '°C</div>' +
           '</div>' +
-          '<div>' + yrIcon(cur.weather_code, cur.is_day, 72) + '</div>' +
+          '<div>' + yrIcon(cur.weather_code, cur.is_day, 80) + '</div>' +
         '</div>' +
         '<div class="weather-verdict">' + verdict.title + '</div>' +
         '<div class="weather-pills">' +
@@ -5612,8 +5629,9 @@
 
   /* ─── Favourites ─── */
 
-  var FAVS_KEY        = 'sniffout_favs';
-  var PLACE_FAVS_KEY  = 'sniffout_place_favs';
+  var FAVS_KEY             = 'sniffout_favs';
+  var PLACE_FAVS_KEY       = 'sniffout_place_favs';
+  var GREENSPACE_FAVS_KEY  = 'sniffout_greenspace_favs';
 
   function getPlaceFavourites() {
     try { return JSON.parse(localStorage.getItem(PLACE_FAVS_KEY)) || []; } catch(e) { return []; }
@@ -5621,6 +5639,36 @@
 
   function savePlaceFavourites(favs) {
     try { localStorage.setItem(PLACE_FAVS_KEY, JSON.stringify(favs)); } catch(e) {}
+  }
+
+  function getGreenspaceFavourites() {
+    try { return JSON.parse(localStorage.getItem(GREENSPACE_FAVS_KEY)) || []; } catch(e) { return []; }
+  }
+
+  function saveGreenspaceFavourites(favs) {
+    try { localStorage.setItem(GREENSPACE_FAVS_KEY, JSON.stringify(favs)); } catch(e) {}
+  }
+
+  function isGreenspaceFavourited(id) {
+    return getGreenspaceFavourites().some(function(f) { return f.id === id; });
+  }
+
+  function toggleGreenspaceFavourite(gsId, btn) {
+    var gs = nearbyGreenSpaces.find(function(g) { return (g.id || g.name) === gsId; });
+    var favs = getGreenspaceFavourites();
+    var idx  = -1;
+    favs.forEach(function(f, i) { if (f.id === gsId) idx = i; });
+    if (idx !== -1) {
+      favs.splice(idx, 1);
+      if (btn) btn.innerHTML = luIcon('heart', 16, '');
+    } else {
+      if (gs) {
+        favs.unshift({ id: gsId, name: gs.name, lat: gs.lat, lon: gs.lon, savedAt: Date.now() });
+      }
+      if (btn) btn.innerHTML = luIcon('heart', 16, 'fill:var(--red);stroke:var(--red);');
+    }
+    saveGreenspaceFavourites(favs);
+    if (nearbyCategory === 'saved') renderSavedVenueList();
   }
 
   function isPlaceFavourited(placeId) {
@@ -6460,6 +6508,9 @@
     var thumbHtml = gs.photoUrl
       ? '<div class="gs-thumb"><img src="' + gs.photoUrl + '" alt="" loading="lazy"></div>'
       : '<div class="gs-thumb"></div>';
+    var gsId = escHtml(gs.id || gs.name);
+    var isFav = isGreenspaceFavourited(gs.id || gs.name);
+    var heartStyle = isFav ? 'fill:var(--red);stroke:var(--red);' : '';
     return (
       '<a class="gs-card" href="' + mapsUrl + '" target="_blank" rel="noopener noreferrer">' +
         thumbHtml +
@@ -6468,6 +6519,9 @@
           '<div class="gs-card-meta">' + distText + '</div>' +
           '<span class="gs-maps-link">View on Google Maps \u2192</span>' +
         '</div>' +
+        '<button class="gs-fav-btn" onclick="event.preventDefault();event.stopPropagation();toggleGreenspaceFavourite(\'' + gsId.replace(/'/g, "\\'") + '\',this)" aria-label="' + (isFav ? 'Remove from saved' : 'Save this space') + '">' +
+          luIcon('heart', 16, heartStyle) +
+        '</button>' +
       '</a>'
     );
   }
@@ -6534,6 +6588,7 @@
       var gsSection = document.getElementById('gs-section');
       if (!gsList) return;
       if (filtered.length) {
+        nearbyGreenSpaces = filtered;
         gsList.innerHTML = filtered.map(function(gs) {
           return renderGreenSpaceCard(gs, lat, lon);
         }).join('');
@@ -6592,6 +6647,7 @@
         var gsEl   = document.getElementById('gs-section');
         if (!gsList) return;
         if (sorted.length) {
+          nearbyGreenSpaces = sorted;
           gsList.innerHTML = sorted.map(function(gs) {
             return renderGreenSpaceCard(gs, lat, lon);
           }).join('');
@@ -6811,6 +6867,7 @@
 
   var nearbyMap          = null;
   var nearbyVenues       = [];
+  var nearbyGreenSpaces  = [];
   var nearbyPendingSort  = null; // set before renderNearbyTab/renderVenueList to apply a sort after fetch
   var nearbyUserLat      = null;
   var nearbyUserLon      = null;
@@ -7090,36 +7147,57 @@
       .replace(/"/g, '&quot;');
   }
 
-  /* ─── Saved places list ─── */
+  /* ─── Saved places + green spaces list ─── */
   function renderSavedVenueList() {
     var el    = document.getElementById('nearby-venues');
     var count = document.getElementById('nearby-count');
     if (!el) return;
-    var saved = getPlaceFavourites();
-    if (count) count.textContent = saved.length + ' saved place' + (saved.length !== 1 ? 's' : '');
-    if (saved.length === 0) {
+    var savedPlaces = getPlaceFavourites();
+    var savedGs     = getGreenspaceFavourites();
+    var total = savedPlaces.length + savedGs.length;
+    if (count) count.textContent = total + ' saved item' + (total !== 1 ? 's' : '');
+    if (total === 0) {
       el.innerHTML =
         '<div class="empty-state" style="padding:40px 24px;text-align:center;font:400 14px/1.5 Inter,sans-serif;color:var(--ink-2);">' +
-        'Tap the heart on any place to save it for later.</div>';
+        'Tap the heart on any place or green space to save it here.</div>';
       return;
     }
-    el.innerHTML = saved.map(function(p) {
+    var venueRows = savedPlaces.map(function(p) {
       var mapsHref = p.mapsUrl ? p.mapsUrl : '#';
+      var typeLabel = p.cat ? p.cat.charAt(0).toUpperCase() + p.cat.slice(1) : 'Place';
       return (
         '<div class="saved-place-card">' +
           '<div class="saved-place-body">' +
             '<div class="saved-place-name">' + escHtml(p.name || '') + '</div>' +
-            (p.address ? '<div class="saved-place-meta">' + escHtml(p.address) + '</div>' : '') +
+            '<div class="saved-place-meta">' + escHtml(typeLabel) + (p.address ? ' - ' + escHtml(p.address) : '') + '</div>' +
           '</div>' +
           '<div class="saved-place-actions">' +
-            (mapsHref !== '#' ? '<a class="saved-place-maps" href="' + mapsHref + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Maps -></a>' : '') +
+            (mapsHref !== '#' ? '<a class="saved-place-maps" href="' + mapsHref + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Maps</a>' : '') +
             '<button class="saved-place-unsave" onclick="togglePlaceFavourite(\'' + (p.placeId || '').replace(/'/g, "\\'") + '\')" aria-label="Remove from saved">' +
               luIcon('heart', 16, 'fill:var(--red);stroke:var(--red);') +
             '</button>' +
           '</div>' +
         '</div>'
       );
-    }).join('');
+    });
+    var gsRows = savedGs.map(function(g) {
+      var mapsHref = 'https://www.google.com/maps/place/' + encodeURIComponent(g.name) + '/@' + g.lat + ',' + g.lon + ',16z';
+      return (
+        '<div class="saved-place-card">' +
+          '<div class="saved-place-body">' +
+            '<div class="saved-place-name">' + escHtml(g.name || '') + '</div>' +
+            '<div class="saved-place-meta">Walk-friendly space</div>' +
+          '</div>' +
+          '<div class="saved-place-actions">' +
+            '<a class="saved-place-maps" href="' + mapsHref + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Maps</a>' +
+            '<button class="saved-place-unsave" onclick="toggleGreenspaceFavourite(\'' + (g.id || '').replace(/'/g, "\\'") + '\',this)" aria-label="Remove from saved">' +
+              luIcon('heart', 16, 'fill:var(--red);stroke:var(--red);') +
+            '</button>' +
+          '</div>' +
+        '</div>'
+      );
+    });
+    el.innerHTML = venueRows.concat(gsRows).join('');
     syncIcons();
   }
 
@@ -7240,35 +7318,37 @@
 
   /* -- Settings sheet: display name edit -------------------------------- */
 
-  var meNameRow = document.getElementById('meNameRow');
-  if (meNameRow) {
-    meNameRow.addEventListener('click', function() {
-      var nameValEl = document.getElementById('meSettingsNameValue');
-      if (!nameValEl || nameValEl.querySelector('input')) return;
-      var current = getSavedUsername();
-      var input = document.createElement('input');
-      input.type        = 'text';
-      input.value       = current;
-      input.placeholder = 'Your name';
-      input.maxLength   = 32;
-      input.style.cssText = 'border:none;outline:none;font-family:inherit;font-size:15px;color:var(--brand);background:transparent;max-width:140px;text-align:right;font-weight:500;';
-      nameValEl.textContent = '';
-      nameValEl.appendChild(input);
-      input.focus();
-      input.select();
-      function commit() {
-        var val = input.value.trim();
-        try { localStorage.setItem(USERNAME_KEY, val); } catch(e) {}
-        nameValEl.textContent = val || 'Not set';
-        renderMeTab();
-      }
-      input.addEventListener('blur', commit);
-      input.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
-        if (e.key === 'Escape') { input.value = current; input.blur(); }
+  document.addEventListener('DOMContentLoaded', function() {
+    var meNameRow = document.getElementById('meNameRow');
+    if (meNameRow) {
+      meNameRow.addEventListener('click', function() {
+        var nameValEl = document.getElementById('meSettingsNameValue');
+        if (!nameValEl || nameValEl.querySelector('input')) return;
+        var current = getSavedUsername();
+        var input = document.createElement('input');
+        input.type        = 'text';
+        input.value       = current;
+        input.placeholder = 'Your name';
+        input.maxLength   = 32;
+        input.style.cssText = 'border:none;outline:none;font-family:inherit;font-size:15px;color:var(--brand);background:transparent;max-width:140px;text-align:right;font-weight:500;';
+        nameValEl.textContent = '';
+        nameValEl.appendChild(input);
+        input.focus();
+        input.select();
+        function commit() {
+          var val = input.value.trim();
+          try { localStorage.setItem(USERNAME_KEY, val); } catch(e) {}
+          nameValEl.textContent = val || 'Not set';
+          renderMeTab();
+        }
+        input.addEventListener('blur', commit);
+        input.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+          if (e.key === 'Escape') { input.value = current; input.blur(); }
+        });
       });
-    });
-  }
+    }
+  });
 
   /* -- Settings sheet: gear button -------------------------------------- */
 
@@ -7292,11 +7372,13 @@
 
   /* -- Display mode segmented control ----------------------------------- */
 
-  document.querySelectorAll('#segment-control-dark .segment-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var mode = btn.getAttribute('data-mode');
-      try { localStorage.setItem(DARKMODE_KEY, mode); } catch(e) {}
-      applyDarkModePreference(mode);
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#segment-control-dark .segment-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var mode = btn.getAttribute('data-mode');
+        try { localStorage.setItem(DARKMODE_KEY, mode); } catch(e) {}
+        applyDarkModePreference(mode);
+      });
     });
   });
 
@@ -7321,12 +7403,14 @@
     if (pill) pill.setAttribute('data-active', String(idx));
   }
 
-  document.querySelectorAll('#segment-control-radius .segment-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var mi = parseInt(btn.getAttribute('data-radius'));
-      try { localStorage.setItem(RADIUS_KEY, mi); } catch(e) {}
-      applyRadiusPreference(mi);
-      setRadius(mi);
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#segment-control-radius .segment-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var mi = parseInt(btn.getAttribute('data-radius'));
+        try { localStorage.setItem(RADIUS_KEY, mi); } catch(e) {}
+        applyRadiusPreference(mi);
+        setRadius(mi);
+      });
     });
   });
 
@@ -7832,13 +7916,10 @@
 <div class="filter-backdrop" id="favs-sheet-backdrop" onclick="closeFavsSheet()"></div>
 <div class="filter-sheet" id="favs-sheet">
   <div class="filter-handle"></div>
-  <div style="padding:16px 16px 4px; border-bottom:1px solid var(--border);">
+  <div style="padding:16px 16px 12px; border-bottom:1px solid var(--border);">
     <div style="font-size:16px;font-weight:700;color:var(--ink);">Favourites</div>
   </div>
-  <div id="favs-sheet-inner" style="overflow-y:auto; max-height:calc(65vh - 80px); padding:0;"></div>
-  <div style="padding:12px 16px 16px; border-top:1px solid var(--border);">
-    <button class="sheet-btn-ghost" onclick="closeFavsSheet()">Close</button>
-  </div>
+  <div id="favs-sheet-inner" style="overflow-y:auto; max-height:calc(65vh - 60px); padding:0 16px; overflow-x:hidden;"></div>
 </div>
 
 <!-- Walk log sheet — FIX 14.5 -->
