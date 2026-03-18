@@ -793,6 +793,7 @@
       font-weight: 500;
       color: rgba(255,255,255,0.9);
       background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.28);
       border-radius: 99px;
       padding: 3px 10px;
     }
@@ -2286,7 +2287,7 @@
     .modal-body p { font-size: 14px; color: var(--ink-2); line-height: 1.6; margin-bottom: 12px; }
     .modal-body p:last-child { margin-bottom: 0; }
     .weather-info-btn {
-      position: absolute; top: 12px; right: 12px;
+      position: absolute; top: 12px; left: 12px;
       background: rgba(255,255,255,0.2); border: none;
       border-radius: 50%; width: 28px; height: 28px;
       color: white; font-size: 15px; cursor: pointer;
@@ -4718,10 +4719,11 @@
 
     var heart = document.getElementById('walk-detail-hero-heart');
     if (heart) {
+      heart.setAttribute('data-heart', walk.id);
       heart.innerHTML = heartSVG(isFavourited(walk.id));
       heart.onclick = function(e) {
         e.stopPropagation();
-        toggleFavourite(walk.id, heart);
+        toggleFavourite(walk.id);
       };
     }
 
@@ -5647,9 +5649,11 @@
     if (idx === -1) { favs.push(id); } else { favs.splice(idx, 1); }
     saveFavourites(favs);
     // Re-render heart icons for this walk everywhere
+    var nowFav = idx === -1;
     document.querySelectorAll('[data-heart="' + id + '"]').forEach(function(el) {
-      el.classList.toggle('fav-active', idx === -1);
-      el.setAttribute('aria-label', idx === -1 ? 'Remove from favourites' : 'Add to favourites');
+      el.classList.toggle('fav-active', nowFav);
+      el.setAttribute('aria-label', nowFav ? 'Remove from favourites' : 'Add to favourites');
+      el.innerHTML = heartSVG(nowFav);
     });
     updateMeStats();
     renderFavouritesList();
@@ -5904,11 +5908,6 @@
 
     var favRegion = getFavouriteRegion();
     if (favRegion) rows.push({ label: 'Favourite region', value: favRegion, isChips: false });
-
-    if (log.length > 0 && totalMi > 0) {
-      var miStr = (totalMi % 1 === 0) ? Math.round(totalMi) + ' mi' : totalMi.toFixed(1) + ' mi';
-      rows.push({ label: 'Miles explored', value: '~' + miStr, isChips: false });
-    }
 
     var uniqueIds = {};
     log.forEach(function(e) { uniqueIds[e.id] = true; });
@@ -6221,8 +6220,9 @@
     return (
       '<div class="trail-card" onclick="onWalkTap(\'' + walk.id + '\')">' +
         '<div class="trail-card-photo">' + badgeHTML + condDot +
-          '<button class="trail-heart" data-heart="' + walk.id + '" ' +
-            'onclick="event.stopPropagation();toggleFavourite(\'' + walk.id + '\',this)">' +
+          '<button class="trail-heart' + (isFavourited(walk.id) ? ' fav-active' : '') + '" data-heart="' + walk.id + '" ' +
+            'aria-label="' + (isFavourited(walk.id) ? 'Remove from' : 'Add to') + ' favourites" ' +
+            'onclick="event.stopPropagation();toggleFavourite(\'' + walk.id + '\')">' +
             heartSVG(isFavourited(walk.id)) +
           '</button>' +
         '</div>' +
