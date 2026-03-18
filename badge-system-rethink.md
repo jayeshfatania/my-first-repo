@@ -1,6 +1,6 @@
 # Badge System Rethink
 **Status:** Complete redesign — replaces all previous badge definitions
-**Owner direction:** Fewer badges, harder to earn, more meaningful; strong emphasis on contribution; no weather/season badges; no single-tap earnable
+**Owner direction:** Fewer badges, harder to earn, more meaningful; strong emphasis on contribution; no weather/season badges; no single-tap earnable; earned moments not chased metrics; badges hidden until earned
 
 ---
 
@@ -22,9 +22,11 @@ The previous badge system had two structural problems:
 
 3. **Warm and specific, not generic gamification.** Badge names should feel like something a UK dog walker would actually say or recognise, not a generic achievement label ("Level 2 Explorer", "Super User"). If a badge name could belong to any app, rename it.
 
-4. **Hidden until earned.** No locked badges visible. The badge row simply does not exist until at least one badge is earned. No "You're 2 away from your next badge" prompts.
+4. **Hidden until earned.** Badges do not exist in the UI until they are earned. The badge row in the Me tab does not render until at least one badge has been earned. There are no locked placeholders, no silhouette states, no progress indicators, no "X more to go" prompts. The discovery moment — finding a new badge waiting in your Me tab, or receiving a toast while using the app — is the entire mechanic.
 
-5. **10 badges total.** Enough to be meaningful, few enough that earning even one matters.
+5. **Earned moments, not chased metrics.** All badge copy is written as earned-moment framing: what the badge celebrates, not what the user did. Not "You submitted 5 condition reports" but "You've become someone other walkers quietly rely on." The count is not the point. The identity is.
+
+6. **10 badges total.** Enough to be meaningful, few enough that earning even one matters.
 
 ---
 
@@ -46,8 +48,8 @@ The previous badge system had two structural problems:
 **Category:** Explorer
 **Phase:** 1 (current)
 
-**What the user sees when earned:**
-"You went on your first three walks on different days."
+**Earned moment copy** (shown in toast and badge detail):
+*"You kept coming back. The lead was always on."*
 
 **Trigger:** Walk log contains entries on 3 distinct calendar dates (ISO date comparison on `logged_at` timestamp).
 
@@ -63,8 +65,8 @@ The previous badge system had two structural problems:
 **Category:** Explorer
 **Phase:** 1 (current)
 
-**What the user sees when earned:**
-"You've logged 25 miles with Sniffout."
+**Earned moment copy:**
+*"Twenty-five miles. Real ground covered, real paths walked."*
 
 **Trigger:** Cumulative `distance` sum across all entries in `sniffout_walk_log` ≥ 25 miles.
 
@@ -78,8 +80,8 @@ The previous badge system had two structural problems:
 **Category:** Explorer
 **Phase:** 1 (current)
 
-**What the user sees when earned:**
-"You've logged at least one walk every week for four weeks running."
+**Earned moment copy:**
+*"Dogs love a routine. Turns out their owners do too."*
 
 **Trigger:** Walk log contains at least one entry in each of 4 consecutive ISO weeks (Monday–Sunday). The streak resets if a week is missed but re-counts from the most recent unbroken run.
 
@@ -93,8 +95,8 @@ The previous badge system had two structural problems:
 **Category:** Contributor
 **Phase:** 1 (current)
 
-**What the user sees when earned:**
-"You filed your first trail condition report. Other walkers will thank you."
+**Earned moment copy:**
+*"Someone is choosing the right path today because of you."*
 
 **Trigger:** First condition report submitted. A valid report requires: at least one condition tag selected (e.g., "muddy", "good underfoot") and submission confirmed. A pure no-input tap is not a valid report.
 
@@ -108,8 +110,8 @@ The previous badge system had two structural problems:
 **Category:** Contributor
 **Phase:** 1 (current)
 
-**What the user sees when earned:**
-"You've filed 5 condition reports. You're one of the people who keeps Sniffout accurate."
+**Earned moment copy:**
+*"You've become someone other walkers quietly rely on."*
 
 **Trigger:** 5 condition reports submitted, each with at least one condition tag, across at least 3 distinct walk IDs.
 
@@ -123,8 +125,8 @@ The previous badge system had two structural problems:
 **Category:** Contributor
 **Phase:** 1 (current)
 
-**What the user sees when earned:**
-"You've filed 10 condition reports across 5 different walks. The trails you walk are better documented because of you."
+**Earned moment copy:**
+*"The trails you walk are better documented because you were there."*
 
 **Trigger:** 10 condition reports submitted, each with at least one condition tag, across at least 5 distinct walk IDs.
 
@@ -138,8 +140,8 @@ The previous badge system had two structural problems:
 **Category:** Contributor
 **Phase:** 3 (requires review system)
 
-**What the user sees when earned:**
-"You wrote your first walk review. Reviews like yours help other dog owners decide where to go."
+**Earned moment copy:**
+*"Your words are out there. Someone will choose their next walk because of them."*
 
 **Trigger:** First walk review submitted with a minimum length of 75 characters. The character floor prevents one-word submissions ("Great!") while not requiring an essay.
 
@@ -153,8 +155,8 @@ The previous badge system had two structural problems:
 **Category:** Community
 **Phase:** 3 (requires rating system)
 
-**What the user sees when earned:**
-"You've rated 10 different walks. Your ratings help other walkers find the best routes."
+**Earned moment copy:**
+*"You've shaped what other walkers will discover next."*
 
 **Trigger:** 10 unique walk ratings submitted (1–5 stars, one per walk ID, cannot rate the same walk twice toward this count).
 
@@ -168,8 +170,8 @@ The previous badge system had two structural problems:
 **Category:** Community
 **Phase:** 3 (requires walk submission and curation workflow)
 
-**What the user sees when earned:**
-"You suggested a walk that made it onto Sniffout. You've helped make the app better for every dog owner who uses it."
+**Earned moment copy:**
+*"You found something worth sharing — and it made it in. Every dog who walks it has you to thank."*
 
 **Trigger:** A walk submission from this user is approved by a Sniffout curator and published to WALKS_DB. Not triggered by submitting — only by approval.
 
@@ -185,8 +187,8 @@ The previous badge system had two structural problems:
 **Category:** Community
 **Phase:** 3 (requires review system)
 
-**What the user sees when earned:**
-"You've written 5 walk reviews with genuine detail. Other walkers rely on people like you."
+**Earned moment copy:**
+*"Other walkers plan their routes around reviews like yours. You've earned that."*
 
 **Trigger:** 5 walk reviews submitted, each with a minimum of 75 characters, cumulative total ≥ 600 characters across all 5. The cumulative floor ensures all five reviews have some substance — prevents gaming by submitting 5 reviews of exactly 75 characters.
 
@@ -238,41 +240,111 @@ Unearned badges are absent from storage — they are never written with `earned:
 
 ---
 
+## How Badges Are Hidden — No Locked State
+
+Badges that have not been earned do not exist in the UI.
+
+There is no locked badge grid, no silhouette placeholder, no blurred outline, no "N badges remaining" counter, and no progress indicator of any kind. The badge row in the Me tab does not render at all until at least one badge has been earned.
+
+This is a deliberate direction. Showing locked badges — even as silhouettes — creates gamification pressure that contradicts the personal and warm feel of the tab. Showing progress indicators ("7/10 to your next badge") turns the badge into a task, not a discovery.
+
+The correct mechanic is the opposite: the user goes about their walks and contributions, and badges appear. They were not chasing the badge; the app noticed something about them. That is the experience this system is designed to produce.
+
+---
+
 ## How a Badge Is Revealed — Earn Moment
 
 When `checkBadgeEarned()` detects a newly triggered badge (a badge that was not in `sniffout_badges` before this check):
 
 1. **Badge is written to storage** with `earnedAt` timestamp.
-2. **Toast notification** appears at the bottom of the screen (above the bottom nav):
+
+2. **If the app is currently open:** a toast notification appears at the bottom of the screen (above the bottom nav):
    ```
    ┌─────────────────────────────────────┐
-   │  ✓  Leads On earned                 │
+   │  Leads On                           │
    └─────────────────────────────────────┘
    ```
-   Toast duration: 3 seconds, then fade out. No tap required to dismiss.
-3. **If the Me tab is currently active:** the badge chip slides into the badge row with a brief scale-up animation (`transform: scale(0.8) → scale(1)`, 200ms ease-out).
-4. **If the Me tab is not active:** when the user next opens the Me tab, the new badge chip renders with the same scale-up animation on first paint.
+   Toast duration: 3 seconds, then fade out. One line — just the badge name. Warm, not celebratory. No exclamation, no congratulations. No tap required to dismiss.
 
-**No confetti, no full-screen celebration, no sound.** The toast + chip animation is the full reveal. Understated is correct here — this is a personal tab, not a game.
+3. **If the Me tab is currently active when the badge is earned:** the new badge chip appears in the badge row with a brief scale-up animation (`transform: scale(0.8) → scale(1)`, 200ms ease-out) and a "New" dot indicator.
+
+4. **If the badge is discovered on next visit** (the app was not open when the trigger fired, or the user navigates to Me tab after the earn): the badge chip renders with a subtle "New" dot indicator on first paint. No animation loop, no persistent highlight — just a single visual cue that this chip arrived since the user was last here. The "New" indicator disappears once the chip has been tapped.
+
+**No confetti, no full-screen celebration, no sound.** The toast and the chip appearing are the complete reveal. Understated is correct — this is a personal tab, not a game.
 
 ---
 
-## How Locked Badges Are Handled
+## Badge Detail — Tapping a Chip in the Me Tab
 
-**They are not shown.** The badge row does not exist until at least one badge is earned. There are no greyed-out locked badge outlines, no "N badges remaining" counter, no progress indicators toward next badge.
+Tapping a badge chip in the badge scroll row reveals an inline detail panel directly beneath the row (not a bottom sheet, not a modal):
 
-This is a deliberate owner decision. Showing locked badges creates a gamification pressure that contradicts the "personal and warm" feel. Users who want to know what badges exist can find out by earning one — the earn-moment toast gives them context.
+```
+┌─────────────────────────────────┐
+│  Leads On                       │
+│                                 │
+│  You kept coming back.          │
+│  The lead was always on.        │
+│                                 │
+│  Earned 14 Feb 2026             │
+└─────────────────────────────────┘
+```
+
+**Content:**
+- **Badge name** — same as the chip label, slightly larger weight
+- **Earned moment description** — the copy defined per badge above. Personal, warm, no stats, no counts. Written as a reflection of who the user has become, not a receipt of what they did.
+- **Date earned** — day and month and year, formatted as "14 Feb 2026". No time, no relative date ("2 weeks ago") — the absolute date is warmer for a personal record.
+
+**Interaction:**
+- Tapping a different chip collapses the current detail and opens the new one
+- Tapping the same chip again collapses the detail
+- One detail open at a time
+
+**What is not shown in the detail:**
+- The badge trigger threshold ("you filed 5 reports")
+- Any progress toward other badges
+- A "share" button (Phase 3 consideration — not Phase 1)
+- Any gamification framing
+
+The detail is personal and specific. It reads like a note the app wrote about the user, not a certificate of completion.
+
+```css
+.me-badge-detail {
+  margin-top: 10px;
+  padding: 14px 16px;
+  background: var(--bg);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: fadeIn 160ms ease;
+}
+.me-badge-detail-name {
+  font: 600 14px/1 'Inter', sans-serif;
+  color: var(--ink);
+}
+.me-badge-detail-desc {
+  font: 400 14px/1.45 'Inter', sans-serif;
+  color: var(--ink-2);
+}
+.me-badge-detail-date {
+  font: 400 12px/1 'Inter', sans-serif;
+  color: var(--ink-2);
+  opacity: 0.6;
+  margin-top: 2px;
+}
+```
 
 ---
 
 ## Badge Descriptions in the UI
 
-Badge descriptions are shown in one place: the inline detail row that appears below the badge scroll when a chip is tapped (defined in `me-tab-rethink-v2-spec.md`).
+Badge earned-moment copy appears in two places only:
 
-The description text shown is the "what the user sees when earned" copy from this document — it is personal ("You filed…") and explains the action, not the rule.
+1. **The toast notification** — the badge name only (one line, no description in the toast itself). The full description waits in the Me tab.
+2. **The inline detail panel** — full earned-moment copy + date, revealed on chip tap.
 
-Badge descriptions are **not** shown in:
-- The badge chip itself (name only)
+Badge copy is **not** shown in:
+- The badge chip itself (name only, no description)
 - Any tooltip on hover
 - Any pre-earn state (there is no pre-earn state visible to the user)
 

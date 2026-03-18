@@ -118,15 +118,156 @@ The dog content format advantage identified in the research is real. The prepara
 
 ## Phase 3 — Firebase Backend
 
-### User accounts and authentication
+> **⚠️ PRIORITY ORDER REVISED — March 2026**
+>
+> Firebase implementation has been accelerated to the top of Phase 3. This overrides the previous ordering (which listed Missing Dog alerts first). The reason: the app now holds personal, irreplaceable user data — walk journal, walk notes, dog profile, and walk photos (added in Round 20). This data cannot safely live in localStorage. localStorage can be wiped by clearing browser data, is device-locked, and has a ~5MB size limit that photos will exhaust quickly. Firebase is now the prerequisite for everything else in Phase 3.
+>
+> **New Phase 3 priority order:**
+> 1. Firebase First — authentication, Firestore, Storage, localStorage migration
+> 2. Missing Dog Alerts
+> 3. User-Submitted Walks
+> 4. Community Ratings and Reviews
+> 5. Push Notifications
 
-Sign-in should have the lowest possible friction. Recommended provider order: Google Sign-In first, Apple Sign-In second (required for iOS App Store compliance if a native app ever ships), email/password as fallback. Do not build a username/password flow from scratch — Firebase Auth handles this.
+---
 
-On first sign-in, migrate the user's existing localStorage data (explored walks, favourites, reviews, username) into their Firebase profile. This is the payoff for the Phase 2 timestamped schema — users who've been using the app see their history preserved, not reset. This migration moment is also an onboarding hook: "We found 12 walks you've already explored — they've been added to your profile."
+### Priority 1 — Firebase First
 
-Anonymous mode (no sign-in) should remain available indefinitely. Do not gate walk discovery or viewing behind an account. Gate only: submitting a walk, writing a review (to prevent spam), and Missing Dog alerts.
+#### Why Firebase cannot wait
 
-### User-submitted walks — submission flow, moderation, quality control
+Phase 2 ships a walk journal, walk notes, a dog profile, and walk photos. These are personal records that users will come to depend on. They are not recoverable if lost. The risks of leaving them in localStorage:
+
+- **Data loss**: clearing browser storage (common for device maintenance, privacy, or low storage warnings) permanently destroys all personal data
+- **Device lock**: a user who walks on their phone cannot view their journal on a tablet, or recover data when they upgrade their phone
+- **Storage cap**: the localStorage limit is approximately 5MB. A single walk photo (even compressed to ~200KB) means a user hits this limit after approximately 25 photos. Power users will hit this within months of Phase 2 launching
+
+Firebase resolves all three. It is not a growth feature — it is data safety infrastructure.
+
+#### Firebase Authentication
+
+Sign-in providers, in recommended order of implementation:
+
+1. **Email/password** — universal fallback, no dependency on third-party account
+2. **Google Sign-In** — lowest friction for most UK users, one tap
+3. **Apple Sign-In** — required if a native iOS App Store version ever ships
+
+Do not build a bespoke username/password flow. Firebase Auth handles this, including password reset, email verification, and session management. Do not gate walk discovery or viewing behind an account. The no-account experience must remain fully functional. Gate only: walk submissions, review writing (spam prevention), and Missing Dog alerts.
+
+Anonymous mode (no sign-in) remains available indefinitely. The migration from anonymous to signed-in should be frictionless: one tap with Google, then data migrates automatically.
+
+#### Firestore — what moves out of localStorage
+
+Every personal data collection currently in localStorage migrates to Firestore on first sign-in:
+
+| Data | localStorage key | Firestore collection |
+|---|---|---|
+| Dog profile | `sniffout_dog_profile` | `users/{uid}/dog_profile` |
+| Walk log (explored) | `sniffout_explored` | `users/{uid}/walk_log` |
+| Walk notes | `sniffout_walk_notes` | `users/{uid}/walk_notes` |
+| Walk journal entries | `sniffout_journal` | `users/{uid}/journal` |
+| Favourited walks | `sniffout_favs` | `users/{uid}/favourites` |
+| Wishlisted walks | `sniffout_wishlist` | `users/{uid}/wishlist` |
+| Badges earned | derived from log | `users/{uid}/badges` |
+| Condition reports | `sniffout_reports` | `users/{uid}/reports` |
+| Place favourites | `sniffout_place_favs` | `users/{uid}/place_favourites` |
+| Review history | `walkReviews` | `reviews/{walkId}/entries` (shared collection) |
+
+Walk reviews migrate from a per-device store to a shared Firestore collection, making them visible to other users for the first time. This is the moment community ratings become meaningful.
+
+#### Firebase Storage — walk photos
+
+Walk photos in Phase 2 are stored as compressed base64 strings in localStorage (one photo per walk visit, approximately 200KB each after compression). This is a **temporary approach**. In Phase 3, photos migrate to Firebase Storage.
+
+**Phase 2 photo approach (temporary, device-only):**
+- Photos stored in localStorage as base64 at ~200KB per image
+- No cross-device access
+- Subject to the ~5MB localStorage cap
+- Users must be informed that photos are device-only until they create an account
+
+**Copy to surface in Phase 2 UI (on the journal/notes screen):**
+> "Photos are saved on this device only. Create an account to back them up and access them anywhere."
+
+This message plants the account creation hook without demanding sign-in. It converts a technical limitation into a compelling reason to register.
+
+**Phase 3 Storage path:**
+- On first sign-in, all base64 photos are decoded and uploaded to Firebase Storage at path `users/{uid}/walk_photos/{walkId}/{timestamp}.jpg`
+- The localStorage base64 string is replaced with a Firebase Storage URL
+- Subsequent photos are captured and uploaded directly; localStorage base64 is no longer used
+
+#### The migration moment — onboarding hook
+
+The localStorage → Firebase migration is not a technical chore. It is the most important onboarding moment in Phase 3. When a user signs in for the first time:
+
+1. App detects existing localStorage data
+2. Migration runs silently in the background (≤5 seconds for typical data volumes)
+3. Confirmation message surfaces in the Me tab:
+
+> "Your walks and notes have been saved to your account. You can now access them on any device."
+
+If photos are present:
+
+> "Your 8 walk photos are uploading to your account. They'll be available everywhere once complete."
+
+This message earns the sign-up. The user exchanged their email for something tangible: their data is now safe. This is a significantly stronger hook than "Create an account to unlock features."
+
+#### Offline-first behaviour
+
+Firebase must not break the app when there is no internet connection. The app is used outdoors, where connectivity is unreliable.
+
+Requirements:
+- Firestore offline persistence must be enabled (`enablePersistence()`)
+- All reads should fall back to the local cache when offline
+- All writes queue locally and sync when connection is restored
+- The UI should indicate sync status when relevant (e.g., a quiet "Syncing..." on the journal screen)
+- Walk discovery (WALKS_DB is hardcoded) is always available offline
+
+#### Architecture decision — Firestore only
+
+Use Firestore for all data, including Missing Dog alerts (see Priority 2). Do not use Realtime Database. Firestore supports real-time listeners with `onSnapshot()`, which handles the alert map view adequately. A split architecture (Firestore + Realtime DB) adds complexity without proportionate benefit at this user scale. Revisit if alert latency becomes an issue.
+
+---
+
+### GDPR Considerations
+
+> **🔴 Do not launch Firebase Auth to real users until GDPR compliance is confirmed.**
+
+Firebase defaults to US data residency. UK/EU GDPR requires personal data to be stored within the UK or EU, or under an adequacy agreement. Before any user accounts go live:
+
+1. **Configure EU/UK data residency** in Firebase Console. Firebase supports `europe-west1` (Belgium) and `europe-west2` (London) as Firestore regions. Use `europe-west2` (London) to comply with UK GDPR post-Brexit and to minimise latency for UK users.
+
+2. **Privacy policy required.** No user account can be created without a publicly accessible privacy policy that explains: what data is collected, how it is stored, how long it is retained, and how users can request deletion. The current app has no privacy policy — this must be drafted and linked before Firebase Auth ships.
+
+3. **Right to erasure must be implemented.** A "Delete my account" function is legally required. Deleting an account must cascade to: Firestore documents (`users/{uid}` and all subcollections), Firebase Storage files (`users/{uid}/`), Firebase Auth record. Partial deletion (account gone but data remains) is not compliant.
+
+4. **Owner is seeking GDPR legal advice.** A solicitor is engaged. No Firebase Auth feature should ship to real users until the solicitor has confirmed the implementation is compliant.
+
+5. **Cookie/consent banner.** If Firebase Analytics is used (even passively), PECR consent is required before analytics events fire. Recommend deferring Firebase Analytics until post-GDPR review to avoid scope creep.
+
+---
+
+### Priority 2 — Missing Dog Alerts
+
+> Previously listed as the top Phase 3 priority. Now second, after Firebase is in place. Firebase Auth (for alert submission) and Firestore (for alert storage) are prerequisites — this ordering is correct.
+
+The design spec is already complete. The key Phase 3 engineering decisions:
+
+**Data model**: Firestore is the right store for Missing Dog alerts — structured documents, real-time listeners for the map view, easy TTL for automatic expiry. Recommended document structure:
+```
+missing_dogs/{alertId}: {
+  dogName, breed, colour, lastSeenLat, lastSeenLon,
+  lastSeenLocation (text), reporterContact,
+  timestamp, status: "active" | "found" | "expired",
+  expiresAt (timestamp, 7 days from creation)
+}
+```
+
+**Alert radius**: surface alerts within 10 miles of the user's current location. Show on a dedicated section in the Today tab and as a map layer in the Nearby tab.
+
+**No account required for viewing alerts.** Account required for submitting an alert (to prevent abuse and allow contact).
+
+---
+
+### Priority 3 — User-Submitted Walks
 
 **Submission flow minimum requirements**
 
@@ -169,7 +310,7 @@ The research documents the core AllTrails problem: unofficial routes masquerade 
 - Including a prominent flag/report button on every community walk card
 - Never allowing GPS-only submissions without a description — the description is the human quality signal
 
-### Community ratings — minimum review thresholds, curated vs community walk badging
+### Priority 4 — Community Ratings and Reviews — minimum review thresholds, curated vs community walk badging
 
 **Rating display logic**
 
@@ -196,25 +337,7 @@ Do not use "Verified" for community walks unless Sniffout staff have physically 
 
 Reviews older than 18 months should carry reduced weight in the aggregate. Trail conditions change: a 3-star review because it was muddy in January 2024 should not suppress a walk's rating in summer 2026. Implement recency decay at Phase 3.
 
-### Missing Dog alerts
-
-The design spec is already complete. The key Phase 3 engineering decisions:
-
-**Data model**: Firestore is the right store for Missing Dog alerts — structured documents, real-time listeners for the map view, easy TTL for automatic expiry. Recommended document structure:
-```
-missing_dogs/{alertId}: {
-  dogName, breed, colour, lastSeenLat, lastSeenLon,
-  lastSeenLocation (text), reporterContact,
-  timestamp, status: "active" | "found" | "expired",
-  expiresAt (timestamp, 7 days from creation)
-}
-```
-
-**Alert radius**: surface alerts within 10 miles of the user's current location. Show on a dedicated section in the Today tab and as a map layer in the Nearby tab.
-
-**No account required for viewing alerts.** Account required for submitting an alert (to prevent abuse and allow contact).
-
-### Push notifications
+### Priority 5 — Push Notifications
 
 Firebase Cloud Messaging for delivery. Notification events in priority order:
 
@@ -230,6 +353,10 @@ Do not send notifications without explicit opt-in. Do not send more than one not
 ### Phase 3 flags
 
 **✅ Agree with researcher**
+- Firebase-first before any community features. Data safety is a prerequisite, not an enhancement.
+- Offline-first with Firestore persistence. The app is used outdoors; connectivity cannot be assumed.
+- Firestore-only architecture. No Realtime Database. Real-time listeners via `onSnapshot()` are sufficient for Missing Dog alerts at this scale.
+- The localStorage → Firebase migration is the primary Phase 3 onboarding moment. Design it as a feature, not a background task.
 - Reviewed-before-publish for all community walk submissions. Quality moat is the primary differentiator.
 - Community walks use the same `WALKS_DB` schema — no second-class data model.
 - Clearly label curated vs community walks. "Sniffout Pick" vs "Community" badge achieves this.
@@ -241,25 +368,35 @@ Do not send notifications without explicit opt-in. Do not send more than one not
 
 1. **Anonymous use must remain fully functional.** There may be pressure post-Phase 3 to push users toward sign-in. Resist this. The walk discovery value — which is the product's core purpose — must never require an account. The PlayDogs competitor requires sign-in for full access; Sniffout's no-login positioning is a genuine differentiator. Gate contribution features only, never discovery.
 
-2. **The reputation score system (AllTrails model) is not needed at small scale.** At a user base of thousands (not millions), complex reputation scoring creates overhead without meaningful quality improvement. The editorial moderation model (human review) is more reliable at this scale than algorithmic trust scoring. Defer reputation score to Phase 4 or when submission volume exceeds ~200/month.
+2. **The localStorage photo approach (Phase 2) is temporary and must be communicated to users.** Phase 2 ships photos as compressed base64 in localStorage. This is a deliberate trade-off to ship quickly. But users must be told that photos are device-only until they create an account — otherwise a device wipe or browser clear will result in a support request and a bad impression of the product. Surface the warning in the journal UI from day one.
 
-3. **GPS-verified completions are a Phase 3+ feature, not Phase 3 core.** Requiring GPS verification before a user can review adds friction that will suppress review volume at the exact moment you need community data to start accumulating. GPS verification as an optional enhancement (reviews show a "GPS verified" badge if the reviewer recorded the walk) is better than a hard requirement. Make it optional.
+3. **GDPR blocks Firebase Auth ship date.** The GDPR review with a solicitor is a hard dependency. This is not a developer concern — it is an owner action item. The developer can build Firebase Auth behind a feature flag while the GDPR review is in progress, but the flag must remain off until legal sign-off is received. Do not ship Firebase Auth to real users without it.
 
-4. **Firebase Realtime Database vs Firestore decision.** Missing Dog alerts and real-time location features benefit from Realtime DB; structured walk and review data benefits from Firestore. A hybrid approach (Firestore for walks/reviews/users, Realtime DB for alerts) is workable but adds complexity. Recommended: Firestore-only for Phase 3, with real-time listener support for alerts. Revisit if real-time alerting latency is insufficient.
+4. **The reputation score system (AllTrails model) is not needed at small scale.** At a user base of thousands (not millions), complex reputation scoring creates overhead without meaningful quality improvement. The editorial moderation model (human review) is more reliable at this scale than algorithmic trust scoring. Defer reputation score to Phase 4 or when submission volume exceeds ~200/month.
+
+5. **GPS-verified completions are a Phase 3+ feature, not Phase 3 core.** Requiring GPS verification before a user can review adds friction that will suppress review volume at the exact moment you need community data to start accumulating. GPS verification as an optional enhancement (reviews show a "GPS verified" badge if the reviewer recorded the walk) is better than a hard requirement. Make it optional.
 
 **🔴 Decisions required**
 
-1. **Authentication providers** — Google + Apple + email/password, or just Google? Apple Sign-In is mandatory if a native iOS app ever ships. Recommended: implement all three in Phase 3 so they don't need to be retrofitted.
+1. **GDPR compliance confirmation** — owner must confirm legal sign-off from solicitor before Firebase Auth ships. Target: confirm timeline before Phase 3 engineering begins so the developer knows what to build behind a feature flag vs what ships live.
 
-2. **Who is the moderation team?** If it is one person (the founder), the reviewed-before-publish model works but needs a defined SLA: how quickly will submissions be reviewed? A 48-hour turnaround is reasonable and should be communicated to submitters. If the team grows, define who has approval rights.
+2. **EU/UK data residency region** — recommended `europe-west2` (London). Owner to confirm before Firebase project is created; region cannot be changed after creation.
 
-3. **Community walk badging nomenclature** — confirm "Community" as the label for user-submitted walks. Alternatives: "Member Walk", "User Submitted". Recommended: "Community" — consistent with the direction of the platform.
+3. **Privacy policy** — must be drafted and published before any user account feature goes live. Owner action item, not a developer task.
 
-4. **Missing Dog alert authentication requirement** — account required to submit? Or phone number only (lower barrier, still accountable)? Recommended: account required, to enable follow-up contact and prevent abuse.
+4. **Right to erasure implementation** — confirm the cascade: delete account → delete Firestore `users/{uid}` (all subcollections) → delete Firebase Storage `users/{uid}/` → delete Firebase Auth record. Developer must implement this as part of Firebase Auth, not as an afterthought.
 
-5. **GPS verification as requirement vs option** — recommended above: optional badge, not hard requirement. Owner to confirm.
+5. **Authentication providers** — Google + Apple + email/password, or just Google? Apple Sign-In is mandatory if a native iOS App Store version ever ships. Recommended: implement all three in Phase 3 so they don't need to be retrofitted.
 
-6. **Notification event priority** — confirm the four events above, and define the suppression logic (max 1 per day per user).
+6. **Who is the moderation team?** If it is one person (the founder), the reviewed-before-publish model works but needs a defined SLA: how quickly will submissions be reviewed? A 48-hour turnaround is reasonable and should be communicated to submitters.
+
+7. **Community walk badging nomenclature** — confirm "Community" as the label for user-submitted walks. Alternatives: "Member Walk", "User Submitted". Recommended: "Community".
+
+8. **Missing Dog alert authentication requirement** — account required to submit? Or phone number only (lower barrier, still accountable)? Recommended: account required.
+
+9. **GPS verification as requirement vs option** — recommended above: optional badge, not hard requirement. Owner to confirm.
+
+10. **Notification event priority** — confirm the four events above, and define the suppression logic (max 1 per day per user).
 
 ---
 
@@ -386,12 +523,20 @@ Podcast sponsorship, newsletter, long-form editorial content, paid social, app s
 | 2 | WALKS_DB curated ratings labelling | Before Phase 3 community ratings | Label as "Sniffout rating", separate from user average |
 | 2 | Static SEO regional pages | Now — parallel to v2 development | Start immediately, 10 pages |
 | 2 | Me tab scope in Phase 2 | Before sprint planning | Stats + badges now, full logbook Phase 3 |
+| 2 | Walk photos device-only warning | Before journal/photo feature ships | Surface "device-only" message in journal UI |
+| 3 | GDPR legal sign-off from solicitor | Before Firebase Auth ships to users | Hard dependency — no auth without this |
+| 3 | Firebase data residency region | Before Firebase project created (region immutable) | `europe-west2` (London) |
+| 3 | Privacy policy | Before any user account feature goes live | Owner to draft; developer to link in UI |
+| 3 | Right to erasure cascade | Before Firebase Auth ships | Delete account → all Firestore + Storage + Auth |
 | 3 | Auth providers | Before Firebase setup | Google + Apple + email/password |
+| 3 | Offline-first Firestore persistence | Phase 3 engineering requirement | `enablePersistence()` from day one |
+| 3 | localStorage → Firebase migration UX | Before Firebase Auth ships | "Your walks have been saved" confirmation in Me tab |
+| 3 | Firebase Storage migration of photos | Phase 3 engineering | Decode base64 → upload on first sign-in |
 | 3 | Moderation team and SLA | Before submission feature ships | Define owner + 48h SLA |
 | 3 | "Community" walk badge label | Before submission feature ships | Confirm "Community" |
 | 3 | Missing Dog alert auth requirement | Before alert feature ships | Account required to submit |
 | 3 | GPS verification model | Before review feature ships | Optional badge, not hard requirement |
-| 3 | Firebase architecture (Firestore vs split) | Before Phase 3 engineering begins | Firestore-only |
+| 3 | Firebase architecture (Firestore vs split) | **Decided** | Firestore-only |
 | 3 | Push notification event set | Before FCM integration | Confirm 4 events above |
 | 4+ | Walk SEO pages timing | Phase 3 vs Phase 4 | Phase 3 engineering task |
 | 4+ | Social content creator | Before social strategy launch | Resourcing decision |

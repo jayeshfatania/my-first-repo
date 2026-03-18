@@ -1,0 +1,7 @@
+name = "places-proxy"
+main = "workers/places-proxy.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+# PLACES_API_KEY is set as a secret via:
+# wrangler secret put PLACES_API_KEY
