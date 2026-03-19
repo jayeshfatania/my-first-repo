@@ -9213,7 +9213,9 @@
     var metaText = walk.distance.toFixed(1) + ' mi · ' + walk.difficulty.charAt(0).toUpperCase() + walk.difficulty.slice(1);
     return (
       '<div class="trail-card" onclick="onWalkTap(\'' + walk.id + '\')">' +
-        '<div class="trail-card-photo">' + badgeHTML + condDot +
+        '<div class="trail-card-photo">' +
+          (walk.imageUrl ? '<img src="' + walk.imageUrl + '" alt="' + escHtml(walk.name) + '" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;">' : '') +
+          badgeHTML + condDot +
           '<button class="trail-heart' + (isFavourited(walk.id) ? ' fav-active' : '') + '" data-heart="' + walk.id + '" ' +
             'aria-label="' + (isFavourited(walk.id) ? 'Remove from' : 'Add to') + ' favourites" ' +
             'onclick="event.stopPropagation();toggleFavourite(\'' + walk.id + '\')">' +
