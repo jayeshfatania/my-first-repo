@@ -4236,6 +4236,19 @@
     if (window.lucide) lucide.createIcons();
   }
 
+  function resolvePhotos(container) {
+    var imgs = container.querySelectorAll('img[data-photo-meta]');
+    imgs.forEach(function(img) {
+      var metaUrl = img.getAttribute('data-photo-meta');
+      if (!metaUrl) return;
+      img.removeAttribute('data-photo-meta');
+      fetch(metaUrl)
+        .then(function(r) { return r.json(); })
+        .then(function(data) { if (data.photoUri) img.src = data.photoUri; })
+        .catch(function() {});
+    });
+  }
+
   /* ─── Picks anchor pill (IntersectionObserver) ─── */
   var picksObserver = null;
 
@@ -8849,7 +8862,7 @@
     var mapsUrl = 'https://www.google.com/maps/place/' +
       encodeURIComponent(gs.name) + '/@' + gs.lat + ',' + gs.lon + ',16z';
     var thumbHtml = gs.photoUrl
-      ? '<div class="gs-thumb"><img src="' + gs.photoUrl + '" alt="" loading="lazy"></div>'
+      ? '<div class="gs-thumb"><img data-photo-meta="' + gs.photoUrl + '" alt="" loading="lazy"></div>'
       : '<div class="gs-thumb"></div>';
     var gsId = escHtml(gs.id || gs.name);
     var isFav = isGreenspaceFavourited(gs.id || gs.name);
@@ -8935,6 +8948,7 @@
         gsList.innerHTML = filtered.map(function(gs) {
           return renderGreenSpaceCard(gs, lat, lon);
         }).join('');
+        resolvePhotos(gsList);
       } else if (gsSection) {
         gsSection.style.display = 'none';
       }
@@ -8994,6 +9008,7 @@
           gsList.innerHTML = sorted.map(function(gs) {
             return renderGreenSpaceCard(gs, lat, lon);
           }).join('');
+          resolvePhotos(gsList);
         } else if (gsEl) {
           gsEl.style.display = 'none';
         }
@@ -9037,7 +9052,7 @@
         var name = (p.displayName && p.displayName.text) || null;
         if (!name) return null;
         var photoUrl = (p.photos && p.photos.length > 0)
-          ? PLACES_PROXY + '/v1/' + p.photos[0].name + '/media?maxWidthPx=400'
+          ? PLACES_PROXY + '/v1/' + p.photos[0].name + '/media?maxWidthPx=400&skipHttpRedirect=true'
           : null;
         return { name: name, lat: plat, lon: plon, photoUrl: photoUrl, rating: p.rating || null };
       }).filter(Boolean);
@@ -9294,7 +9309,7 @@
                   : p.regularOpeningHours.openNow === false ? false : null;
         }
         var photoUrl = (p.photos && p.photos.length > 0)
-          ? PLACES_PROXY + '/v1/' + p.photos[0].name + '/media?maxWidthPx=400'
+          ? PLACES_PROXY + '/v1/' + p.photos[0].name + '/media?maxWidthPx=400&skipHttpRedirect=true'
           : null;
         return {
           placeId:     p.name || null,
@@ -9370,8 +9385,9 @@
           dist:        distMi
         };
       });
-      NEARBY_DINING_CACHE[cacheKey] = places;
-      cb(places);
+      var filtered = places.filter(function(p) { return p.allowsDogs !== false; });
+      NEARBY_DINING_CACHE[cacheKey] = filtered;
+      cb(filtered);
     })
     .catch(function() { cb(null); });
   }
@@ -9587,6 +9603,7 @@
     var tipHtml = tip ? '<div class="venue-cat-tip">' + tip + '</div>' : '';
     el.innerHTML = tipHtml + venues.map(renderVenueCard).join('') +
       '<div class="nearby-disclaimer">Results may not always be up to date. We recommend calling ahead or checking official sources to confirm dogs are welcome and to verify opening times.</div>';
+    resolvePhotos(el);
     syncIcons();
   }
 
@@ -9604,7 +9621,7 @@
     if (venue.isOpen === false) openHtml = '<span class="venue-open-gp closed">Closed</span>';
 
     var photoHtml = venue.photoUrl
-      ? '<div class="venue-card-photo-gp"><img src="' + venue.photoUrl + '" alt="" loading="lazy"></div>'
+      ? '<div class="venue-card-photo-gp"><img data-photo-meta="' + venue.photoUrl + '" alt="" loading="lazy"></div>'
       : '<div class="venue-card-photo-gp"></div>';
 
     var isFaved   = venue.placeId ? isPlaceFavourited(venue.placeId) : false;
