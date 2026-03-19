@@ -863,6 +863,7 @@
       height: 130px;
       position: relative;
       background: var(--brand);
+      overflow: hidden;
     }
     .portrait-badge {
       position: absolute;
@@ -9158,7 +9159,7 @@
   function renderPortraitCard(walk) {
     var fav = isFavourited(walk.id);
     var photoStyle = walk.imageUrl ? '' : 'background:var(--brand);';
-    var photoInner = walk.imageUrl ? '<img src="' + walk.imageUrl + '" alt="' + walk.name + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;">' : '';
+    var photoInner = walk.imageUrl ? '<img src="' + walk.imageUrl + '" alt="' + walk.name + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">' : '';
     var badgeHTML  = walk.badge ? '<div class="portrait-badge">' + walk.badge + '</div>' : '';
 
     return (
@@ -9466,6 +9467,7 @@
     var HIDDEN_GEM_THRESHOLD_KM = 50;
     var hiddenGems = WALKS_DB
       .filter(function(w) { return w.badge === 'Hidden gem'; })
+      .filter(function(w) { return PREVIEW_PICK_IDS.indexOf(w.id) === -1; })
       .map(function(w) {
         return { walk: w, dist: haversineKm(lat, lon, w.lat, w.lon) };
       })
