@@ -49,6 +49,16 @@ As of 19 March 2026, a full day of development has been completed. The app has a
 - `start_url` was pointing to the old v1 path. Now correctly set to `/sniffout-v2.html`.
 - Installed PWA instances no longer show a 404 on launch.
 
+### Round 26 — Saved places, heart icons, weather hero, walk note save button, fresh weather fetch
+
+- **FIX 26.1** — Saved places not appearing in Me tab. Root cause: localStorage key mismatch — Nearby tab saving to `sniffout_place_favs` but Me tab reading from `sniffout_saved_places`. Fixed across all three read locations.
+- **FIX 26.2** — Empty state copy corrected from "bookmark icon" to "heart icon".
+- **FIX 26.3** — Heart icon disappearing on Walks tab fixed with `z-index: 1` on `.walk-heart`.
+- **FIX 26.4** — Weather tab hero temperature and icon alignment fixed. Gap set to 56px, icon 96px, vertically centred. Per Designer recommendation. (Iterated twice — 26.4b and 26.4c — to reach final values.)
+- **FIX 26.5** — Weather tab showing wrong icon fixed. Replaced stale `is_day` cache value with live hour-based check (`currentH >= 6 && currentH < 21`).
+- **FIX 26.6** — Save button added to walk note input with 2-second confirmation message.
+- **FIX 26.7** — Weather now always fetches fresh data on every load. App renders instantly with cached data then re-renders with live data when fetch completes.
+
 ---
 
 ## Pre-Launch Blockers — Status as of 19 March 2026
@@ -86,7 +96,7 @@ No remaining technical hard blockers. All three outstanding blockers are legal a
 
 ## Next Up
 
-### Immediate — Round 26
+### Immediate — Round 27
 
 **Me tab subpages implementation**
 - Implement per `me-tab-subpages-spec.md` (Designer spec complete).
@@ -101,9 +111,20 @@ No remaining technical hard blockers. All three outstanding blockers are legal a
 
 **CLAUDE.md** — already updated today for brand colour and API key. No further CLAUDE.md changes needed unless a new architectural decision warrants it.
 
+### Also immediate
+
+**Full UX/UI review session**
+- Dedicated session. Designer to review every tab systematically and produce a prioritised findings list.
+- Must happen before next beta push. Owner confirmed this as a prerequisite.
+
+**Logo rebuild**
+- Owner creating new logo in Illustrator.
+- Required exports: `icon.svg` (master), `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180x180), `favicon.svg`.
+- Replace existing icon files in repo when ready. No Developer work needed until exports are ready.
+
 ### Soon (Phase 2 remaining)
 
-- **Dog-friendly restaurants in Nearby tab** — brief exists at `developer-brief-restaurants.md`. Revert was intentional; feature to return in a dedicated round with proper design.
+- **Dog-friendly restaurants in Nearby tab** — permanently removed in FIX 23.2. Too many quality issues with non-dog-friendly results appearing. Brief exists at `developer-brief-restaurants.md` for a future dedicated round with proper design.
 - **Walk Wrapped summary** — twice yearly (July and December/January). Data foundation exists (`sniffout_walk_log` with timestamps). Needs Designer spec.
 - **Pollen data on Weather tab** — Open-Meteo European AQI endpoint. Phase 3 per CLAUDE.md.
 - **Copy review session** — all UI copy across all tabs reviewed against brand voice.
@@ -130,6 +151,10 @@ These decisions are locked and should not be revisited without a clear reason.
 | Weather icons | Today tab = white Lucide icons; Weather tab = Yr.no meteocon SVGs | 18 March 2026 |
 | Walk log data model | `sniffout_walk_log` timestamped entries — no revert to `sniffout_walked` | Round 12 |
 | Streaks | Not surfaced in UI — milestone badges only | Round 12 |
-| Pubs/restaurants in Nearby | Reverted from Round 23. Brief exists at `developer-brief-restaurants.md`. Return in a dedicated round. | 19 March 2026 |
-| API key security | Cloudflare Worker proxy at `places-proxy.sniffout.app` — do not revert to direct Google URL | 19 March 2026 |
+| Pubs/restaurants in Nearby | Permanently removed (FIX 23.2). Quality issues — too many non-dog-friendly results. Brief at `developer-brief-restaurants.md` for a future dedicated round. | 19 March 2026 |
+| API key security | Cloudflare Worker proxy at `places-proxy.sniffout.app` — fully working. Do not revert to direct Google URL. | 19 March 2026 |
 | Strategic direction | Personal record (dog walking journal) not just a discovery tool | 18 March 2026 |
+| Weather fetch | Always fetches fresh on every load. Renders instantly with cache then re-renders when live data arrives. Never serve stale weather. | 19 March 2026 |
+| Settings vs dog profile | Gear icon opens settings only. "Your Dog" row opens dog profile subpage. Fully separated. | 19 March 2026 |
+| Logo | To be rebuilt in Illustrator by owner. SVG master + four PNG/ICO exports. No Developer work until exports ready. | 19 March 2026 |
+| UX/UI review | Full dedicated session required before next beta push. Designer reviews every tab systematically. | 19 March 2026 |
