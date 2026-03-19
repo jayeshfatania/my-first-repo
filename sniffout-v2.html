@@ -3560,7 +3560,7 @@
         </div>
         <div class="me-dog-prompt-body">
           <p class="me-dog-prompt-text">Add your dog's name to make this tab yours</p>
-          <button class="me-dog-prompt-link" onclick="openMeSettingsSheet();setTimeout(function(){var s=document.getElementById('dogSettingsSection');if(s)s.scrollIntoView({behavior:'smooth'});},300)">Set up dog profile -></button>
+          <button class="me-dog-prompt-link" onclick="openMeSubpage('dog')">Set up dog profile -></button>
         </div>
         <button class="me-dog-prompt-dismiss" onclick="dismissDogPrompt()" aria-label="Dismiss">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -3569,6 +3569,25 @@
 
       <!-- Entry rows -->
       <div class="me-entries" id="meEntries">
+
+        <!-- Your Dog -->
+        <button class="me-entry-row" onclick="openMeSubpage('dog')" id="entryDog">
+          <div class="me-entry-icon">
+            <svg width="18" height="18" viewBox="0 0 48 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M24 2C30 2 43 8 43 18C43 28 35 36 24 36C13 36 5 28 5 18C5 8 18 2 24 2Z" fill="currentColor" opacity="0.9"/>
+              <ellipse cx="15.5" cy="21" rx="5.5" ry="5.5" fill="var(--surface)"/>
+              <ellipse cx="32.5" cy="21" rx="5.5" ry="5.5" fill="var(--surface)"/>
+              <rect x="22" y="7" width="4" height="9" rx="2" fill="var(--surface)"/>
+            </svg>
+          </div>
+          <div class="me-entry-text">
+            <span class="me-entry-label">Your Dog</span>
+            <span class="me-entry-preview" id="dogEntryPreview">Add your dog</span>
+          </div>
+          <div class="me-entry-right">
+            <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </button>
 
         <!-- Walk Journal -->
         <button class="me-entry-row" onclick="openMeSubpage('journal')" id="entryJournal">
@@ -7848,6 +7867,16 @@
       }
     }
 
+    // Your Dog entry row preview
+    var dogEntryPreview = document.getElementById('dogEntryPreview');
+    if (dogEntryPreview) {
+      if (dog && dog.name) {
+        dogEntryPreview.textContent = dog.name + (dog.breed ? ' \u00b7 ' + dog.breed : '');
+      } else {
+        dogEntryPreview.textContent = 'Add your dog';
+      }
+    }
+
     // Dog profile prompt
     var promptEl = document.getElementById('meDogPrompt');
     if (promptEl) {
@@ -8210,10 +8239,11 @@
   }
 
   function renderMeSubpageContent(id) {
-    if (id === 'journal')     renderSubpageJournal();
-    else if (id === 'badges')     renderSubpageBadges();
-    else if (id === 'savedwalks') renderSubpageSavedWalks();
+    if (id === 'journal')      renderSubpageJournal();
+    else if (id === 'badges')      renderSubpageBadges();
+    else if (id === 'savedwalks')  renderSubpageSavedWalks();
     else if (id === 'savedplaces') renderSubpageSavedPlaces();
+    else if (id === 'dog')         populateDogSettings();
   }
 
   /* ─── Walk Journal subpage ─── */
@@ -8474,7 +8504,6 @@
     if (sheet)   sheet.classList.add('is-open');
     document.body.style.overflow = 'hidden';
     history.pushState(null, '', location.href);
-    populateDogSettings();
     // Restore dark mode toggle to saved preference (suppressing pill animation)
     var _dPill = document.getElementById('segment-pill-dark');
     if (_dPill) _dPill.style.transition = 'none';
@@ -10260,148 +10289,6 @@
 <div class="me-settings-sheet" id="meSettingsSheet">
   <div class="me-settings-handle"></div>
   <div class="me-settings-title">Settings</div>
-  <!-- Your name row -->
-  <div class="me-settings-row" id="meNameRow">
-    <span class="me-settings-row-label">Your name</span>
-    <span class="me-settings-row-value">
-      <span id="meSettingsNameValue">Not set</span>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-    </span>
-  </div>
-  <!-- Your dog -->
-  <div class="me-settings-section" id="dogSettingsSection">
-    <div class="dog-settings-section-label">Your dog</div>
-    <div class="dog-settings-field">
-      <label class="dog-settings-label" for="dogSettingsName">Name</label>
-      <input class="dog-settings-input" id="dogSettingsName" type="text" maxlength="24" placeholder="e.g. Luna" autocomplete="off" autocapitalize="words">
-    </div>
-    <div class="dog-settings-field">
-      <label class="dog-settings-label" for="dogSettingsBreed">Breed</label>
-      <select class="dog-settings-select" id="dogSettingsBreed" onchange="handleDogBreedChange()">
-        <option value="">Select breed</option>
-        <option>Labrador</option>
-        <option>Cocker Spaniel</option>
-        <option>Springer Spaniel</option>
-        <option>Golden Retriever</option>
-        <option>French Bulldog</option>
-        <option>Border Collie</option>
-        <option>German Shepherd</option>
-        <option>Staffordshire Bull Terrier</option>
-        <option>Cavalier King Charles Spaniel</option>
-        <option>Pug</option>
-        <option>Beagle</option>
-        <option>Boxer</option>
-        <option>Dachshund</option>
-        <option>Shih Tzu</option>
-        <option>Jack Russell Terrier</option>
-        <option>Yorkshire Terrier</option>
-        <option>Whippet</option>
-        <option>Greyhound</option>
-        <option>Vizsla</option>
-        <option>Weimaraner</option>
-        <option>Dalmatian</option>
-        <option>Border Terrier</option>
-        <option>West Highland Terrier</option>
-        <option>Scottish Terrier</option>
-        <option>Cairn Terrier</option>
-        <option>Schnauzer</option>
-        <option>Dobermann</option>
-        <option>Rottweiler</option>
-        <option>Great Dane</option>
-        <option>Hungarian Vizsla</option>
-        <option>Pointer</option>
-        <option>Setter</option>
-        <option>Brittany Spaniel</option>
-        <option>Basset Hound</option>
-        <option>Bloodhound</option>
-        <option>Shar Pei</option>
-        <option>Chow Chow</option>
-        <option>Samoyed</option>
-        <option>Husky</option>
-        <option>Alaskan Malamute</option>
-        <option>Bernese Mountain Dog</option>
-        <option>St Bernard</option>
-        <option>Newfoundland</option>
-        <option>Irish Wolfhound</option>
-        <option>Lurcher</option>
-        <option>Saluki</option>
-        <option>Afghan Hound</option>
-        <option>Borzoi</option>
-        <option>Italian Greyhound</option>
-        <option>Maltese</option>
-        <option>Pomeranian</option>
-        <option>Chihuahua</option>
-        <option>Cockapoo</option>
-        <option>Labradoodle</option>
-        <option>Cavapoo</option>
-        <option>Goldendoodle</option>
-        <option>Sprocker</option>
-        <option>Jackapoo</option>
-        <option>Schnoodle</option>
-        <option value="Mixed breed / crossbreed">Mixed breed / crossbreed</option>
-        <option value="Not sure / rescue">Not sure / rescue</option>
-        <option value="Other (please specify)">Other (please specify)</option>
-      </select>
-      <input class="dog-settings-input dog-settings-other-input" id="dogSettingsBreedOther" type="text" maxlength="48" placeholder="Please specify" style="display:none">
-    </div>
-    <div class="dog-settings-field">
-      <div class="dog-settings-label">Size</div>
-      <div class="segment-control me-size-control" id="segment-control-size" role="group" aria-label="Dog size">
-        <div class="segment-pill" id="segment-pill-size" aria-hidden="true"></div>
-        <button class="segment-btn" data-size="small" aria-pressed="false"><span>Small</span></button>
-        <button class="segment-btn" data-size="medium" aria-pressed="false"><span>Medium</span></button>
-        <button class="segment-btn" data-size="large" aria-pressed="false"><span>Large</span></button>
-      </div>
-    </div>
-    <div class="dog-settings-field">
-      <div class="dog-settings-label" id="dogTagsLabel">About your dog</div>
-      <div class="dog-tags-row" id="dogTagsRow">
-        <button class="dog-tag-chip" data-tag="Energetic" onclick="toggleDogTag(this)">Energetic</button>
-        <button class="dog-tag-chip" data-tag="Nervous" onclick="toggleDogTag(this)">Nervous</button>
-        <button class="dog-tag-chip" data-tag="Elderly" onclick="toggleDogTag(this)">Elderly</button>
-        <button class="dog-tag-chip" data-tag="Good recall" onclick="toggleDogTag(this)">Good recall</button>
-        <button class="dog-tag-chip" data-tag="Reactive" onclick="toggleDogTag(this)">Reactive</button>
-        <button class="dog-tag-chip" data-tag="Loves water" onclick="toggleDogTag(this)">Loves water</button>
-        <button class="dog-tag-chip" data-tag="Mud-happy" onclick="toggleDogTag(this)">Mud-happy</button>
-        <button class="dog-tag-chip" data-tag="Sociable" onclick="toggleDogTag(this)">Sociable</button>
-      </div>
-    </div>
-    <div class="dog-settings-field">
-      <div class="dog-settings-label">Birthday (optional)</div>
-      <div class="dog-birthday-row">
-        <select class="dog-settings-select" id="dogSettingsBdDay">
-          <option value="">Day</option>
-        </select>
-        <select class="dog-settings-select" id="dogSettingsBdMonth">
-          <option value="">Month</option>
-          <option value="1">January</option>
-          <option value="2">February</option>
-          <option value="3">March</option>
-          <option value="4">April</option>
-          <option value="5">May</option>
-          <option value="6">June</option>
-          <option value="7">July</option>
-          <option value="8">August</option>
-          <option value="9">September</option>
-          <option value="10">October</option>
-          <option value="11">November</option>
-          <option value="12">December</option>
-        </select>
-        <select class="dog-settings-select" id="dogSettingsBdYear">
-          <option value="">Year</option>
-        </select>
-      </div>
-    </div>
-    <button class="dog-settings-save-btn" onclick="saveDogSettings()">Save dog profile</button>
-    <button class="dog-settings-remove-link" id="dogSettingsRemoveBtn" onclick="showDogRemoveConfirm()" style="display:none">Remove dog profile</button>
-    <div class="dog-settings-confirm" id="dogSettingsConfirm">
-      <p class="dog-settings-confirm-text" id="dogSettingsConfirmText">Remove your dog? This will not delete your walks.</p>
-      <div class="dog-settings-confirm-row">
-        <button class="dog-settings-confirm-yes" onclick="executeDogRemove()">Remove</button>
-        <button class="dog-settings-confirm-no" onclick="cancelDogRemove()">Cancel</button>
-      </div>
-    </div>
-  </div>
   <!-- Display mode -->
   <div class="me-settings-section">
     <div class="segment-label">Display mode</div>
@@ -10576,6 +10463,152 @@
     <div class="me-subpage-header-spacer"></div>
   </div>
   <div class="me-subpage-content" id="savedPlacesContent"></div>
+</div>
+
+<!-- Your Dog subpage -->
+<div class="me-subpage" id="subpageDog" role="dialog" aria-modal="true" aria-label="Your Dog">
+  <div class="me-subpage-handle"></div>
+  <div class="me-subpage-header">
+    <button class="me-subpage-back" onclick="closeMeSubpage('dog')" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 class="me-subpage-title">Your Dog</h2>
+    <div class="me-subpage-header-spacer"></div>
+  </div>
+  <div class="me-subpage-content" id="dogSubpageContent">
+    <div style="padding:16px 20px 32px">
+      <div class="dog-settings-field">
+        <label class="dog-settings-label" for="dogSettingsName">Name</label>
+        <input class="dog-settings-input" id="dogSettingsName" type="text" maxlength="24" placeholder="e.g. Luna" autocomplete="off" autocapitalize="words">
+      </div>
+      <div class="dog-settings-field">
+        <label class="dog-settings-label" for="dogSettingsBreed">Breed</label>
+        <select class="dog-settings-select" id="dogSettingsBreed" onchange="handleDogBreedChange()">
+          <option value="">Select breed</option>
+          <option>Labrador</option>
+          <option>Cocker Spaniel</option>
+          <option>Springer Spaniel</option>
+          <option>Golden Retriever</option>
+          <option>French Bulldog</option>
+          <option>Border Collie</option>
+          <option>German Shepherd</option>
+          <option>Staffordshire Bull Terrier</option>
+          <option>Cavalier King Charles Spaniel</option>
+          <option>Pug</option>
+          <option>Beagle</option>
+          <option>Boxer</option>
+          <option>Dachshund</option>
+          <option>Shih Tzu</option>
+          <option>Jack Russell Terrier</option>
+          <option>Yorkshire Terrier</option>
+          <option>Whippet</option>
+          <option>Greyhound</option>
+          <option>Vizsla</option>
+          <option>Weimaraner</option>
+          <option>Dalmatian</option>
+          <option>Border Terrier</option>
+          <option>West Highland Terrier</option>
+          <option>Scottish Terrier</option>
+          <option>Cairn Terrier</option>
+          <option>Schnauzer</option>
+          <option>Dobermann</option>
+          <option>Rottweiler</option>
+          <option>Great Dane</option>
+          <option>Hungarian Vizsla</option>
+          <option>Pointer</option>
+          <option>Setter</option>
+          <option>Brittany Spaniel</option>
+          <option>Basset Hound</option>
+          <option>Bloodhound</option>
+          <option>Shar Pei</option>
+          <option>Chow Chow</option>
+          <option>Samoyed</option>
+          <option>Husky</option>
+          <option>Alaskan Malamute</option>
+          <option>Bernese Mountain Dog</option>
+          <option>St Bernard</option>
+          <option>Newfoundland</option>
+          <option>Irish Wolfhound</option>
+          <option>Lurcher</option>
+          <option>Saluki</option>
+          <option>Afghan Hound</option>
+          <option>Borzoi</option>
+          <option>Italian Greyhound</option>
+          <option>Maltese</option>
+          <option>Pomeranian</option>
+          <option>Chihuahua</option>
+          <option>Cockapoo</option>
+          <option>Labradoodle</option>
+          <option>Cavapoo</option>
+          <option>Goldendoodle</option>
+          <option>Sprocker</option>
+          <option>Jackapoo</option>
+          <option>Schnoodle</option>
+          <option value="Mixed breed / crossbreed">Mixed breed / crossbreed</option>
+          <option value="Not sure / rescue">Not sure / rescue</option>
+          <option value="Other (please specify)">Other (please specify)</option>
+        </select>
+        <input class="dog-settings-input dog-settings-other-input" id="dogSettingsBreedOther" type="text" maxlength="48" placeholder="Please specify" style="display:none">
+      </div>
+      <div class="dog-settings-field">
+        <div class="dog-settings-label">Size</div>
+        <div class="segment-control me-size-control" id="segment-control-size" role="group" aria-label="Dog size">
+          <div class="segment-pill" id="segment-pill-size" aria-hidden="true"></div>
+          <button class="segment-btn" data-size="small" aria-pressed="false"><span>Small</span></button>
+          <button class="segment-btn" data-size="medium" aria-pressed="false"><span>Medium</span></button>
+          <button class="segment-btn" data-size="large" aria-pressed="false"><span>Large</span></button>
+        </div>
+      </div>
+      <div class="dog-settings-field">
+        <div class="dog-settings-label" id="dogTagsLabel">About your dog</div>
+        <div class="dog-tags-row" id="dogTagsRow">
+          <button class="dog-tag-chip" data-tag="Energetic" onclick="toggleDogTag(this)">Energetic</button>
+          <button class="dog-tag-chip" data-tag="Nervous" onclick="toggleDogTag(this)">Nervous</button>
+          <button class="dog-tag-chip" data-tag="Elderly" onclick="toggleDogTag(this)">Elderly</button>
+          <button class="dog-tag-chip" data-tag="Good recall" onclick="toggleDogTag(this)">Good recall</button>
+          <button class="dog-tag-chip" data-tag="Reactive" onclick="toggleDogTag(this)">Reactive</button>
+          <button class="dog-tag-chip" data-tag="Loves water" onclick="toggleDogTag(this)">Loves water</button>
+          <button class="dog-tag-chip" data-tag="Mud-happy" onclick="toggleDogTag(this)">Mud-happy</button>
+          <button class="dog-tag-chip" data-tag="Sociable" onclick="toggleDogTag(this)">Sociable</button>
+        </div>
+      </div>
+      <div class="dog-settings-field">
+        <div class="dog-settings-label">Birthday (optional)</div>
+        <div class="dog-birthday-row">
+          <select class="dog-settings-select" id="dogSettingsBdDay">
+            <option value="">Day</option>
+          </select>
+          <select class="dog-settings-select" id="dogSettingsBdMonth">
+            <option value="">Month</option>
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+          <select class="dog-settings-select" id="dogSettingsBdYear">
+            <option value="">Year</option>
+          </select>
+        </div>
+      </div>
+      <button class="dog-settings-save-btn" onclick="saveDogSettings()">Save dog profile</button>
+      <button class="dog-settings-remove-link" id="dogSettingsRemoveBtn" onclick="showDogRemoveConfirm()" style="display:none">Remove dog profile</button>
+      <div class="dog-settings-confirm" id="dogSettingsConfirm">
+        <p class="dog-settings-confirm-text" id="dogSettingsConfirmText">Remove your dog? This will not delete your walks.</p>
+        <div class="dog-settings-confirm-row">
+          <button class="dog-settings-confirm-yes" onclick="executeDogRemove()">Remove</button>
+          <button class="dog-settings-confirm-no" onclick="cancelDogRemove()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -10941,6 +10974,11 @@
     document.getElementById('subpageSavedplaces'),
     document.getElementById('savedPlacesContent'),
     function() { closeMeSubpage('savedplaces'); }
+  );
+  addSheetSwipe(
+    document.getElementById('subpageDog'),
+    document.getElementById('dogSubpageContent'),
+    function() { closeMeSubpage('dog'); }
   );
 </script>
 
