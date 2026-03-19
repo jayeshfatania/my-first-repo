@@ -6407,6 +6407,29 @@
       imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/richmond-park.jpg', badge: 'Popular', rating: 4.6, reviewCount: 528, source: 'curated'
     },
     {
+      id: 'isabella-plantation',
+      name: 'Isabella Plantation',
+      location: 'Richmond Park, London',
+      lat: 51.4344,
+      lon: -0.2771,
+      description: 'Honestly one of the most photogenic places we\'ve taken Pretzel - the azaleas hit peak colour in May and the three ponds with their little waterfalls make the whole thing feel like a secret garden tucked inside Richmond Park. Leads on throughout (it\'s a firm rule, not seasonal), but the paths are flat with no stiles which is genuinely ideal for smaller dogs - Pretzel had absolutely zero complaints. Broomfield Hill is the car park you want and you have to come in via Kingston Gate, so override your satnav if it tries to take you another way. The cafe kiosk is right there at the car park which means coffee on arrival and a pastry on the way out, and that felt like the correct approach.',
+      distance: 0.9,
+      duration: 50,
+      difficulty: 'easy',
+      terrain: 'mixed',
+      environment: 'woodland',
+      offLead: 'none',
+      enclosed: false,
+      livestock: false,
+      hasStiles: false,
+      hasParking: true,
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/isabella-plantation.jpg',
+      badge: 'Hidden gem',
+      rating: 0,
+      reviewCount: 0,
+      source: 'curated'
+    },
+    {
       id: 'leith-hill',
       name: 'Leith Hill & Coldharbour',
       location: 'Dorking, Surrey',
@@ -9994,12 +10017,12 @@
   function saveUnits(u)        { try { localStorage.setItem(UNITS_KEY, u); } catch(e) {} }
   function getSavedDarkMode() {
     try {
-      var saved = localStorage.getItem(DARKMODE_KEY) || 'auto';
+      var saved = localStorage.getItem(DARKMODE_KEY) || 'light';
       // Migrate old 'on'/'off' values to 'dark'/'light'
       if (saved === 'on')  { saved = 'dark';  try { localStorage.setItem(DARKMODE_KEY, 'dark');  } catch(e) {} }
       if (saved === 'off') { saved = 'light'; try { localStorage.setItem(DARKMODE_KEY, 'light'); } catch(e) {} }
       return saved;
-    } catch(e) { return 'auto'; }
+    } catch(e) { return 'light'; }
   }
 
   /* ─── Dark mode ─── */
@@ -10038,7 +10061,7 @@
     var pill = document.getElementById('segment-pill-dark');
     var modes = ['light', 'auto', 'dark'];
     var idx = modes.indexOf(mode);
-    if (idx < 0) idx = 1; // default to auto
+    if (idx < 0) idx = 0; // default to light
     btns.forEach(function(btn, i) {
       btn.classList.toggle('active', i === idx);
       btn.setAttribute('aria-pressed', i === idx ? 'true' : 'false');
