@@ -9189,7 +9189,7 @@
   var nearbyUserLat      = null;
   var nearbyUserLon      = null;
   var nearbyLocationName = '';
-  var nearbyCategory     = 'cafe';
+  var nearbyCategory     = 'pub';
   var nearbyView         = 'list';
   var NEARBY_GOOGLE_CACHE = {};
 
@@ -9198,6 +9198,7 @@
 
   /* ─── Category config — mirrors dog-walk-dashboard.html CAT_CONFIG ─── */
   var CATEGORIES = [
+    { id: 'pub',    label: 'Pubs' },
     { id: 'cafe',   label: 'Cafes' },
     { id: 'shop',   label: 'Pet Shops' },
     { id: 'vet',    label: 'Vets' },
@@ -9205,6 +9206,7 @@
   ];
 
   var CATEGORY_ICON = {
+    pub:    '🍺',
     cafe:   '☕',
     vet:    '🏥',
     shop:   '🛍️',
@@ -9212,6 +9214,7 @@
   };
 
   var CATEGORY_LABEL = {
+    pub:    'Pub',
     cafe:   'Dog-friendly café',
     vet:    'Veterinary',
     shop:   'Pet shop',
@@ -9220,6 +9223,7 @@
 
   /* ─── Per-category Google Places queries + tips ─── */
   var CAT_GOOGLE_CONFIG = {
+    pub:   { query: 'dog friendly pubs',  tip: 'Many UK pubs welcome dogs, especially in bar areas and beer gardens. Call ahead to check, as policies vary.' },
     cafe:  { query: 'dog friendly cafes', tip: 'Many cafés welcome dogs on terraces or in dedicated areas. Call ahead — policies vary.' },
     shop:  { query: 'pet shops',          tip: 'Stock up on treats, leads, and poo bags before you head out.' },
     vet:   { query: 'veterinary clinics', tip: 'Good to know your nearest vet before heading out, especially on longer walks.' }
