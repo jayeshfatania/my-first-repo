@@ -111,6 +111,8 @@
     .nav-item:not(.active) .nav-label { color: var(--ink-2); }
     .nav-item.active svg { color: var(--brand); }
     .nav-item:not(.active) svg { color: var(--ink-2); }
+    .nav-item.active { opacity: 1; }
+    .nav-item:not(.active) { opacity: 0.5; }
     /* State A: dim non-Today tabs */
     nav.state-a .nav-item:not([data-tab="today"]) {
       opacity: 0.50;
@@ -2441,6 +2443,14 @@
       margin: 12px 0 0;
     }
     /* Saved Walks subpage rows */
+    .saved-walks-section-head {
+      font: 600 12px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 16px 0 8px;
+    }
+    .saved-walks-section-head--gap { padding-top: 24px; }
     .saved-walk-row {
       display: flex;
       align-items: center;
@@ -5630,14 +5640,7 @@
           photoBtn.className = 'walk-photo-add-btn';
           photoBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Add a photo';
           photoBtn.onclick = (function(wId, wTs) {
-            return function() {
-              var inp = document.getElementById('journalPhotoInput');
-              if (!inp) return;
-              inp.setAttribute('data-walk-id', wId);
-              inp.setAttribute('data-ts', String(wTs));
-              inp.value = '';
-              inp.click();
-            };
+            return function() { showCameraChoice(wId, wTs); };
           })(walkId, photoTs);
           photoDiv.appendChild(photoBtn);
         }
@@ -5793,6 +5796,47 @@
     overlay.style.transition = '';
     var img = document.getElementById('img-viewer-img');
     if (img) setTimeout(function() { img.src = ''; }, 220);
+  }
+
+  function showCameraChoice(wId, wTs) {
+    var inp = document.getElementById('journalPhotoInput');
+    if (!inp) return;
+    inp.setAttribute('data-walk-id', wId);
+    inp.setAttribute('data-ts', String(wTs));
+    inp.value = '';
+
+    // Show a simple action sheet
+    var overlay = document.createElement('div');
+    overlay.id = 'camera-choice-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.45);display:flex;align-items:flex-end;';
+    overlay.innerHTML =
+      '<div style="width:100%;background:var(--surface);border-radius:16px 16px 0 0;padding:8px 0 32px;">' +
+        '<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 16px;"></div>' +
+        '<button id="camera-choice-camera" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px 20px;background:none;border:none;font:500 16px Inter,sans-serif;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent;">' +
+          '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>' +
+          'Take a photo' +
+        '</button>' +
+        '<button id="camera-choice-library" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px 20px;background:none;border:none;font:500 16px Inter,sans-serif;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent;">' +
+          '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' +
+          'Choose from library' +
+        '</button>' +
+      '</div>';
+    document.body.appendChild(overlay);
+
+    function dismiss() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }
+
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) dismiss(); });
+
+    document.getElementById('camera-choice-camera').addEventListener('click', function() {
+      dismiss();
+      inp.setAttribute('capture', 'environment');
+      inp.click();
+    });
+    document.getElementById('camera-choice-library').addEventListener('click', function() {
+      dismiss();
+      inp.removeAttribute('capture');
+      inp.click();
+    });
   }
 
   function initImageViewerSwipe() {
@@ -5983,8 +6027,8 @@
     var icon = wishlisted
       ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="var(--brand)" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>'
       : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
-    var label      = wishlisted ? 'On your list' : 'Add to list';
-    var hint       = wishlisted ? 'On your list' : 'Save for later';
+    var label      = wishlisted ? 'On my sniff list' : 'Add to sniff list';
+    var hint       = wishlisted ? 'On my sniff list' : 'Save to sniff list';
     var color      = wishlisted ? 'var(--brand)' : 'var(--ink-2)';
     return '<div class="wishlist-btn-wrap">' +
       '<button class="wishlist-btn" id="walk-wishlist-btn" data-walk-id="' + walkId + '" style="color:' + color + ';margin-top:8px;" onclick="onWishlistTap(\'' + walkId + '\')">' + icon + '<span>' + label + '</span></button>' +
@@ -6065,7 +6109,7 @@
       var favLabel = document.createElement('div');
       favLabel.id = 'walk-detail-hero-fav-label';
       favLabel.className = 'walk-detail-hero-fav-label';
-      favLabel.textContent = isFavourited(walk.id) ? 'Favourited' : 'Favourite';
+      favLabel.textContent = isFavourited(walk.id) ? 'Sniffed and approved' : 'Sniff and approve';
       heroEl.appendChild(favLabel);
     }
 
@@ -6118,7 +6162,7 @@
       : null;
     if (actionsContainer) {
       var oldLink    = actionsContainer.querySelector('.walked-conditions-link');
-      var oldWishBtn = actionsContainer.querySelector('.wishlist-btn');
+      var oldWishBtn = actionsContainer.querySelector('.wishlist-btn-wrap');
       var oldNote    = actionsContainer.querySelector('.walk-note-container');
       var oldPrompt  = actionsContainer.querySelector('.wishlist-prompt');
       var oldPhoto   = actionsContainer.querySelector('.walk-photo-container');
@@ -6214,14 +6258,7 @@
               photoBtn2.className = 'walk-photo-add-btn';
               photoBtn2.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Add a photo';
               photoBtn2.onclick = (function(wId, wTs) {
-                return function() {
-                  var inp = document.getElementById('journalPhotoInput');
-                  if (!inp) return;
-                  inp.setAttribute('data-walk-id', wId);
-                  inp.setAttribute('data-ts', String(wTs));
-                  inp.value = '';
-                  inp.click();
-                };
+                return function() { showCameraChoice(wId, wTs); };
               })(walk.id, photoTs2);
               photoDiv2.appendChild(photoBtn2);
             }
@@ -7696,7 +7733,7 @@
       el.innerHTML = heartSVG(nowFav);
     });
     var favLabel = document.getElementById('walk-detail-hero-fav-label');
-    if (favLabel) favLabel.textContent = nowFav ? 'Favourited' : 'Favourite';
+    if (favLabel) favLabel.textContent = nowFav ? 'Sniffed and approved' : 'Sniff and approve';
     updateMeStats();
     renderFavouritesList();
   }
@@ -8218,9 +8255,9 @@
         var lastEntry = walkLog[0]; // log is stored most-recent first (unshift)
         var walkById = {};
         WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
-        var lastWalkId = lastEntry.walkId || lastEntry.id;
-        var lastWalk = walkById[lastWalkId];
-        var lastName = lastWalk ? lastWalk.name : lastWalkId;
+        var lastName = (lastEntry.type === 'custom')
+          ? (lastEntry.name || 'Custom walk')
+          : (walkById[lastEntry.id] ? walkById[lastEntry.id].name : (lastEntry.id || 'Walk'));
         journalCount.textContent = walkLog.length;
         journalPreview.textContent = lastName + ' \u00b7 ' + formatRelativeDate(lastEntry.date || lastEntry.ts);
       }
@@ -8799,8 +8836,26 @@
   function renderSubpageSavedWalks() {
     var el = document.getElementById('savedWalksContent');
     if (!el) return;
-    var favIds = getFavourites();
-    if (favIds.length === 0) {
+    var favIds      = getFavourites();
+    var wishlistIds = getWishlist();
+
+    function buildWalkRow(id) {
+      var walk = WALKS_DB.find(function(w) { return w.id === id; });
+      if (!walk) return '';
+      var diffClass = 'saved-walk-diff--' + (walk.difficulty || 'easy');
+      return '<div class="saved-walk-row" onclick="closeMeSubpage(\'savedwalks\');onWalkTap(\'' + walk.id + '\')">' +
+        '<div class="saved-walk-info">' +
+          '<span class="saved-walk-name">' + escHtml(walk.name) + '</span>' +
+          '<span class="saved-walk-meta">' + (walk.distance ? formatDist(walk.distance) : '') + (walk.location ? ' \u00b7 ' + escHtml(walk.location) : '') + '</span>' +
+        '</div>' +
+        '<div class="saved-walk-right">' +
+          '<span class="saved-walk-diff ' + diffClass + '">' + (walk.difficulty || 'easy') + '</span>' +
+          '<svg class="saved-walk-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>' +
+        '</div>' +
+      '</div>';
+    }
+
+    if (favIds.length === 0 && wishlistIds.length === 0) {
       el.innerHTML =
         '<div class="me-subpage-empty">' +
           '<div class="me-subpage-empty-icon">' +
@@ -8808,29 +8863,25 @@
               '<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>' +
             '</svg>' +
           '</div>' +
-          '<p class="me-subpage-empty-head">Heart any walk to save it here</p>' +
-          '<p class="me-subpage-empty-body">Saved walks are stored on this device and don\'t need a connection to view.</p>' +
+          '<p class="me-subpage-empty-head">No saved walks yet</p>' +
+          '<p class="me-subpage-empty-body">Heart a walk to mark it as Sniffed and approved, or bookmark one for your sniff list.</p>' +
         '</div>';
       return;
     }
+
     var html = '';
-    favIds.forEach(function(id) {
-      var walk = WALKS_DB.find(function(w) { return w.id === id; });
-      if (!walk) return;
-      var diffClass = 'saved-walk-diff--' + (walk.difficulty || 'easy');
-      html +=
-        '<div class="saved-walk-row" onclick="closeMeSubpage(\'savedwalks\');onWalkTap(\'' + walk.id + '\')">' +
-          '<div class="saved-walk-info">' +
-            '<span class="saved-walk-name">' + escHtml(walk.name) + '</span>' +
-            '<span class="saved-walk-meta">' + (walk.distance ? formatDist(walk.distance) : '') + (walk.location ? ' \u00b7 ' + escHtml(walk.location) : '') + '</span>' +
-          '</div>' +
-          '<div class="saved-walk-right">' +
-            '<span class="saved-walk-diff ' + diffClass + '">' + (walk.difficulty || 'easy') + '</span>' +
-            '<svg class="saved-walk-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>' +
-          '</div>' +
-        '</div>';
-    });
-    el.innerHTML = html || '<div class="me-subpage-empty"><p class="me-subpage-empty-head">No saved walks found</p></div>';
+
+    if (favIds.length > 0) {
+      html += '<div class="saved-walks-section-head">Sniffed and approved</div>';
+      favIds.forEach(function(id) { html += buildWalkRow(id); });
+    }
+
+    if (wishlistIds.length > 0) {
+      html += '<div class="saved-walks-section-head' + (favIds.length > 0 ? ' saved-walks-section-head--gap' : '') + '">On my sniff list</div>';
+      wishlistIds.forEach(function(id) { html += buildWalkRow(id); });
+    }
+
+    el.innerHTML = html;
   }
 
   /* ─── Saved Places subpage ─── */
