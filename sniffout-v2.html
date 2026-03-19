@@ -1067,18 +1067,18 @@
     ═══════════════════════════════ */
 
     /* Hero */
-    .wx-hero { padding: 20px 16px 24px; }
+    .wx-hero { padding: 12px 16px 16px; }
     .wx-hero-location {
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 20px; font: 500 15px/1 'Inter', sans-serif; color: var(--ink-2);
+      margin-bottom: 12px; font: 500 15px/1 'Inter', sans-serif; color: var(--ink-2);
     }
     .wx-hero-main {
-      display: flex; align-items: flex-start; justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
     }
     .wx-hero-temp-block { display: flex; align-items: flex-start; gap: 2px; }
     .wx-hero-temp { font: 700 80px/1 'Inter', sans-serif; color: var(--ink); letter-spacing: -3px; }
     .wx-hero-unit { font: 400 32px/1 'Inter', sans-serif; color: var(--ink-2); margin-top: 8px; }
-    .wx-hero-icon { width: 96px; height: 96px; margin-top: 14px; flex-shrink: 0; }
+    .wx-hero-icon { width: 80px; height: 80px; flex-shrink: 0; }
     .wx-hero-condition { margin-top: 16px; font: 500 17px/1.2 'Inter', sans-serif; color: var(--ink); }
     .wx-hero-sub { margin-top: 4px; font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); }
 
@@ -1293,6 +1293,7 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      z-index: 1;
     }
     .walk-body { padding: 14px; }
     .walk-name {
@@ -4583,7 +4584,7 @@
     var windMph  = kmhToMph(windKmh);
     var humidity = Math.round(cur.relative_humidity_2m || 0);
     var currentH = new Date().getHours();
-    var isDay    = cur.is_day !== 0;
+    var isDay    = currentH >= 6 && currentH < 21;
 
     // Rain tile values
     var maxRainProb = 0;
@@ -4727,7 +4728,7 @@
             '<span class="wx-hero-temp">' + temp + '</span>' +
             '<span class="wx-hero-unit">&#176;C</span>' +
           '</div>' +
-          (heroIconSrc ? '<img class="wx-hero-icon" src="' + heroIconSrc + '" alt="' + (WMO_DESC[cur.weather_code] || 'Weather') + '" width="96" height="96">' : '') +
+          (heroIconSrc ? '<img class="wx-hero-icon" src="' + heroIconSrc + '" alt="' + (WMO_DESC[cur.weather_code] || 'Weather') + '" width="80" height="80">' : '') +
         '</div>' +
         '<div class="wx-hero-condition">' + (WMO_DESC[cur.weather_code] || '') + '</div>' +
         '<div class="wx-hero-sub">Feels like ' + feels + '&#176; &nbsp;&#183;&nbsp; H ' + todayHigh + '&#176; &nbsp; L ' + todayLow + '&#176;</div>' +
@@ -7805,8 +7806,7 @@
     var walkLog = log;
     var badges  = getEarnedBadges();
     var favs    = getFavourites();
-    var savedPlaces = [];
-    try { savedPlaces = JSON.parse(localStorage.getItem('sniffout_saved_places') || '[]'); } catch(e) {}
+    var savedPlaces = getPlaceFavourites();
 
     // Walk Journal row
     var journalCount   = document.getElementById('journalCount');
@@ -8409,8 +8409,7 @@
   function renderSubpageSavedPlaces() {
     var el = document.getElementById('savedPlacesContent');
     if (!el) return;
-    var places = [];
-    try { places = JSON.parse(localStorage.getItem('sniffout_saved_places') || '[]'); } catch(e) {}
+    var places = getPlaceFavourites();
     if (places.length === 0) {
       el.innerHTML =
         '<div class="me-subpage-empty">' +
@@ -8421,7 +8420,7 @@
             '</svg>' +
           '</div>' +
           '<p class="me-subpage-empty-head">Save cafes and green spaces</p>' +
-          '<p class="me-subpage-empty-body">Tap the bookmark icon on any venue in the Nearby tab to save it here.</p>' +
+          '<p class="me-subpage-empty-body">Tap the heart icon on any venue in the Nearby tab to save it here.</p>' +
         '</div>';
       return;
     }
@@ -8433,8 +8432,8 @@
     };
     var html = '';
     places.forEach(function(place) {
-      var icon = CATEGORY_ICONS[place.category] || CATEGORY_ICONS['cafe'];
-      var categoryLabel = place.category ? (place.category.charAt(0).toUpperCase() + place.category.slice(1).replace('_', ' ')) : '';
+      var icon = CATEGORY_ICONS[place.cat] || CATEGORY_ICONS['cafe'];
+      var categoryLabel = place.cat ? (place.cat.charAt(0).toUpperCase() + place.cat.slice(1).replace('_', ' ')) : '';
       html +=
         '<div class="saved-place-row" onclick="openSavedPlaceInMaps(\'' + escHtml(place.placeId || '') + '\')">' +
           '<div class="saved-place-type-icon">' + icon + '</div>' +
@@ -8449,8 +8448,7 @@
   }
 
   function openSavedPlaceInMaps(placeId) {
-    var places = [];
-    try { places = JSON.parse(localStorage.getItem('sniffout_saved_places') || '[]'); } catch(e) {}
+    var places = getPlaceFavourites();
     var place = places.find(function(p) { return p.placeId === placeId; });
     if (place && place.mapsUrl) window.open(place.mapsUrl, '_blank');
   }
