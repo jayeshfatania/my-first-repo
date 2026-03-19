@@ -3212,6 +3212,10 @@
     .walk-note-container { margin: 12px 16px; }
     .walk-note-area { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; outline: none; resize: none; font: 400 14px/1.6 'Inter', sans-serif; color: var(--ink-2); padding: 12px 16px; box-sizing: border-box; display: block; }
     .walk-note-area::placeholder { color: var(--ink-2); opacity: 0.5; }
+    .walk-note-save-btn { margin-top: 8px; height: 38px; padding: 0 16px; background: var(--brand); color: #fff; border: none; border-radius: 10px; font: 600 13px/1 'Inter', sans-serif; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .walk-note-save-btn:active { opacity: 0.8; }
+    .walk-note-confirm { display: inline-block; margin-left: 10px; font: 400 13px/1 'Inter', sans-serif; color: var(--brand); opacity: 0; transition: opacity 300ms; vertical-align: middle; }
+    .walk-note-confirm.show { opacity: 1; }
     /* Walk photo */
     .walk-photo-container { margin: 0 16px 12px; display: flex; flex-direction: column; gap: 8px; }
     .walk-photo-thumb { width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; display: block; }
@@ -5407,6 +5411,21 @@
         return function() { if (entry) updateWalkNote(walkId, entry.ts, ta.value); };
       })(latestEntry));
       noteDiv.appendChild(ta);
+      var saveBtn1 = document.createElement('button');
+      saveBtn1.className = 'walk-note-save-btn';
+      saveBtn1.textContent = 'Save note';
+      var confirmMsg1 = document.createElement('span');
+      confirmMsg1.className = 'walk-note-confirm';
+      confirmMsg1.textContent = 'Note saved';
+      saveBtn1.addEventListener('click', (function(entry, taRef, msgRef) {
+        return function() {
+          if (entry) updateWalkNote(walkId, entry.ts, taRef.value);
+          msgRef.classList.add('show');
+          setTimeout(function() { msgRef.classList.remove('show'); }, 2000);
+        };
+      })(latestEntry, ta, confirmMsg1));
+      noteDiv.appendChild(saveBtn1);
+      noteDiv.appendChild(confirmMsg1);
       actionsEl.appendChild(noteDiv);
 
       // Photo section
@@ -5897,6 +5916,21 @@
             return function() { if (entry) updateWalkNote(walk.id, entry.ts, ta.value); };
           })(latestEntry));
           noteDiv.appendChild(ta);
+          var saveBtn2 = document.createElement('button');
+          saveBtn2.className = 'walk-note-save-btn';
+          saveBtn2.textContent = 'Save note';
+          var confirmMsg2 = document.createElement('span');
+          confirmMsg2.className = 'walk-note-confirm';
+          confirmMsg2.textContent = 'Note saved';
+          saveBtn2.addEventListener('click', (function(entry, taRef, msgRef) {
+            return function() {
+              if (entry) updateWalkNote(walk.id, entry.ts, taRef.value);
+              msgRef.classList.add('show');
+              setTimeout(function() { msgRef.classList.remove('show'); }, 2000);
+            };
+          })(latestEntry, ta, confirmMsg2));
+          noteDiv.appendChild(saveBtn2);
+          noteDiv.appendChild(confirmMsg2);
           actionsEl.appendChild(noteDiv);
 
           // Photo section
