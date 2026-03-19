@@ -9,7 +9,7 @@
 
 | # | Item | Status | Owner | Priority | Notes / Dependencies |
 |---|------|--------|-------|----------|----------------------|
-| T1 | **Google Places API key moved to serverless proxy** | 🔴 Blocked | Developer | Must have | Key is currently hardcoded in `sniffout-v2.html`. Exposes billing account to scraping. Must be proxied (e.g. Cloudflare Worker, Vercel Edge Function, or Netlify Function) before any public traffic hits the app. This is a security prerequisite — do not launch without it. |
+| T1 | **Google Places API key moved to serverless proxy** | ✅ Done | Developer | Must have | Resolved 19 March 2026. Cloudflare Worker proxy deployed at `places-proxy.sniffout.app`. Referer header added to Worker so Google accepts requests. Key no longer in page source. Place photos also routing through proxy. |
 | T2 | Firebase configured with region `europe-west2` (London) | ⬜ Not started | Developer | Must have | Required for UK data residency. Depends on Firebase being provisioned (Phase 3). Region cannot be changed after project creation — set correctly from day one. |
 | T3 | All `localStorage` data migration paths tested | ⬜ Not started | Developer | Must have | Keys in scope: `sniffout_session`, `sniffout_active_tab`, `sniffout_favs`, `sniffout_username`, `sniffout_radius`, `sniffout_explored`, `walkReviews`, `recentSearches`. Test upgrade path from any prior v1 data left by early testers. |
 | T4 | PWA manifest complete and tested | 🔄 In progress | Developer | Must have | Check `manifest.json`: all icon sizes present (192px, 512px, maskable), `theme_color` matches `#1E4D3A`, `background_color` matches `#F7F5F0`, `start_url` correct, `display: standalone`. Test "Add to Home Screen" on both iOS and Android. |
@@ -22,7 +22,7 @@
 | T11 | Service worker cache strategy validated | ⬜ Not started | Developer | Must have | `sw.js` uses network-first, cache fallback with key `sniffout-v2`. Verify stale cache does not serve old HTML after a deploy. Test offline experience — walks should load from cache, weather should fail gracefully. |
 | T12 | Security and penetration test completed | ⬜ Not started | Developer / Owner | Must have | At minimum: OWASP Top 10 review for a client-side app (XSS via any dynamic HTML insertion, exposed API key — see T1, localStorage data exposure). Professional pen test recommended if budget allows. |
 | T13 | Desktop "Coming soon" screen verified | ⬜ Not started | Developer | Should have | Viewport ≥768px or non-touch device shows holding screen. Test on common desktop browsers (Chrome, Firefox, Safari). |
-| T14 | `sniffout-v2.html` set as production file and `index.html` redirect updated | ⬜ Not started | Developer | Must have | Currently `index.html` redirects to `dog-walk-dashboard.html`. Redirect must be updated to point at the v2 file before v2 goes live. Coordinate with Owner to avoid breaking live v1 users. |
+| T14 | `sniffout-v2.html` set as production file and `index.html` redirect updated | ✅ Done | Developer | Must have | Resolved 19 March 2026. `manifest.json` `start_url` fixed to `/sniffout-v2.html` — installed PWA no longer shows 404. `index.html` intentionally redirects to `coming-soon.html`; app accessible at `sniffout.app/sniffout-v2.html` direct link only until public launch. |
 | T15 | Open Graph / social meta tags added | ⬜ Not started | Developer | Should have | `og:title`, `og:description`, `og:image`, `twitter:card`. Ensures links shared on WhatsApp and social media render correctly — important for word-of-mouth launch. |
 
 ---

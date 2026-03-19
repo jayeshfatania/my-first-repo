@@ -23,7 +23,7 @@ Closest competitor is PlayDogs (France/Switzerland, 170k downloads), but it reli
 ## Design Principles
 
 Mobile-first, uncluttered, modern and slick. **v2 uses a clean card-based design — glassmorphism has been removed.** Design reference is `design-spec.md` and `mockup.html`. Key decisions locked:
-- Brand colour: `#1E4D3A` (forest green)
+- Brand colour: `#3B5C2A` (Meadow green)
 - Background: `#F7F5F0` (warm off-white)
 - Typography: Inter 400/500/600/700 only
 - Cards: `border-radius: 16px`, `1px solid var(--border)`, no blur or translucent surfaces
@@ -110,7 +110,7 @@ Do not add fields without PO sign-off. `isPushchairFriendly` has been removed.
 | Service | Purpose | Auth |
 |---------|---------|------|
 | Open-Meteo | Weather forecasts (current + hourly) | None |
-| Google Places (New) | Dog-friendly venues | API key hardcoded in JS |
+| Google Places (New) | Dog-friendly venues | API key secured behind Cloudflare Worker proxy at `places-proxy.sniffout.app` |
 | Nominatim (OSM) | Reverse geocoding | None |
 | postcodes.io | UK postcode → lat/lon | None |
 | Leaflet 1.9.4 (CDN) | Map rendering | None |
@@ -123,7 +123,7 @@ All inline. v2 token set:
 
 | Token | Value | Notes |
 |-------|-------|-------|
-| `--brand` | `#1E4D3A` | Forest green — brand colour |
+| `--brand` | `#3B5C2A` | Meadow green — brand colour |
 | `--bg` | `#F7F5F0` | Warm off-white page background |
 | `--surface` | `#FFFFFF` | Card surfaces |
 | `--border` | `rgba(0,0,0,0.08)` | Card borders |
