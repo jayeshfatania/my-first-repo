@@ -3378,7 +3378,7 @@
           <div class="hero-section">
             <h1 class="hero-headline">Discover great walks</h1>
             <p class="hero-subline">Handpicked walks. Live conditions.</p>
-            <p class="hero-body">25 handpicked UK walks with terrain, off-lead and livestock info — plus live weather checks and nearby dog-friendly spots.</p>
+            <p class="hero-body">25 handpicked UK walks with terrain, off-lead and livestock info - plus live weather checks and nearby dog-friendly spots.</p>
 
             <div class="cta-block">
               <button class="cta-primary" id="btn-use-location">
@@ -3407,7 +3407,7 @@
                   </svg>
                 </button>
               </div>
-              <div class="search-error" id="search-error">We couldn't find that — try a postcode (e.g. SW11) or a place name.</div>
+              <div class="search-error" id="search-error">We couldn't find that - try a postcode (e.g. SW11) or a place name.</div>
             </div>
           </div>
 
@@ -3544,7 +3544,7 @@
         <div class="me-stats-row">
           <div class="me-stat-card me-stat-card--primary">
             <span class="me-stat-number" id="statMiles">0</span>
-            <span class="me-stat-label">miles walked</span>
+            <span class="me-stat-label" id="statMilesLabel">miles walked</span>
           </div>
           <div class="me-stat-card">
             <span class="me-stat-number" id="statWalks">0</span>
@@ -4369,20 +4369,20 @@
     if (temp > 32) {
       hazards.push({ title: '🌡️ Too hot to walk safely', body: 'Pavement temperatures at this level are dangerous for paws. Avoid midday walks entirely.' });
     } else if (temp >= 25) {
-      hazards.push({ title: '☀️ Hot enough to hurt paws', body: 'Press your hand on the pavement — if you can\'t hold it for 7 seconds, it\'s too hot for your dog.' });
+      hazards.push({ title: '☀️ Hot enough to hurt paws', body: 'Press your hand on the pavement - if you can\'t hold it for 7 seconds, it\'s too hot for your dog.' });
     }
     if (isStormCode(code)) {
-      hazards.push({ title: '⛈️ Thunderstorm warning — stay inside', body: 'Avoid open areas, water, and tall trees. Keep your dog indoors.' });
+      hazards.push({ title: '⛈️ Thunderstorm warning - stay inside', body: 'Avoid open areas, water, and tall trees. Keep your dog indoors.' });
     }
     if (gusts >= 60) {
-      hazards.push({ title: '💨 Dangerous winds — don\'t go out', body: 'Risk of falling branches and debris on exposed routes.' });
+      hazards.push({ title: '💨 Dangerous winds - don\'t go out', body: 'Risk of falling branches and debris on exposed routes.' });
     } else if (gusts >= 45) {
-      hazards.push({ title: '💨 Very gusty — choose sheltered routes', body: 'Stick to woodland or valley routes where possible.' });
+      hazards.push({ title: '💨 Very gusty - choose sheltered routes', body: 'Stick to woodland or valley routes where possible.' });
     }
     if (feels < -5) {
-      hazards.push({ title: '🧊 Very cold — brief outings only', body: 'Keep walks short and dry your dog thoroughly when you return.' });
+      hazards.push({ title: '🧊 Very cold - brief outings only', body: 'Keep walks short and dry your dog thoroughly when you return.' });
     } else if (temp <= 0) {
-      hazards.push({ title: '❄️ Freezing — watch for grit and ice', body: 'Rinse paws after walking on gritted paths to prevent irritation.' });
+      hazards.push({ title: '❄️ Freezing - watch for grit and ice', body: 'Rinse paws after walking on gritted paths to prevent irritation.' });
     }
     return hazards;
   }
@@ -4391,13 +4391,13 @@
 
   function getPawSafety(tempC) {
     if (tempC >= 35) {
-      return { state: 'danger', title: '🐾 Too hot for paws', body: 'Pavement can reach 70°C in direct sun at this temperature. Use the 7-second test — press your hand on the tarmac. If you can\'t hold it for 7 seconds, it\'s too hot for your dog\'s paws.' };
+      return { state: 'danger', title: '🐾 Too hot for paws', body: 'Pavement can reach 70°C in direct sun at this temperature. Use the 7-second test - press your hand on the tarmac. If you can\'t hold it for 7 seconds, it\'s too hot for your dog\'s paws.' };
     }
     if (tempC >= 25) {
-      return { state: 'caution', title: '🐾 Paw check needed', body: 'At ' + Math.round(tempC) + '°C, pavement may be getting warm. Press your hand on the tarmac before setting off — if it\'s uncomfortable to hold for 7 seconds, choose a shaded route or walk on grass.' };
+      return { state: 'caution', title: '🐾 Paw check needed', body: 'At ' + Math.round(tempC) + '°C, pavement may be getting warm. Press your hand on the tarmac before setting off - if it\'s uncomfortable to hold for 7 seconds, choose a shaded route or walk on grass.' };
     }
     if (tempC <= 0) {
-      return { state: 'caution', title: '🐾 Paw check needed', body: 'Freezing temperatures mean ice and grit on paths. Rinse paws when you get back — road salt can irritate skin if licked.' };
+      return { state: 'caution', title: '🐾 Paw check needed', body: 'Freezing temperatures mean ice and grit on paths. Rinse paws when you get back - road salt can irritate skin if licked.' };
     }
     return null;
   }
@@ -4417,9 +4417,9 @@
     }
     totalMm = Math.round(totalMm * 10) / 10;
     if (rainHours === 0 && maxProb < 20) return '<strong>Looks dry</strong> for the rest of today';
-    if (rainHours <= 1 && maxProb < 50) return '<strong>Mostly dry</strong> — light showers possible. Worth a jacket.';
-    if (rainHours <= 2) return '<strong>Brief showers</strong> — about ' + rainHours + ' hour. The dry windows are worth planning around.';
-    return '<strong>Wet afternoon</strong> — ' + rainHours + ' hours of rain, up to ' + totalMm + 'mm forecast. Best to walk early.';
+    if (rainHours <= 1 && maxProb < 50) return '<strong>Mostly dry</strong> - light showers possible. Worth a jacket.';
+    if (rainHours <= 2) return '<strong>Brief showers</strong> - about ' + rainHours + ' hour. The dry windows are worth planning around.';
+    return '<strong>Wet afternoon</strong> - ' + rainHours + ' hours of rain, up to ' + totalMm + 'mm forecast. Best to walk early.';
   }
 
   /* ─── Best walk window (Section 9) ─── */
@@ -4440,7 +4440,7 @@
     if (bestProb < 30) {
       return 'Best window today: ' + timeStr + ' · ' + bestTemp + '°C · ' + bestProb + '% chance of rain';
     }
-    return 'Best option today: ' + timeStr + ' — but still ' + bestProb + '% chance of rain. Take a coat.';
+    return 'Best option today: ' + timeStr + ' - but still ' + bestProb + '% chance of rain. Take a coat.';
   }
 
   function formatHour(h) {
@@ -5823,7 +5823,7 @@
     }
 
     var distEl = document.getElementById('walk-detail-dist');
-    if (distEl) distEl.textContent = walk.distance.toFixed(1) + ' mi';
+    if (distEl) distEl.textContent = formatDist(walk.distance);
 
     var durEl = document.getElementById('walk-detail-dur');
     if (durEl) {
@@ -6149,7 +6149,7 @@
   }
 
   function shareWalk(walk) {
-    var text = walk.name + ' — ' + walk.distance.toFixed(1) + ' mi, ' +
+    var text = walk.name + ' - ' + formatDist(walk.distance) + ', ' +
                walk.duration + ' min · ' + walk.location;
     if (navigator.share) {
       navigator.share({
@@ -7592,9 +7592,16 @@
   function updateMeStats() {
     var log = getWalkLog();
     var totalMiles = getTotalDistanceMi();
-    var milesStr = totalMiles === 0 ? '-' : (totalMiles % 1 === 0 ? Math.round(totalMiles).toString() : totalMiles.toFixed(1));
     var milesEl = document.getElementById('statMiles');
-    if (milesEl) milesEl.textContent = milesStr;
+    if (milesEl) {
+      if (totalMiles === 0) {
+        milesEl.textContent = '-';
+      } else {
+        milesEl.textContent = '~' + formatDist(totalMiles);
+      }
+    }
+    var labelEl = document.getElementById('statMilesLabel');
+    if (labelEl) labelEl.textContent = getSavedUnits() === 'mi' ? 'miles walked' : 'km walked';
     var walksEl = document.getElementById('statWalks');
     if (walksEl) walksEl.textContent = log.length === 0 ? '-' : log.length;
     var contribs = getContributionCount();
@@ -7749,7 +7756,7 @@
     var progress  = (totalMi - prevMilestone) / (nextMilestone - prevMilestone) * 100;
     var remaining = nextMilestone - totalMi;
     var pct       = Math.min(100, Math.max(0, Math.round(progress)));
-    var miStr     = (totalMi % 1 === 0) ? Math.round(totalMi) + ' mi' : totalMi.toFixed(1) + ' mi';
+    var miStr     = formatDist(totalMi);
     var remStr    = remaining < 0.05 ? '< 0.1' : remaining.toFixed(1);
 
     if (currentEl) currentEl.textContent = '~' + miStr;
@@ -8118,7 +8125,7 @@
     listEl.innerHTML = visible.map(function(entry) {
       var walk = walkById[entry.id];
       var name = walk ? walk.name : entry.id;
-      var dist = walk ? walk.distance.toFixed(1) + ' mi' : '';
+      var dist = walk ? formatDist(walk.distance) : '';
       var loc  = walk ? walk.location : '';
       var meta = [dist, loc].filter(Boolean).join(' - ');
       var ts   = entry.ts ? new Date(entry.ts) : null;
@@ -8159,7 +8166,7 @@
     listEl.innerHTML = reversed.map(function(entry) {
       var walk = walkById[entry.id];
       var name = walk ? walk.name : entry.id;
-      var dist = walk ? walk.distance.toFixed(1) + ' mi' : '';
+      var dist = walk ? formatDist(walk.distance) : '';
       var loc  = walk ? walk.location : '';
       var meta = [dist, loc].filter(Boolean).join(' - ');
       var ts   = entry.ts ? new Date(entry.ts) : null;
@@ -8209,7 +8216,7 @@
         var rowKey = entry.id + '_' + entry.ts;
         var walk   = walkById[entry.id];
         var name   = walk ? walk.name : entry.id;
-        var dist   = walk ? walk.distance.toFixed(1) + ' mi' : '';
+        var dist   = walk ? formatDist(walk.distance) : '';
         var loc    = walk ? walk.location : '';
         var meta   = [dist, loc].filter(Boolean).join(' - ');
         var ts     = entry.ts ? new Date(entry.ts) : null;
@@ -8316,7 +8323,7 @@
       var walkId = entry.walkId || entry.id;
       var walk   = walkById[walkId];
       var name   = walk ? walk.name : walkId;
-      var dist   = walk ? walk.distance.toFixed(1) + ' mi' : '';
+      var dist   = walk ? formatDist(walk.distance) : '';
       var ts     = entry.date ? new Date(entry.date) : (entry.ts ? new Date(entry.ts) : null);
       var dateStr = ts ? ts.getDate() + ' ' + MONTHS[ts.getMonth()] + ' ' + ts.getFullYear() : '';
       var note    = entry.note || '';
@@ -8435,7 +8442,7 @@
         '<div class="saved-walk-row" onclick="closeMeSubpage(\'savedwalks\');onWalkTap(\'' + walk.id + '\')">' +
           '<div class="saved-walk-info">' +
             '<span class="saved-walk-name">' + escHtml(walk.name) + '</span>' +
-            '<span class="saved-walk-meta">' + (walk.distance ? walk.distance + ' mi' : '') + (walk.location ? ' \u00b7 ' + escHtml(walk.location) : '') + '</span>' +
+            '<span class="saved-walk-meta">' + (walk.distance ? formatDist(walk.distance) : '') + (walk.location ? ' \u00b7 ' + escHtml(walk.location) : '') + '</span>' +
           '</div>' +
           '<div class="saved-walk-right">' +
             '<span class="saved-walk-diff ' + diffClass + '">' + (walk.difficulty || 'easy') + '</span>' +
@@ -8554,6 +8561,11 @@
     if (_rPill) _rPill.style.transition = 'none';
     applyRadiusPreference(getSavedRadiusMi());
     if (_rPill) requestAnimationFrame(function() { requestAnimationFrame(function() { if (_rPill) _rPill.style.transition = ''; }); });
+    // Restore units toggle to saved preference (suppressing pill animation)
+    var _uPill = document.getElementById('segment-pill-units');
+    if (_uPill) _uPill.style.transition = 'none';
+    applyUnitsPreference(getSavedUnits());
+    if (_uPill) requestAnimationFrame(function() { requestAnimationFrame(function() { if (_uPill) _uPill.style.transition = ''; }); });
   }
 
   function closeMeSettingsSheet() {
@@ -8808,7 +8820,7 @@
           '<div class="walk-name">' + walk.name + '</div>' +
           ratingHTML +
           '<div class="walk-meta">' +
-            '<span class="walk-meta-item">' + walk.distance.toFixed(1) + ' mi</span>' +
+            '<span class="walk-meta-item">' + formatDist(walk.distance) + '</span>' +
             '<span class="walk-meta-item">' + walk.duration + ' min</span>' +
             '<span class="walk-meta-item">' + difficultyLabel(walk.difficulty) + '</span>' +
           '</div>' +
@@ -9180,7 +9192,7 @@
     var rows = visible.map(function(w) {
       return '<div class="me-fav-row" onclick="onWalkTap(\'' + w.id + '\')">' +
         '<span class="me-fav-name">' + w.name + '</span>' +
-        '<span class="me-fav-dist">' + (w.distance ? w.distance + ' mi' : '') + '</span>' +
+        '<span class="me-fav-dist">' + (w.distance ? formatDist(w.distance) : '') + '</span>' +
       '</div>';
     }).join('');
 
@@ -9201,7 +9213,7 @@
     inner.innerHTML = favWalks.map(function(w) {
       return '<div class="me-fav-row" onclick="closeFavsSheet();onWalkTap(\'' + w.id + '\')">' +
         '<span class="me-fav-name">' + w.name + '</span>' +
-        '<span class="me-fav-dist">' + (w.distance ? w.distance + ' mi' : '') + '</span>' +
+        '<span class="me-fav-dist">' + (w.distance ? formatDist(w.distance) : '') + '</span>' +
       '</div>';
     }).join('');
     var backdrop = document.getElementById('favs-sheet-backdrop');
@@ -9304,7 +9316,7 @@
   /* ─── Per-category Google Places queries + tips ─── */
   var CAT_GOOGLE_CONFIG = {
     pub:   { query: 'dog friendly pubs',  tip: 'Many UK pubs welcome dogs, especially in bar areas and beer gardens. Call ahead to check, as policies vary.' },
-    cafe:  { query: 'dog friendly cafes', tip: 'Many cafés welcome dogs on terraces or in dedicated areas. Call ahead — policies vary.' },
+    cafe:  { query: 'dog friendly cafes', tip: 'Many cafés welcome dogs on terraces or in dedicated areas. Call ahead - policies vary.' },
     shop:  { query: 'pet shops',          tip: 'Stock up on treats, leads, and poo bags before you head out.' },
     vet:   { query: 'veterinary clinics', tip: 'Good to know your nearest vet before heading out, especially on longer walks.' }
   };
@@ -9670,6 +9682,7 @@
   var USERNAME_KEY  = 'sniffout_username';
   var RADIUS_KEY    = 'sniffout_radius';
   var DARKMODE_KEY  = 'sniffout_darkmode';
+  var UNITS_KEY     = 'sniffout_units';
 
   var RADIUS_OPTIONS  = [5, 10, 25, 50];
 
@@ -9678,6 +9691,8 @@
   function getSavedUsername()  { try { return localStorage.getItem(USERNAME_KEY)  || ''; } catch(e) { return ''; } }
   function getSavedRadius()    { try { return parseInt(localStorage.getItem(RADIUS_KEY))  || 5; } catch(e) { return 5; } }
   function saveRadius(km)      { try { localStorage.setItem(RADIUS_KEY, km); } catch(e) {} }
+  function getSavedUnits()     { try { return localStorage.getItem(UNITS_KEY) || 'km'; } catch(e) { return 'km'; } }
+  function saveUnits(u)        { try { localStorage.setItem(UNITS_KEY, u); } catch(e) {} }
   function getSavedDarkMode() {
     try {
       var saved = localStorage.getItem(DARKMODE_KEY) || 'auto';
@@ -9832,6 +9847,41 @@
       });
     });
   });
+
+  /* -- Units segmented control ------------------------------------------ */
+
+  var UNITS_OPTIONS = ['km', 'mi'];
+
+  function applyUnitsPreference(u) {
+    var btns = document.querySelectorAll('#segment-control-units .segment-btn');
+    var pill = document.getElementById('segment-pill-units');
+    var idx  = UNITS_OPTIONS.indexOf(u);
+    if (idx < 0) idx = 0;
+    btns.forEach(function(btn, i) {
+      btn.classList.toggle('active', i === idx);
+      btn.setAttribute('aria-pressed', i === idx ? 'true' : 'false');
+    });
+    if (pill) pill.setAttribute('data-active', String(idx));
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#segment-control-units .segment-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var u = btn.getAttribute('data-units');
+        saveUnits(u);
+        applyUnitsPreference(u);
+        updateMeStats();
+      });
+    });
+  });
+
+  function formatDist(miles) {
+    if (getSavedUnits() === 'mi') {
+      return miles.toFixed(1) + ' mi';
+    }
+    var km = miles * 1.60934;
+    return km.toFixed(1) + ' km';
+  }
 
   /* -- Dog size segmented control --------------------------------------- */
 
@@ -10175,7 +10225,7 @@
     </div>
     <div class="modal-body">
       <p>We show live weather conditions for your location. On normal days, you'll see a walk verdict and current conditions.</p>
-      <p>If weather is extreme — very hot, freezing, stormy, or dangerously windy — we'll show a specific caution to help you plan your walk safely and protect your dog.</p>
+      <p>If weather is extreme - very hot, freezing, stormy, or dangerously windy - we'll show a specific caution to help you plan your walk safely and protect your dog.</p>
       <p>Paw safety warnings appear only when pavement temperatures are genuinely dangerous (above 25°C or below 0°C).</p>
     </div>
   </div>
@@ -10359,6 +10409,15 @@
       <button class="segment-btn" data-radius="10" aria-pressed="false"><span>10 mi</span></button>
     </div>
   </div>
+  <!-- Units -->
+  <div class="me-settings-section">
+    <div class="segment-label">Distance units</div>
+    <div class="segment-control me-units-control" id="segment-control-units" role="group" aria-label="Distance units">
+      <div class="segment-pill" id="segment-pill-units" aria-hidden="true"></div>
+      <button class="segment-btn" data-units="km" aria-pressed="false"><span>km</span></button>
+      <button class="segment-btn" data-units="mi" aria-pressed="false"><span>miles</span></button>
+    </div>
+  </div>
   <!-- Phase 3 hook: following/followers row here (not built) -->
   <div class="me-settings-note">Your walks, favourites, and reviews are saved on this device. Sync across devices is coming in a future update.</div>
 </div>
@@ -10424,7 +10483,7 @@
     <div class="walk-detail-desc" id="walk-detail-desc"></div>
     <div class="walk-detail-conditions">
       <div class="walk-detail-conditions-heading">Current conditions</div>
-      <div class="walk-detail-conditions-disclaimer">Community reported — not verified by Sniffout</div>
+      <div class="walk-detail-conditions-disclaimer">Community reported - not verified by Sniffout</div>
       <div id="walk-detail-cond-tags"></div>
     </div>
     <div class="walk-detail-actions">
