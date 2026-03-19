@@ -7534,13 +7534,14 @@
   function updateMeStats() {
     var log = getWalkLog();
     var totalMiles = getTotalDistanceMi();
-    var milesStr = totalMiles === 0 ? '0' : (totalMiles % 1 === 0 ? Math.round(totalMiles).toString() : totalMiles.toFixed(1));
+    var milesStr = totalMiles === 0 ? '-' : (totalMiles % 1 === 0 ? Math.round(totalMiles).toString() : totalMiles.toFixed(1));
     var milesEl = document.getElementById('statMiles');
     if (milesEl) milesEl.textContent = milesStr;
     var walksEl = document.getElementById('statWalks');
-    if (walksEl) walksEl.textContent = log.length;
+    if (walksEl) walksEl.textContent = log.length === 0 ? '-' : log.length;
+    var contribs = getContributionCount();
     var contribsEl = document.getElementById('statContribs');
-    if (contribsEl) contribsEl.textContent = getContributionCount();
+    if (contribsEl) contribsEl.textContent = contribs === 0 ? '-' : contribs;
   }
 
   /* -- getTotalMiles alias -------------------------------------------- */
@@ -8474,6 +8475,16 @@
     document.body.style.overflow = 'hidden';
     history.pushState(null, '', location.href);
     populateDogSettings();
+    // Restore dark mode toggle to saved preference (suppressing pill animation)
+    var _dPill = document.getElementById('segment-pill-dark');
+    if (_dPill) _dPill.style.transition = 'none';
+    applyDarkModePreference(getSavedDarkMode());
+    if (_dPill) requestAnimationFrame(function() { requestAnimationFrame(function() { if (_dPill) _dPill.style.transition = ''; }); });
+    // Restore radius toggle to saved preference (suppressing pill animation)
+    var _rPill = document.getElementById('segment-pill-radius');
+    if (_rPill) _rPill.style.transition = 'none';
+    applyRadiusPreference(getSavedRadiusMi());
+    if (_rPill) requestAnimationFrame(function() { requestAnimationFrame(function() { if (_rPill) _rPill.style.transition = ''; }); });
   }
 
   function closeMeSettingsSheet() {
@@ -9699,10 +9710,6 @@
   if (meGearBtn) {
     meGearBtn.addEventListener('click', function() {
       openMeSettingsSheet();
-      var _rPill = document.getElementById('segment-pill-radius');
-      if (_rPill) _rPill.style.transition = 'none';
-      applyRadiusPreference(getSavedRadiusMi());
-      if (_rPill) requestAnimationFrame(function() { requestAnimationFrame(function() { if (_rPill) _rPill.style.transition = ''; }); });
     });
   }
 
