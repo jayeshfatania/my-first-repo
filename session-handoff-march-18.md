@@ -474,15 +474,19 @@ Five personas are defined in `copywriter-personas.md`. Rules carry forward acros
 
 As of session close on 18 March 2026:
 
-### 1. Developer — Round 22 (in progress)
+### 1. Developer — Round 22 (complete), Round 23 (complete)
 
-Two fixes in progress:
+**Round 22** — both fixes resolved:
 
 **FIX 22.1 — Birthday banner investigation:** The birthday banner on the Today tab is not appearing correctly. Developer is investigating the root cause. The birthday is stored as `{ day, month, year }` in `sniffout_dog.birthday`. The banner should appear on the matching day and month each year.
 
 **FIX 22.2 — Today tab icon revert to Lucide:** The Today tab weather icon is being reverted from Yr.no SVG back to Lucide icons (white, from `luIcon()` function). This is a design decision: Today tab uses Lucide white icons, Weather tab uses Yr.no meteocons. Do not merge until this is complete.
 
-**Next action:** Check if Developer has finished Round 22. Test FIX 22.1 (birthday banner) and FIX 22.2 (Today tab Lucide icons) on device before pushing.
+**Round 23** — complete:
+- Dog profile prompt added to Me tab
+- Pubs and restaurants added to Nearby tab (using `developer-brief-restaurants.md`)
+
+**Next action:** Issue Round 24 brief — see Section 9.
 
 ### 2. Editor — Batch 03 descriptions (in progress)
 
@@ -504,10 +508,14 @@ The Developer needs to add all 40 walks from Batches 02 and 03 to `WALKS_DB` in 
 
 ### 5. Developer — Cloudflare Worker proxy for Google Places API key
 
-The API key is hardcoded in `sniffout-v2.html`. A Cloudflare Worker proxy needs to be deployed that accepts requests from `sniffout.app`, forwards to Google Places with the API key server-side, and returns results. The key must be removed from the HTML.
+Worker is deployed and accessible at:
+- `places-proxy.sniffout.workers.dev` (Cloudflare subdomain)
+- `places-proxy.sniffout.app` (custom domain — DNS record exists and is proxied, but custom domain is not yet resolving correctly)
 
-**Status:** Planned, not yet started.
-**Priority:** Must complete before any public URL is shared.
+**Status:** Worker deployed. Custom domain resolution needs testing and likely debugging. Worker code itself may also need debugging. Developer is updating `sniffout-v2.html` to use the proxy URL instead of calling Google directly.
+
+**Do not revert to direct Google URL — fix forward.**
+**Priority:** Must be confirmed working before any public URL is shared.
 
 ### 6. Designer — Me tab subpages spec
 
@@ -524,10 +532,14 @@ The Designer is working on `me-tab-subpages-spec.md` — the architecture for Me
 
 In this order:
 
-1. **Verify Round 22** — check Developer FIX 22.1 (birthday banner) and FIX 22.2 (Today tab Lucide icons) are working. Test on device before pushing.
-2. **Review Editor Batch 03** — check `editor-review-batch-03.md`. Approve or flag issues.
-3. **Send Batch 03 to Validator** — after Editor sign-off, issue Validator prompt.
-4. **Review Validator Batch 03** — check `validation-report-batch-03.md`. Approve or flag issues.
+1. **Issue Round 24 brief** — four fixes needed:
+   - Me tab zeros: show dashes not zeros when no data exists
+   - Weather icon alignment and size on Weather tab
+   - Settings separated from dog profile — needs its own subpage
+   - Dark mode toggle defaulting to Light incorrectly
+2. **Confirm Cloudflare Worker proxy** — test `places-proxy.sniffout.app` resolves and returns correct data. Debug Worker code if needed. Do not revert to direct Google URL.
+3. **Developer content update (Batches 02 + 03)** — Validator has signed off on Batch 03. Issue combined brief to add all 40 walks to `WALKS_DB`. Walk count reaches 85.
+4. **Review Editor Batch 03** — check `editor-review-batch-03.md`. Approve or flag issues.
 5. **Developer content update (Batches 02 + 03)** — once Validator signs off on Batch 03, issue a combined brief to add all 40 walks to `WALKS_DB`. Walk count reaches 85.
 6. **Review Designer me-tab-subpages-spec.md** — when complete, review and approve before implementing.
 7. **Brand colour update round** — update `--brand` from `#1E4D3A` to `#3B5C2A` (Meadow Green) throughout `sniffout-v2.html`, manifest, and any hardcoded values.
@@ -782,9 +794,9 @@ Confirm the push worked by checking: `https://sniffout.app/sniffout-v2.html` —
 ## QUICK REFERENCE — CRITICAL THINGS TO NOT FORGET
 
 1. **Never touch `dog-walk-dashboard.html`** — live production file, protected
-2. **API key is hardcoded** — do not share app URL publicly until Cloudflare Worker proxy is deployed
-3. **Round 22 is in progress** — check Developer status before issuing new work
-4. **Batch 03 content pipeline is in progress** — Editor → Validator → Developer content update
+2. **Cloudflare Worker proxy deployed** — custom domain `places-proxy.sniffout.app` not yet resolving, fix forward, do not revert to direct Google URL
+3. **Round 24 needed** — Me tab zeros, Weather icon alignment, Settings subpage, dark mode toggle default
+4. **Batch 03 validated** — ready for Developer content update (combined with Batch 02, 40 walks total)
 5. **Brand colour is `#3B5C2A` (Meadow Green)** — confirmed and implemented today
 6. **Firebase first in Phase 3** — personal data (journal, notes, photos) cannot safely live in localStorage long-term
 7. **GDPR is a hard blocker** — owner must engage solicitor before any public launch

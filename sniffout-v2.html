@@ -9345,7 +9345,7 @@
     if (NEARBY_DINING_CACHE[cacheKey]) { cb(NEARBY_DINING_CACHE[cacheKey]); return; }
 
     var body = {
-      includedTypes: ['bar', 'pub', 'restaurant', 'cafe'],
+      includedTypes: ['pub', 'cafe', 'veterinary_care', 'pet_store'],
       locationRestriction: {
         circle: {
           center: { latitude: lat, longitude: lon },
