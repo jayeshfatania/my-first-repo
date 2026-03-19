@@ -2560,46 +2560,6 @@
       line-height: 1.5;
       text-align: center;
     }
-    .dining-disclaimer {
-      margin: 0 16px 12px;
-      font-size: 12px;
-      color: var(--ink-2);
-      line-height: 1.5;
-      font-style: italic;
-    }
-    .dining-dogs-badge {
-      display: inline-block;
-      background: var(--brand);
-      color: #fff;
-      font: 600 11px/1 'Inter', sans-serif;
-      border-radius: 4px;
-      padding: 3px 7px;
-      margin-top: 6px;
-    }
-    .dining-dogs-warning {
-      font-size: 12px;
-      color: var(--amber);
-      margin-top: 6px;
-      line-height: 1.4;
-    }
-    .dining-call-ahead {
-      font-size: 12px;
-      color: var(--ink-2);
-      margin-top: 6px;
-      border-top: 1px solid var(--border);
-      padding-top: 6px;
-      line-height: 1.4;
-    }
-    .dining-type-pill {
-      display: inline-block;
-      font: 500 11px/1 'Inter', sans-serif;
-      color: var(--ink-2);
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 2px 6px;
-    }
-
     /* ── Saved places list ── */
     .saved-place-card {
       display: flex;
@@ -9229,7 +9189,7 @@
   var nearbyUserLat      = null;
   var nearbyUserLon      = null;
   var nearbyLocationName = '';
-  var nearbyCategory     = 'dining'; // default: pubs & restaurants
+  var nearbyCategory     = 'cafe';
   var nearbyView         = 'list';
   var NEARBY_GOOGLE_CACHE = {};
 
@@ -9238,7 +9198,6 @@
 
   /* ─── Category config — mirrors dog-walk-dashboard.html CAT_CONFIG ─── */
   var CATEGORIES = [
-    { id: 'dining', label: 'Pubs & restaurants' },
     { id: 'cafe',   label: 'Cafes' },
     { id: 'shop',   label: 'Pet Shops' },
     { id: 'vet',    label: 'Vets' },
@@ -9246,7 +9205,6 @@
   ];
 
   var CATEGORY_ICON = {
-    dining: '🍺',
     cafe:   '☕',
     vet:    '🏥',
     shop:   '🛍️',
@@ -9254,7 +9212,6 @@
   };
 
   var CATEGORY_LABEL = {
-    dining: 'Pub or restaurant',
     cafe:   'Dog-friendly café',
     vet:    'Veterinary',
     shop:   'Pet shop',
@@ -9266,13 +9223,6 @@
     cafe:  { query: 'dog friendly cafes', tip: 'Many cafés welcome dogs on terraces or in dedicated areas. Call ahead — policies vary.' },
     shop:  { query: 'pet shops',          tip: 'Stock up on treats, leads, and poo bags before you head out.' },
     vet:   { query: 'veterinary clinics', tip: 'Good to know your nearest vet before heading out, especially on longer walks.' }
-  };
-
-  var DINING_TYPE_LABEL = {
-    pub:        'Pub',
-    bar:        'Bar',
-    restaurant: 'Restaurant',
-    cafe:       'Cafe'
   };
 
   /* ─── Google Places text-search fetch ─── */
@@ -9334,64 +9284,6 @@
     .catch(function() { cb([]); });
   }
 
-  /* ─── Nearby Search for pubs & restaurants (uses allowsDogs field) ─── */
-
-  var NEARBY_DINING_CACHE = {};
-
-  function fetchDogFriendlyVenues(lat, lon, cb) {
-    var radiusMiles  = getSavedRadiusMi();
-    var radiusMetres = Math.round(radiusMiles * 1609);
-    var cacheKey     = 'dining|' + Math.round(lat * 100) / 100 + '|' + Math.round(lon * 100) / 100 + '|' + radiusMetres;
-    if (NEARBY_DINING_CACHE[cacheKey]) { cb(NEARBY_DINING_CACHE[cacheKey]); return; }
-
-    var body = {
-      includedTypes: ['pub', 'cafe', 'veterinary_care', 'pet_store'],
-      locationRestriction: {
-        circle: {
-          center: { latitude: lat, longitude: lon },
-          radius: radiusMetres
-        }
-      },
-      rankPreference: 'DISTANCE',
-      maxResultCount: 20
-    };
-
-    fetch(PLACES_PROXY + '/v1/places:searchNearby', {
-      method: 'POST',
-      headers: {
-        'Content-Type':     'application/json',
-        'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.location,places.rating,places.userRatingCount,places.allowsDogs,places.googleMapsUri,places.websiteUri,places.primaryType'
-      },
-      body: JSON.stringify(body)
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      var places = (data.places || []).map(function(p) {
-        var plat   = p.location ? p.location.latitude  : null;
-        var plon   = p.location ? p.location.longitude : null;
-        var distMi = (plat && plon) ? haversineMiles(lat, lon, plat, plon) : null;
-        var ad = p.allowsDogs;
-        return {
-          placeId:     p.id || null,
-          name:        (p.displayName && p.displayName.text) || 'Unknown',
-          address:     (p.formattedAddress || '').split(',').slice(0, 2).join(', ').trim(),
-          rating:      p.rating || null,
-          ratingCount: p.userRatingCount || 0,
-          allowsDogs:  (ad === true) ? true : (ad === false) ? false : null,
-          mapsUrl:     p.googleMapsUri || p.websiteUri || '',
-          primaryType: p.primaryType || null,
-          lat:         plat,
-          lon:         plon,
-          dist:        distMi
-        };
-      });
-      var filtered = places.filter(function(p) { return p.allowsDogs !== false; });
-      NEARBY_DINING_CACHE[cacheKey] = filtered;
-      cb(filtered);
-    })
-    .catch(function() { cb(null); });
-  }
-
   /* ─── Directions URL (iOS → Apple Maps, others → Google Maps) ─── */
 
   function getDirectionsUrl(lat, lon) {
@@ -9413,14 +9305,13 @@
 
     var content = document.getElementById('nearby-content');
     if (content) {
-      var isDining = (nearbyCategory === 'dining');
       content.innerHTML =
         '<div class="nearby-filters" id="nearby-filter-row">' +
           CATEGORIES.map(function(c) {
             return '<button class="chip' + (c.id === nearbyCategory ? ' active' : '') + '" data-nearby-cat="' + c.id + '">' + c.label + '</button>';
           }).join('') +
         '</div>' +
-        '<div class="nearby-toggle-row"' + (isDining ? ' style="display:none"' : '') + ' id="nearby-toggle-row">' +
+        '<div class="nearby-toggle-row" id="nearby-toggle-row">' +
           '<span class="nearby-count" id="nearby-count">Loading…</span>' +
           '<div class="view-toggle">' +
             '<button class="toggle-btn active" id="nearby-list-btn">List</button>' +
@@ -9439,17 +9330,8 @@
         this.classList.add('active');
         var venuesEl   = document.getElementById('nearby-venues');
         var countEl    = document.getElementById('nearby-count');
-        var toggleRow  = document.getElementById('nearby-toggle-row');
-        // Show/hide map toggle for dining category
-        if (toggleRow) toggleRow.style.display = (cat === 'dining') ? 'none' : '';
         if (cat === 'saved') {
           renderSavedVenueList();
-        } else if (cat === 'dining') {
-          if (venuesEl) venuesEl.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding pubs & restaurants near you…</div></div>';
-          if (countEl) countEl.textContent = 'Loading…';
-          fetchDogFriendlyVenues(nearbyUserLat, nearbyUserLon, function(venues) {
-            renderDiningVenueList(venues);
-          });
         } else {
           if (venuesEl) venuesEl.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding ' + CATEGORIES.find(function(c){return c.id===cat;}).label.toLowerCase() + ' near you…</div></div>';
           if (countEl) countEl.textContent = 'Loading…';
@@ -9486,93 +9368,12 @@
     // Initial load
     if (nearbyCategory === 'saved') {
       renderSavedVenueList();
-    } else if (nearbyCategory === 'dining') {
-      fetchDogFriendlyVenues(lat, lon, function(venues) {
-        renderDiningVenueList(venues);
-      });
     } else {
       fetchNearbyPlaces(nearbyCategory, lat, lon, nearbyLocationName, function(venues) {
         nearbyVenues = venues;
         renderVenueList();
       });
     }
-  }
-
-  function renderDiningVenueList(venues) {
-    var el    = document.getElementById('nearby-venues');
-    var count = document.getElementById('nearby-count');
-    if (!el) return;
-
-    if (venues === null) {
-      if (count) count.textContent = '';
-      el.innerHTML =
-        '<div class="dining-disclaimer">Venues listed may or may not welcome dogs. Where Google has confirmed dogs are welcome, we show a badge. Always check with the venue before visiting.</div>' +
-        '<div class="empty-state"><div style="font-weight:600;margin-bottom:6px">Couldn\'t load venues</div><div>Check your connection and try again.</div></div>';
-      return;
-    }
-
-    if (count) count.textContent = venues.length + ' place' + (venues.length !== 1 ? 's' : '') + ' found';
-
-    if (venues.length === 0) {
-      el.innerHTML =
-        '<div class="dining-disclaimer">Venues listed may or may not welcome dogs. Where Google has confirmed dogs are welcome, we show a badge. Always check with the venue before visiting.</div>' +
-        '<div class="empty-state"><div style="font-weight:600;margin-bottom:6px">No pubs or restaurants found nearby</div><div>Try widening your search radius in Settings, or search for venues in the Walks tab before you go.</div></div>';
-      return;
-    }
-
-    el.innerHTML =
-      '<div class="dining-disclaimer">Venues listed may or may not welcome dogs. Where Google has confirmed dogs are welcome, we show a badge. Always check with the venue before visiting.</div>' +
-      venues.map(renderDiningCard).join('');
-    syncIcons();
-  }
-
-  function renderDiningCard(venue) {
-    var typeLabel = DINING_TYPE_LABEL[venue.primaryType] || 'Venue';
-    var distStr   = venue.dist !== null
-      ? (venue.dist < 0.1 ? Math.round(venue.dist * 1760) + ' yd' : venue.dist.toFixed(1) + ' mi') + ' away'
-      : '';
-    var ratingHtml = venue.rating
-      ? '<span class="venue-rating-gp">★ ' + venue.rating.toFixed(1) + ' (' + venue.ratingCount + ')</span>'
-      : '';
-
-    var isFaved   = venue.placeId ? isPlaceFavourited(venue.placeId) : false;
-    var heartHtml = venue.placeId
-      ? '<button class="venue-fav-btn" ' +
-        'onclick="event.preventDefault();event.stopPropagation();togglePlaceFavourite(\'' + venue.placeId.replace(/'/g, "\\'") + '\')" ' +
-        'aria-label="' + (isFaved ? 'Remove from saved places' : 'Save place') + '">' +
-        luIcon('heart', 16, isFaved ? 'fill:var(--red);stroke:var(--red);' : 'stroke:var(--ink-2);') +
-        '</button>'
-      : '';
-
-    var dogsHtml = '';
-    if (venue.allowsDogs === true) {
-      dogsHtml = '<div class="dining-dogs-badge">Google-confirmed: dogs welcome</div>';
-    } else if (venue.allowsDogs === false) {
-      dogsHtml = '<div class="dining-dogs-warning">Dogs may not be welcome here — check before visiting.</div>';
-    }
-
-    var footerHtml = (venue.allowsDogs === null)
-      ? '<div class="dining-call-ahead">Call ahead to confirm dogs are welcome.</div>'
-      : '';
-
-    var href = venue.mapsUrl || '#';
-    return (
-      '<a class="venue-card-gp" href="' + href + '" target="_blank" rel="noopener"' + (href === '#' ? ' onclick="return false"' : '') + '>' +
-        heartHtml +
-        '<div class="venue-card-photo-gp"></div>' +
-        '<div class="venue-card-body-gp">' +
-          '<div class="venue-card-name-gp">' + escHtml(venue.name) + '</div>' +
-          '<div class="venue-card-meta-gp">' +
-            '<span class="dining-type-pill">' + escHtml(typeLabel) + '</span>' +
-            (distStr ? '<span>' + distStr + '</span>' : '') +
-            ratingHtml +
-          '</div>' +
-          (venue.address ? '<div class="venue-address-gp">' + escHtml(venue.address) + '</div>' : '') +
-          dogsHtml +
-          footerHtml +
-        '</div>' +
-      '</a>'
-    );
   }
 
   function renderVenueList() {
