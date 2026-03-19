@@ -5480,7 +5480,7 @@
 
     updateMeStats();
     renderWalkLogSection();
-    renderBadges();
+    renderMeBadges();
     checkBadgeEarned();
 
     if (!hasSubmittedTagsToday(walkId)) {
@@ -7651,10 +7651,6 @@
     return result;
   }
 
-  function renderBadges() {
-    /* Replaced by renderMeBadges() -- kept as no-op for any legacy call sites */
-  }
-
   function updateMeStats() {
     var log = getWalkLog();
     var totalMiles = getTotalDistanceMi();
@@ -8938,7 +8934,7 @@
   function onWalkTap(id) {
     markExplored(id);
     updateMeStats();
-    renderBadges();
+    renderMeBadges();
     openWalkDetail(id);
   }
 
@@ -9332,7 +9328,7 @@
   renderFavouritesList();
   updateMeStats();
   renderWalkLogSection();
-  renderBadges();
+  renderMeBadges();
   renderStateAPreviews();
 </script>
 
