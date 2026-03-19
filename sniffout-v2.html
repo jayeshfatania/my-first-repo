@@ -10940,8 +10940,8 @@
           }
         } catch(e) {}
 
-        // If session was stale or missing, trigger a fresh weather fetch in the background
-        if (!sessionRestored && typeof loadWeatherAndShow === 'function') {
+        // Always fetch fresh weather — cached render above is shown instantly while this loads
+        if (typeof loadWeatherAndShow === 'function') {
           loadWeatherAndShow(loc.lat, loc.lon, loc.location);
         }
 
