@@ -2026,6 +2026,10 @@
       letter-spacing: -1px;
       color: var(--ink);
     }
+    .me-stat-label {
+      font: 400 12px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+    }
     /* Entry rows */
     .me-entries {
       padding: 0 16px 40px;
@@ -7822,11 +7826,15 @@
       }
     }
 
-    // Header: dog avatar — show initial if dog name set
+    // Header: dog avatar — show initial if dog name set, otherwise outline SVG
     var avatarEl = document.getElementById('meDogAvatar');
-    if (avatarEl && dog && dog.name) {
-      avatarEl.innerHTML = '<span style="font:700 16px/1 \'Inter\',sans-serif;color:var(--brand);">' +
-        dog.name.charAt(0).toUpperCase() + '</span>';
+    if (avatarEl) {
+      if (dog && dog.name) {
+        avatarEl.innerHTML = '<span style="font:700 16px/1 \'Inter\',sans-serif;color:var(--brand);">' +
+          dog.name.charAt(0).toUpperCase() + '</span>';
+      } else {
+        avatarEl.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M10 3C8.5 3 7 4 7 6v1H5a2 2 0 00-2 2v2c0 1.1.9 2 2 2h.5L5 17h2l1-3h4l1 3h2l-.5-4H15a2 2 0 002-2V9a2 2 0 00-2-2h-2V6c0-2-1.5-3-3-3z"/></svg>';
+      }
     }
 
     // Settings sheet name
