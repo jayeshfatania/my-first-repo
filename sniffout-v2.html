@@ -3180,6 +3180,62 @@
       cursor: pointer;
       box-shadow: 0 1px 6px rgba(0,0,0,0.15);
     }
+    /* ─── Hero expand hint ─── */
+    .walk-detail-hero-expand {
+      position: absolute;
+      bottom: 12px;
+      right: 14px;
+      width: 28px;
+      height: 28px;
+      background: rgba(0,0,0,0.40);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    /* ─── Full-screen image viewer ─── */
+    .img-viewer-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(0,0,0,0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 200ms;
+    }
+    .img-viewer-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .img-viewer-img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .img-viewer-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
     .walk-detail-info {
       padding: 16px 16px 14px;
       background: var(--surface);
@@ -5701,6 +5757,57 @@
     }, 310);
   }
 
+  /* ─── Full-screen image viewer ─── */
+  function openImageViewer(url) {
+    var overlay = document.getElementById('img-viewer-overlay');
+    var img     = document.getElementById('img-viewer-img');
+    if (!overlay || !img) return;
+    img.src = url;
+    overlay.classList.add('open');
+  }
+
+  function closeImageViewer() {
+    var overlay = document.getElementById('img-viewer-overlay');
+    if (!overlay) return;
+    overlay.classList.remove('open');
+    overlay.style.transform  = '';
+    overlay.style.transition = '';
+    var img = document.getElementById('img-viewer-img');
+    if (img) setTimeout(function() { img.src = ''; }, 220);
+  }
+
+  function initImageViewerSwipe() {
+    var overlay = document.getElementById('img-viewer-overlay');
+    if (!overlay) return;
+    var startY     = 0;
+    var isDragging = false;
+
+    overlay.addEventListener('touchstart', function(e) {
+      startY     = e.touches[0].clientY;
+      isDragging = true;
+      overlay.style.transition = 'none';
+    }, { passive: true });
+
+    overlay.addEventListener('touchmove', function(e) {
+      if (!isDragging) return;
+      var deltaY = e.touches[0].clientY - startY;
+      if (deltaY < 0) { isDragging = false; overlay.style.transform = ''; return; }
+      overlay.style.transform = 'translateY(' + deltaY + 'px)';
+    }, { passive: true });
+
+    overlay.addEventListener('touchend', function(e) {
+      if (!isDragging) return;
+      isDragging = false;
+      var deltaY = e.changedTouches[0].clientY - startY;
+      overlay.style.transition = '';
+      if (deltaY > 80) {
+        closeImageViewer();
+      } else {
+        overlay.style.transform = '';
+      }
+    });
+  }
+
   function initWalkDetailSwipe() {
     var overlay = document.getElementById('walk-detail-overlay');
     var scroll  = document.getElementById('walk-detail-scroll');
@@ -5883,6 +5990,8 @@
     if (hero) {
       var oldImg = hero.querySelector('img');
       if (oldImg) oldImg.remove();
+      var oldHint = hero.querySelector('.walk-detail-hero-expand');
+      if (oldHint) oldHint.remove();
       if (walk.imageUrl) {
         var img = document.createElement('img');
         img.src = walk.imageUrl;
@@ -5890,8 +5999,18 @@
         img.loading = 'lazy';
         hero.insertBefore(img, hero.firstChild);
         hero.style.background = '';
+        hero.style.cursor = 'pointer';
+        hero.onclick = function() { openImageViewer(walk.imageUrl); };
+        // Expand hint icon
+        var hint = document.createElement('div');
+        hint.className = 'walk-detail-hero-expand';
+        hint.setAttribute('aria-hidden', 'true');
+        hint.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
+        hero.appendChild(hint);
       } else {
         hero.style.background = 'var(--brand)';
+        hero.style.cursor = '';
+        hero.onclick = null;
       }
     }
 
@@ -10867,6 +10986,12 @@
   </div>
 </div>
 
+<!-- Full-screen image viewer -->
+<div id="img-viewer-overlay" class="img-viewer-overlay" role="dialog" aria-modal="true" aria-label="Full screen image">
+  <button class="img-viewer-close" onclick="closeImageViewer()" aria-label="Close image">&#x2715;</button>
+  <img id="img-viewer-img" class="img-viewer-img" src="" alt="">
+</div>
+
 <!-- ══════════ ME TAB SUBPAGES ══════════ -->
 
 <!-- Walk Journal subpage -->
@@ -11385,6 +11510,7 @@
 
   initApp();
   initWalkDetailSwipe();
+  initImageViewerSwipe();
 
   /* ─── Swipe-to-dismiss: filter-type bottom sheets ─── */
   /* Note: wxSheet is initialised in DOMContentLoaded (Phase C) because
