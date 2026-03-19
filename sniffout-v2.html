@@ -131,7 +131,7 @@
     /* ─── Tab title bar ─── */
     .tab-title-bar { padding: 12px 16px 8px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 20; }
     .tab-title { font-size: 22px; font-weight: 700; color: var(--ink); }
-    .filter-btn { background: none; border: none; padding: 4px 2px; cursor: pointer; color: var(--ink-2); display: flex; align-items: center; flex-shrink: 0; }
+    .filter-btn { background: none; border: none; padding: 10px 10px; min-width: 44px; min-height: 44px; cursor: pointer; color: var(--ink-2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .filter-btn:active { color: var(--brand); }
     .picks-anchor-btn {
       position: fixed;
@@ -503,9 +503,8 @@
       display: block;
       text-align: center;
       font-size: 14px;
+      font-weight: 500;
       color: var(--ink-2);
-      text-decoration: underline;
-      text-underline-offset: 3px;
       cursor: pointer;
       margin-bottom: 0;
     }
@@ -878,10 +877,10 @@
     }
     .portrait-heart {
       position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 28px;
-      height: 28px;
+      top: 4px;
+      right: 4px;
+      width: 44px;
+      height: 44px;
       background: rgba(255,255,255,0.92);
       border-radius: 50%;
       display: flex;
@@ -1223,6 +1222,10 @@
       border-color: var(--brand);
       color: #fff;
     }
+    [data-nearby-cat] {
+      min-height: 44px;
+      padding: 11px 16px;
+    }
 
     /* Segmented toggle (List / Map) */
     .view-toggle {
@@ -1262,7 +1265,7 @@
     .walk-photo {
       height: 180px;
       position: relative;
-      background: var(--brand);
+      background: linear-gradient(135deg, #3B5C2A 0%, #2E7D5E 100%);
     }
     .walk-photo img {
       width: 100%;
@@ -1285,8 +1288,8 @@
       position: absolute;
       top: 12px;
       right: 12px;
-      width: 32px;
-      height: 32px;
+      width: 44px;
+      height: 44px;
       background: rgba(255,255,255,0.92);
       border-radius: 50%;
       display: flex;
@@ -1466,6 +1469,10 @@
       font: 700 22px/1 'Inter', sans-serif;
       color: var(--ink);
       letter-spacing: -0.3px;
+    }
+    .me-name.me-name-placeholder {
+      font-weight: 400;
+      color: var(--ink-2);
     }
     .me-gear-btn {
       width: 36px; height: 36px;
@@ -2525,13 +2532,15 @@
     ═══════════════════════════════ */
     body.night {
       --bg:       #0F1C16;
-      --surface:  #1A2C22;
+      --surface:  #243A2C;
       --border:   #263530;
       --ink:      #F0F0ED;
       --ink-2:    #8B9690;
       --chip-off: #263530;
       --brand:    #82B09A;
     }
+    body.night #nearby-map,
+    body.night #walk-detail-map { filter: invert(1) hue-rotate(180deg); }
     body.night .search-input-row { background: var(--surface); }
     body.night .hour-seg.poor { background: var(--border); }
     body.night .walk-preview-card     { background: rgba(130,176,154,0.07); border-color: rgba(130,176,154,0.18); }
@@ -2797,7 +2806,7 @@
       justify-content: center;
       gap: 5px;
       width: 100%;
-      height: 34px;
+      height: 44px;
       margin-top: 8px;
       background: transparent;
       border: 1px solid var(--border);
@@ -3133,7 +3142,7 @@
     .walk-detail-hero {
       width: 100%;
       height: 220px;
-      background: var(--brand);
+      background: linear-gradient(135deg, #3B5C2A 0%, #2E7D5E 100%);
       position: relative;
       flex-shrink: 0;
     }
@@ -7987,10 +7996,13 @@
     // Header: display name
     var nameEl = document.getElementById('meDisplayName');
     if (nameEl) {
-      if (dog && dog.name) {
-        nameEl.textContent = dog.name;
+      var displayName = (dog && dog.name) ? dog.name : (name || '');
+      if (displayName) {
+        nameEl.textContent = displayName;
+        nameEl.className = 'me-name';
       } else {
-        nameEl.textContent = name || '';
+        nameEl.textContent = 'Set up your profile';
+        nameEl.className = 'me-name me-name-placeholder';
       }
     }
 
