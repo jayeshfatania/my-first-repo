@@ -8438,9 +8438,9 @@
       return;
     }
     var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var badgeSvg = BADGE_ICONS[b.id] || '';
     var html = '';
     earned.forEach(function(b) {
+      var badgeSvg = BADGE_ICONS[b.id] || '';
       var earnedAt = b.earnedAt ? new Date(b.earnedAt) : null;
       var dateStr = earnedAt
         ? 'Earned ' + earnedAt.getDate() + ' ' + MONTHS[earnedAt.getMonth()] + ' ' + earnedAt.getFullYear()
