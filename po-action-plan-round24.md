@@ -59,6 +59,37 @@ As of 19 March 2026, a full day of development has been completed. The app has a
 - **FIX 26.6** — Save button added to walk note input with 2-second confirmation message.
 - **FIX 26.7** — Weather now always fetches fresh data on every load. App renders instantly with cached data then re-renders with live data when fetch completes.
 
+### Round 27 — Me tab avatar, stats dashboard, entry point rows
+
+- Me tab avatar, stats dashboard, and subpage entry point rows reviewed. The bulk of this work was already in place from previous rounds — small gaps identified and filled.
+
+### Round 28 — Me tab subpage overlays
+
+- All four subpage overlays confirmed built from previous rounds: Walk Journal, Badges, Saved Walks, Saved Places.
+- Wiring verified — each entry point row correctly opens its corresponding subpage overlay.
+
+### Round 29 — Units toggle, formatDist helper, em dash sweep
+
+- **FIX 29.1** — km/miles units toggle added to Settings. Defaults to km. Selection saves to `sniffout_units` in localStorage.
+- **FIX 29.2** — `formatDist()` helper applied across all distance displays in the app. Respects `sniffout_units` setting consistently.
+- **FIX 29.3** — Me tab stats label updates dynamically when units setting changes. `~` prefix confirmed throughout.
+- **FIX 29.4** — Em dash sweep complete across all user-facing copy. No em dashes or en dashes remain anywhere in the app.
+
+### Round 30 — Free-form walk logging
+
+- **FIX 30.1** — Walk log schema extended with `type` field (`"curated"` | `"custom"`). Existing entries default to `"curated"` via fallback — no migration needed.
+- **FIX 30.2** — "Log a walk" button and bottom sheet added to Walk Journal. Fields: name (required), date (defaults to today, editable), distance (optional), duration (optional), notes (optional).
+- **FIX 30.3** — Custom entries display in the journal timeline with a "Your route" chip distinguishing them from curated walk entries.
+- **FIX 30.4** — Me tab stats include custom walk distances in the total miles calculation.
+
+### Additional fixes (afternoon session — not part of a formal round)
+
+- **Badge custom icons** — all 10 badges now show unique custom SVG icons. Implementation required debugging: root cause was duplicate `renderMeBadges` function names and mismatched render path wiring.
+- **Badge subpage crash fixed** — duplicate function removed, correct function wired to all call sites.
+- **Weather tab hero spacing finalised** — 56px gap, 96px icon, vertically centred pair. Per Designer recommendation.
+- **manifest.json start_url fixed** — PWA installs correctly to `/sniffout-v2.html`.
+- **Cloudflare Worker proxy confirmed fully working** — see T1 resolution above.
+
 ---
 
 ## Pre-Launch Blockers — Status as of 19 March 2026
@@ -80,6 +111,8 @@ As of 19 March 2026, a full day of development has been completed. The app has a
 
 No remaining technical hard blockers. All three outstanding blockers are legal and require the solicitor to be engaged. Owner action required.
 
+**Note for solicitor (when privacy policy is drafted):** The app now stores user-entered health notes about dogs (vet visits, medication, health observations) via the walk notes field and walk log. This is not special category GDPR data, but the solicitor should be aware so the privacy policy accurately reflects the categories of data stored.
+
 ---
 
 ## Content Pipeline — Current State
@@ -96,39 +129,26 @@ No remaining technical hard blockers. All three outstanding blockers are legal a
 
 ## Next Up
 
-### Immediate — Round 27
+### Upcoming work — priority order
 
-**Me tab subpages implementation**
-- Implement per `me-tab-subpages-spec.md` (Designer spec complete).
-- Me tab is becoming increasingly content-rich. Subpages provide the structure needed before adding more features.
-- PO to review `me-tab-subpages-spec.md` and approve before issuing Developer brief.
+1. **Full UX/UI review** — dedicated Designer session reviewing every tab systematically. Prioritised findings list. Must happen before next beta push.
+2. **Batch 02 + 03 content update** — 40 walks validated and ready. Issue combined Developer brief. Walk count reaches 85.
+3. **Logo rebuild** — owner creating in Illustrator. Required exports: `icon.svg` (master), `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180x180), `favicon.svg`. No Developer work until exports are ready.
+4. **`sniffout.co.uk` redirect** — defensive registration exists but not yet redirecting to `sniffout.app`. Owner action.
+5. **`hello@sniffout.app` support email** — required for GDPR subject access requests (checklist item B6). Owner action.
+6. **GDPR solicitor engagement** — L1/L2/L3/L4 all blocked on this. Owner action. Target: engaged at least 4 weeks before any beta launch date.
 
-### Also immediate
+### Phase 2b — post-launch (confirmed deferred)
 
-**Batch 02 + 03 content update**
-- Issue combined Developer brief. 40 walks to add.
-- Both batches validated. No blockers. This is ready to go now.
-
-**CLAUDE.md** — already updated today for brand colour and API key. No further CLAUDE.md changes needed unless a new architectural decision warrants it.
-
-### Also immediate
-
-**Full UX/UI review session**
-- Dedicated session. Designer to review every tab systematically and produce a prioritised findings list.
-- Must happen before next beta push. Owner confirmed this as a prerequisite.
-
-**Logo rebuild**
-- Owner creating new logo in Illustrator.
-- Required exports: `icon.svg` (master), `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180x180), `favicon.svg`.
-- Replace existing icon files in repo when ready. No Developer work needed until exports are ready.
+- **Dog diary / health log** — scoped in `dog-diary-feature-scope.md`. Deferred to after soft launch to gather beta feedback first. Entry types: vet visit, medication, health note, general. New localStorage key `sniffout_dog_diary`. Me tab subpage.
+- **Dog-friendly restaurants in Nearby tab** — permanently removed. Brief at `developer-brief-restaurants.md`. Returns in a future dedicated round with proper design.
+- **Walk Wrapped summary** — twice yearly. Walk log foundation exists. Needs Designer spec.
+- **Copy review session** — all UI copy reviewed against brand voice.
+- **Brand guidelines document** — Meadow Green `#3B5C2A` confirmed. Full guidelines not yet produced.
 
 ### Soon (Phase 2 remaining)
 
-- **Dog-friendly restaurants in Nearby tab** — permanently removed in FIX 23.2. Too many quality issues with non-dog-friendly results appearing. Brief exists at `developer-brief-restaurants.md` for a future dedicated round with proper design.
-- **Walk Wrapped summary** — twice yearly (July and December/January). Data foundation exists (`sniffout_walk_log` with timestamps). Needs Designer spec.
 - **Pollen data on Weather tab** — Open-Meteo European AQI endpoint. Phase 3 per CLAUDE.md.
-- **Copy review session** — all UI copy across all tabs reviewed against brand voice.
-- **Brand guidelines document** — Meadow Green `#3B5C2A` confirmed. Full guidelines (colour palette, typography, logo usage) not yet produced. Designer brief needed.
 
 ### Phase 3 (priority order — confirmed)
 
@@ -158,3 +178,7 @@ These decisions are locked and should not be revisited without a clear reason.
 | Settings vs dog profile | Gear icon opens settings only. "Your Dog" row opens dog profile subpage. Fully separated. | 19 March 2026 |
 | Logo | To be rebuilt in Illustrator by owner. SVG master + four PNG/ICO exports. No Developer work until exports ready. | 19 March 2026 |
 | UX/UI review | Full dedicated session required before next beta push. Designer reviews every tab systematically. | 19 March 2026 |
+| Free-form walk logging | Built before soft launch — journal was structurally broken without it. `type: "curated"/"custom"` field in walk log. | 19 March 2026 |
+| Dog diary | Deferred to post-launch Phase 2b. Scoped in `dog-diary-feature-scope.md`. | 19 March 2026 |
+| Units | km default, miles toggle in Settings, saves to `sniffout_units`. `formatDist()` helper applied everywhere. | 19 March 2026 |
+| Em dashes | Swept from all user-facing copy in FIX 29.4. Hyphens only throughout the app. | 19 March 2026 |

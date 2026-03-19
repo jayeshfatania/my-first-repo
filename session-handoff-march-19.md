@@ -132,6 +132,8 @@ These apply in every session without exception:
 - **Quality over speed** — no pressure to ship. Flag issues clearly. Do not wave through borderline content to keep things moving.
 - **Agent prompts always start with role and CLAUDE.md instruction** — every prompt begins "You are the [Role] for Sniffout" and instructs the agent to read `CLAUDE.md` before starting.
 - **Designer produces recommendations only — never edits code.** The Designer spec files go to the Developer for implementation. If the Designer pane accidentally runs developer work (edits `sniffout-v2.html`), discard the changes immediately with `git checkout sniffout-v2.html` and re-brief the Developer correctly.
+- **When badge icons or similar asset implementations fail silently**, check for duplicate function names and mismatched render paths before assuming an ID mismatch. This was the root cause of the badge icon issue in Round 26/27 — a duplicate `renderMeBadges` function was silently taking precedence.
+- **Free-form walk logging is live.** The walk journal now accepts both curated (`type: "curated"`) and user-created entries (`type: "custom"`). All functions that work with the walk log must handle both types correctly.
 
 ### The content pipeline
 
@@ -306,6 +308,29 @@ Full dog profile system:
 - **FIX 26.5** — Weather tab wrong icon fixed. Replaced stale `is_day` cache with live hour-based check (`currentH >= 6 && currentH < 21`)
 - **FIX 26.6** — Save button added to walk note input with 2-second confirmation message
 - **FIX 26.7** — Weather always fetches fresh on every load. Renders instantly with cache, re-renders with live data when fetch completes.
+- **Badge custom icons** — all 10 badges now show unique custom SVG icons. Root cause of earlier failure: duplicate `renderMeBadges` function silently taking precedence. Correct function wired to all call sites.
+
+### Round 27 — Me tab avatar, stats dashboard, entry point rows
+
+- Me tab avatar, stats dashboard, and subpage entry point rows reviewed and gaps filled. Most of this work was already in place from previous rounds.
+
+### Round 28 — Me tab subpage overlays confirmed
+
+- All four subpage overlays confirmed built and wired: Walk Journal, Badges, Saved Walks, Saved Places. Each entry point row correctly opens its corresponding subpage overlay.
+
+### Round 29 — Units toggle, formatDist helper, em dash sweep
+
+- **FIX 29.1** — km/miles units toggle added to Settings. Defaults to km. Saves to `sniffout_units` in localStorage.
+- **FIX 29.2** — `formatDist()` helper applied across all distance displays in the app. Respects `sniffout_units` consistently.
+- **FIX 29.3** — Me tab stats label updates dynamically when units setting changes. `~` prefix confirmed throughout.
+- **FIX 29.4** — Em dash sweep complete. No em dashes or en dashes remain anywhere in user-facing copy.
+
+### Round 30 — Free-form walk logging
+
+- **FIX 30.1** — Walk log schema extended with `type` field (`"curated"` | `"custom"`). Existing entries default to `"curated"` via fallback — no migration needed.
+- **FIX 30.2** — "Log a walk" button and bottom sheet added to Walk Journal. Fields: name (required), date (defaults to today), distance (optional), duration (optional), notes (optional).
+- **FIX 30.3** — Custom entries display in the journal timeline with a "Your route" chip.
+- **FIX 30.4** — Me tab stats include custom walk distances in total miles calculation.
 
 ---
 
@@ -351,6 +376,24 @@ No Developer work needed until the owner provides the export files.
 ### Full UX/UI review
 
 A dedicated session where the Designer reviews every tab systematically and produces a prioritised findings list. This must happen before the next beta push. It is a gate, not a nice-to-have.
+
+### Units
+
+km is the default. A miles toggle is in Settings, saves to `sniffout_units`. `formatDist()` helper applied everywhere distances display across the app.
+
+### Em dashes
+
+Swept from all user-facing copy in FIX 29.4. Hyphens only throughout the app. No em dashes or en dashes remain.
+
+### Free-form walk logging
+
+Built and shipped in Round 30 — before soft launch, as confirmed in `dog-diary-feature-scope.md`. The journal was structurally broken without it. Walk log now has a `type` field: `"curated"` for WALKS_DB walks, `"custom"` for user-created entries. Both appear in the same journal timeline.
+
+### Dog diary
+
+Scoped in `dog-diary-feature-scope.md`. Deferred to post-launch Phase 2b. Entry types when built: vet visit, medication, health note, general. New localStorage key `sniffout_dog_diary`. Lives as a Me tab subpage.
+
+**Solicitor flag:** The app stores user-entered notes about their dog including health observations (via walk notes and the future dog diary). Not special category GDPR data, but the privacy policy must accurately reflect that these categories are stored.
 
 ### Pre-launch blockers — technical blockers resolved
 
