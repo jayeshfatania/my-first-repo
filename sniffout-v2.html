@@ -3616,15 +3616,9 @@
             </div>
           </div>
 
-          <!-- Sniffout Picks preview (populated by renderStateAPreviews()) -->
+          <!-- Showcase carousel (always shown, hardcoded 7 walks) -->
           <div class="preview-picks-section">
-            <div class="preview-picks-header">
-              <span class="preview-picks-label">Sniffout Picks</span>
-              <span class="preview-picks-prompt" id="preview-picks-prompt">
-                Set your location to see what's nearest →
-              </span>
-            </div>
-            <div class="trail-carousel preview-carousel" id="preview-picks-carousel">
+            <div class="trail-carousel" id="preview-picks-carousel">
               <!-- populated by renderStateAPreviews() -->
             </div>
           </div>
@@ -9926,7 +9920,7 @@
   });
 
   /* ─── State A preview carousel ─── */
-  var PREVIEW_PICK_IDS = ['leith-hill', 'haytor-dartmoor', 'malham-cove', 'richmond-park'];
+  var PREVIEW_PICK_IDS = ['isabella-plantation', 'stanage-edge', 'balmaha-loch-lomond', 'rhossili-gower', 'seven-sisters', 'formby-beach-pinewoods', 'alnmouth-northumberland'];
 
   function renderStateAPreviews() {
     var carousel = document.getElementById('preview-picks-carousel');
