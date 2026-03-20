@@ -530,6 +530,22 @@ Full dog profile system:
 - **Tappable temperature feature implemented then reverted** — replaced by the hourly forecast bar approach. `temperature-tap-spec.md` exists but feature was removed from `sniffout-v2.html`. Superseded.
 - **T&C consent screen added as L5** — hard go-live blocker. Requires ToS (L3) to be complete first.
 
+### Completed — 20 March 2026 afternoon session
+
+- **Hourly forecast bar added to Weather tab** — "Hour by hour" card added as Card 2 on the Weather tab. Walk Window card is **kept** (not removed) and updated to whole-day scope (6am to midnight). Walk Window is Card 1, Hour by hour is Card 2. Walk Window footer shows rain summary only. `hourly-forecast-layout-rec.md` produced by Designer.
+- **Dynamic walk count implemented** — all hardcoded "25 handpicked walks" references replaced with `WALKS_DB.length`. Walk count displays correctly regardless of database size. Never hardcode a walk count number again.
+- **State A full redesign implemented** — spec in `state-a-redesign-spec.md`. Changes:
+  - Headline: "Paws before you go."
+  - Hero body copy paragraph removed
+  - CTA card wrapper removed
+  - Wordmark corrected to 20px
+  - Showcase carousel: 7 hardcoded walks (`isabella-plantation`, `stanage-edge`, `balmaha-loch-lomond`, `rhossili-gower`, `seven-sisters`, `formby-beach-pinewoods`, `alnmouth-northumberland`)
+  - Social proof strip: "Know the route · Own the weather · Find the spots"
+- **Batch 02 and 03 content added to app** — walk count is now **100**. The previous handoff was out of date on this — both batches are now live in `WALKS_DB`.
+- **`firebase-setup-plan.md` created** — by Researcher. Firebase architecture and setup plan documented for Phase 3 reference.
+- **`state-a-redesign-spec.md` created** — by Designer. State A redesign spec.
+- **`hourly-forecast-layout-rec.md` created** — by Designer. Layout recommendation for the hourly forecast bar implementation.
+
 ---
 
 ## SECTION 6 — KEY DECISIONS ON RECORD
@@ -603,9 +619,13 @@ All interactive elements set to minimum 44px (WCAG 2.5.5 / Apple HIG). Apply to 
 
 Today, Walks, and Nearby tabs all have a tappable location line with inline search bar.
 
-### Hourly forecast bar replaces Walk Window card
+### Hourly forecast bar and Walk Window — both live on Weather tab
 
-The tappable temperature hero approach (temperature-tap-spec.md) was implemented and then reverted. The replacement decision is an **hourly forecast bar** on the Weather tab. Walk Window card will be removed when the hourly forecast bar is implemented. Designer spec exists at `hourly-forecast-spec.md`. Developer has created a mockup (`hourly-forecast-mockup.html`) for owner review before implementation.
+The tappable temperature hero approach (`temperature-tap-spec.md`) was implemented and then reverted. The replacement is an **hourly forecast bar** ("Hour by hour" card) on the Weather tab — now implemented.
+
+**Key structural decision:** The Walk Window card is **kept**, not removed. It has been updated to whole-day scope (6am to midnight). Walk Window is Card 1, Hour by hour is Card 2 on the Weather tab. Walk Window footer shows rain summary only.
+
+Designer spec: `hourly-forecast-spec.md`. Layout recommendation: `hourly-forecast-layout-rec.md`.
 
 ### T&C consent screen is a hard go-live blocker
 
@@ -631,18 +651,20 @@ T1 (API key) and T14 (manifest start_url) resolved on 19 March 2026. All remaini
 
 | Stage | Count | Status |
 |-------|-------|--------|
-| Walks in `sniffout-v2.html` (WALKS_DB) | **86** | Live in app — includes Isabella Plantation (added Round 33) |
-| Batch 02 | 20 | Validated — awaiting Developer content update |
-| Batch 03 | 20 | Validated — awaiting Developer content update |
+| Walks in `sniffout-v2.html` (WALKS_DB) | **100** | Live in app. Batches 01-03 all complete. |
+| Batch 01 | 20 | ✅ In app |
+| Batch 02 | 20 | ✅ In app — added 20 March 2026 |
+| Batch 03 | 20 | ✅ In app — added 20 March 2026 |
 
-Both Batch 02 and Batch 03 are fully validated and waiting. No blockers. Issue the combined content update brief to Developer when ready.
+All batches complete. No content updates pending. Walk count is displayed dynamically via `WALKS_DB.length` — never hardcode a number.
 
 ### Walk photos
 
 | Status | Count |
 |--------|-------|
 | Walks with real photos | 3 — Richmond Park, Wimbledon Common, Isabella Plantation |
-| Walks using illustrated placeholder (`placeholder-walk.jpg`) | 83 |
+| Walks using illustrated placeholder (`placeholder-walk.jpg`) | 97 |
+| Showcase carousel walks needing photos (priority) | 7 — isabella-plantation, stanage-edge, balmaha-loch-lomond, rhossili-gower, seven-sisters, formby-beach-pinewoods, alnmouth-northumberland |
 
 Walk photos are hosted on GitHub as raw URLs:
 `https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/filename.jpg`
@@ -653,13 +675,9 @@ Image files must be pushed to the repo before being referenced in `WALKS_DB`.
 
 **Batch 01:** Researcher ✅ / Copywriter ✅ / Editor ✅ / Validator ✅ / Developer ✅ — in app
 
-**Batch 02 (20 walks):**
-- Researcher ✅ / Copywriter ✅ / Editor ✅ / Validator ✅ (tehidy fixed, lickey-hills duplicate resolved)
-- Developer content update: **NOT YET DONE** — waiting
+**Batch 02 (20 walks):** Researcher ✅ / Copywriter ✅ / Editor ✅ / Validator ✅ / Developer ✅ — in app (added 20 March 2026)
 
-**Batch 03 (20 walks — Northern Ireland, Hampshire, Wiltshire, Somerset, Gloucestershire, Highland Scotland, Yorkshire coast, County Durham, Lincolnshire, Oxfordshire, Greater Manchester, Bristol, Essex, Isle of Wight, Dorset):**
-- Researcher ✅ / Copywriter ✅ / Editor ✅ / Validator ✅ (all issues resolved)
-- Developer content update: **NOT YET DONE** — waiting
+**Batch 03 (20 walks — Northern Ireland, Hampshire, Wiltshire, Somerset, Gloucestershire, Highland Scotland, Yorkshire coast, County Durham, Lincolnshire, Oxfordshire, Greater Manchester, Bristol, Essex, Isle of Wight, Dorset):** Researcher ✅ / Copywriter ✅ / Editor ✅ / Validator ✅ / Developer ✅ — in app (added 20 March 2026)
 
 ### Copywriter personas
 
@@ -679,41 +697,39 @@ Five personas defined in `copywriter-personas.md`. Rules carry forward across al
 
 ## SECTION 8 — WHAT IS IN PROGRESS RIGHT NOW
 
-As of 20 March 2026 (end of morning session):
+As of end of day 20 March 2026:
 
-### 1. Hourly forecast bar — in development
+### 1. Photos for 7 showcase carousel walks (priority — owner action)
 
-Designer spec complete: `hourly-forecast-spec.md`.
-Developer has created a local mockup: `hourly-forecast-mockup.html`.
-**The mockup has NOT been pushed to GitHub** — it is local only.
+The State A showcase carousel features 7 specific walks. These are the most visible walks in the app for a first-time user. Real photos should be sourced for these walks first.
 
-This replaces both the Walk Window card (to be removed) and the reverted tappable temperature hero approach.
+Walks: `isabella-plantation`, `stanage-edge`, `balmaha-loch-lomond`, `rhossili-gower`, `seven-sisters`, `formby-beach-pinewoods`, `alnmouth-northumberland`
 
-**Next action:** Owner reviews the mockup locally (`http://localhost:8000/hourly-forecast-mockup.html`). If approved, Developer implements in `sniffout-v2.html` and removes the Walk Window card.
+**Next action:** Owner to source photos. Push image files to repo before referencing in `WALKS_DB`.
 
-### 2. Content update — Batch 02 and 03 (ready to go)
-
-Both batches are fully validated. 40 walks ready to add to `WALKS_DB`.
-
-**Next action:** Issue combined content update brief to Developer. No blockers.
-
-### 3. State A first-run screen redesign (upcoming)
-
-The current first-run state needs a full Designer pass. Prerequisite for the second UX review.
-
-**Next action:** Issue Designer prompt for State A redesign spec.
-
-### 4. Dark mode colour rethink (upcoming)
+### 2. Dark mode colour rethink (upcoming — Designer task)
 
 Today tab mint/sage tones clash with the broader dark mode palette. Requires a Designer spec before any Developer implementation.
 
 **Next action:** Issue Designer prompt for dark mode colour review.
 
-### 5. Walk image sourcing (ongoing — owner action)
+### 3. Second UX/UI review pass (upcoming — gated)
 
-83 walks still need real photos. 3 currently have images.
+Gated behind dark mode colour rethink being built and implemented first.
+
+**Next action:** Do not issue until dark mode rethink is done.
+
+### 4. Walk image sourcing — 97 remaining (ongoing — owner action)
+
+97 walks still use `placeholder-walk.jpg`. 3 have real photos. Showcase carousel walks (item 1 above) are the priority.
 
 **Next action:** Owner to direct sourcing strategy.
+
+### 5. CLAUDE.md and folder restructure (PO task)
+
+CLAUDE.md has been updated in today's session. A folder restructure to organise spec files, research files, and content pipeline files may be worth doing — issue as a PO task before next major round.
+
+**Next action:** PO to assess and brief if needed.
 
 ### 6. Logo rebuild (owner action)
 
@@ -733,24 +749,22 @@ L1, L2/L3, L4, and L5 all blocked on solicitor engagement.
 
 ### Immediate (in priority order)
 
-1. **Hourly forecast bar** — owner reviews mockup locally, then Developer implements in `sniffout-v2.html` and removes Walk Window card.
-2. **Batch 02 + 03 content update** — both batches validated, no blockers. Issue combined Developer brief. 40 walks to add.
-3. **"25 handpicked walks" copy fix** — appears in three places across the app. Correct number is 86. Small Developer fix.
-4. **Nearby places placeholder image** — owner to create in Illustrator. Separate from `placeholder-walk.jpg`.
-5. **State A first-run screen redesign** — Designer spec needed first, then Developer implementation.
-6. **Dark mode colour rethink** — Designer spec needed first. Then Developer implements.
-7. **Second UX/UI review pass** — after items 5 and 6 are built. Do not issue before then.
-8. **Walk image sourcing** — owner to direct. 83 walks need photos.
-9. **Logo rebuild** — owner delivers Illustrator exports, Developer replaces icon files.
+1. **Photos for 7 showcase carousel walks** — owner to source. These are the most visible walks in the app (State A carousel). Priority over other walk photos.
+2. **Dark mode colour rethink** — Designer spec first. Then Developer implements.
+3. **Second UX/UI review pass** — gated behind dark mode rethink. Do not issue before then.
+4. **Walk image sourcing** — 97 walks need photos. Owner to direct.
+5. **Nearby places placeholder image** — owner to create in Illustrator. Separate from `placeholder-walk.jpg`.
+6. **Copy review session** — all UI copy reviewed against brand voice. Includes "Not to be sniffed at" Me tab tertiary stat.
+7. **Logo rebuild** — owner delivers Illustrator exports, Developer replaces icon files.
+8. **CLAUDE.md and folder restructure** — PO task. Assess and brief if needed.
 
 ### Soon (Phase 2 remaining)
 
-- **Copy review session** — all UI copy across all tabs reviewed against brand voice. Includes "Not to be sniffed at" tertiary stat copy in Me tab.
 - **Walk Wrapped summary** — twice yearly (July and December/January). Walk log foundation exists. Needs Designer spec.
 - **Brand guidelines document** — Meadow Green `#3B5C2A` confirmed but full guidelines not yet produced.
 - **Dog-friendly restaurants in Nearby tab** — permanently removed. Brief at `developer-brief-restaurants.md` for a future dedicated round.
-- **Me tab dashboard alignment polish** — deferred pending State A redesign.
-- **Bottom nav active tab contrast** — may need further iteration after Round 33 fix.
+- **Me tab dashboard alignment polish** — deferred.
+- **Bottom nav active tab contrast** — may need further iteration.
 - **Walk empty state copy** — deferred until Firebase walk submission is built.
 
 ### Phase 3 (priority order — confirmed)
@@ -822,8 +836,10 @@ All files in `~/Desktop/my-first-repo/`.
 | `disclaimer-design-spec.md` | Walk disclaimer design (implemented Round 13). |
 | `brand-colour-proposal.md` | 8 colour options. Option G (Meadow Green `#3B5C2A`) confirmed. |
 | `developer-brief-restaurants.md` | Brief for dog-friendly restaurants/pubs. Permanently deferred. |
-| `hourly-forecast-spec.md` | Hourly forecast bar spec (Designer complete). Developer mockup (`hourly-forecast-mockup.html`) exists locally — not yet in `sniffout-v2.html`. |
+| `hourly-forecast-spec.md` | Hourly forecast bar spec (Designer). Feature implemented — "Hour by hour" is Card 2 on Weather tab. |
+| `hourly-forecast-layout-rec.md` | Designer layout recommendation for hourly forecast bar. Used during implementation. |
 | `temperature-tap-spec.md` | Tappable temperature spec. Feature was implemented and then reverted in favour of hourly forecast bar. Superseded. |
+| `state-a-redesign-spec.md` | Designer spec for State A first-run screen redesign. Implemented 20 March 2026. |
 | `dog-diary-feature-scope.md` | Strategic scoping for dog diary feature. Deferred to Phase 2b post-launch. |
 
 ### Content pipeline files
@@ -843,6 +859,7 @@ All files in `~/Desktop/my-first-repo/`.
 |------|---------|
 | `dog-friendly-venues-research.md` | Research on dog-friendly venue data sources for Nearby tab. |
 | `me-tab-dashboard-research.md` | Research on personal stats design. |
+| `firebase-setup-plan.md` | Firebase architecture and setup plan for Phase 3. Produced by Researcher 20 March 2026. |
 
 ### Session handoff notes
 
@@ -973,17 +990,16 @@ Confirm push by checking `https://sniffout.app/sniffout-v2.html` — allow ~1 mi
 1. **Never touch `dog-walk-dashboard.html`** — live production v1, protected per CLAUDE.md
 2. **Cloudflare Worker proxy is fully working** — `places-proxy.sniffout.app`. Do not revert to direct Google URL under any circumstances.
 3. **Pubs/restaurants permanently removed** — quality issues. Brief at `developer-brief-restaurants.md`. Do not re-add without a dedicated design round.
-4. **Batch 02 + 03 ready to go** — 40 walks validated, waiting for combined Developer content update.
+4. **All batches complete — walk count is 100** — Batches 01, 02, and 03 all live in WALKS_DB. Use `WALKS_DB.length` dynamically, never hardcode a number.
 5. **Brand colour is `#3B5C2A` (Meadow Green)** — fully implemented. No `#1E4D3A` references should remain.
-6. **Hourly forecast bar is in development** — Designer spec done (`hourly-forecast-spec.md`), Developer mockup local only (`hourly-forecast-mockup.html`). Owner must review mockup before Developer implements. Walk Window card will be removed when implemented.
-7. **Walk count is 86** — Isabella Plantation added in Round 33. 83 walks still need photos.
+6. **Hourly forecast bar is LIVE** — "Hour by hour" is Card 2 on Weather tab. Walk Window is Card 1 (kept, updated to 6am-midnight scope). Tappable temperature spec (`temperature-tap-spec.md`) is superseded — do not re-implement.
+7. **97 walks still need photos** — 3 have real photos. 7 showcase carousel walks are priority.
 8. **Brand language: "On my sniff list" and "Sniffed and approved"** — confirmed names for Wishlist and Favourites. Do not revert.
 9. **Walk card placeholder is `placeholder-walk.jpg`** — single illustrated image. No gradients.
 10. **L1-L5 are all legal blockers** — all solicitor-dependent. Owner must engage solicitor. L5 is T&C consent screen — hard go-live blocker.
 11. **`locationRestriction` must not be used** on Nearby tab — causes empty results. Radius enforced client-side.
 12. **Logo rebuild in progress** — owner creating in Illustrator, five exports needed.
-13. **Firebase first in Phase 3** — personal data (journal, notes, photos) cannot safely live in localStorage long-term.
+13. **Firebase first in Phase 3** — personal data (journal, notes, photos) cannot safely live in localStorage long-term. `firebase-setup-plan.md` produced by Researcher.
 14. **Today tab = Lucide icons, Weather tab = Yr.no icons** — confirmed design decision, do not merge.
-15. **"25 handpicked walks" copy is wrong** — appears in 3 places. Correct number is 86. Fix in a small Developer round.
-16. **Second UX review is gated** — State A redesign and dark mode rethink must be built first. Do not issue second UX review prompt before those are done.
-17. **Tappable temperature was reverted** — `temperature-tap-spec.md` is superseded. The hourly forecast bar is the replacement. Do not re-implement the temperature tap.
+15. **State A headline is "Paws before you go."** — implemented. Social proof strip: "Know the route · Own the weather · Find the spots". Do not revert to old hero copy.
+16. **Second UX review is gated** — dark mode colour rethink must be built first. Do not issue before then.
