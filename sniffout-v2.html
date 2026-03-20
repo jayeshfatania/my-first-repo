@@ -9700,8 +9700,9 @@
     var distText = distKm < 1
       ? Math.round(distKm * 1000) + 'm away'
       : distKm.toFixed(1) + ' km away';
-    var mapsUrl = 'https://www.google.com/maps/place/' +
-      encodeURIComponent(gs.name) + '/@' + gs.lat + ',' + gs.lon + ',16z';
+    var mapsUrl = (gs.lat && gs.lon)
+      ? 'https://www.google.com/maps/search/?api=1&query=' + gs.lat + '%2C' + gs.lon
+      : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(gs.name);
     var thumbHtml = gs.photoUrl
       ? '<div class="gs-thumb"><img data-photo-meta="' + gs.photoUrl + '" alt="" loading="lazy"></div>'
       : '<div class="gs-thumb"></div>';
