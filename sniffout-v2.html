@@ -448,14 +448,14 @@
       padding: 8px 16px 16px;
     }
     .state-a-header .wordmark {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
       color: var(--brand);
       letter-spacing: -0.3px;
     }
     .state-a-scroll { padding-bottom: 32px; }
 
-    .hero-section { padding: 24px 16px 28px; }
+    .hero-section { padding: 24px 16px 20px; }
     .hero-headline {
       font-size: 32px;
       font-weight: 700;
@@ -507,7 +507,7 @@
       font-weight: 500;
       color: var(--ink-2);
       cursor: pointer;
-      margin-bottom: 0;
+      margin-bottom: 24px;
     }
     .search-expand {
       margin-top: 10px;
@@ -3584,20 +3584,17 @@
         <div class="state-a-scroll">
 
           <div class="hero-section">
-            <h1 class="hero-headline">Discover great walks</h1>
+            <h1 class="hero-headline">We'll take the lead.</h1>
             <p class="hero-subline">Handpicked walks. Live conditions.</p>
-            <p class="hero-body" id="hero-body-walk-count">25 handpicked UK walks with terrain, off-lead and livestock info - plus live weather checks and nearby dog-friendly spots.</p>
 
-            <div class="cta-block">
-              <button class="cta-primary" id="btn-use-location">
-                <svg width="18" height="18" viewBox="0 0 18 22" fill="white">
-                  <path d="M9 0C5.13 0 2 3.13 2 7c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 116.5 7 2.5 2.5 0 019 9.5z"/>
-                </svg>
-                Find walks near me
-              </button>
+            <button class="cta-primary" id="btn-use-location">
+              <svg width="18" height="18" viewBox="0 0 18 22" fill="white">
+                <path d="M9 0C5.13 0 2 3.13 2 7c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 116.5 7 2.5 2.5 0 019 9.5z"/>
+              </svg>
+              Find walks near me
+            </button>
 
-              <span class="cta-secondary" id="btn-toggle-search">Or enter a location →</span>
-            </div>
+            <span class="cta-secondary" id="btn-toggle-search">Or enter a location &rarr;</span>
 
             <!-- Recent search pills (populated by JS) -->
             <div id="recent-pills"></div>
@@ -3633,8 +3630,8 @@
           </div>
 
           <!-- Social proof -->
-          <div class="social-proof" id="social-proof-walk-count">
-            25 handpicked UK walks&nbsp;·&nbsp;Just open and explore&nbsp;·&nbsp;Dog-specific routes
+          <div class="social-proof">
+            Know the route&nbsp;&middot;&nbsp;Own the weather&nbsp;&middot;&nbsp;Find the spots
           </div>
 
         </div><!-- /state-a-scroll -->
@@ -11890,10 +11887,6 @@
   var count = WALKS_DB.length + '+ walks';
   document.getElementById('meta-description').setAttribute('content',
     'Discover ' + count + ' across the UK with live weather checks, paw safety alerts and nearby dog-friendly spots.');
-  document.getElementById('hero-body-walk-count').textContent =
-    WALKS_DB.length + '+ handpicked UK walks with terrain, off-lead and livestock info - plus live weather checks and nearby dog-friendly spots.';
-  document.getElementById('social-proof-walk-count').innerHTML =
-    WALKS_DB.length + '+ handpicked UK walks&nbsp;\xb7&nbsp;Just open and explore&nbsp;\xb7&nbsp;Dog-specific routes';
 })();
 </script>
 

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>State A Redesign Mockup - Sniffout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ---- CSS Tokens (matching sniffout-v2.html) ---- */
+    :root {
+      --brand:     #3B5C2A;
+      --bg:        #F7F5F0;
+      --surface:   #FFFFFF;
+      --border:    #E5E7EB;
+      --ink:       #111827;
+      --ink-2:     #6B7280;
+      --amber:     #D97706;
+      --red:       #DC2626;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #D0CCC5;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 48px;
+      gap: 40px;
+    }
+
+    /* ---- Mockup wrapper ---- */
+    .mockup-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.45);
+    }
+
+    .phone-frame {
+      width: 390px;
+      min-height: 844px;
+      background: var(--bg);
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Screen content ---- */
+    .screen {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- State A header (AFTER: wordmark 20px per Change 5) ---- */
+    .state-a-header {
+      background: var(--bg);
+      padding: 8px 16px 16px;
+    }
+    .state-a-header .wordmark {
+      font-size: 20px;         /* Changed from 22px per spec Change 5 */
+      font-weight: 700;
+      color: var(--brand);
+      letter-spacing: -0.3px;
+    }
+
+    /* ---- Hero section (AFTER: no hero-body, no cta-block) ---- */
+    .hero-section {
+      padding: 24px 16px 20px; /* reduced bottom padding per Change 3 note */
+    }
+    .hero-headline {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .hero-subline {
+      font-size: 15px;
+      color: var(--ink-2);
+      line-height: 1.5;
+      margin-bottom: 24px;    /* extra space now that hero-body is gone */
+    }
+
+    /* ---- CTA: button sits directly on --bg (no cta-block wrapper) ---- */
+    .cta-primary {
+      width: 100%;
+      height: 56px;
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font: 600 15px/1 'Inter', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .cta-secondary {
+      display: block;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-2);
+      cursor: pointer;
+      margin-bottom: 24px;    /* per Change 2: add margin-bottom: 24px */
+    }
+
+    /* ---- Sniffout Picks section ---- */
+    .preview-picks-section {
+      padding: 8px 0 24px;
+    }
+    .preview-picks-header {
+      padding: 0 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .preview-picks-label {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.2px;
+    }
+    .preview-picks-prompt {
+      font-size: 13px;
+      color: var(--brand);
+      font-weight: 500;
+    }
+
+    /* ---- Trail carousel ---- */
+    .trail-carousel {
+      display: flex;
+      gap: 12px;
+      padding: 0 16px 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .trail-carousel::-webkit-scrollbar { display: none; }
+
+    /* ---- Trail card ---- */
+    .trail-card {
+      flex-shrink: 0;
+      width: 240px;
+      min-width: 240px;
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      opacity: 0.85; /* preview-carousel opacity */
+    }
+    .trail-card-photo {
+      height: 180px;
+      background: linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #2E7D5E 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .trail-card-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .trail-card-badge {
+      position: absolute;
+      bottom: 8px;
+      left: 10px;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 99px;
+      padding: 3px 8px;
+    }
+    .trail-card-body { padding: 10px 12px 14px; }
+    .trail-card-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+    .trail-card-meta {
+      font-size: 12px;
+      color: var(--ink-2);
+      margin-bottom: 6px;
+    }
+    .trail-card-tags { display: flex; gap: 4px; }
+    .trail-tag {
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 6px;
+      padding: 2px 8px;
+      color: var(--brand);
+      background: rgba(59,92,42,0.1);
+    }
+    .trail-tag.partial {
+      color: var(--amber);
+      background: rgba(217,119,6,0.08);
+    }
+
+    /* ---- Social proof (AFTER: new copy per Change 4) ---- */
+    .social-proof {
+      text-align: center;
+      font-size: 13px;
+      color: var(--ink-2);
+      padding: 0 16px 24px;
+      line-height: 1.8;
+    }
+
+    /* ---- Bottom nav (static, Today active) ---- */
+    .bottom-nav {
+      height: 64px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: stretch;
+      flex-shrink: 0;
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--ink-2);
+    }
+    .nav-item.active { color: var(--brand); }
+    .nav-item svg { display: block; }
+
+    /* ---- Mockup annotation ---- */
+    .annotation-block {
+      width: 390px;
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-size: 13px;
+      color: #374151;
+      line-height: 1.7;
+    }
+    .annotation-block h3 {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #6B7280;
+      margin-bottom: 10px;
+    }
+    .annotation-block ul {
+      padding-left: 18px;
+    }
+    .annotation-block li { margin-bottom: 4px; }
+    .annotation-block code {
+      font-family: ui-monospace, monospace;
+      font-size: 11px;
+      background: #F3F4F6;
+      border-radius: 4px;
+      padding: 1px 5px;
+      color: #1F2937;
+    }
+    .change-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+      background: var(--brand);
+      border-radius: 4px;
+      padding: 1px 6px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+  <span class="mockup-label">State A Redesign - Post Round 12 - Light mode</span>
+
+  <!-- Phone frame -->
+  <div class="phone-frame">
+    <div class="screen">
+
+      <!-- State A header: wordmark 20px (Change 5) -->
+      <div class="state-a-header">
+        <div class="wordmark">sniffout</div>
+      </div>
+
+      <!-- Hero section: no hero-body (Change 1), no cta-block wrapper (Change 2) -->
+      <div class="hero-section">
+        <h1 class="hero-headline">Discover great walks</h1>
+        <p class="hero-subline">Handpicked walks. Live conditions.</p>
+
+        <!-- CTA sits directly on --bg, no card wrapper -->
+        <button class="cta-primary">
+          <svg width="18" height="18" viewBox="0 0 18 22" fill="white" aria-hidden="true">
+            <path d="M9 0C5.13 0 2 3.13 2 7c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 116.5 7 2.5 2.5 0 019 9.5z"/>
+          </svg>
+          Find walks near me
+        </button>
+
+        <!-- cta-secondary: margin-bottom 24px (Change 2) -->
+        <span class="cta-secondary">Or enter a location &rarr;</span>
+      </div>
+
+      <!-- Sniffout Picks: carousel immediately below hero (Change 3 confirmed) -->
+      <div class="preview-picks-section">
+        <div class="preview-picks-header">
+          <span class="preview-picks-label">Sniffout Picks</span>
+          <span class="preview-picks-prompt">Set your location to see what's nearest &rarr;</span>
+        </div>
+
+        <div class="trail-carousel">
+
+          <!-- Card 1 -->
+          <div class="trail-card">
+            <div class="trail-card-photo">
+              <img src="placeholder-walk.jpg" alt="Malham Cove" onerror="this.style.display='none'">
+              <span class="trail-card-badge">Sniffout Pick</span>
+            </div>
+            <div class="trail-card-body">
+              <div class="trail-card-name">Malham Cove &amp; Gordale</div>
+              <div class="trail-card-meta">Malham, North Yorkshire - 4.2 mi</div>
+              <div class="trail-card-tags">
+                <span class="trail-tag">Full off-lead</span>
+                <span class="trail-tag">Moderate</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="trail-card">
+            <div class="trail-card-photo">
+              <img src="placeholder-walk.jpg" alt="Box Hill" onerror="this.style.display='none'">
+              <span class="trail-card-badge">Popular</span>
+            </div>
+            <div class="trail-card-body">
+              <div class="trail-card-name">Box Hill &amp; River Mole Loop</div>
+              <div class="trail-card-meta">Dorking, Surrey - 3.8 mi</div>
+              <div class="trail-card-tags">
+                <span class="trail-tag partial">Partial off-lead</span>
+                <span class="trail-tag">Mixed terrain</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="trail-card">
+            <div class="trail-card-photo">
+              <img src="placeholder-walk.jpg" alt="Brecon Beacons" onerror="this.style.display='none'">
+              <span class="trail-card-badge">Hidden gem</span>
+            </div>
+            <div class="trail-card-body">
+              <div class="trail-card-name">Brecon Beacons Waterfall Walk</div>
+              <div class="trail-card-meta">Pontneddfechan, Powys - 5.1 mi</div>
+              <div class="trail-card-tags">
+                <span class="trail-tag">Full off-lead</span>
+                <span class="trail-tag">Hard</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Social proof: new copy (Change 4) -->
+      <div class="social-proof">
+        65+ handpicked walks&nbsp;&middot;&nbsp;Live weather &amp; paw safety&nbsp;&middot;&nbsp;Off-lead &amp; terrain info
+      </div>
+
+    </div><!-- /screen -->
+
+    <!-- Bottom nav: Today active, other tabs greyed (matching State A nav behaviour) -->
+    <nav class="bottom-nav">
+      <!-- Today (active) -->
+      <div class="nav-item active">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+        Today
+      </div>
+      <!-- Weather (inactive) -->
+      <div class="nav-item" style="opacity:0.35;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        Weather
+      </div>
+      <!-- Walks (inactive) -->
+      <div class="nav-item" style="opacity:0.35;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M3 17l6-6 4 4 8-10"/>
+        </svg>
+        Walks
+      </div>
+      <!-- Nearby (inactive) -->
+      <div class="nav-item" style="opacity:0.35;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        Nearby
+      </div>
+      <!-- Me (inactive) -->
+      <div class="nav-item" style="opacity:0.35;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/>
+        </svg>
+        Me
+      </div>
+    </nav>
+  </div><!-- /phone-frame -->
+
+  <!-- Annotations -->
+  <div class="annotation-block">
+    <h3>Changes shown in this mockup</h3>
+    <ul>
+      <li><span class="change-tag">1</span> <code>p.hero-body</code> removed - feature paragraph eliminated</li>
+      <li><span class="change-tag">2</span> <code>.cta-block</code> wrapper removed - button and secondary link sit directly on <code>--bg</code>. <code>.cta-secondary</code> gets <code>margin-bottom: 24px</code></li>
+      <li><span class="change-tag">3</span> Picks carousel is now above the fold on 390px - no scroll required to see first card</li>
+      <li><span class="change-tag">4</span> Social proof: "65+ handpicked walks - Live weather &amp; paw safety - Off-lead &amp; terrain info" (no "Just open and explore", no "UK")</li>
+      <li><span class="change-tag">5</span> Wordmark: <code>22px</code> reduced to <code>20px</code> to match State B header</li>
+    </ul>
+  </div>
+
+</body>
+</html>

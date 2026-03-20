@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hourly Forecast — Sniffout Layout Mockup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ─── Design tokens (matches sniffout-v2.html) ─── */
+    :root {
+      --brand:   #3B5C2A;
+      --bg:      #F7F5F0;
+      --surface: #FFFFFF;
+      --border:  rgba(0,0,0,0.08);
+      --ink:     #1A1A1A;
+      --ink-2:   #6B6B6B;
+      --amber:   #F59E0B;
+      --red:     #EF4444;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 24px 16px 64px;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+
+    /* ─── Mockup header ─── */
+    .mockup-header {
+      margin-bottom: 20px;
+    }
+    .mockup-header h1 {
+      font: 700 15px/1 'Inter', sans-serif;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .mockup-header p {
+      font: 400 12px/1.5 'Inter', sans-serif;
+      color: var(--ink-2);
+    }
+
+    /* ─── Card wrapper (shared by both cards) ─── */
+    .wx-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .wx-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ─── Shared card header / divider ─── */
+    .wx-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .wx-card-title {
+      font: 600 15px/1 'Inter', sans-serif;
+      color: var(--ink);
+    }
+    .wx-card-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 12px;
+    }
+
+    /* ════════════════════════════════════════
+       SECTION 1 — Hourly forecast bar
+       (from hourly-forecast-spec.md)
+    ════════════════════════════════════════ */
+
+    .wx-hourly-best {
+      font: 700 15px/1 'Inter', sans-serif;
+      color: var(--brand);
+    }
+
+    /* Wrapper adds the right-edge fade */
+    .wx-hourly-fade {
+      position: relative;
+    }
+    .wx-hourly-fade::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 32px;
+      background: linear-gradient(to right, transparent, var(--surface));
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Scrollable row */
+    .wx-hourly-scroll {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .wx-hourly-scroll::-webkit-scrollbar { display: none; }
+
+    /* Individual hour card */
+    .wx-hour-card {
+      flex-shrink: 0;
+      width: 68px;
+      padding: 8px 6px;
+      border-radius: 12px;
+      border: 1.5px solid transparent;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      scroll-snap-align: start;
+      cursor: default;
+      transition: opacity 100ms;
+    }
+    .wx-hour-card:active { opacity: 0.88; }
+
+    /* Now card modifier */
+    .wx-hour-card--now {
+      border-color: var(--brand);
+    }
+
+    /* Quality tint modifiers */
+    .wx-hour-card--good     { background: rgba(59, 92, 42, 0.07); }
+    .wx-hour-card--marginal { background: rgba(245, 158, 11, 0.07); }
+
+    /* Card elements */
+    .wx-hour-time {
+      font: 400 11px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+      text-align: center;
+    }
+    .wx-hour-card--now .wx-hour-time {
+      font-weight: 600;
+      color: var(--brand);
+    }
+
+    .wx-hour-icon {
+      display: block;
+      width: 28px;
+      height: 28px;
+      margin-top: 4px;
+    }
+
+    .wx-hour-temp {
+      font: 700 14px/1 'Inter', sans-serif;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    .wx-hour-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      margin-top: 4px;
+    }
+    .wx-hour-dot--good     { background: var(--brand); }
+    .wx-hour-dot--marginal { background: var(--amber); }
+    .wx-hour-dot--poor     { background: rgba(0,0,0,0.12); }
+
+    /* Legend footer */
+    .wx-hourly-legend {
+      font: 400 12px/1.4 'Inter', sans-serif;
+      color: var(--ink-2);
+      margin-top: 12px;
+    }
+
+    /* ════════════════════════════════════════
+       SECTION 2 — Walk window card
+       (existing app component, unchanged)
+    ════════════════════════════════════════ */
+
+    .wx-walk-window-time {
+      font: 700 15px/1 'Inter', sans-serif;
+      color: var(--brand);
+    }
+
+    /* Hour bar labels */
+    .hour-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--ink-2);
+      margin-bottom: 6px;
+    }
+
+    /* Hour bar */
+    .hour-bar {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 8px;
+    }
+    .hour-seg {
+      height: 28px;
+      border-radius: 4px;
+      flex: 1;
+    }
+    .hour-seg.ideal    { background: var(--brand); }
+    .hour-seg.marginal { background: var(--amber); }
+    .hour-seg.poor     { background: var(--border); }
+
+    /* Legend */
+    .wx-window-legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 10px;
+      font: 400 11px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+    }
+    .wx-window-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .wx-window-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* Footer note */
+    .wx-walk-footer {
+      margin-top: 12px;
+      font: 400 12px/1.4 'Inter', sans-serif;
+      color: var(--ink-2);
+    }
+
+    /* ─── Section label (outside cards) ─── */
+    .section-note {
+      font: 500 10px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mockup-header">
+    <h1>Weather tab — layout mockup</h1>
+    <p>Dummy data: Now = 1pm. Walk Window shows full day 6am–midnight. Hourly bar shows Now onwards.</p>
+  </div>
+
+  <div class="wx-cards">
+
+    <!-- ══════════════════════════════════════
+         CARD 1 — Walk window
+         Full day 6am–midnight (18 segments).
+         Labels every 3 hours: 6am 9am 12pm 3pm 6pm 9pm
+         Quality: poor 6am–8am, marginal 9am–11am,
+         good 12pm–5pm, marginal 6pm, poor 7pm–11pm
+    ══════════════════════════════════════ -->
+
+    <p class="section-note">Card 1 — Walk window (existing, whole-day scope)</p>
+
+    <div class="wx-card">
+
+      <div class="wx-card-header">
+        <span class="wx-card-title">Walk window</span>
+        <span class="wx-walk-window-time">Best: 2pm – 5pm</span>
+      </div>
+
+      <div class="wx-card-divider"></div>
+
+      <!-- Labels at 6am, 9am, 12pm, 3pm, 6pm, 9pm (every 3 of 18 segments) -->
+      <div class="hour-bar-labels">
+        <span>6am</span>
+        <span>9am</span>
+        <span>12pm</span>
+        <span>3pm</span>
+        <span>6pm</span>
+        <span>9pm</span>
+      </div>
+
+      <!-- 18 segments: 6am through 11pm -->
+      <div class="hour-bar">
+        <div class="hour-seg poor"></div>     <!-- 6am  -->
+        <div class="hour-seg poor"></div>     <!-- 7am  -->
+        <div class="hour-seg poor"></div>     <!-- 8am  -->
+        <div class="hour-seg marginal"></div> <!-- 9am  -->
+        <div class="hour-seg marginal"></div> <!-- 10am -->
+        <div class="hour-seg marginal"></div> <!-- 11am -->
+        <div class="hour-seg ideal"></div>    <!-- 12pm -->
+        <div class="hour-seg ideal"></div>    <!-- 1pm  Now -->
+        <div class="hour-seg ideal"></div>    <!-- 2pm  -->
+        <div class="hour-seg ideal"></div>    <!-- 3pm  -->
+        <div class="hour-seg ideal"></div>    <!-- 4pm  -->
+        <div class="hour-seg ideal"></div>    <!-- 5pm  -->
+        <div class="hour-seg marginal"></div> <!-- 6pm  -->
+        <div class="hour-seg poor"></div>     <!-- 7pm  -->
+        <div class="hour-seg poor"></div>     <!-- 8pm  -->
+        <div class="hour-seg poor"></div>     <!-- 9pm  -->
+        <div class="hour-seg poor"></div>     <!-- 10pm -->
+        <div class="hour-seg poor"></div>     <!-- 11pm -->
+      </div>
+
+      <div class="wx-window-legend">
+        <div class="wx-window-legend-item">
+          <div class="wx-window-legend-dot" style="background:var(--brand)"></div>Good
+        </div>
+        <div class="wx-window-legend-item">
+          <div class="wx-window-legend-dot" style="background:var(--amber)"></div>Marginal
+        </div>
+        <div class="wx-window-legend-item">
+          <div class="wx-window-legend-dot" style="background:var(--border)"></div>Poor
+        </div>
+      </div>
+
+      <div class="wx-walk-footer">Rain possible from 6pm. Best window: 2pm – 5pm based on rain probability.</div>
+
+    </div><!-- /.wx-card (walk window) -->
+
+
+    <!-- ══════════════════════════════════════
+         CARD 2 — Hour by hour
+         Scrollable hourly bar from Now (1pm)
+         through 11pm. No best-window annotation.
+         No legend footer.
+    ══════════════════════════════════════ -->
+
+    <p class="section-note">Card 2 — Hour by hour (proposed, Now onwards)</p>
+
+    <div class="wx-card">
+      <div class="wx-card-header">
+        <span class="wx-card-title">Hour by hour</span>
+      </div>
+      <div class="wx-card-divider"></div>
+
+      <div class="wx-hourly-fade">
+        <div class="wx-hourly-scroll">
+
+          <!-- Now (1pm) — good -->
+          <div class="wx-hour-card wx-hour-card--now wx-hour-card--good">
+            <span class="wx-hour-time">Now</span>
+            <img class="wx-hour-icon"
+              src="https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/02d.svg"
+              alt="Partly cloudy">
+            <span class="wx-hour-temp" style="color:#1A1A1A">12°</span>
+            <div class="wx-hour-dot wx-hour-dot--good"></div>
+          </div>
+
+          <!-- 2pm — good -->
+          <div class="wx-hour-card wx-hour-card--good">
+            <span class="wx-hour-time">2pm</span>
+            <img class="wx-hour-icon"
+              src="https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/01d.svg"
+              alt="Clear sky">
+            <span class="wx-hour-temp" style="color:#1A1A1A">14°</span>
+            <div class="wx-hour-dot wx-hour-dot--good"></div>
+          </div>
+
+          <!-- 3pm — good -->
+          <div class="wx-hour-card wx-hour-card--good">
+            <span class="wx-hour-time">3pm</span>
+            <img class="wx-hour-icon"
+              src="https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/01d.svg"
+              alt="Clear sky">
+            <span class="wx-hour-temp" style="color:#1A1A1A">15°</span>
+            <div class="wx-hour-dot wx-hour-dot--good"></div>
+          </div>
+
+          <!-- 4pm — good -->
+          <div class="wx-hour-card wx-hour-card--good">
+            <span class="wx-hour-time">4pm</span>
+            <img class="wx-hour-icon"
+              src="https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/02d.svg"
+              alt="Partly cloudy">
+            <span class="wx-hour-temp" style="color:#1A1A1A">14°</span>
+            <div class="wx-hour-dot wx-hour-dot--good"></div>
+          </div>
+
+          <!-- 5pm — good -->
+          <div class="wx-hour-card wx-hour-card--good">
+            <span class="wx-hour-time">5pm</span>
+            <img class="wx-hour-icon"
+              src="https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/03d.svg"
+              alt="Mostly cloudy">
+            <span class="wx-hour-temp" style="color:#1A1A1A">13°</span>
+            <div class="wx-hour-dot wx-hour-dot--good"></div>
+          </div>
+
+          <!-- 6pm — marginal -->
+          <div class="wx-hour-card wx-hour-card--marginal">
+            <span class="wx-hour-time">6pm</span>
+            <img class="wx-hour-icon"
+              src="https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/40d.svg"
+              alt="Light showers">
+            <span class="wx-hour-temp" style="color:#1A1A1A">11°</span>
+            <div class="wx-hour-dot wx-hour-dot--marginal"></div>
+          </div>
+
+          <!-- 7pm — poor -->
+          <div class="wx-hour-card">
+            <span class="wx-hour-time">7pm</span>
+            <img class="wx-hour-icon"
+              src="https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/09.svg"
+              alt="Rain">
+            <span class="wx-hour-temp" style="color:#6B6B6B">9°</span>
+            <div class="wx-hour-dot wx-hour-dot--poor"></div>
+          </div>
+
+          <!-- 8pm — poor -->
+          <div class="wx-hour-card">
+            <span class="wx-hour-time">8pm</span>
+            <img class="wx-hour-icon"
+              src="https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/09.svg"
+              alt="Rain">
+            <span class="wx-hour-temp" style="color:#6B6B6B">8°</span>
+            <div class="wx-hour-dot wx-hour-dot--poor"></div>
+          </div>
+
+          <!-- 9pm — poor -->
+          <div class="wx-hour-card">
+            <span class="wx-hour-time">9pm</span>
+            <img class="wx-hour-icon"
+              src="https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/04.svg"
+              alt="Overcast">
+            <span class="wx-hour-temp" style="color:#6B6B6B">7°</span>
+            <div class="wx-hour-dot wx-hour-dot--poor"></div>
+          </div>
+
+          <!-- 10pm — poor -->
+          <div class="wx-hour-card">
+            <span class="wx-hour-time">10pm</span>
+            <img class="wx-hour-icon"
+              src="https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/04.svg"
+              alt="Overcast">
+            <span class="wx-hour-temp" style="color:#6B6B6B">6°</span>
+            <div class="wx-hour-dot wx-hour-dot--poor"></div>
+          </div>
+
+          <!-- 11pm — poor -->
+          <div class="wx-hour-card">
+            <span class="wx-hour-time">11pm</span>
+            <img class="wx-hour-icon"
+              src="https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/04.svg"
+              alt="Overcast">
+            <span class="wx-hour-temp" style="color:#6B6B6B">5°</span>
+            <div class="wx-hour-dot wx-hour-dot--poor"></div>
+          </div>
+
+        </div><!-- /.wx-hourly-scroll -->
+      </div><!-- /.wx-hourly-fade -->
+
+    </div><!-- /.wx-card (hour by hour) -->
+
+  </div><!-- /.wx-cards -->
+
+</body>
+</html>
