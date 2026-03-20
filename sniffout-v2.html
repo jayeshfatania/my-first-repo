@@ -9334,7 +9334,7 @@
 
   function renderPortraitCard(walk) {
     var fav = isFavourited(walk.id);
-    var photoStyle = walk.imageUrl ? '' : 'background:var(--brand);';
+    var photoStyle = walk.imageUrl ? '' : '';
     var photoInner = walk.imageUrl ? '<img src="' + walk.imageUrl + '" alt="' + walk.name + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">' : '';
     var badgeHTML  = walk.badge ? '<div class="portrait-badge">' + walk.badge + '</div>' : '';
 
