@@ -1191,11 +1191,12 @@
     .wx-temp-sheet-hl { font: 500 14px/1 'Inter', sans-serif; color: var(--ink-2); }
     .wx-temp-divider { border: none; border-top: 1px solid var(--border); margin: 0 0 12px; }
     .wx-temp-rows { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-    .wx-temp-row { display: flex; align-items: center; gap: 10px; height: 40px; }
-    .wx-temp-row-time { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); width: 40px; flex-shrink: 0; }
+    .wx-temp-row { display: flex; align-items: center; height: 40px; }
+    .wx-temp-row-time { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); width: 44px; flex-shrink: 0; }
+    .wx-temp-row-temp-block { flex: 1; display: flex; flex-direction: column; }
     .wx-temp-row-value { font: 700 15px/1 'Inter', sans-serif; }
-    .wx-temp-row-fl { font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); }
-    .wx-temp-row-dot { width: 8px; height: 8px; border-radius: 50%; margin-left: auto; flex-shrink: 0; }
+    .wx-temp-row-fl { font: 400 12px/1 'Inter', sans-serif; color: var(--ink-2); margin-top: 3px; }
+    .wx-temp-row-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; margin-left: 12px; }
     .wx-temp-row-dot--good    { background: var(--brand); }
     .wx-temp-row-dot--caution { background: var(--amber); }
     .wx-temp-row-dot--poor    { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(0,0,0,0.12); }
@@ -5339,8 +5340,10 @@
       rowsHTML +=
         '<div class="wx-temp-row">' +
           '<span class="wx-temp-row-time">' + timeLabel + '</span>' +
-          '<span class="wx-temp-row-value" style="color:' + tempColor + '">' + t + '\u00b0</span>' +
-          flHTML +
+          '<div class="wx-temp-row-temp-block">' +
+            '<span class="wx-temp-row-value" style="color:' + tempColor + '">' + t + '\u00b0</span>' +
+            flHTML +
+          '</div>' +
           '<div class="wx-temp-row-dot ' + dotCls + '"></div>' +
         '</div>';
     }
