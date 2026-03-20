@@ -1870,6 +1870,8 @@
       -webkit-tap-highlight-color: transparent;
     }
     .log-walk-save-btn:active { opacity: 0.85; }
+    .log-walk-cancel-btn { display: block; width: 100%; margin-top: 10px; padding: 12px; background: none; border: none; font: 500 15px/1 'Inter', sans-serif; color: var(--ink-2); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .log-walk-cancel-btn:active { opacity: 0.6; }
     /* ─── Custom entry chip in journal ─── */
     .journal-row-custom-chip {
       display: inline-block;
@@ -6159,9 +6161,6 @@
       } else if (isWalked(walk.id)) {
         // State 3 — walked before, not today
         walkedBtn.className = 'walked-btn';
-        walkedBtn.style.borderColor = 'rgba(59,92,42,0.25)';
-        walkedBtn.style.color       = 'var(--brand)';
-        walkedBtn.style.fontWeight  = '600';
         walkedBtn.innerHTML = luIcon('rotate-ccw', 15, 'flex-shrink:0;') + '<span>Walk again</span>';
         walkedBtn.onclick = function() { onMarkWalked(walk.id, walkedBtn); };
       } else {
@@ -10977,6 +10976,7 @@
     <textarea class="log-walk-textarea" id="logWalkNote" rows="3" placeholder="Add a note about this walk..."></textarea>
   </div>
   <button class="log-walk-save-btn" onclick="saveCustomWalk()">Save</button>
+  <button class="log-walk-cancel-btn" onclick="closeLogWalkSheet()">Cancel</button>
 </div>
 
 <!-- Walk detail overlay — FIX 12.1 -->
