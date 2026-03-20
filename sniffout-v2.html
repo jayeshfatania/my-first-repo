@@ -3584,7 +3584,7 @@
         <div class="state-a-scroll">
 
           <div class="hero-section">
-            <h1 class="hero-headline">We'll take the lead.</h1>
+            <h1 class="hero-headline">Paws before you go.</h1>
             <p class="hero-subline">Handpicked walks. Live conditions.</p>
 
             <button class="cta-primary" id="btn-use-location">
@@ -9919,25 +9919,12 @@
     });
   });
 
-  /* ─── State A preview carousel ─── */
-  var PREVIEW_PICK_IDS = ['isabella-plantation', 'stanage-edge', 'balmaha-loch-lomond', 'rhossili-gower', 'seven-sisters', 'formby-beach-pinewoods', 'alnmouth-northumberland'];
-
-  function renderStateAPreviews() {
-    var carousel = document.getElementById('preview-picks-carousel');
-    if (!carousel) return;
-    var walks = PREVIEW_PICK_IDS.map(function(id) {
-      return WALKS_DB.filter(function(w) { return w.id === id; })[0];
-    }).filter(Boolean);
-    carousel.innerHTML = walks.map(renderTrailCard).join('');
-  }
-
   /* ─── Init ─── */
   renderWalksTab();
   renderFavouritesList();
   updateMeStats();
   renderWalkLogSection();
   renderMeBadges();
-  renderStateAPreviews();
 </script>
 
 <script>
@@ -10362,6 +10349,20 @@
   };
 
   // restoreSession override removed — initApp() handles all tab rendering on load
+
+  /* ─── State A showcase carousel ─── */
+  var PREVIEW_PICK_IDS = ['isabella-plantation', 'stanage-edge', 'balmaha-loch-lomond', 'rhossili-gower', 'seven-sisters', 'formby-beach-pinewoods', 'alnmouth-northumberland'];
+
+  function renderStateAPreviews() {
+    var carousel = document.getElementById('preview-picks-carousel');
+    if (!carousel) return;
+    var walks = PREVIEW_PICK_IDS.map(function(id) {
+      return WALKS_DB.filter(function(w) { return w.id === id; })[0];
+    }).filter(Boolean);
+    carousel.innerHTML = walks.map(renderTrailCard).join('');
+  }
+
+  renderStateAPreviews();
 </script>
 
 <script>
