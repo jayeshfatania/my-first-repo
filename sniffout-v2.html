@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Discover 25 handpicked UK dog walks with live weather checks, paw safety alerts and nearby dog-friendly spots.">
+  <meta name="description" content="Discover 25 handpicked UK dog walks with live weather checks, paw safety alerts and nearby dog-friendly spots." id="meta-description">
   <title>Sniffout — Dog walks &amp; weather for the UK</title>
 
   <!-- PWA -->
@@ -3586,7 +3586,7 @@
           <div class="hero-section">
             <h1 class="hero-headline">Discover great walks</h1>
             <p class="hero-subline">Handpicked walks. Live conditions.</p>
-            <p class="hero-body">25 handpicked UK walks with terrain, off-lead and livestock info - plus live weather checks and nearby dog-friendly spots.</p>
+            <p class="hero-body" id="hero-body-walk-count">25 handpicked UK walks with terrain, off-lead and livestock info - plus live weather checks and nearby dog-friendly spots.</p>
 
             <div class="cta-block">
               <button class="cta-primary" id="btn-use-location">
@@ -3633,7 +3633,7 @@
           </div>
 
           <!-- Social proof -->
-          <div class="social-proof">
+          <div class="social-proof" id="social-proof-walk-count">
             25 handpicked UK walks&nbsp;·&nbsp;Just open and explore&nbsp;·&nbsp;Dog-specific routes
           </div>
 
@@ -11884,6 +11884,18 @@
   <div class="wx-sheet-note" id="wxSheetNote"></div>
 </div>
 
+
+<script>
+(function() {
+  var count = WALKS_DB.length + '+ walks';
+  document.getElementById('meta-description').setAttribute('content',
+    'Discover ' + count + ' across the UK with live weather checks, paw safety alerts and nearby dog-friendly spots.');
+  document.getElementById('hero-body-walk-count').textContent =
+    WALKS_DB.length + '+ handpicked UK walks with terrain, off-lead and livestock info - plus live weather checks and nearby dog-friendly spots.';
+  document.getElementById('social-proof-walk-count').innerHTML =
+    WALKS_DB.length + '+ handpicked UK walks&nbsp;\xb7&nbsp;Just open and explore&nbsp;\xb7&nbsp;Dog-specific routes';
+})();
+</script>
 
 </body>
 </html>
