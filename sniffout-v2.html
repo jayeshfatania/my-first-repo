@@ -10795,12 +10795,49 @@
     if (panel) panel.scrollTop = 0;
   });
 
-  /* ─── Keep Me tab stats fresh when app regains focus ─── */
+  /* ─── Silent weather auto-refresh ─── */
+
+  var SILENT_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
+  var _hiddenAt = null;
+
+  // Silently re-fetch weather if location is set and last fetch was >= 5 min ago.
+  // No loading indicator is shown - the existing rendered data stays in place
+  // until the fresh fetch completes and re-renders.
+  function silentWeatherRefresh() {
+    try {
+      if (!isStateB) return; // No location set - nothing to refresh
+      var raw = localStorage.getItem(SESSION_KEY);
+      if (!raw) return;
+      var s = JSON.parse(raw);
+      if (!s || !s.lat || !s.lon) return;
+      if (Date.now() - s.timestamp < SILENT_REFRESH_INTERVAL) return; // Too soon
+      loadWeatherAndShow(s.lat, s.lon, s.location);
+    } catch(e) {}
+  }
+
+  // CHANGE 1 - Refresh on app focus.
+  // Track how long the app was hidden. On return, only refresh if hidden >= 5 min.
   document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) {
+    if (document.hidden) {
+      _hiddenAt = Date.now();
+    } else {
       updateMeStats();
+      if (_hiddenAt !== null && Date.now() - _hiddenAt >= SILENT_REFRESH_INTERVAL) {
+        silentWeatherRefresh();
+      }
+      _hiddenAt = null;
     }
   });
+
+  // CHANGE 2 - Refresh on tab switch to Today or Weather.
+  // Wrap switchTab so switching to these tabs triggers a silent refresh if stale.
+  var _origSwitchTab = switchTab;
+  switchTab = function(id) {
+    _origSwitchTab(id);
+    if (id === 'today' || id === 'weather') {
+      silentWeatherRefresh();
+    }
+  };
 </script>
 
 <script>
