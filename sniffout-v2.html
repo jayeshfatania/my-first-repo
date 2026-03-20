@@ -1076,7 +1076,10 @@
     .wx-hero-main {
       display: flex; align-items: center; justify-content: center; gap: 56px;
     }
-    .wx-hero-temp-block { display: flex; align-items: flex-start; gap: 2px; }
+    .wx-hero-temp-block { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+    .wx-hero-temp-block:active { opacity: 0.78; }
+    .wx-hero-temp-inner { display: flex; align-items: flex-start; gap: 2px; }
+    .wx-temp-chevron { display: block; margin: 6px auto 0; color: var(--ink-2); opacity: 0.55; }
     .wx-hero-temp { font: 700 80px/1 'Inter', sans-serif; color: var(--ink); letter-spacing: -3px; }
     .wx-hero-unit { font: 400 32px/1 'Inter', sans-serif; color: var(--ink-2); margin-top: 8px; }
     .wx-hero-icon { width: 96px; height: 96px; flex-shrink: 0; }
@@ -1170,6 +1173,33 @@
     .wx-sheet-badge--moderate { background: rgba(245,158,11,0.12); color: #B45309; }
     .wx-sheet-badge--high     { background: rgba(239,68,68,0.12); color: var(--red); }
     .wx-sheet-note { margin-top: 16px; font: 400 13px/1.4 'Inter', sans-serif; color: var(--ink-2); border-top: 1px solid var(--border); padding-top: 12px; }
+
+    /* Temperature hourly sheet */
+    .wx-temp-sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; }
+    .wx-temp-sheet-overlay[hidden] { display: none; }
+    .wx-temp-sheet {
+      position: fixed; bottom: 0; left: 0; right: 0; max-height: 65vh;
+      background: var(--surface); border-radius: 20px 20px 0 0;
+      padding: 12px 16px 32px; z-index: 201;
+      transform: translateY(100%); transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+      display: flex; flex-direction: column;
+    }
+    .wx-temp-sheet.is-open { transform: translateY(0); }
+    .wx-temp-sheet[hidden] { display: none; }
+    .wx-temp-sheet-title-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+    .wx-temp-sheet-title { font: 700 17px/1 'Inter', sans-serif; color: var(--ink); }
+    .wx-temp-sheet-hl { font: 500 14px/1 'Inter', sans-serif; color: var(--ink-2); }
+    .wx-temp-divider { border: none; border-top: 1px solid var(--border); margin: 0 0 12px; }
+    .wx-temp-rows { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .wx-temp-row { display: flex; align-items: center; gap: 10px; height: 40px; }
+    .wx-temp-row-time { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); width: 40px; flex-shrink: 0; }
+    .wx-temp-row-value { font: 700 15px/1 'Inter', sans-serif; }
+    .wx-temp-row-fl { font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); }
+    .wx-temp-row-dot { width: 8px; height: 8px; border-radius: 50%; margin-left: auto; flex-shrink: 0; }
+    .wx-temp-row-dot--good    { background: var(--brand); }
+    .wx-temp-row-dot--caution { background: var(--amber); }
+    .wx-temp-row-dot--poor    { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(0,0,0,0.12); }
+    .wx-temp-footer { font: 400 12px/1.4 'Inter', sans-serif; color: var(--ink-2); margin-top: 12px; }
 
     /* Walk window legend (reused in new card) */
     .wx-window-legend { display: flex; gap: 14px; margin-top: 10px; font: 400 11px/1 'Inter', sans-serif; color: var(--ink-2); }
@@ -4766,6 +4796,7 @@
   /* ─── Weather tab helpers ─── */
 
   var wxHourlyData = null; // Set by renderWeatherTab, read by openWxSheet
+  var wxDailyData  = null; // Set by renderWeatherTab, read by openTempSheet
 
   function kmhToMph(kmh) { return Math.round(kmh * 0.6214); }
 
@@ -4847,6 +4878,7 @@
     if (!content) return;
 
     wxHourlyData = hourly;
+    wxDailyData  = daily;
 
     var temp     = Math.round(cur.temperature_2m);
     var feels    = Math.round(cur.apparent_temperature);
@@ -4994,9 +5026,12 @@
           '<span>' + dateStr + '</span>' +
         '</div>' +
         '<div class="wx-hero-main">' +
-          '<div class="wx-hero-temp-block">' +
-            '<span class="wx-hero-temp">' + temp + '</span>' +
-            '<span class="wx-hero-unit">&#176;C</span>' +
+          '<div class="wx-hero-temp-block" onclick="openTempSheet()">' +
+            '<div class="wx-hero-temp-inner">' +
+              '<span class="wx-hero-temp">' + temp + '</span>' +
+              '<span class="wx-hero-unit">&#176;C</span>' +
+            '</div>' +
+            '<svg class="wx-temp-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>' +
           '</div>' +
           (heroIconSrc ? '<img class="wx-hero-icon" src="' + heroIconSrc + '" alt="' + (WMO_DESC[cur.weather_code] || 'Weather') + '" width="96" height="96">' : '') +
         '</div>' +
@@ -5249,6 +5284,87 @@
     }, { once: true });
   }
 
+  /* ─── Temperature hourly sheet ─── */
+
+  function openTempSheet() {
+    var overlay  = document.getElementById('wxTempSheetOverlay');
+    var sheet    = document.getElementById('wxTempSheet');
+    var hlEl     = document.getElementById('wxTempSheetHL');
+    var rowsEl   = document.getElementById('wxTempSheetRows');
+    var footerEl = document.getElementById('wxTempSheetFooter');
+    if (!overlay || !sheet) return;
+
+    var hourly = wxHourlyData;
+    var daily  = wxDailyData;
+    if (!hourly) return;
+
+    // H/L
+    var todayHigh = (daily && daily.temperature_2m_max) ? Math.round(daily.temperature_2m_max[0]) : '--';
+    var todayLow  = (daily && daily.temperature_2m_min) ? Math.round(daily.temperature_2m_min[0]) : '--';
+    if (hlEl) hlEl.textContent = 'H ' + todayHigh + '\u00b0  L ' + todayLow + '\u00b0';
+
+    // Build rows: current hour through midnight
+    var currentH = new Date().getHours();
+    var limit    = Math.min(24, hourly.time ? hourly.time.length : 0);
+    var rowsHTML = '';
+    var anyFL    = false;
+
+    for (var i = currentH; i < limit; i++) {
+      var t  = Math.round(hourly.temperature_2m[i] || 0);
+      var at = Math.round((hourly.apparent_temperature && hourly.apparent_temperature[i] != null)
+                          ? hourly.apparent_temperature[i] : t);
+      var prob = hourly.precipitation_probability ? (hourly.precipitation_probability[i] || 0) : 0;
+
+      // Time label
+      var timeLabel = (i === currentH) ? 'Now' : formatHour(i % 24);
+
+      // Temperature colour by comfort range
+      var tempColor;
+      if      (t < 2)  tempColor = '#6B9FD4';
+      else if (t < 8)  tempColor = 'var(--ink-2)';
+      else if (t < 23) tempColor = 'var(--ink)';
+      else if (t < 28) tempColor = 'var(--amber)';
+      else             tempColor = 'var(--red)';
+
+      // Walk quality dot — same logic as buildHourBar hour-seg
+      var dotCls = prob >= 60 ? 'wx-temp-row-dot--poor' : (prob >= 30 ? 'wx-temp-row-dot--caution' : 'wx-temp-row-dot--good');
+
+      // Feels-like — only when diff >= 2°C
+      var flHTML = '';
+      if (Math.abs(at - t) >= 2) {
+        anyFL = true;
+        flHTML = '<span class="wx-temp-row-fl">FL ' + at + '\u00b0</span>';
+      }
+
+      rowsHTML +=
+        '<div class="wx-temp-row">' +
+          '<span class="wx-temp-row-time">' + timeLabel + '</span>' +
+          '<span class="wx-temp-row-value" style="color:' + tempColor + '">' + t + '\u00b0</span>' +
+          flHTML +
+          '<div class="wx-temp-row-dot ' + dotCls + '"></div>' +
+        '</div>';
+    }
+
+    if (rowsEl) rowsEl.innerHTML = rowsHTML;
+    if (footerEl) footerEl.style.display = anyFL ? '' : 'none';
+
+    overlay.hidden = false;
+    sheet.hidden   = false;
+    history.pushState(null, '', location.href);
+    requestAnimationFrame(function() { sheet.classList.add('is-open'); });
+  }
+
+  function closeTempSheet() {
+    var sheet   = document.getElementById('wxTempSheet');
+    var overlay = document.getElementById('wxTempSheetOverlay');
+    if (!sheet) return;
+    sheet.classList.remove('is-open');
+    sheet.addEventListener('transitionend', function() {
+      sheet.hidden   = true;
+      overlay.hidden = true;
+    }, { once: true });
+  }
+
   /* ─── Main render entry point ─── */
 
   function renderWeather(data, locationName) {
@@ -5274,8 +5390,8 @@
   document.addEventListener('DOMContentLoaded', function() {
     var overlay = document.getElementById('wxSheetOverlay');
     if (overlay) overlay.addEventListener('click', closeWxSheet);
-    /* wxSheet is declared after this script block in the HTML, so
-       addSheetSwipe must be deferred to DOMContentLoaded */
+    /* wxSheet and wxTempSheet are declared after this script block in the HTML,
+       so addSheetSwipe must be deferred to DOMContentLoaded */
     addSheetSwipe(
       document.getElementById('wxSheet'),
       null,
@@ -5286,6 +5402,13 @@
         if (ov)    { ov.hidden = true; }
       }
     );
+    addSheetSwipe(
+      document.getElementById('wxTempSheet'),
+      document.getElementById('wxTempSheetRows'),
+      closeTempSheet
+    );
+    var tempOverlay = document.getElementById('wxTempSheetOverlay');
+    if (tempOverlay) tempOverlay.addEventListener('click', closeTempSheet);
   });
 
   /* ─── Init: session restore is handled by initApp() at end of all phases ─── */
@@ -6064,6 +6187,11 @@
     var wxSheet = document.getElementById('wxSheet');
     if (wxSheet && !wxSheet.hidden && wxSheet.classList.contains('is-open')) {
       closeWxSheet();
+      return true;
+    }
+    var wxTempSheet = document.getElementById('wxTempSheet');
+    if (wxTempSheet && !wxTempSheet.hidden && wxTempSheet.classList.contains('is-open')) {
+      closeTempSheet();
       return true;
     }
     var meSettings = document.getElementById('meSettingsSheet');
@@ -11805,6 +11933,19 @@
   <div class="wx-sheet-title" id="wxSheetTitle"></div>
   <div class="wx-sheet-rows" id="wxSheetRows"></div>
   <div class="wx-sheet-note" id="wxSheetNote"></div>
+</div>
+
+<!-- Temperature hourly breakdown sheet -->
+<div class="wx-temp-sheet-overlay" id="wxTempSheetOverlay" hidden></div>
+<div class="wx-temp-sheet" id="wxTempSheet" hidden>
+  <div class="wx-sheet-handle"></div>
+  <div class="wx-temp-sheet-title-row">
+    <span class="wx-temp-sheet-title">Temperature today</span>
+    <span class="wx-temp-sheet-hl" id="wxTempSheetHL"></span>
+  </div>
+  <hr class="wx-temp-divider">
+  <div class="wx-temp-rows" id="wxTempSheetRows"></div>
+  <div class="wx-temp-footer" id="wxTempSheetFooter">Feels like shown where it differs from actual by 2° or more.</div>
 </div>
 
 </body>
