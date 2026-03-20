@@ -9927,7 +9927,7 @@
       method: 'POST',
       headers: {
         'Content-Type':     'application/json',
-        'X-Goog-FieldMask': 'places.name,places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.googleMapsUri,places.location,places.photos'
+        'X-Goog-FieldMask': 'places.name,places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.regularOpeningHours,places.googleMapsUri,places.location,places.photos,places.primaryType'
       },
       body: JSON.stringify(body)
     })
@@ -9955,12 +9955,26 @@
           isOpen:      openNow,
           mapsUrl:     p.googleMapsUri || '',
           photoUrl:    photoUrl,
+          primaryType: p.primaryType || null,
           cat:         cat,
           lat:         plat,
           lon:         plon,
           dist:        distKm
         };
       });
+      // Pub category: filter out non-pub venue types and names
+      if (cat === 'pub') {
+        var PUB_EXCLUDE_TYPES = ['night_club', 'casino', 'liquor_store', 'meal_delivery', 'fast_food_restaurant'];
+        var PUB_EXCLUDE_NAMES = ['cocktail', 'nightclub', 'night club', 'strip club', "gentlemen's club", 'karaoke'];
+        places = places.filter(function(p) {
+          if (p.primaryType && PUB_EXCLUDE_TYPES.indexOf(p.primaryType) !== -1) return false;
+          var nameLower = p.name.toLowerCase();
+          for (var k = 0; k < PUB_EXCLUDE_NAMES.length; k++) {
+            if (nameLower.indexOf(PUB_EXCLUDE_NAMES[k]) !== -1) return false;
+          }
+          return true;
+        });
+      }
       // Safety-net: drop anything the API returned outside the strict radius
       places = places.filter(function(p) { return p.dist === null || p.dist <= radiusKm; });
       places.sort(function(a, b) { return (a.dist || 999) - (b.dist || 999); });
