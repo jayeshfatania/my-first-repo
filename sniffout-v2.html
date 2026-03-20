@@ -26,6 +26,12 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- Firebase JS SDK (compat v10.12.0) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+
   <style>
     /* ─── CSS Tokens ─── */
     :root {
@@ -5491,8 +5497,10 @@
         wind_speed   = wc.wind_speed_10m != null ? wc.wind_speed_10m : null;
       }
     } catch(e) {}
-    log.unshift({ id: id, type: 'curated', ts: Date.now(), weather_code: weather_code, is_day: is_day, wind_speed: wind_speed, note: null });
+    var logEntry = { id: id, type: 'curated', ts: Date.now(), weather_code: weather_code, is_day: is_day, wind_speed: wind_speed, note: null };
+    log.unshift(logEntry);
     try { localStorage.setItem('sniffout_walk_log', JSON.stringify(log)); } catch(e) {}
+    fsWriteWalkLogEntry(logEntry);
     checkBadgeEarned();
   }
 
@@ -7797,7 +7805,10 @@
           found = true;
         }
       });
-      if (found) localStorage.setItem('sniffout_walk_log', JSON.stringify(log));
+      if (found) {
+        localStorage.setItem('sniffout_walk_log', JSON.stringify(log));
+        fsUpdateWalkNote(ts, note);
+      }
     } catch(e) {}
   }
 
@@ -9303,6 +9314,7 @@
     var log = getWalkLog();
     log.unshift(entry);
     try { localStorage.setItem('sniffout_walk_log', JSON.stringify(log)); } catch(e) {}
+    fsWriteWalkLogEntry(entry);
     checkBadgeEarned();
     updateMeStats();
     closeLogWalkSheet();
@@ -11890,6 +11902,171 @@
 
   // Sync radius chips on load
   syncRadiusChips();
+</script>
+
+<script>
+  /* ═══════════════════════════════
+     FIREBASE — Initialisation, Auth, Firestore helpers
+  ═══════════════════════════════ */
+
+  /* ─── Firebase config ─── */
+  var firebaseConfig = {
+    apiKey:            'AIzaSyBw3gCJmzmkghDBXqvaH0v8w-AjegVBCCw',
+    authDomain:        'sniffout-fe976.firebaseapp.com',
+    projectId:         'sniffout-fe976',
+    storageBucket:     'sniffout-fe976.firebasestorage.app',
+    messagingSenderId: '215294666916',
+    appId:             '1:215294666916:web:75f344237046d5b903de31',
+    measurementId:     'G-B1GQG1KWD3'
+  };
+
+  /* ─── Globals ─── */
+  var db      = null;
+  var auth    = null;
+  var storage = null;
+  var fsUid   = null; // set after anonymous sign-in
+
+  /* ─── Init ─── */
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db      = firebase.firestore();
+    auth    = firebase.auth();
+    storage = firebase.storage();
+
+    // Enable offline persistence (Firestore-level local cache)
+    db.enablePersistence({ synchronizeTabs: true }).catch(function(err) {
+      console.warn('Firestore persistence unavailable:', err.code);
+    });
+
+    // Anonymous auth — silent, graceful degradation on failure
+    auth.signInAnonymously().then(function(result) {
+      fsUid = result.user.uid;
+    }).catch(function(err) {
+      console.warn('Firebase anonymous auth failed:', err);
+    });
+  } catch(e) {
+    console.warn('Firebase init failed:', e);
+  }
+
+  /*
+   * ─── Firestore security rules ──────────────────────────────────────────────
+   * Paste these in Firebase Console › Firestore Database › Rules
+   *
+   * rules_version = '2';
+   * service cloud.firestore {
+   *   match /databases/{database}/documents {
+   *
+   *     // Each user can only read/write their own document and subcollections
+   *     match /users/{uid} {
+   *       allow read, write: if request.auth != null && request.auth.uid == uid;
+   *
+   *       match /{subcollection}/{docId} {
+   *         allow read, write: if request.auth != null && request.auth.uid == uid;
+   *       }
+   *     }
+   *
+   *     // Deny everything else
+   *     match /{document=**} {
+   *       allow read, write: if false;
+   *     }
+   *   }
+   * }
+   * ──────────────────────────────────────────────────────────────────────── */
+
+  /*
+   * ─── Firebase Storage security rules ───────────────────────────────────────
+   * Paste these in Firebase Console › Storage › Rules
+   *
+   * rules_version = '2';
+   * service firebase.storage {
+   *   match /b/{bucket}/o {
+   *
+   *     // Walk photos: only the owning user can read or write
+   *     match /users/{uid}/walkPhotos/{photo} {
+   *       allow read, write: if request.auth != null && request.auth.uid == uid;
+   *     }
+   *
+   *     // Deny everything else
+   *     match /{allPaths=**} {
+   *       allow read, write: if false;
+   *     }
+   *   }
+   * }
+   * ──────────────────────────────────────────────────────────────────────── */
+
+  /* ─── Firestore helper: write walk log entry ─── */
+  function fsWriteWalkLogEntry(entry) {
+    if (!db || !fsUid || !entry) return;
+    try {
+      var walk  = entry.id ? WALKS_DB.filter(function(w) { return w.id === entry.id; })[0] : null;
+      var docId = String(entry.ts);
+      db.collection('users').doc(fsUid).collection('walkLog').doc(docId).set({
+        walkId:      entry.id      || null,
+        walkName:    walk ? (walk.name     || null) : (entry.name  || null),
+        location:    walk ? (walk.location || null) : null,
+        distance:    walk ? (walk.distance || null) : (entry.distance != null ? entry.distance : null),
+        type:        entry.type    || null,
+        date:        new Date(entry.ts),
+        note:        entry.note    || null,
+        weatherCode: entry.weather_code != null ? entry.weather_code : null,
+        isDay:       entry.is_day       != null ? entry.is_day       : null,
+        windSpeed:   entry.wind_speed   != null ? entry.wind_speed   : null,
+        duration:    entry.duration     != null ? entry.duration     : null,
+        dogId:       entry.dogId  || null,
+        createdAt:   firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(function(err) {
+        console.warn('Firestore walkLog write failed:', err);
+      });
+    } catch(e) {
+      console.warn('fsWriteWalkLogEntry error:', e);
+    }
+  }
+
+  /* ─── Firestore helper: update walk note ─── */
+  function fsUpdateWalkNote(ts, note) {
+    if (!db || !fsUid) return;
+    try {
+      db.collection('users').doc(fsUid).collection('walkLog').doc(String(ts)).update({
+        note:      note || null,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(function(err) {
+        console.warn('Firestore walkLog note update failed:', err);
+      });
+    } catch(e) {
+      console.warn('fsUpdateWalkNote error:', e);
+    }
+  }
+
+  /* ─── Firestore helper: saved walk (favourite) ─── */
+  function fsWriteSavedWalk(walkId, isSaving) {
+    if (!db || !fsUid || !walkId) return;
+    try {
+      var ref = db.collection('users').doc(fsUid).collection('savedWalks').doc(walkId);
+      if (isSaving) {
+        ref.set({ walkId: walkId, savedAt: firebase.firestore.FieldValue.serverTimestamp() })
+          .catch(function(err) { console.warn('Firestore savedWalk write failed:', err); });
+      } else {
+        ref.delete()
+          .catch(function(err) { console.warn('Firestore savedWalk delete failed:', err); });
+      }
+    } catch(e) {
+      console.warn('fsWriteSavedWalk error:', e);
+    }
+  }
+
+  /* ─── Firestore helper: user profile ─── */
+  function fsWriteUserProfile(displayName, dog) {
+    if (!db || !fsUid) return;
+    try {
+      var data = { lastSeen: firebase.firestore.FieldValue.serverTimestamp() };
+      if (displayName != null) data.displayName = displayName;
+      if (dog != null) data.dog = dog;
+      db.collection('users').doc(fsUid).set(data, { merge: true })
+        .catch(function(err) { console.warn('Firestore profile write failed:', err); });
+    } catch(e) {
+      console.warn('fsWriteUserProfile error:', e);
+    }
+  }
 </script>
 
 <script>
