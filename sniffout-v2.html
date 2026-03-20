@@ -9700,9 +9700,11 @@
     var distText = distKm < 1
       ? Math.round(distKm * 1000) + 'm away'
       : distKm.toFixed(1) + ' km away';
-    var mapsUrl = (gs.lat && gs.lon)
-      ? 'https://www.google.com/maps/search/?api=1&query=' + gs.lat + '%2C' + gs.lon
-      : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(gs.name);
+    var mapsUrl = gs.placeId
+      ? 'https://www.google.com/maps/place/?q=place_id:' + gs.placeId
+      : (gs.lat && gs.lon)
+        ? 'https://www.google.com/maps/search/?api=1&query=' + gs.lat + '%2C' + gs.lon
+        : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(gs.name);
     var thumbHtml = gs.photoUrl
       ? '<div class="gs-thumb"><img data-photo-meta="' + gs.photoUrl + '" alt="" loading="lazy"></div>'
       : '<div class="gs-thumb"></div>';
@@ -9881,7 +9883,7 @@
       method: 'POST',
       headers: {
         'Content-Type':     'application/json',
-        'X-Goog-FieldMask': 'places.displayName,places.location,places.photos,places.rating'
+        'X-Goog-FieldMask': 'places.displayName,places.location,places.photos,places.rating,places.id'
       },
       body: JSON.stringify(body)
     })
@@ -9896,7 +9898,7 @@
         var photoUrl = (p.photos && p.photos.length > 0)
           ? PLACES_PROXY + '/v1/' + p.photos[0].name + '/media?maxWidthPx=400&skipHttpRedirect=true'
           : null;
-        return { name: name, lat: plat, lon: plon, photoUrl: photoUrl, rating: p.rating || null };
+        return { name: name, lat: plat, lon: plon, photoUrl: photoUrl, rating: p.rating || null, placeId: p.id || null };
       }).filter(Boolean);
 
       results.sort(function(a, b) {
