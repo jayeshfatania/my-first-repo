@@ -3651,10 +3651,26 @@
     <!-- ══════════ WALKS TAB ══════════ -->
     <div id="tab-walks" class="tab-panel">
       <div class="tab-title-bar">
-        <h2 class="tab-title">Walks</h2>
+        <div>
+          <h2 class="tab-title">Walks</h2>
+          <div class="tab-subtitle location-line" id="walks-location-line" style="display:none;">
+            <svg width="11" height="13" viewBox="0 0 11 14" fill="currentColor" aria-hidden="true"><path d="M5.5 0C3.03 0 1 2.03 1 4.5 1 7.88 5.5 14 5.5 14S10 7.88 10 4.5C10 2.03 7.97 0 5.5 0zm0 6.125A1.625 1.625 0 115.5 2.875a1.625 1.625 0 010 3.25z"/></svg>
+            <span id="walks-location-name"></span>
+            <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+          </div>
+        </div>
         <button class="filter-btn" id="walks-radius-btn" aria-label="Filter by radius">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4-2V12L3 4z"/></svg>
         </button>
+      </div>
+      <div id="walks-location-search" style="display:none; padding:0 16px 12px;">
+        <div class="search-input-row">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="5"/><path d="M10.5 10.5l3.5 3.5"/></svg>
+          <input type="text" id="walks-location-search-input" placeholder="Enter place name or postcode" autocomplete="off">
+          <button class="search-submit" id="walks-location-search-submit"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M2 7h10M8 3l4 4-4 4"/></svg></button>
+        </div>
+        <div class="search-error" id="walks-location-search-error">We couldn't find that — try a postcode (e.g. SW11) or a place name.</div>
+        <div id="walks-location-recent-pills"></div>
       </div>
       <div class="radius-picker" id="walks-radius-picker">
         <button class="chip radius-chip" data-km="1">1 km</button>
@@ -3677,11 +3693,24 @@
       <div class="tab-title-bar">
         <div>
           <h2 class="tab-title">Nearby</h2>
-          <div class="tab-subtitle" id="nearby-location-sub"></div>
+          <div class="tab-subtitle location-line" id="nearby-location-line" style="display:none;">
+            <svg width="11" height="13" viewBox="0 0 11 14" fill="currentColor" aria-hidden="true"><path d="M5.5 0C3.03 0 1 2.03 1 4.5 1 7.88 5.5 14 5.5 14S10 7.88 10 4.5C10 2.03 7.97 0 5.5 0zm0 6.125A1.625 1.625 0 115.5 2.875a1.625 1.625 0 010 3.25z"/></svg>
+            <span id="nearby-location-name"></span>
+            <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+          </div>
         </div>
         <button class="filter-btn" id="nearby-radius-btn" aria-label="Filter by radius">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4-2V12L3 4z"/></svg>
         </button>
+      </div>
+      <div id="nearby-location-search" style="display:none; padding:0 16px 12px;">
+        <div class="search-input-row">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="5"/><path d="M10.5 10.5l3.5 3.5"/></svg>
+          <input type="text" id="nearby-location-search-input" placeholder="Enter place name or postcode" autocomplete="off">
+          <button class="search-submit" id="nearby-location-search-submit"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M2 7h10M8 3l4 4-4 4"/></svg></button>
+        </div>
+        <div class="search-error" id="nearby-location-search-error">We couldn't find that — try a postcode (e.g. SW11) or a place name.</div>
+        <div id="nearby-location-recent-pills"></div>
       </div>
       <div class="radius-picker" id="nearby-radius-picker">
         <button class="chip radius-chip" data-km="1">1 km</button>
@@ -4058,6 +4087,62 @@
   if (locLine) {
     locLine.addEventListener('click', function() {
       if (typeof toggleStateBSearch === 'function') toggleStateBSearch();
+    });
+  }
+
+  /* Walks tab location line */
+  var walksLocLine = document.getElementById('walks-location-line');
+  if (walksLocLine) {
+    walksLocLine.addEventListener('click', function() {
+      var search = document.getElementById('walks-location-search');
+      var input  = document.getElementById('walks-location-search-input');
+      var err    = document.getElementById('walks-location-search-error');
+      if (!search) return;
+      var opening = search.style.display === 'none';
+      search.style.display = opening ? '' : 'none';
+      if (err) err.classList.remove('visible');
+      if (opening) { renderRecentPills(); if (input) setTimeout(function() { input.focus(); }, 50); }
+    });
+  }
+  var _walksSearchBtn   = document.getElementById('walks-location-search-submit');
+  var _walksSearchInput = document.getElementById('walks-location-search-input');
+  if (_walksSearchBtn) {
+    _walksSearchBtn.addEventListener('click', function() {
+      var val = _walksSearchInput ? _walksSearchInput.value.trim() : '';
+      if (val) geocodeAndGo(val);
+    });
+  }
+  if (_walksSearchInput) {
+    _walksSearchInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.keyCode === 13) { var val = this.value.trim(); if (val) geocodeAndGo(val); }
+    });
+  }
+
+  /* Nearby tab location line */
+  var nearbyLocLine = document.getElementById('nearby-location-line');
+  if (nearbyLocLine) {
+    nearbyLocLine.addEventListener('click', function() {
+      var search = document.getElementById('nearby-location-search');
+      var input  = document.getElementById('nearby-location-search-input');
+      var err    = document.getElementById('nearby-location-search-error');
+      if (!search) return;
+      var opening = search.style.display === 'none';
+      search.style.display = opening ? '' : 'none';
+      if (err) err.classList.remove('visible');
+      if (opening) { renderRecentPills(); if (input) setTimeout(function() { input.focus(); }, 50); }
+    });
+  }
+  var _nearbySearchBtn   = document.getElementById('nearby-location-search-submit');
+  var _nearbySearchInput = document.getElementById('nearby-location-search-input');
+  if (_nearbySearchBtn) {
+    _nearbySearchBtn.addEventListener('click', function() {
+      var val = _nearbySearchInput ? _nearbySearchInput.value.trim() : '';
+      if (val) geocodeAndGo(val);
+    });
+  }
+  if (_nearbySearchInput) {
+    _nearbySearchInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.keyCode === 13) { var val = this.value.trim(); if (val) geocodeAndGo(val); }
     });
   }
 
@@ -9825,14 +9910,15 @@
 
   /* ─── Google Places text-search fetch ─── */
   function fetchNearbyPlaces(cat, lat, lon, locationName, cb) {
-    var radius  = getSavedRadius() * 1000; // km → metres (used as location bias, not hard filter)
+    var radiusKm = getSavedRadius();
+    var radius   = radiusKm * 1000; // km → metres
     var cacheKey = cat + '|' + Math.round(lat * 100) / 100 + '|' + Math.round(lon * 100) / 100 + '|' + radius;
     if (NEARBY_GOOGLE_CACHE[cacheKey]) { cb(NEARBY_GOOGLE_CACHE[cacheKey]); return; }
 
     var cfg  = CAT_GOOGLE_CONFIG[cat] || CAT_GOOGLE_CONFIG.pub;
     var body = {
-      textQuery:     cfg.query + ' near ' + locationName,
-      locationBias:  { circle: { center: { latitude: lat, longitude: lon }, radius: radius } },
+      textQuery:           cfg.query + ' near ' + locationName,
+      locationRestriction: { circle: { center: { latitude: lat, longitude: lon }, radius: radius } },
       maxResultCount: 20,
       languageCode:  'en-GB'
     };
@@ -9875,6 +9961,8 @@
           dist:        distKm
         };
       });
+      // Safety-net: drop anything the API returned outside the strict radius
+      places = places.filter(function(p) { return p.dist === null || p.dist <= radiusKm; });
       places.sort(function(a, b) { return (a.dist || 999) - (b.dist || 999); });
       NEARBY_GOOGLE_CACHE[cacheKey] = places;
       cb(places);
@@ -9898,8 +9986,10 @@
     nearbyUserLon      = lon;
     nearbyLocationName = locationName || '';
 
-    var sub = document.getElementById('nearby-location-sub');
-    if (sub && locationName) sub.textContent = 'Near ' + locationName;
+    var nearbyLocName = document.getElementById('nearby-location-name');
+    var nearbyLocLine = document.getElementById('nearby-location-line');
+    if (nearbyLocName && locationName) nearbyLocName.textContent = locationName;
+    if (nearbyLocLine && locationName) nearbyLocLine.style.display = '';
 
     var content = document.getElementById('nearby-content');
     if (content) {
@@ -10532,7 +10622,9 @@
   function renderRecentPills() {
     var targets = [
       document.getElementById('recent-pills'),
-      document.getElementById('state-b-recent-pills')
+      document.getElementById('state-b-recent-pills'),
+      document.getElementById('walks-location-recent-pills'),
+      document.getElementById('nearby-location-recent-pills')
     ];
 
     var starred = getStarred().filter(function(e) { return e && e.label && e.lat && e.lon; });
@@ -10687,10 +10779,25 @@
   var _showStateBOrig = showStateB;
   showStateB = function(locationName) {
     _showStateBOrig(locationName);
+    // Close Today tab inline search
     var sbSearch = document.getElementById('state-b-search');
     var sbErr    = document.getElementById('state-b-search-error');
     if (sbSearch) sbSearch.style.display = 'none';
     if (sbErr)    sbErr.classList.remove('visible');
+    // Update and show Walks location line; close its search bar
+    var walksLocName = document.getElementById('walks-location-name');
+    var walksLocLine = document.getElementById('walks-location-line');
+    var walksSearch  = document.getElementById('walks-location-search');
+    if (walksLocName && locationName) walksLocName.textContent = locationName;
+    if (walksLocLine && locationName) walksLocLine.style.display = '';
+    if (walksSearch)  walksSearch.style.display = 'none';
+    // Update and show Nearby location line; close its search bar
+    var nearbyLocName = document.getElementById('nearby-location-name');
+    var nearbyLocLine = document.getElementById('nearby-location-line');
+    var nearbySearch  = document.getElementById('nearby-location-search');
+    if (nearbyLocName && locationName) nearbyLocName.textContent = locationName;
+    if (nearbyLocLine && locationName) nearbyLocLine.style.display = '';
+    if (nearbySearch)  nearbySearch.style.display = 'none';
   };
 
   // Show State B search error if geocode fails while State B search is open
