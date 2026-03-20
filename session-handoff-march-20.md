@@ -85,6 +85,7 @@ No branches, no PRs, no staging environment. Push directly to main. GitHub Pages
 | Service worker | `sw.js` — network-first, cache fallback, cache key `sniffout-v2` |
 | PWA manifest | `manifest.json` — `start_url` set to `/sniffout-v2.html`, `theme_color` `#3B5C2A` |
 | Brand colour | `#3B5C2A` (Meadow Green) — fully implemented throughout |
+| Firebase | Compat SDK v10.12.0 (CDN) — project `sniffout-fe976`, region `europe-west2`. Anonymous auth + Firestore dual-write + Storage. Foundation only — full migration is Phase 3. |
 
 ### Local dev
 
@@ -546,6 +547,15 @@ Full dog profile system:
 - **`state-a-redesign-spec.md` created** — by Designer. State A redesign spec.
 - **`hourly-forecast-layout-rec.md` created** — by Designer. Layout recommendation for the hourly forecast bar implementation.
 
+### Completed — 20 March 2026 evening session
+
+- **Dark mode Scheme B implemented** — new dark palette ("Dark Slate") applied via `body.night`. Tokens: `--bg #141414`, `--surface #1F1F1F`, `--border rgba(255,255,255,0.08)`, `--ink #F4F2EE`, `--ink-2 #8A8A8A`, `--brand #5C7A63`, `--chip-off #2A2A2A`. Weather tab hero card overrides to `#1A3522`. Spec in `dark-mode-schemes.md`. Dark mode colour rethink is now DONE — second UX review is unblocked.
+- **Firebase foundation implemented** — Firebase SDK (compat v10.12.0, CDN) integrated into `sniffout-v2.html`. Project: `sniffout-fe976`, region `europe-west2`. Anonymous auth fires on load — UID used for Firestore document paths. Firestore dual-write active for walk log entries (writes to both localStorage and Firestore). Firebase Storage configured. **This is foundation only — the full migration (authenticated accounts, server-side reads, localStorage migration) remains Phase 3, gated on GDPR sign-off (L1).** Do not add Firebase reads to the critical render path.
+- **PWA install prompt card added to Me tab** — dismissible card prompting user to install the app to their home screen. Dismissed state saves to `sniffout_hide_install_prompt` in localStorage. Does not reappear once dismissed.
+- **Silent auto-refresh implemented** — `silentWeatherRefresh()` function. Triggers on `visibilitychange` event (app comes back to foreground) and on tab switch. Re-fetches weather if data is older than 5 minutes. Runs silently — no loading state, no UI blocking. Replaces the previous "always fetch on load" approach for background refreshes.
+- **New logo icons** — updated PWA icon assets integrated. `manifest.json` updated to reference new icon files.
+- **Paw-print icon unified** — paw-print icon standardised across all uses in the app. Single consistent SVG path used everywhere.
+
 ---
 
 ## SECTION 6 — KEY DECISIONS ON RECORD
@@ -639,6 +649,22 @@ Deferred to Phase 3. Requires Firebase backend.
 
 Renamed from "Match device" to "Auto".
 
+### Dark mode Scheme B — confirmed and implemented
+
+Dark Slate palette is live. Tokens documented in CLAUDE.md. Previous dark mode card surfaces (`#243A2C`, mint/sage tones) replaced. Spec in `dark-mode-schemes.md`. Do not revert to old dark mode colours.
+
+### Firebase foundation — live but boundary is firm
+
+Firebase project `sniffout-fe976` (region `europe-west2`) is integrated. Anonymous auth, Firestore dual-write for walk log, and Firebase Storage are active. **The boundary:** this is write-only foundation. No Firebase reads on the critical render path. localStorage remains source of truth for all UI rendering. Full authenticated Firebase migration remains Phase 3, gated on GDPR (L1). Do not expand Firebase scope without explicit instruction.
+
+### PWA install prompt card
+
+Me tab shows a dismissible install prompt card. Dismissed state persists in `sniffout_hide_install_prompt`. Does not reappear once dismissed. This is the app's only install prompt surface.
+
+### Paw-print icon
+
+Unified across all uses. Single consistent SVG path. Do not introduce a second paw-print variant.
+
 ### Pre-launch blockers — current status
 
 T1 (API key) and T14 (manifest start_url) resolved on 19 March 2026. All remaining blockers are legal and solicitor-dependent.
@@ -707,37 +733,31 @@ Walks: `isabella-plantation`, `stanage-edge`, `balmaha-loch-lomond`, `rhossili-g
 
 **Next action:** Owner to source photos. Push image files to repo before referencing in `WALKS_DB`.
 
-### 2. Dark mode colour rethink (upcoming — Designer task)
+### 2. Second UX/UI review pass (NOW UNBLOCKED)
 
-Today tab mint/sage tones clash with the broader dark mode palette. Requires a Designer spec before any Developer implementation.
+Dark mode Scheme B has been implemented. The second UX/UI review pass is now unblocked. This is a full Designer-led review pass across all tabs and states.
 
-**Next action:** Issue Designer prompt for dark mode colour review.
+**Next action:** Issue Designer prompt for second UX/UI review when owner is ready to start the next round.
 
-### 3. Second UX/UI review pass (upcoming — gated)
-
-Gated behind dark mode colour rethink being built and implemented first.
-
-**Next action:** Do not issue until dark mode rethink is done.
-
-### 4. Walk image sourcing — 97 remaining (ongoing — owner action)
+### 3. Walk image sourcing — 97 remaining (ongoing — owner action)
 
 97 walks still use `placeholder-walk.jpg`. 3 have real photos. Showcase carousel walks (item 1 above) are the priority.
 
 **Next action:** Owner to direct sourcing strategy.
 
-### 5. CLAUDE.md and folder restructure (PO task)
+### 4. Folder restructure (PO task)
 
-CLAUDE.md has been updated in today's session. A folder restructure to organise spec files, research files, and content pipeline files may be worth doing — issue as a PO task before next major round.
+A folder restructure to organise spec files, research files, and content pipeline files may be worth doing — issue as a PO task before next major round.
 
 **Next action:** PO to assess and brief if needed.
 
-### 6. Logo rebuild (owner action)
+### 5. Logo rebuild (owner action)
 
 Owner is creating new logo in Illustrator. No Developer action until exports are delivered.
 
 **Next action:** When exports are ready, issue Developer brief to replace icon files in repo.
 
-### 7. GDPR solicitor (owner action — outstanding blocker)
+### 6. GDPR solicitor (owner action — outstanding blocker)
 
 L1, L2/L3, L4, and L5 all blocked on solicitor engagement.
 
@@ -750,13 +770,12 @@ L1, L2/L3, L4, and L5 all blocked on solicitor engagement.
 ### Immediate (in priority order)
 
 1. **Photos for 7 showcase carousel walks** — owner to source. These are the most visible walks in the app (State A carousel). Priority over other walk photos.
-2. **Dark mode colour rethink** — Designer spec first. Then Developer implements.
-3. **Second UX/UI review pass** — gated behind dark mode rethink. Do not issue before then.
-4. **Walk image sourcing** — 97 walks need photos. Owner to direct.
-5. **Nearby places placeholder image** — owner to create in Illustrator. Separate from `placeholder-walk.jpg`.
-6. **Copy review session** — all UI copy reviewed against brand voice. Includes "Not to be sniffed at" Me tab tertiary stat.
-7. **Logo rebuild** — owner delivers Illustrator exports, Developer replaces icon files.
-8. **CLAUDE.md and folder restructure** — PO task. Assess and brief if needed.
+2. **Second UX/UI review pass** — NOW UNBLOCKED. Dark mode Scheme B is implemented. Issue Designer prompt for full review across all tabs and states.
+3. **Walk image sourcing** — 97 walks need photos. Owner to direct.
+4. **Nearby places placeholder image** — owner to create in Illustrator. Separate from `placeholder-walk.jpg`.
+5. **Copy review session** — all UI copy reviewed against brand voice. Includes "Not to be sniffed at" Me tab tertiary stat.
+6. **Logo rebuild** — owner delivers Illustrator exports, Developer replaces icon files.
+7. **Folder restructure** — PO task. Assess and brief if needed.
 
 ### Soon (Phase 2 remaining)
 
@@ -769,7 +788,7 @@ L1, L2/L3, L4, and L5 all blocked on solicitor engagement.
 
 ### Phase 3 (priority order — confirmed)
 
-1. **Firebase** — authentication, Firestore, Firebase Storage, localStorage migration. Region `europe-west2`. GDPR sign-off hard prerequisite.
+1. **Firebase full migration** — foundation is live (anonymous auth, Firestore dual-write, Storage). Phase 3 completes this: authenticated user accounts, server-side walk log reads, full localStorage → Firestore migration. Region `europe-west2`. GDPR sign-off (L1) is hard prerequisite.
 2. **Report an issue** — Firestore-backed submission form.
 3. **Missing Dog alerts** — Firestore-backed, map layer.
 4. **User-submitted walks** — editorial review before publish, curated vs community badge.
@@ -841,6 +860,7 @@ All files in `~/Desktop/my-first-repo/`.
 | `temperature-tap-spec.md` | Tappable temperature spec. Feature was implemented and then reverted in favour of hourly forecast bar. Superseded. |
 | `state-a-redesign-spec.md` | Designer spec for State A first-run screen redesign. Implemented 20 March 2026. |
 | `dog-diary-feature-scope.md` | Strategic scoping for dog diary feature. Deferred to Phase 2b post-launch. |
+| `dark-mode-schemes.md` | Dark mode colour scheme options. Scheme B (Dark Slate) confirmed and implemented. |
 
 ### Content pipeline files
 
@@ -1002,4 +1022,8 @@ Confirm push by checking `https://sniffout.app/sniffout-v2.html` — allow ~1 mi
 13. **Firebase first in Phase 3** — personal data (journal, notes, photos) cannot safely live in localStorage long-term. `firebase-setup-plan.md` produced by Researcher.
 14. **Today tab = Lucide icons, Weather tab = Yr.no icons** — confirmed design decision, do not merge.
 15. **State A headline is "Paws before you go."** — implemented. Social proof strip: "Know the route · Own the weather · Find the spots". Do not revert to old hero copy.
-16. **Second UX review is gated** — dark mode colour rethink must be built first. Do not issue before then.
+16. **Second UX review is NOW UNBLOCKED** — dark mode Scheme B is implemented. Issue Designer prompt when owner is ready.
+17. **Dark mode Scheme B is live** — Dark Slate palette. `--bg #141414`, `--surface #1F1F1F`. Spec in `dark-mode-schemes.md`. Do not revert to old dark mode colours.
+18. **Firebase foundation is live — boundary is firm** — anonymous auth, Firestore dual-write, Storage active. Full migration (auth, server reads, localStorage migration) is Phase 3, gated on L1 (GDPR). Do not add Firebase reads to critical render path.
+19. **PWA install prompt card in Me tab** — dismissible, persists to `sniffout_hide_install_prompt`. Does not reappear once dismissed.
+20. **Silent auto-refresh via `silentWeatherRefresh()`** — triggers on `visibilitychange` and tab switch, 5-minute threshold. Runs silently, no UI blocking.

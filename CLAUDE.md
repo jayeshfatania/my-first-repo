@@ -33,7 +33,9 @@ Nothing gimmicky. Paw emoji (🐾) reserved for paw safety block only.
 
 ## Deferred — Do Not Implement Without Instruction
 
-Firebase backend, Google Places API expansion (already integrated at current scope — do not add new venue categories or API calls), user accounts, native app, marker clustering plugin, community tab, walk submission, push notifications.
+Google Places API expansion (already integrated at current scope — do not add new venue categories or API calls), user accounts, native app, marker clustering plugin, community tab, walk submission, push notifications.
+
+**Firebase note:** Firebase foundation is now in place (project: `sniffout-fe976`, region `europe-west2`, anonymous auth, Firestore, Storage, SDK v10.12.0 via CDN). The foundation is integrated but the **full Firebase migration** — authenticated user accounts, server-side walk log migration, full Firestore read/write — remains Phase 3 and must not be implemented without explicit instruction and GDPR sign-off (L1).
 
 ## Project Overview
 
@@ -82,6 +84,7 @@ All state is in-memory globals + `localStorage`. Key storage:
 | `sniffout_dogs` | array of dog profile objects (multiple dogs supported) |
 | `sniffout_walk_log` | array of timestamped walk log entries — `type: "curated"` or `"custom"` |
 | `sniffout_units` | `"km"` (default) or `"miles"` — user units preference |
+| `sniffout_hide_install_prompt` | boolean — set when user dismisses the PWA install prompt card in Me tab |
 | `walkReviews` | JSON object of user reviews |
 | `recentSearches` | JSON array |
 
@@ -123,12 +126,15 @@ Do not add WALKS_DB schema fields without PO sign-off.
 | Nominatim (OSM) | Reverse geocoding | None |
 | postcodes.io | UK postcode → lat/lon | None |
 | Leaflet 1.9.4 (CDN) | Map rendering | None |
+| Firebase (compat SDK v10.12.0, CDN) | Firestore (walk log dual-write), Firebase Storage (photos), anonymous auth | Project: `sniffout-fe976`, region `europe-west2` |
 
-**Phase 3 additions (not yet implemented):** Open-Meteo `uv_index` parameter; Open-Meteo `european_aqi` endpoint for pollen.
+**Firebase initialisation:** SDK loaded via CDN in `sniffout-v2.html`. Anonymous auth fires on load — UID used for Firestore document paths. Dual-write is active for walk log entries (writes to both localStorage and Firestore). Do not add Firebase reads to the critical render path — localStorage remains the source of truth for UI rendering.
+
+**Phase 3 additions (not yet implemented):** Open-Meteo `uv_index` parameter; Open-Meteo `european_aqi` endpoint for pollen; full authenticated Firebase migration.
 
 ### CSS
 
-All inline. v2 token set:
+All inline. Light mode token set:
 
 | Token | Value | Notes |
 |-------|-------|-------|
@@ -141,7 +147,20 @@ All inline. v2 token set:
 | `--amber` | `#F59E0B` | Warnings |
 | `--red` | `#EF4444` | Danger/errors |
 
-Dark mode toggled via `body.night` class. Set manually by the user via Settings ("Auto" option uses `prefers-color-scheme`). Default for new users is light mode. Not automatic based on weather.
+Dark mode — Scheme B (Dark Slate), applied via `body.night` class. Token overrides:
+
+| Token | Dark value | Notes |
+|-------|-----------|-------|
+| `--bg` | `#141414` | Near-black page background |
+| `--surface` | `#1F1F1F` | Dark card surfaces |
+| `--border` | `rgba(255,255,255,0.08)` | Subtle light border |
+| `--ink` | `#F4F2EE` | Off-white primary text |
+| `--ink-2` | `#8A8A8A` | Muted secondary text |
+| `--brand` | `#5C7A63` | Lightened brand for dark bg contrast |
+| `--chip-off` | `#2A2A2A` | Off/inactive chip background |
+| Weather hero bg | `#1A3522` | Weather tab hero card override only |
+
+Dark mode is toggled manually by the user via Settings. "Auto" option uses `prefers-color-scheme`. Default for new users is light mode. Spec in `dark-mode-schemes.md`.
 
 ### Key Function Groups (v2)
 
@@ -154,6 +173,8 @@ Dark mode toggled via `body.night` class. Set manually by the user via Settings 
 - **Dog profile**: reads/writes `sniffout_dogs`; drives Me tab avatar, personalised copy, and walk log `dogId` tagging
 - **Storage**: `getReviews/saveReviews`, `getFavourites/saveFavourites`
 - **Session**: `saveSession()`, `restoreSession()` — persists location + weather for 8h
+- **Silent refresh**: `silentWeatherRefresh()` — triggers on `visibilitychange` event and on tab switch; re-fetches weather if data is older than 5 minutes. Does not block UI. Runs silently in background.
+- **Firebase helpers**: `fsWriteWalkLogEntry(entry)`, `fsUpdateWalkNote(entryId, note)`, `fsWriteSavedWalk(walkId)`, `fsWriteUserProfile(profileData)` — write-only helpers for Firestore dual-write. All are fire-and-forget; failures are silent and do not affect UI. localStorage remains source of truth.
 - **Geocoding**: `geocodePostcode(pc)` — postcodes.io lookup
 
 ### Approved Copy — Key Strings
