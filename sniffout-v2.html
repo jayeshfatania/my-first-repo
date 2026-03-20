@@ -1176,6 +1176,37 @@
     .wx-window-legend-item { display: flex; align-items: center; gap: 4px; }
     .wx-window-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
 
+    /* Hourly forecast card */
+    .wx-hourly-fade { position: relative; }
+    .wx-hourly-fade::after {
+      content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 32px;
+      background: linear-gradient(to right, transparent, var(--surface));
+      pointer-events: none; z-index: 1;
+    }
+    .wx-hourly-scroll {
+      display: flex; gap: 8px; overflow-x: auto;
+      -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .wx-hourly-scroll::-webkit-scrollbar { display: none; }
+    .wx-hour-card {
+      flex-shrink: 0; width: 68px; padding: 8px 6px; border-radius: 12px;
+      border: 1.5px solid transparent; background: var(--surface);
+      display: flex; flex-direction: column; align-items: center;
+      scroll-snap-align: start; cursor: default;
+    }
+    .wx-hour-card--now     { border-color: var(--brand); }
+    .wx-hour-card--good    { background: rgba(59,92,42,0.07); }
+    .wx-hour-card--marginal { background: rgba(245,158,11,0.07); }
+    .wx-hour-time { font: 400 11px/1 'Inter', sans-serif; color: var(--ink-2); text-align: center; }
+    .wx-hour-card--now .wx-hour-time { font-weight: 600; color: var(--brand); }
+    .wx-hour-icon { display: block; margin-top: 4px; }
+    .wx-hour-temp { font: 700 14px/1 'Inter', sans-serif; text-align: center; margin-top: 4px; }
+    .wx-hour-dot  { width: 5px; height: 5px; border-radius: 50%; margin-top: 4px; }
+    .wx-hour-dot--good     { background: var(--brand); }
+    .wx-hour-dot--marginal { background: var(--amber); }
+    .wx-hour-dot--poor     { background: rgba(0,0,0,0.12); }
+
     /* Dark mode weather overrides */
     body.night .wx-hero-temp      { color: #fff; }
     body.night .wx-hero-condition { color: rgba(255,255,255,0.9); }
@@ -4679,9 +4710,9 @@
     }
     totalMm = Math.round(totalMm * 10) / 10;
     if (rainHours === 0 && maxProb < 20) return '<strong>Looks dry</strong> for the rest of today';
-    if (rainHours <= 1 && maxProb < 50) return '<strong>Mostly dry</strong> - light showers possible. Worth a jacket.';
-    if (rainHours <= 2) return '<strong>Brief showers</strong> - about ' + rainHours + ' hour. The dry windows are worth planning around.';
-    return '<strong>Wet afternoon</strong> - ' + rainHours + ' hours of rain, up to ' + totalMm + 'mm forecast. Best to walk early.';
+    if (rainHours <= 1 && maxProb < 50) return '<strong>Mostly dry</strong> - light showers possible.';
+    if (rainHours <= 2) return '<strong>Brief showers</strong> - about ' + rainHours + ' hour.';
+    return '<strong>Wet afternoon</strong> - ' + rainHours + ' hours of rain, up to ' + totalMm + 'mm forecast.';
   }
 
   /* ─── Best walk window (Section 9) ─── */
@@ -5031,6 +5062,9 @@
           '<div class="wx-walk-footer">' + rainSum.replace(/<\/?strong>/g, '') + '</div>' +
         '</div>' +
 
+        // Hour by hour card
+        buildHourlyCard(hourly) +
+
         // Metric tiles 2x2
         '<div class="wx-tiles">' +
 
@@ -5114,17 +5148,60 @@
   }
 
   function buildHourBar(hourly) {
-    var h = new Date().getHours();
     var labels = '', bars = '';
-    for (var i = 0; i < 12; i++) {
-      var idx  = h + i;
-      if (idx >= hourly.time.length) break;
-      var prob = hourly.precipitation_probability[idx] || 0;
+    // Full day: 6am (index 6) through 11pm (index 23)
+    for (var i = 6; i < 24; i++) {
+      if (i >= hourly.time.length) break;
+      var prob = hourly.precipitation_probability[i] || 0;
       var cls  = prob >= 60 ? 'poor' : (prob >= 30 ? 'marginal' : 'ideal');
-      if (i % 3 === 0) labels += '<span>' + formatHour(idx % 24) + '</span>';
+      // Labels at 6am(6), 9am(9), 12pm(12), 3pm(15), 6pm(18), 9pm(21)
+      if ((i - 6) % 3 === 0) labels += '<span>' + formatHour(i) + '</span>';
       bars += '<div class="hour-seg ' + cls + '"></div>';
     }
     return '<div class="hour-bar-labels">' + labels + '</div><div class="hour-bar">' + bars + '</div>';
+  }
+
+  function buildHourlyCard(hourly) {
+    var h = new Date().getHours();
+    var limit = Math.min(24, hourly.time ? hourly.time.length : 0);
+    var cards = '';
+    for (var i = h; i < limit; i++) {
+      var t    = Math.round(hourly.temperature_2m[i] || 0);
+      var prob = hourly.precipitation_probability ? (hourly.precipitation_probability[i] || 0) : 0;
+      var code = hourly.weather_code ? (hourly.weather_code[i] || 0) : 0;
+      var isDay = (i >= 6 && i < 21) ? 1 : 0;
+      var entry = WMO_YR[code];
+      var iconName = entry ? (isDay ? entry.day : entry.night) : '04';
+      var timeLabel = (i === h) ? 'Now' : formatHour(i);
+      var quality = prob >= 60 ? 'poor' : (prob >= 30 ? 'marginal' : 'good');
+      var tempColor;
+      if      (t < 2)  tempColor = '#6B9FD4';
+      else if (t < 8)  tempColor = 'var(--ink-2)';
+      else if (t < 23) tempColor = 'var(--ink)';
+      else if (t < 28) tempColor = 'var(--amber)';
+      else             tempColor = 'var(--red)';
+      var cardCls = 'wx-hour-card' +
+        (i === h ? ' wx-hour-card--now' : '') +
+        (quality !== 'poor' ? ' wx-hour-card--' + quality : '');
+      cards +=
+        '<div class="' + cardCls + '">' +
+          '<span class="wx-hour-time">' + timeLabel + '</span>' +
+          '<img class="wx-hour-icon" src="' + YR_BASE + iconName + '.svg" width="28" height="28" alt="">' +
+          '<span class="wx-hour-temp" style="color:' + tempColor + '">' + t + '\u00b0</span>' +
+          '<div class="wx-hour-dot wx-hour-dot--' + quality + '"></div>' +
+        '</div>';
+    }
+    return (
+      '<div class="wx-card">' +
+        '<div class="wx-card-header">' +
+          '<span class="wx-card-title">Hour by hour</span>' +
+        '</div>' +
+        '<div class="wx-card-divider"></div>' +
+        '<div class="wx-hourly-fade">' +
+          '<div class="wx-hourly-scroll">' + cards + '</div>' +
+        '</div>' +
+      '</div>'
+    );
   }
 
   function buildForecastGrid(daily) {
