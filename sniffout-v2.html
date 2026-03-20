@@ -2114,9 +2114,10 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 18px 16px 16px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
+      align-items: flex-start;
       gap: 5px;
     }
     .me-stat-card--secondary {
@@ -2567,6 +2568,7 @@
     body.night .venue-open-gp.open    { background: rgba(130,176,154,0.12); }
     body.night .chip.active           { background: rgba(130,176,154,0.10); border-color: rgba(130,176,154,0.22); color: var(--brand); }
     body.night .hazard-card.brand-variant { background: rgba(130,176,154,0.07); }
+    body.night .weather-hero { background: #1E3D2A; }
 
     /* ═══════════════════════════════
        LOADING STATE
@@ -3081,6 +3083,7 @@
       display: flex; align-items: center; justify-content: center;
       font: 500 12px/1 'Inter', sans-serif;
       -webkit-tap-highlight-color: transparent;
+      margin-left: auto;
     }
     .weather-hero { position: relative; }
     /* ─── Lucide icons ─── */
@@ -6091,9 +6094,9 @@
   }
 
   window.addEventListener('popstate', function() {
-    if (closeTopSheet()) {
-      history.pushState(null, '', location.href);
-    }
+    closeTopSheet();
+    // Always push a new entry back so the stack is never empty — prevents Android back closing the browser
+    history.pushState(null, '', location.href);
   });
 
   function renderWishlistBtn(walkId) {
@@ -11013,7 +11016,7 @@
       </button>
       <button class="segment-btn" data-mode="auto" aria-pressed="false">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a9 9 0 0 0 0 18V3z"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-        <span>Match device</span>
+        <span>Auto</span>
       </button>
       <button class="segment-btn" data-mode="dark" aria-pressed="false">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -11687,6 +11690,8 @@
     checkBirthdayBanner();
   }
 
+  // Ensure the history stack always has at least one entry so Android back never closes the browser
+  history.replaceState(null, '', location.href);
   initApp();
   initWalkDetailSwipe();
   initImageViewerSwipe();
