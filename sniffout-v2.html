@@ -6098,10 +6098,15 @@
     return false;
   }
 
+  window.addEventListener('beforeunload', function(e) {
+    e.preventDefault();
+    e.returnValue = '';
+  });
+
   window.addEventListener('popstate', function() {
-    closeTopSheet();
-    // Always push a new entry back so the stack is never empty — prevents Android back closing the browser
+    // Push synchronously first — before anything else — so the stack is never empty
     history.pushState(null, '', location.href);
+    closeTopSheet();
   });
 
   function renderWishlistBtn(walkId) {
@@ -8046,7 +8051,8 @@
       if (totalMiles === 0) {
         milesEl.textContent = '-';
       } else {
-        milesEl.textContent = '~' + formatDist(totalMiles);
+        var numOnly = getSavedUnits() === 'mi' ? totalMiles.toFixed(1) : (totalMiles * 1.60934).toFixed(1);
+        milesEl.textContent = '~' + numOnly;
       }
     }
     var labelEl = document.getElementById('statMilesLabel');
@@ -9724,6 +9730,7 @@
     });
 
     var nearest = sorted.slice(0, 6);
+    var nearestIds = nearest.map(function(w) { return w.id; });
 
     section.innerHTML =
       '<div class="section-header" style="padding-top:4px">' +
@@ -9731,7 +9738,7 @@
         '<span class="section-link" onclick="switchTab(\'walks\')">See all</span>' +
       '</div>' +
       '<div class="hscroll-row" style="padding:0 16px 16px">' +
-        nearest.map(renderPortraitCard).join('') +
+        nearest.map(function(w) { return renderPortraitCard(Object.assign({}, w, {badge: 'Sniffout Pick'})); }).join('') +
       '</div>';
 
     // Hidden gems section
@@ -9739,6 +9746,7 @@
     var hiddenGems = WALKS_DB
       .filter(function(w) { return w.badge === 'Hidden gem'; })
       .filter(function(w) { return PREVIEW_PICK_IDS.indexOf(w.id) === -1; })
+      .filter(function(w) { return nearestIds.indexOf(w.id) === -1; })
       .map(function(w) {
         return { walk: w, dist: haversineKm(lat, lon, w.lat, w.lon) };
       })
@@ -9755,7 +9763,7 @@
           '<span class="section-link" onclick="switchTab(\'walks\')">Explore →</span>' +
         '</div>' +
         '<div class="hscroll-row" style="padding:0 16px 24px">' +
-          hiddenGems.map(renderPortraitCard).join('') +
+          hiddenGems.map(function(w) { return renderPortraitCard(Object.assign({}, w, {badge: 'Hidden gem'})); }).join('') +
         '</div>';
     }
 
@@ -10780,21 +10788,22 @@
   }
 
   function initWeatherModalSwipe() {
+    var overlay = document.getElementById('weather-info-modal');
     var sheet = document.getElementById('weather-info-sheet');
-    if (!sheet) return;
+    if (!overlay || !sheet) return;
     var startY = 0, isDragging = false;
-    sheet.addEventListener('touchstart', function(e) {
+    overlay.addEventListener('touchstart', function(e) {
       startY = e.touches[0].clientY;
       isDragging = true;
       sheet.style.transition = 'none';
     }, { passive: true });
-    sheet.addEventListener('touchmove', function(e) {
+    overlay.addEventListener('touchmove', function(e) {
       if (!isDragging) return;
       var deltaY = e.touches[0].clientY - startY;
       if (deltaY < 0) { isDragging = false; sheet.style.transform = ''; return; }
       sheet.style.transform = 'translateY(' + deltaY + 'px)';
     }, { passive: true });
-    sheet.addEventListener('touchend', function(e) {
+    overlay.addEventListener('touchend', function(e) {
       if (!isDragging) return;
       isDragging = false;
       var deltaY = e.changedTouches[0].clientY - startY;
