@@ -2127,9 +2127,9 @@
       padding: 14px 16px;
     }
     .me-stat-number {
-      font: 700 48px/1 'Inter', sans-serif;
+      font: 700 36px/1 'Inter', sans-serif;
       color: var(--ink);
-      letter-spacing: -2px;
+      letter-spacing: -1px;
     }
     .me-stat-number--sm {
       font: 700 32px/1 'Inter', sans-serif;
@@ -6046,6 +6046,11 @@
   }
 
   function closeTopSheet() {
+    var weatherModal = document.getElementById('weather-info-modal');
+    if (weatherModal && weatherModal.classList.contains('open')) {
+      closeWeatherModal();
+      return true;
+    }
     var imgViewer = document.getElementById('img-viewer-overlay');
     if (imgViewer && imgViewer.classList.contains('open')) {
       closeImageViewer();
@@ -10765,11 +10770,42 @@
 
   function openWeatherModal() {
     var el = document.getElementById('weather-info-modal');
-    if (el) el.classList.add('open');
+    if (el) { el.classList.add('open'); history.pushState(null, '', location.href); }
   }
   function closeWeatherModal() {
-    var el = document.getElementById('weather-info-modal');
+    var el     = document.getElementById('weather-info-modal');
+    var sheet  = document.getElementById('weather-info-sheet');
     if (el) el.classList.remove('open');
+    if (sheet) { sheet.style.transition = ''; sheet.style.transform = ''; }
+  }
+
+  function initWeatherModalSwipe() {
+    var sheet = document.getElementById('weather-info-sheet');
+    if (!sheet) return;
+    var startY = 0, isDragging = false;
+    sheet.addEventListener('touchstart', function(e) {
+      startY = e.touches[0].clientY;
+      isDragging = true;
+      sheet.style.transition = 'none';
+    }, { passive: true });
+    sheet.addEventListener('touchmove', function(e) {
+      if (!isDragging) return;
+      var deltaY = e.touches[0].clientY - startY;
+      if (deltaY < 0) { isDragging = false; sheet.style.transform = ''; return; }
+      sheet.style.transform = 'translateY(' + deltaY + 'px)';
+    }, { passive: true });
+    sheet.addEventListener('touchend', function(e) {
+      if (!isDragging) return;
+      isDragging = false;
+      var deltaY = e.changedTouches[0].clientY - startY;
+      sheet.style.transition = '';
+      if (deltaY > 80) {
+        sheet.style.transform = '';
+        closeWeatherModal();
+      } else {
+        sheet.style.transform = '';
+      }
+    });
   }
 </script>
 
@@ -10844,7 +10880,8 @@
 
 <!-- Weather info modal -->
 <div class="modal-overlay" id="weather-info-modal" onclick="if(event.target===this)closeWeatherModal()">
-  <div class="modal-sheet">
+  <div class="modal-sheet" id="weather-info-sheet">
+    <div class="me-settings-handle"></div>
     <div class="modal-header">
       <div class="modal-title">What you'll see here</div>
       <button class="modal-close" onclick="closeWeatherModal()">✕</button>
@@ -11690,11 +11727,15 @@
     checkBirthdayBanner();
   }
 
-  // Ensure the history stack always has at least one entry so Android back never closes the browser
-  history.replaceState(null, '', location.href);
+  // Seed the history stack with two same-origin entries so Android back can never navigate away.
+  // replaceState sets the base entry; pushState adds a second entry ahead of it.
+  // The popstate handler always re-pushes, creating an infinite loop that keeps the user in the app.
+  history.replaceState({ sniffout: 1 }, '', location.href);
+  history.pushState({ sniffout: 1 }, '', location.href);
   initApp();
   initWalkDetailSwipe();
   initImageViewerSwipe();
+  initWeatherModalSwipe();
 
   /* ─── Swipe-to-dismiss: filter-type bottom sheets ─── */
   /* Note: wxSheet is initialised in DOMContentLoaded (Phase C) because
