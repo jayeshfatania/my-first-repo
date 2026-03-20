@@ -92,6 +92,60 @@ As of 19 March 2026, a full day of development has been completed. The app has a
 
 ---
 
+## Completed — 20 March 2026
+
+### Round 31 — UX review blockers and high priority fixes
+
+- **FIX 31.1** — Filter button tap target increased to 44px.
+- **FIX 31.2** — Heart buttons increased to 44x44px.
+- **FIX 31.3** — Walk photo placeholder replaced with gradient.
+- **FIX 31.4** — Nearby category chips increased to 44px.
+- **FIX 31.5** — Mark as walked button increased to 44px.
+- **FIX 31.6** — Empty name state in Me tab header fixed.
+- **FIX 31.7** — Dark mode card surfaces raised to `#243A2C`.
+- **FIX 31.8** — Leaflet map inverted in dark mode.
+- **FIX 31.9** — Location link underline removed.
+
+### Round 32 — Medium priority UX fixes
+
+- **FIX 32.1** — Nav labels increased to 11px.
+- **FIX 32.2** — Inactive tab dimming increased to 50%.
+- **FIX 32.3** — Walk photo placeholder gradient updated.
+- **FIX 32.4** — Add photo button dashed border replaced with solid, camera icon added.
+- **FIX 32.5** — Hero headline increased to 32px.
+- **FIX 32.6** — Sheet handles unified across all sheets and subpages.
+- **FIX 32.7** — Walk rating increased to 13px.
+- **FIX 32.8** — Dog profile subpage inline padding moved to CSS class.
+- **FIX 32.9** — Favourite and wishlist labels added (later removed as unnecessary).
+
+### Round 33 — Sniff list labels and fixes
+
+- **Wishlist renamed** to "On my sniff list" — confirmed brand language.
+- **Favourites renamed** to "Sniffed and approved" — confirmed brand language.
+- **Saved Walks subpage** now shows two sections: "Sniffed and approved" and "On my sniff list".
+- **Walk Journal preview null fix** — prevented crash on entries with no note.
+- **Camera/gallery choice restored** — photo picker explicitly offers camera vs gallery.
+- **Active nav tab contrast fixed** — active tab now clearly distinguishable.
+
+### Additional fixes — 20 March 2026
+
+- **Tap to expand walk image** — walk detail overlay image now tappable to open full-screen viewer. Android back button closes the viewer.
+- **Walk images added** — Richmond Park, Wimbledon Common, and Isabella Plantation now have real photos.
+- **Isabella Plantation added to WALKS_DB** — full data, description, and photo. Badge: Hidden gem. Leads only throughout. 0.9 miles, 50 minutes. Walk count now **86**.
+- **Richmond Park added to Sniffout Picks carousel** — now featured on Today tab.
+- **`renderTrailCard` updated** — walk images now display on trail cards where available.
+- **Portrait card placeholder fixed** — Today tab portrait cards show correct placeholder.
+- **Illustrated placeholder image added** (`placeholder-walk.jpg`) — replaces gradient placeholder for all walk cards. Single consistent image used across the app.
+- **Button labels removed** from heart and wishlist buttons.
+- **Consistent raised button style** applied across all primary action buttons.
+- **Walked button text fix** — corrected display text.
+- **Cancel button added** to "Log a walk" sheet.
+- **"Save for later" label duplication fixed**.
+- **Add to list / wishlist fixed** — saves correctly to the correct localStorage key.
+- **Default dark mode set to light** for new users.
+
+---
+
 ## Pre-Launch Blockers — Status as of 19 March 2026
 
 ### Resolved today
@@ -123,7 +177,9 @@ No remaining technical hard blockers. All three outstanding blockers are legal a
 | Batch 02 | Complete | Complete | Complete | ⬜ Awaiting Developer update |
 | Batch 03 | Complete | Complete | Complete | ⬜ Awaiting Developer update |
 
-**Next action:** Issue combined content update brief to Developer. 40 walks (Batch 02 + Batch 03) to add to `WALKS_DB`. Walk count reaches 85 on completion.
+**Note:** Isabella Plantation was added individually in Round 33. Walk count is now **86** including Isabella. Batch 02 and Batch 03 are still pending.
+
+**Next action:** Issue combined content update brief to Developer. 40 walks (Batch 02 + Batch 03) to add to `WALKS_DB`.
 
 ---
 
@@ -131,12 +187,21 @@ No remaining technical hard blockers. All three outstanding blockers are legal a
 
 ### Upcoming work — priority order
 
-1. **Full UX/UI review** — dedicated Designer session reviewing every tab systematically. Prioritised findings list. Must happen before next beta push.
-2. **Batch 02 + 03 content update** — 40 walks validated and ready. Issue combined Developer brief. Walk count reaches 85.
-3. **Logo rebuild** — owner creating in Illustrator. Required exports: `icon.svg` (master), `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180x180), `favicon.svg`. No Developer work until exports are ready.
-4. **`sniffout.co.uk` redirect** — defensive registration exists but not yet redirecting to `sniffout.app`. Owner action.
-5. **`hello@sniffout.app` support email** — required for GDPR subject access requests (checklist item B6). Owner action.
-6. **GDPR solicitor engagement** — L1/L2/L3/L4 all blocked on this. Owner action. Target: engaged at least 4 weeks before any beta launch date.
+1. **Batch 02 + 03 content update** — 40 walks validated and ready. Issue combined Developer brief.
+2. **Second UX/UI review pass** — a second dedicated Designer session will be needed once State A first-run redesign and dark mode colour rethink are implemented. These two items need to be built first.
+3. **State A first-run screen redesign** — Designer pass needed. Current first-run state needs a full redesign.
+4. **Dark mode colour rethink** — Today tab mint/sage tones clash with dark mode palette across the rest of the app. Requires Designer spec before Developer implements.
+5. **"25 handpicked walks" copy** — this figure appears in three places across the app. Correct number is 86. Update across all three instances.
+6. **Walk image sourcing** — 83 walks still need real photos. Owner to source or direct.
+7. **Nearby places placeholder image** — a separate placeholder image is needed for nearby venue cards (different from the walk card placeholder). Owner to create.
+8. **Me tab dashboard alignment polish** — minor alignment refinements identified in UX review. Deferred pending State A redesign.
+9. **Info button position on Today tab** — move further right to better distinguish it from the filter pills. Small Developer fix.
+10. **Bottom nav active tab contrast** — further improvement review needed after Round 33 fix. May require another iteration.
+11. **"Not to be sniffed at" copy** — add as tertiary line in Me tab stats when user has walk data. Deferred to copy review pass.
+12. **Logo rebuild** — owner creating in Illustrator. Required exports: `icon.svg` (master), `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180x180), `favicon.svg`. No Developer work until exports are ready.
+13. **`sniffout.co.uk` redirect** — defensive registration exists but not yet redirecting to `sniffout.app`. Owner action.
+14. **`hello@sniffout.app` support email** — required for GDPR subject access requests (checklist item B6). Owner action.
+15. **GDPR solicitor engagement** — L1/L2/L3/L4 all blocked on this. Owner action. Target: engaged at least 4 weeks before any beta launch date.
 
 ### Phase 2b — post-launch (confirmed deferred)
 
@@ -182,3 +247,9 @@ These decisions are locked and should not be revisited without a clear reason.
 | Dog diary | Deferred to post-launch Phase 2b. Scoped in `dog-diary-feature-scope.md`. | 19 March 2026 |
 | Units | km default, miles toggle in Settings, saves to `sniffout_units`. `formatDist()` helper applied everywhere. | 19 March 2026 |
 | Em dashes | Swept from all user-facing copy in FIX 29.4. Hyphens only throughout the app. | 19 March 2026 |
+| Wishlist / Favourites brand names | Wishlist = "On my sniff list". Favourites = "Sniffed and approved". Confirmed brand language. Saved Walks subpage shows two separate sections. | 20 March 2026 |
+| Walk card placeholder | Single illustrated placeholder image (`placeholder-walk.jpg`, hosted on GitHub) used consistently for all walk cards without a real photo. Replaces gradient placeholder. | 20 March 2026 |
+| Default dark mode | Light mode is the default for new users. Dark mode requires explicit selection in Settings. | 20 March 2026 |
+| Isabella Plantation | Confirmed as Hidden gem walk. Leads only throughout. 0.9 miles, 50 minutes. Full data, description, and photo in WALKS_DB. | 20 March 2026 |
+| Tap target standard | All interactive tap targets (filter buttons, heart buttons, category chips, action buttons) set to minimum 44px per WCAG and Apple HIG requirements. | 20 March 2026 |
+| Dark mode card surfaces | Raised to `#243A2C` in dark mode. Leaflet map inverted in dark mode. | 20 March 2026 |

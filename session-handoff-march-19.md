@@ -1,5 +1,6 @@
 # Sniffout — Session Handoff Note
 **Date:** 19 March 2026
+**Last updated:** 20 March 2026
 **Prepared by:** Product Owner agent
 **Purpose:** Complete context handoff for the next Claude chat session. A new session reading this document should be able to pick up immediately with zero loss of context.
 
@@ -134,6 +135,8 @@ These apply in every session without exception:
 - **Designer produces recommendations only — never edits code.** The Designer spec files go to the Developer for implementation. If the Designer pane accidentally runs developer work (edits `sniffout-v2.html`), discard the changes immediately with `git checkout sniffout-v2.html` and re-brief the Developer correctly.
 - **When badge icons or similar asset implementations fail silently**, check for duplicate function names and mismatched render paths before assuming an ID mismatch. This was the root cause of the badge icon issue in Round 26/27 — a duplicate `renderMeBadges` function was silently taking precedence.
 - **Free-form walk logging is live.** The walk journal now accepts both curated (`type: "curated"`) and user-created entries (`type: "custom"`). All functions that work with the walk log must handle both types correctly.
+- **Wishlist = "On my sniff list", Favourites = "Sniffed and approved".** These are confirmed brand names. Any Developer brief or copy touching these features must use these exact labels.
+- **A second UX/UI review pass will be needed** after State A first-run redesign and dark mode colour rethink are implemented. Do not treat Round 31/32 as the final UX review.
 
 ### The content pipeline
 
@@ -332,9 +335,59 @@ Full dog profile system:
 - **FIX 30.3** — Custom entries display in the journal timeline with a "Your route" chip.
 - **FIX 30.4** — Me tab stats include custom walk distances in total miles calculation.
 
+### Round 31 — UX review blockers and high priority fixes
+
+- **FIX 31.1** — Filter button tap target increased to 44px.
+- **FIX 31.2** — Heart buttons increased to 44x44px.
+- **FIX 31.3** — Walk photo placeholder replaced with gradient.
+- **FIX 31.4** — Nearby category chips increased to 44px.
+- **FIX 31.5** — Mark as walked button increased to 44px.
+- **FIX 31.6** — Empty name state in Me tab header fixed.
+- **FIX 31.7** — Dark mode card surfaces raised to `#243A2C`.
+- **FIX 31.8** — Leaflet map inverted in dark mode.
+- **FIX 31.9** — Location link underline removed.
+
+### Round 32 — Medium priority UX fixes
+
+- **FIX 32.1** — Nav labels increased to 11px.
+- **FIX 32.2** — Inactive tab dimming increased to 50%.
+- **FIX 32.3** — Walk photo placeholder gradient updated.
+- **FIX 32.4** — Add photo button dashed border replaced with solid, camera icon added.
+- **FIX 32.5** — Hero headline increased to 32px.
+- **FIX 32.6** — Sheet handles unified across all sheets and subpages.
+- **FIX 32.7** — Walk rating increased to 13px.
+- **FIX 32.8** — Dog profile subpage inline padding moved to CSS class.
+- **FIX 32.9** — Favourite and wishlist labels added (later removed as unnecessary).
+
+### Round 33 — Sniff list labels and fixes
+
+- **Wishlist renamed** to "On my sniff list" — confirmed brand language.
+- **Favourites renamed** to "Sniffed and approved" — confirmed brand language.
+- **Saved Walks subpage** now shows two sections: "Sniffed and approved" and "On my sniff list".
+- **Walk Journal preview null fix** — prevented crash on entries with no note.
+- **Camera/gallery choice restored** — photo picker explicitly offers camera vs gallery.
+- **Active nav tab contrast fixed** — active tab now clearly distinguishable.
+
+### Additional fixes — 20 March 2026
+
+- **Tap to expand walk image** — walk detail overlay image now tappable to open full-screen viewer. Android back button closes the viewer.
+- **Walk images added** — Richmond Park, Wimbledon Common, and Isabella Plantation now have real photos. Three walks total have images.
+- **Isabella Plantation added to WALKS_DB** — full data, description, and photo. Badge: Hidden gem. Leads only throughout. 0.9 miles, 50 minutes. Walk count now **86**.
+- **Richmond Park added to Sniffout Picks carousel** — now featured on Today tab.
+- **`renderTrailCard` updated** — walk images now display on trail cards where available.
+- **Portrait card placeholder fixed** — Today tab portrait cards show correct placeholder.
+- **Illustrated placeholder image added** (`placeholder-walk.jpg`) — replaces gradient placeholder for all walk cards. Consistent single image across the app.
+- **Button labels removed** from heart and wishlist buttons.
+- **Consistent raised button style** applied across all primary action buttons.
+- **Walked button text fix** — corrected display text.
+- **Cancel button added** to "Log a walk" sheet.
+- **"Save for later" label duplication fixed**.
+- **Add to list / wishlist fixed** — saves correctly to the correct localStorage key.
+- **Default dark mode set to light** for new users.
+
 ---
 
-## SECTION 6 — KEY DECISIONS MADE TODAY (19 MARCH 2026)
+## SECTION 6 — KEY DECISIONS ON RECORD
 
 ### Weather fetch strategy
 
@@ -395,6 +448,35 @@ Scoped in `dog-diary-feature-scope.md`. Deferred to post-launch Phase 2b. Entry 
 
 **Solicitor flag:** The app stores user-entered notes about their dog including health observations (via walk notes and the future dog diary). Not special category GDPR data, but the privacy policy must accurately reflect that these categories are stored.
 
+### Sniff list and Favourites brand names
+
+**Decision: confirmed brand language.**
+
+- Wishlist = **"On my sniff list"**
+- Favourites = **"Sniffed and approved"**
+
+Saved Walks subpage shows two distinct sections using these labels. Do not revert to generic "Wishlist" or "Favourites" language anywhere in the app.
+
+### Walk card placeholder image
+
+**Decision: single illustrated placeholder image for all walk cards.**
+
+`placeholder-walk.jpg` (hosted on GitHub) is used for any walk card without a real photo. Replaces all gradient placeholder approaches. Consistent across Today tab portrait cards, Walks tab trail cards, and the walk detail overlay. Do not reintroduce gradients as placeholders.
+
+### Default dark mode
+
+**Decision: light mode is the default for new users.**
+
+Dark mode requires explicit selection in Settings. New user sessions start in light mode.
+
+### Isabella Plantation
+
+Confirmed as a Hidden gem walk. Leads only throughout (formal restriction). 0.9 miles, 50 minutes. Full data, description, and photo now in WALKS_DB. Added in Round 33.
+
+### Tap target standard
+
+All interactive elements (filter buttons, heart buttons, category chips, action buttons) set to minimum 44px. This is in line with WCAG 2.5.5 and Apple HIG. Apply to any new interactive elements added in future rounds.
+
 ### Pre-launch blockers — technical blockers resolved
 
 T1 (API key) and T14 (manifest start_url) resolved on 19 March 2026. Remaining blockers are all legal (solicitor-dependent). No technical hard blockers outstanding.
@@ -407,13 +489,20 @@ T1 (API key) and T14 (manifest start_url) resolved on 19 March 2026. Remaining b
 
 | Stage | Count | Status |
 |-------|-------|--------|
-| Walks in `sniffout-v2.html` (WALKS_DB) | 65 | Live in app |
-| Batch 01 | 20 | In app |
+| Walks in `sniffout-v2.html` (WALKS_DB) | **86** | Live in app — includes Isabella Plantation (added Round 33) |
 | Batch 02 | 20 | Validated — awaiting Developer content update |
 | Batch 03 | 20 | Validated — awaiting Developer content update |
-| **Target after all batches** | **85** | After combined Batch 02 + 03 Developer update |
 
 Both Batch 02 and Batch 03 are fully validated and waiting. No blockers. Issue the combined content update brief to Developer when ready.
+
+### Walk photos
+
+| Status | Count |
+|--------|-------|
+| Walks with real photos | 3 — Richmond Park, Wimbledon Common, Isabella Plantation |
+| Walks using illustrated placeholder (`placeholder-walk.jpg`) | 83 |
+
+Walk image sourcing is a significant outstanding task. Owner to direct sourcing strategy for the 83 remaining walks.
 
 ### Batch status
 
@@ -445,33 +534,45 @@ Five personas defined in `copywriter-personas.md`. Rules carry forward across al
 
 ## SECTION 8 — WHAT IS IN PROGRESS RIGHT NOW
 
-As of session close on 19 March 2026:
+As of session close on 20 March 2026:
 
 ### 1. Content update — Batch 02 and 03 (ready to go)
 
-Both batches are fully validated. 40 walks ready to add to `WALKS_DB`. Walk count reaches 85.
+Both batches are fully validated. 40 walks ready to add to `WALKS_DB`.
 
 **Next action:** Issue combined content update brief to Developer. No blockers.
 
-### 2. Logo rebuild (owner action)
+### 2. State A first-run screen redesign (upcoming)
+
+The current first-run state needs a full Designer pass. This is a prerequisite for the second UX review.
+
+**Next action:** Issue Designer prompt for State A redesign spec.
+
+### 3. Dark mode colour rethink (upcoming)
+
+Today tab mint/sage tones clash with the broader dark mode palette. Requires a Designer spec before any Developer implementation.
+
+**Next action:** Issue Designer prompt for dark mode colour review.
+
+### 4. Second UX/UI review pass (upcoming — blocked on items 2 and 3)
+
+A second dedicated Designer session is needed after State A redesign and dark mode colour rethink are built. The first UX review (Rounds 31/32) addressed all high and medium priority items. The second pass should address anything raised by the State A redesign and dark mode work, plus any remaining items.
+
+**Next action:** Do not issue second UX review prompt until State A and dark mode specs are built and implemented.
+
+### 5. Walk image sourcing (ongoing — owner action)
+
+83 walks still need real photos. 3 currently have images (Richmond Park, Wimbledon Common, Isabella Plantation).
+
+**Next action:** Owner to direct sourcing strategy.
+
+### 6. Logo rebuild (owner action)
 
 Owner is creating new logo in Illustrator. No Developer action until exports are delivered.
 
 **Next action:** When exports are ready, issue Developer brief to replace icon files in repo.
 
-### 3. Full UX/UI review (upcoming)
-
-Dedicated Designer session to review every tab and produce a prioritised findings list.
-
-**Next action:** Issue Designer prompt to start the review. Must happen before next beta push.
-
-### 4. Round 27 — Me tab subpages
-
-`me-tab-subpages-spec.md` exists (Designer spec). PO to review and approve before issuing Developer brief.
-
-**Next action:** Read `me-tab-subpages-spec.md`, approve or flag issues, then issue Developer brief for Round 27.
-
-### 5. GDPR solicitor (owner action — outstanding blocker)
+### 7. GDPR solicitor (owner action — outstanding blocker)
 
 Owner is seeking a solicitor. L1 (GDPR sign-off), L2/L3 (privacy policy/ToS), and L4 (NDA review) are all blocked on this.
 
@@ -484,17 +585,22 @@ Owner is seeking a solicitor. L1 (GDPR sign-off), L2/L3 (privacy policy/ToS), an
 ### Immediate (in priority order)
 
 1. **Batch 02 + 03 content update** — both batches validated, no blockers. Issue combined Developer brief. 40 walks to add.
-2. **Round 27 — Me tab subpages** — review `me-tab-subpages-spec.md`, then issue Developer brief.
-3. **Full UX/UI review session** — Designer reviews every tab systematically. Prioritised findings list. Must happen before beta push.
-4. **Logo rebuild** — owner delivers Illustrator exports, Developer replaces icon files.
+2. **State A first-run screen redesign** — Designer spec needed first, then Developer implementation.
+3. **Dark mode colour rethink** — Designer spec needed first (Today tab mint/sage clash). Then Developer implements.
+4. **Second UX/UI review pass** — after items 2 and 3 are built. Do not issue before then.
+5. **Small fixes queue** — "25 handpicked walks" copy update (3 locations, correct number 86); info button position on Today tab; bottom nav active tab contrast iteration.
+6. **Walk image sourcing** — owner to direct. 83 walks need photos.
+7. **Logo rebuild** — owner delivers Illustrator exports, Developer replaces icon files.
 
 ### Soon (Phase 2 remaining)
 
 - **Walk Wrapped summary** — twice yearly (July and December/January). Walk log foundation exists. Needs Designer spec.
 - **Pollen data on Weather tab** — Open-Meteo European AQI endpoint. Phase 3 per CLAUDE.md.
-- **Copy review session** — all UI copy across all tabs reviewed against brand voice.
+- **Copy review session** — all UI copy across all tabs reviewed against brand voice. Includes "Not to be sniffed at" tertiary stat copy in Me tab.
 - **Brand guidelines document** — Meadow Green `#3B5C2A` confirmed but full guidelines not yet produced.
 - **Dog-friendly restaurants in Nearby tab** — permanently removed from current build. Brief at `developer-brief-restaurants.md` for a future dedicated round. Do not re-implement without design work.
+- **Nearby places placeholder image** — owner to create. Separate from walk card placeholder (`placeholder-walk.jpg`).
+- **Me tab dashboard alignment polish** — deferred pending State A redesign.
 
 ### Pre-launch hard blockers — status
 
@@ -717,10 +823,14 @@ Confirm push by checking `https://sniffout.app/sniffout-v2.html` — allow ~1 mi
 1. **Never touch `dog-walk-dashboard.html`** — live production v1, protected per CLAUDE.md
 2. **Cloudflare Worker proxy is fully working** — `places-proxy.sniffout.app`. Do not revert to direct Google URL under any circumstances.
 3. **Pubs/restaurants permanently removed** — quality issues. Brief at `developer-brief-restaurants.md`. Do not re-add without a dedicated design round.
-4. **Batch 02 + 03 ready to go** — 40 walks validated, waiting for combined Developer content update
+4. **Batch 02 + 03 ready to go** — 40 walks validated, waiting for combined Developer content update.
 5. **Brand colour is `#3B5C2A` (Meadow Green)** — fully implemented. No `#1E4D3A` references should remain.
-6. **Full UX/UI review before beta push** — Designer must review every tab systematically first
-7. **Logo rebuild in progress** — owner creating in Illustrator, five exports needed
-8. **GDPR is the only hard blocker** — L1/L2/L3/L4 all solicitor-dependent. Owner must engage solicitor.
-9. **Firebase first in Phase 3** — personal data (journal, notes, photos) cannot safely live in localStorage long-term
-10. **Today tab = Lucide icons, Weather tab = Yr.no icons** — confirmed design decision, do not merge
+6. **Second UX/UI review is coming — but not yet** — State A redesign and dark mode colour rethink must be built first.
+7. **Walk count is 86** — Isabella Plantation added in Round 33. 83 walks still need photos.
+8. **Brand language: "On my sniff list" and "Sniffed and approved"** — confirmed names for Wishlist and Favourites. Do not revert to generic labels.
+9. **Walk card placeholder is `placeholder-walk.jpg`** — single illustrated image. No gradients.
+10. **GDPR is the only hard blocker** — L1/L2/L3/L4 all solicitor-dependent. Owner must engage solicitor.
+11. **Logo rebuild in progress** — owner creating in Illustrator, five exports needed.
+12. **Firebase first in Phase 3** — personal data (journal, notes, photos) cannot safely live in localStorage long-term.
+13. **Today tab = Lucide icons, Weather tab = Yr.no icons** — confirmed design decision, do not merge.
+14. **"25 handpicked walks" copy is wrong** — appears in 3 places. Correct number is 86. Fix in a small Developer round.
