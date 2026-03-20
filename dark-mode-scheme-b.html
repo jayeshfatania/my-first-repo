@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scheme B - Dark Slate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ---- Scheme B: Dark Slate ---- */
+    :root {
+      --bg:        #141414;
+      --surface:   #1F1F1F;
+      --border:    rgba(255,255,255,0.08);
+      --ink:       #F4F2EE;
+      --ink-2:     #8A8A8A;
+      --brand:     #4CAF6A;
+      --chip-off:  #2A2A2A;
+      --amber:     #D97706;
+      --red:       #DC2626;
+      --hero-bg:   #1A3522;
+      --tint-rgb:  76, 175, 106;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      padding: 24px 16px 48px;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .scheme-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--brand);
+      margin-bottom: 4px;
+    }
+    .scheme-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.3px;
+      margin-bottom: 6px;
+    }
+    .scheme-character {
+      font-size: 13px;
+      color: var(--ink-2);
+      line-height: 1.5;
+      margin-bottom: 4px;
+    }
+    .scheme-mood {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--brand);
+      margin-bottom: 28px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--ink-2);
+      margin-bottom: 10px;
+    }
+    .section { margin-bottom: 24px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .hero-card {
+      background: var(--hero-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 16px 16px;
+    }
+    .hero-location {
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .hero-main {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .hero-temp {
+      font-size: 56px;
+      font-weight: 700;
+      color: var(--brand);
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+    .hero-unit {
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--brand);
+      margin-top: 8px;
+    }
+    .hero-icon-placeholder {
+      width: 64px;
+      height: 64px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    .hero-condition {
+      font-size: 15px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 4px;
+    }
+    .hero-feels {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 14px;
+    }
+    .verdict-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--brand);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 99px;
+      padding: 6px 14px;
+    }
+    .verdict-badge-dot {
+      width: 7px;
+      height: 7px;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0.8;
+    }
+
+    .walk-card {
+      background: rgba(var(--tint-rgb), 0.07);
+      border: 1px solid rgba(var(--tint-rgb), 0.14);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .walk-photo {
+      height: 120px;
+      background: linear-gradient(135deg, rgba(var(--tint-rgb),0.3) 0%, rgba(var(--tint-rgb),0.12) 100%);
+      display: flex;
+      align-items: flex-end;
+      padding: 8px 10px;
+    }
+    .walk-badge {
+      background: rgba(0,0,0,0.55);
+      color: rgba(255,255,255,0.92);
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 99px;
+      padding: 3px 9px;
+    }
+    .walk-body { padding: 12px 14px 14px; }
+    .walk-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .walk-meta {
+      font-size: 12px;
+      color: var(--ink-2);
+      margin-bottom: 8px;
+    }
+    .walk-tags { display: flex; gap: 6px; }
+    .walk-tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--brand);
+      background: rgba(var(--tint-rgb), 0.13);
+      border-radius: 6px;
+      padding: 3px 8px;
+    }
+
+    .type-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .type-primary { font-size: 16px; font-weight: 600; color: var(--ink); }
+    .type-secondary { font-size: 14px; font-weight: 400; color: var(--ink-2); }
+    .type-link { font-size: 14px; font-weight: 500; color: var(--brand); }
+    .type-link span { text-decoration: underline; text-underline-offset: 2px; }
+
+    .swatch-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .swatch {
+      flex: 1;
+      min-width: 60px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .swatch-chip { height: 36px; }
+    .swatch-label {
+      background: var(--surface);
+      padding: 5px 7px;
+    }
+    .swatch-token { font-size: 9px; font-weight: 600; color: var(--ink-2); display: block; }
+    .swatch-hex { font-size: 9px; font-weight: 500; color: var(--ink); display: block; margin-top: 1px; font-family: ui-monospace, monospace; }
+
+    .contrast-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .contrast-chip {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(var(--tint-rgb), 0.12);
+      color: var(--brand);
+    }
+  </style>
+</head>
+<body>
+
+  <p class="scheme-label">Sniffout Dark Mode - Scheme B</p>
+  <h1 class="scheme-name">Dark Slate</h1>
+  <p class="scheme-character">The most dramatic departure. Near-charcoal neutral background with brand green functioning as a colour accent against that neutral field. The weather hero card becomes the primary green element on screen. Premium, restrained, slightly tech-influenced.</p>
+  <p class="scheme-mood">Mood: The app at night on a high-end phone. Green is the signal - everything else gets out of its way.</p>
+
+  <!-- 1. Surface card -->
+  <div class="section">
+    <p class="section-label">Surface + border</p>
+    <div class="card">
+      <p class="type-primary">Sample card content</p>
+      <p class="type-secondary" style="margin-top:4px;">Secondary text on surface background. Neutral dark - no green undertone.</p>
+    </div>
+  </div>
+
+  <!-- 2. Weather hero -->
+  <div class="section">
+    <p class="section-label">Weather hero card</p>
+    <div class="hero-card">
+      <div class="hero-location">
+        <svg width="11" height="13" viewBox="0 0 11 14" fill="currentColor"><path d="M5.5 0C3.03 0 1 2.03 1 4.5 1 7.88 5.5 14 5.5 14S10 7.88 10 4.5C10 2.03 7.97 0 5.5 0zm0 6.125A1.625 1.625 0 115.5 2.875a1.625 1.625 0 010 3.25z"/></svg>
+        Richmond, London
+      </div>
+      <div class="hero-main">
+        <div>
+          <div style="display:flex;align-items:flex-start;gap:2px;">
+            <span class="hero-temp">11</span>
+            <span class="hero-unit">°C</span>
+          </div>
+        </div>
+        <div class="hero-icon-placeholder">⛅</div>
+      </div>
+      <p class="hero-condition">Partly cloudy</p>
+      <p class="hero-feels">Feels like 8° &nbsp;·&nbsp; H 14°&nbsp; L 7°</p>
+      <div class="verdict-badge">
+        <div class="verdict-badge-dot"></div>
+        Good for a walk
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Walk preview card -->
+  <div class="section">
+    <p class="section-label">Walk preview card (brand-tinted)</p>
+    <div class="walk-card">
+      <div class="walk-photo">
+        <span class="walk-badge">Sniffout Pick</span>
+      </div>
+      <div class="walk-body">
+        <div class="walk-name">Stanage Edge</div>
+        <div class="walk-meta">Hathersage, Peak District &nbsp;·&nbsp; 4.8 mi &nbsp;·&nbsp; Moderate</div>
+        <div class="walk-tags">
+          <span class="walk-tag">Full off-lead</span>
+          <span class="walk-tag">Rocky</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4+5. Typography + brand accent -->
+  <div class="section">
+    <p class="section-label">Typography + brand accent</p>
+    <div class="type-row">
+      <span class="type-primary">Primary text - walks nearby</span>
+      <span class="type-secondary">Secondary text - 3.2 miles away - last visited Tuesday</span>
+      <span class="type-link"><span>Add to home screen →</span></span>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
+        <div style="width:24px;height:24px;background:var(--brand);border-radius:6px;flex-shrink:0;"></div>
+        <span style="font-size:12px;color:var(--ink-2);">Brand fill element</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Walk tag chip -->
+  <div class="section">
+    <p class="section-label">Walk card chips + tags</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <span class="walk-tag">Full off-lead</span>
+      <span class="walk-tag">Mixed terrain</span>
+      <span class="walk-tag" style="color:var(--amber);background:rgba(217,119,6,0.1);">Partial off-lead</span>
+      <span style="font-size:11px;font-weight:500;padding:3px 8px;border-radius:6px;background:var(--chip-off);color:var(--ink-2);">No off-lead</span>
+    </div>
+  </div>
+
+  <!-- Token swatches -->
+  <div class="section">
+    <p class="section-label">Token palette</p>
+    <div class="swatch-row">
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#141414;"></div>
+        <div class="swatch-label"><span class="swatch-token">--bg</span><span class="swatch-hex">#141414</span></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#1F1F1F;"></div>
+        <div class="swatch-label"><span class="swatch-token">--surface</span><span class="swatch-hex">#1F1F1F</span></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#1A3522;"></div>
+        <div class="swatch-label"><span class="swatch-token">hero-bg</span><span class="swatch-hex">#1A3522</span></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#4CAF6A;"></div>
+        <div class="swatch-label"><span class="swatch-token">--brand</span><span class="swatch-hex">#4CAF6A</span></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#8A8A8A;"></div>
+        <div class="swatch-label"><span class="swatch-token">--ink-2</span><span class="swatch-hex">#8A8A8A</span></div>
+      </div>
+    </div>
+    <div class="contrast-row">
+      <span class="contrast-chip">Brand on bg: ~7.1:1 AAA</span>
+      <span class="contrast-chip">White on hero: ~8.8:1 AAA</span>
+      <span class="contrast-chip">Brand on surface: ~6.0:1 AA</span>
+    </div>
+  </div>
+
+</body>
+</html>
