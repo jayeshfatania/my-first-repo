@@ -137,6 +137,8 @@ These apply in every session without exception:
 - **Free-form walk logging is live.** The walk journal now accepts both curated (`type: "curated"`) and user-created entries (`type: "custom"`). All functions that work with the walk log must handle both types correctly.
 - **Wishlist = "On my sniff list", Favourites = "Sniffed and approved".** These are confirmed brand names. Any Developer brief or copy touching these features must use these exact labels.
 - **A second UX/UI review pass will be needed** after State A first-run redesign and dark mode colour rethink are implemented. Do not treat Round 31/32 as the final UX review.
+- **Screenshot context has limits.** In sessions where many screenshots have been shared, the chat context can become constrained. Where possible, prefer terminal output and plain descriptions of issues over screenshots. Reserve screenshots for cases where visual inspection is genuinely necessary.
+- **`locationRestriction` must not be used** on the Nearby tab. It is incompatible with the `searchText` endpoint and causes empty results. Radius is enforced client-side. Do not reintroduce it.
 
 ### The content pipeline
 
@@ -385,6 +387,28 @@ Full dog profile system:
 - **Add to list / wishlist fixed** — saves correctly to the correct localStorage key.
 - **Default dark mode set to light** for new users.
 
+### Morning fixes — 20 March 2026
+
+- **Nearby radius enforced client-side** — `locationRestriction` reverted to `locationBias` (caused empty results). Radius now enforced by post-fetch client-side distance filter. Do not reintroduce `locationRestriction`.
+- **Pub search quality improved** — `primaryType` added to Google Places field mask. Non-pub venues (night clubs, casinos, cocktail bars) filtered by `primaryType` and name keyword checks after fetch.
+- **Location switching added to Walks and Nearby tabs** — tappable location line with inline search bar, consistent with Today tab. Location can now be changed from all three tabs.
+- **Android back button fixed** — `beforeunload` listener added; `pushState` fires synchronously on every `popstate` event. Browser navigation no longer exits the app unexpectedly.
+- **Info sheet swipe-to-dismiss** — extended to full overlay and scrim tap. Previously only the sheet handle triggered dismiss.
+- **Stats card distance label fixed** — km was appearing twice. Number line shows value only; label line shows "km walked" / "miles walked".
+- **Isabella Plantation dedup fixed** — Picks carousel IDs excluded from Hidden Gems filter. Walk no longer appears in both carousels.
+- **Badge labels fixed** — Sniffout Picks carousel forces `"Sniffout Pick"` badge; Hidden Gems carousel forces `"Hidden gem"` badge regardless of the walk's default field value.
+- **Dark mode Today tab partial fix** — weather hero card overridden to `#1E3D2A` in dark mode. Full rethink is a separate upcoming Designer task.
+- **Info button moved** — far right of weather pills row, separated from filter pills.
+- **Me tab stats card padding normalised**.
+- **Dark mode toggle renamed** from "Match device" to "Auto".
+- **Walked button text fix** — inline colour override removed.
+- **Cancel button added** to Log a walk sheet.
+- **`locationRestriction` reverted to `locationBias`** — confirmed fix for empty Nearby results.
+
+### In development — 20 March 2026
+
+- **Tappable temperature hero on Weather tab** — Developer implementing per `temperature-tap-spec.md`. Tapping the hero opens a full-day temperature sheet. Full remaining day shown — not capped at 10pm (valid for summer heat planning).
+
 ---
 
 ## SECTION 6 — KEY DECISIONS ON RECORD
@@ -477,6 +501,34 @@ Confirmed as a Hidden gem walk. Leads only throughout (formal restriction). 0.9 
 
 All interactive elements (filter buttons, heart buttons, category chips, action buttons) set to minimum 44px. This is in line with WCAG 2.5.5 and Apple HIG. Apply to any new interactive elements added in future rounds.
 
+### Nearby radius — locationBias not locationRestriction
+
+`locationRestriction` caused empty results on the Nearby tab and has been permanently reverted to `locationBias`. Radius is enforced by a post-fetch client-side distance filter. Do not reintroduce `locationRestriction` — it is incompatible with the `searchText` endpoint.
+
+### Location switching — available on all three main tabs
+
+Today, Walks, and Nearby tabs all now have a tappable location line with an inline search bar. Users can switch location from any of these three tabs. Consistent pattern across the app.
+
+### Temperature tap — full day shown in sheet
+
+Tapping the hero temperature on the Weather tab opens a sheet showing the full remaining day's temperatures. Not capped at 10pm — this is intentional, as summer heat planning is a valid use case for evening dog walkers. Spec at `temperature-tap-spec.md`.
+
+### T&C consent screen is a hard go-live blocker
+
+Users must actively accept Terms of Service before using the app for the first time. This is L5 in the pre-launch blockers list. It cannot be built until the ToS copy (L3) exists. Solicitor-dependent. Do not attempt to go live without this.
+
+### Report an issue — Phase 3
+
+Deferred to Phase 3. Requires Firebase backend for submission routing. Do not build a client-side form without the backend in place.
+
+### Walk empty state copy — deferred
+
+Updating the walk empty state copy is deferred until Firebase walk submission is built. Not meaningful at current content scale.
+
+### Dark mode toggle label
+
+Renamed from "Match device" to "Auto". Cleaner, less technical, more consistent with standard mobile conventions.
+
 ### Pre-launch blockers — technical blockers resolved
 
 T1 (API key) and T14 (manifest start_url) resolved on 19 March 2026. Remaining blockers are all legal (solicitor-dependent). No technical hard blockers outstanding.
@@ -534,7 +586,13 @@ Five personas defined in `copywriter-personas.md`. Rules carry forward across al
 
 ## SECTION 8 — WHAT IS IN PROGRESS RIGHT NOW
 
-As of session close on 20 March 2026:
+As of 20 March 2026 morning session:
+
+### 0. Temperature tap feature (in development)
+
+Developer is implementing per `temperature-tap-spec.md`. Tapping the hero temperature on the Weather tab opens a full-day temperature sheet.
+
+**Next action:** Await Developer output. Review before merging.
 
 ### 1. Content update — Batch 02 and 03 (ready to go)
 
@@ -584,13 +642,15 @@ Owner is seeking a solicitor. L1 (GDPR sign-off), L2/L3 (privacy policy/ToS), an
 
 ### Immediate (in priority order)
 
-1. **Batch 02 + 03 content update** — both batches validated, no blockers. Issue combined Developer brief. 40 walks to add.
-2. **State A first-run screen redesign** — Designer spec needed first, then Developer implementation.
-3. **Dark mode colour rethink** — Designer spec needed first (Today tab mint/sage clash). Then Developer implements.
-4. **Second UX/UI review pass** — after items 2 and 3 are built. Do not issue before then.
-5. **Small fixes queue** — "25 handpicked walks" copy update (3 locations, correct number 86); info button position on Today tab; bottom nav active tab contrast iteration.
-6. **Walk image sourcing** — owner to direct. 83 walks need photos.
-7. **Logo rebuild** — owner delivers Illustrator exports, Developer replaces icon files.
+1. **Temperature tap** — in development. Await Developer output and review.
+2. **Batch 02 + 03 content update** — both batches validated, no blockers. Issue combined Developer brief. 40 walks to add.
+3. **T&C consent screen** — hard go-live blocker (L5). Blocked on solicitor completing L3 (ToS). Track alongside other legal blockers.
+4. **State A first-run screen redesign** — Designer spec needed first, then Developer implementation.
+5. **Dark mode colour rethink** — Designer spec needed first (Today tab mint/sage clash). Then Developer implements.
+6. **Second UX/UI review pass** — after items 4 and 5 are built. Do not issue before then.
+7. **Small fixes queue** — "25 handpicked walks" copy (3 locations, correct number 86); bottom nav active tab contrast.
+8. **Walk image sourcing** — owner to direct. 83 walks need photos.
+9. **Logo rebuild** — owner delivers Illustrator exports, Developer replaces icon files.
 
 ### Soon (Phase 2 remaining)
 
@@ -611,6 +671,7 @@ Owner is seeking a solicitor. L1 (GDPR sign-off), L2/L3 (privacy policy/ToS), an
 | L1 — GDPR sign-off | 🔴 Blocked | Owner seeking solicitor |
 | L2/L3 — Privacy policy / ToS | 🔴 Blocked | Depends on L1 |
 | L4 — NDA review | 🔴 Blocked | `sniffout-nda.docx` ready for review |
+| L5 — T&C consent screen | 🔴 Not started | Hard go-live blocker. Depends on L3 (ToS). Developer work required once ToS copy is ready. |
 
 No technical hard blockers remain. All outstanding blockers are legal.
 
@@ -653,7 +714,7 @@ All files in `~/Desktop/my-first-repo/`.
 | `po-action-plan-round12.md` | Historical record. PO decisions from Rounds 12-23, gamification direction, phase roadmap. |
 | `product-vision-update.md` | Strategic vision. Discovery → personal record reframe. Phase build order. Firebase-first. 16 owner decisions. |
 | `community-gamification-roadmap.md` | Phase 2/3/4 roadmap. Community features, gamification approach. |
-| `pre-launch-checklist.md` | 47-item checklist. T1 and T14 resolved. Three legal blockers outstanding (L1, L2/L3, L4). |
+| `pre-launch-checklist.md` | 47-item checklist. T1 and T14 resolved. Four legal blockers outstanding (L1, L2/L3, L4, L5). L5 = T&C consent screen — hard go-live blocker added 20 March 2026. |
 
 ### Design specs
 
@@ -829,8 +890,11 @@ Confirm push by checking `https://sniffout.app/sniffout-v2.html` — allow ~1 mi
 7. **Walk count is 86** — Isabella Plantation added in Round 33. 83 walks still need photos.
 8. **Brand language: "On my sniff list" and "Sniffed and approved"** — confirmed names for Wishlist and Favourites. Do not revert to generic labels.
 9. **Walk card placeholder is `placeholder-walk.jpg`** — single illustrated image. No gradients.
-10. **GDPR is the only hard blocker** — L1/L2/L3/L4 all solicitor-dependent. Owner must engage solicitor.
-11. **Logo rebuild in progress** — owner creating in Illustrator, five exports needed.
-12. **Firebase first in Phase 3** — personal data (journal, notes, photos) cannot safely live in localStorage long-term.
-13. **Today tab = Lucide icons, Weather tab = Yr.no icons** — confirmed design decision, do not merge.
-14. **"25 handpicked walks" copy is wrong** — appears in 3 places. Correct number is 86. Fix in a small Developer round.
+10. **GDPR and T&C are hard blockers** — L1/L2/L3/L4/L5 all solicitor-dependent. Owner must engage solicitor.
+11. **T&C consent screen is L5** — hard go-live blocker. Cannot be built until L3 (ToS) exists.
+12. **Logo rebuild in progress** — owner creating in Illustrator, five exports needed.
+13. **Firebase first in Phase 3** — personal data (journal, notes, photos) cannot safely live in localStorage long-term.
+14. **Today tab = Lucide icons, Weather tab = Yr.no icons** — confirmed design decision, do not merge.
+15. **"25 handpicked walks" copy is wrong** — appears in 3 places. Correct number is 86. Fix in a small Developer round.
+16. **`locationRestriction` must not be used** on Nearby tab — causes empty results. Radius enforced client-side instead.
+17. **Temperature tap is in development** — Developer implementing per `temperature-tap-spec.md`.

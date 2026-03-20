@@ -144,9 +144,31 @@ As of 19 March 2026, a full day of development has been completed. The app has a
 - **Add to list / wishlist fixed** — saves correctly to the correct localStorage key.
 - **Default dark mode set to light** for new users.
 
+### Morning fixes — 20 March 2026
+
+- **Nearby radius enforced client-side** — `locationRestriction` caused empty results and has been reverted to `locationBias` for `searchText` endpoint compatibility. Radius is now enforced by a post-fetch client-side distance filter. Results are correctly bounded by the user's selected radius.
+- **Pub search quality improved** — `primaryType` added to the Google Places field mask. Non-pub venues (night clubs, casinos, cocktail bars, etc.) filtered out by `primaryType` and name keyword checks after fetch.
+- **Location switching added to Walks and Nearby tab headers** — tappable location line with inline search bar, consistent with the Today tab pattern. Users can switch location from all three tabs.
+- **Android back button fixed** — `beforeunload` listener added; `pushState` fires synchronously on every `popstate` event. Browser navigation is now correctly intercepted and does not exit the app unexpectedly.
+- **Info sheet swipe-to-dismiss** — extended to full overlay including scrim area tap. Previously only the sheet handle triggered dismiss.
+- **Stats card distance label fixed** — km was appearing twice. Number line now shows value only; label line shows "km walked" / "miles walked" cleanly.
+- **Isabella Plantation dedup fixed** — Picks carousel IDs are now collected and excluded from the Hidden Gems filter. Isabella no longer appears in both carousels.
+- **Badge labels fixed** — Sniffout Picks carousel forces `"Sniffout Pick"` badge; Hidden Gems carousel forces `"Hidden gem"` badge. Cards in each carousel always show the correct badge regardless of the walk's default field value.
+- **Dark mode Today tab colour clash partially addressed** — weather hero card overridden to `#1E3D2A` in dark mode. Full dark mode colour rethink is a separate upcoming Designer task.
+- **Info button moved** — now positioned at the far right of the weather pills row, clearly separated from the filter pills.
+- **Me tab stats card padding normalised** — consistent internal spacing applied.
+- **Dark mode toggle renamed** — "Match device" renamed to "Auto".
+- **Walked button text fix** — inline colour override removed; inherits correctly from button style.
+- **Cancel button added to Log a walk sheet** — allows user to dismiss without saving.
+- **`locationRestriction` reverted to `locationBias`** — confirmed fix for empty Nearby results; `locationBias` retained for `searchText` endpoint compatibility.
+
+### In development — 20 March 2026
+
+- **Tappable temperature hero on Weather tab** — Developer implementing per `temperature-tap-spec.md`. Tapping the hero temperature opens a full-day temperature sheet (not capped at 10pm — full remaining day shown, valid use case for summer heat planning).
+
 ---
 
-## Pre-Launch Blockers — Status as of 19 March 2026
+## Pre-Launch Blockers — Status as of 20 March 2026
 
 ### Resolved today
 
@@ -162,8 +184,9 @@ As of 19 March 2026, a full day of development has been completed. The app has a
 | **L1** — GDPR sign-off from solicitor | 🔴 Blocked | Owner is seeking a solicitor. Hard legal blocker — do not launch without this. |
 | **L2 / L3** — Privacy policy and Terms of Service | 🔴 Blocked | Depends on L1. Cannot be written without legal input. |
 | **L4** — NDA review by solicitor | 🔴 Blocked | `sniffout-nda.docx` exists and is ready for review. No beta access until cleared. |
+| **L5** — T&C consent screen built and live | 🔴 Not started | Hard go-live blocker. Users must actively accept Terms of Service before using the app. Depends on L3 (ToS must exist first). Developer work required once ToS copy is ready. |
 
-No remaining technical hard blockers. All three outstanding blockers are legal and require the solicitor to be engaged. Owner action required.
+No remaining technical hard blockers. All four outstanding blockers are legal and require the solicitor to be engaged. Owner action required.
 
 **Note for solicitor (when privacy policy is drafted):** The app now stores user-entered health notes about dogs (vet visits, medication, health observations) via the walk notes field and walk log. This is not special category GDPR data, but the solicitor should be aware so the privacy policy accurately reflects the categories of data stored.
 
@@ -188,20 +211,22 @@ No remaining technical hard blockers. All three outstanding blockers are legal a
 ### Upcoming work — priority order
 
 1. **Batch 02 + 03 content update** — 40 walks validated and ready. Issue combined Developer brief.
-2. **Second UX/UI review pass** — a second dedicated Designer session will be needed once State A first-run redesign and dark mode colour rethink are implemented. These two items need to be built first.
-3. **State A first-run screen redesign** — Designer pass needed. Current first-run state needs a full redesign.
-4. **Dark mode colour rethink** — Today tab mint/sage tones clash with dark mode palette across the rest of the app. Requires Designer spec before Developer implements.
-5. **"25 handpicked walks" copy** — this figure appears in three places across the app. Correct number is 86. Update across all three instances.
-6. **Walk image sourcing** — 83 walks still need real photos. Owner to source or direct.
-7. **Nearby places placeholder image** — a separate placeholder image is needed for nearby venue cards (different from the walk card placeholder). Owner to create.
-8. **Me tab dashboard alignment polish** — minor alignment refinements identified in UX review. Deferred pending State A redesign.
-9. **Info button position on Today tab** — move further right to better distinguish it from the filter pills. Small Developer fix.
+2. **Temperature tap feature** — in development by Developer. `temperature-tap-spec.md` issued. Full remaining day shown in sheet (not capped at 10pm).
+3. **T&C consent screen** — hard go-live blocker (L5). Cannot be built until ToS copy exists (L3). Solicitor-dependent. Add to pre-launch checklist.
+4. **State A first-run screen redesign** — Designer pass needed. Current first-run state needs a full redesign.
+5. **Dark mode colour rethink** — Today tab mint/sage tones clash with the broader dark mode palette. Requires Designer spec before Developer implements.
+6. **Second UX/UI review pass** — after items 4 and 5 are built and implemented. Do not issue before then.
+7. **"25 handpicked walks" copy** — appears in three places across the app. Correct number is 86. Small Developer fix.
+8. **Walk image sourcing** — 83 walks still need real photos. Owner to source or direct.
+9. **Nearby places placeholder image** — separate from walk card placeholder (`placeholder-walk.jpg`). Owner to create.
 10. **Bottom nav active tab contrast** — further improvement review needed after Round 33 fix. May require another iteration.
-11. **"Not to be sniffed at" copy** — add as tertiary line in Me tab stats when user has walk data. Deferred to copy review pass.
-12. **Logo rebuild** — owner creating in Illustrator. Required exports: `icon.svg` (master), `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180x180), `favicon.svg`. No Developer work until exports are ready.
-13. **`sniffout.co.uk` redirect** — defensive registration exists but not yet redirecting to `sniffout.app`. Owner action.
-14. **`hello@sniffout.app` support email** — required for GDPR subject access requests (checklist item B6). Owner action.
-15. **GDPR solicitor engagement** — L1/L2/L3/L4 all blocked on this. Owner action. Target: engaged at least 4 weeks before any beta launch date.
+11. **Me tab dashboard alignment polish** — minor refinements deferred pending State A redesign.
+12. **"Not to be sniffed at" copy** — Me tab stats tertiary line when user has walk data. Deferred to copy review pass.
+13. **Walk empty state copy update** — deferred until Firebase walk submission is built. Not relevant at current scale.
+14. **Logo rebuild** — owner creating in Illustrator. Required exports: `icon.svg` (master), `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180x180), `favicon.svg`. No Developer work until exports are ready.
+15. **`sniffout.co.uk` redirect** — defensive registration exists but not yet redirecting to `sniffout.app`. Owner action.
+16. **`hello@sniffout.app` support email** — required for GDPR subject access requests (checklist item B6). Owner action.
+17. **GDPR solicitor engagement** — L1/L2/L3/L4/L5 all blocked on this. Owner action. Target: engaged at least 4 weeks before any beta launch date.
 
 ### Phase 2b — post-launch (confirmed deferred)
 
@@ -253,3 +278,10 @@ These decisions are locked and should not be revisited without a clear reason.
 | Isabella Plantation | Confirmed as Hidden gem walk. Leads only throughout. 0.9 miles, 50 minutes. Full data, description, and photo in WALKS_DB. | 20 March 2026 |
 | Tap target standard | All interactive tap targets (filter buttons, heart buttons, category chips, action buttons) set to minimum 44px per WCAG and Apple HIG requirements. | 20 March 2026 |
 | Dark mode card surfaces | Raised to `#243A2C` in dark mode. Leaflet map inverted in dark mode. | 20 March 2026 |
+| Temperature sheet — full day shown | Tappable temperature hero opens a sheet showing the full remaining day's temperatures. Not capped at 10pm — valid use case for summer heat planning. Implemented per `temperature-tap-spec.md`. | 20 March 2026 |
+| Nearby radius enforcement | `locationRestriction` caused empty results — reverted to `locationBias`. Radius is enforced by a post-fetch client-side distance filter instead. Do not reintroduce `locationRestriction`. | 20 March 2026 |
+| Location switching | Available on Today, Walks, and Nearby tab headers. Consistent tappable location line with inline search bar across all three tabs. | 20 March 2026 |
+| T&C consent screen | Hard go-live blocker. Users must accept Terms of Service before using the app. Added as L5 to pre-launch blockers. Depends on L3 (ToS) being ready first. | 20 March 2026 |
+| Report an issue | Deferred to Phase 3. Requires Firebase backend for submission routing. Do not build client-side form without backend. | 20 March 2026 |
+| Walk empty state copy | Deferred until Firebase walk submission is built. Not a meaningful change at current content scale. | 20 March 2026 |
+| Dark mode toggle label | Renamed from "Match device" to "Auto". | 20 March 2026 |
