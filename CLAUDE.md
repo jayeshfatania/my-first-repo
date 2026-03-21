@@ -28,7 +28,7 @@ Mobile-first, uncluttered, modern and slick. **v2 uses a clean card-based design
 - Typography: Inter 400/500/600/700 only
 - Cards: `border-radius: 16px`, `1px solid var(--border)`, no blur or translucent surfaces
 - Dark mode: `body.night` class, toggled manually via Settings ("Auto" option). Not automatic based on weather.
-- Me tab primary stat card (`me-stat-card--primary`): number colour is `var(--ink)` in light mode and `#5C7A63` in dark mode. This matches the Weather tab brand accent. Do not change without explicit owner instruction.
+- Me tab primary stat card (`me-stat-card--primary`): number colour is `var(--ink)` in both light and dark mode, consistent with all other stat card numbers. Do not add a colour override without explicit owner instruction.
 
 Nothing gimmicky. Paw emoji (🐾) reserved for paw safety block only.
 
