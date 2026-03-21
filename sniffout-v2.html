@@ -12173,6 +12173,21 @@
     document.getElementById('walk-log-sheet-inner'),
     closeWalkLogSheet
   );
+  addSheetSwipe(
+    document.getElementById('walks-filter-sheet'),
+    null,
+    function() { closeFilterSheet('walks'); }
+  );
+  addSheetSwipe(
+    document.getElementById('nearby-filter-sheet'),
+    null,
+    function() { closeFilterSheet('nearby'); }
+  );
+  addSheetSwipe(
+    document.getElementById('logWalkSheet'),
+    null,
+    closeLogWalkSheet
+  );
 
   // Me tab subpage swipe-to-dismiss
   addSheetSwipe(
