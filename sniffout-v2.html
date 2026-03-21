@@ -2684,6 +2684,7 @@
     body.night .chip.active           { background: rgba(92,122,99,0.10); border-color: rgba(92,122,99,0.22); color: var(--brand); }
     body.night .hazard-card.brand-variant { background: rgba(92,122,99,0.07); }
     body.night .weather-hero { background: #1A3522; }
+    body.night .me-stat-card--primary .me-stat-number { color: #5C7A63; }
 
     /* ═══════════════════════════════
        LOADING STATE
@@ -2852,6 +2853,12 @@
       -webkit-overflow-scrolling: touch;
     }
     .trail-carousel::-webkit-scrollbar { display: none; }
+    .trail-fade-wrap { position: relative; }
+    .trail-fade-wrap::after {
+      content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 32px;
+      background: linear-gradient(to right, transparent, var(--bg));
+      pointer-events: none; z-index: 1;
+    }
     .trail-card {
       flex-shrink: 0;
       width: 240px;
@@ -3711,8 +3718,10 @@
 
           <!-- Showcase carousel (always shown, hardcoded 7 walks) -->
           <div class="preview-picks-section">
-            <div class="trail-carousel" id="preview-picks-carousel">
-              <!-- populated by renderStateAPreviews() -->
+            <div class="trail-fade-wrap">
+              <div class="trail-carousel" id="preview-picks-carousel">
+                <!-- populated by renderStateAPreviews() -->
+              </div>
             </div>
           </div>
 
@@ -3754,6 +3763,7 @@
           <div class="search-error" id="state-b-search-error">We couldn't find that -- try a postcode (e.g. SW11) or a place name.</div>
           <div id="state-b-recent-pills"></div>
         </div>
+        <div id="recently-viewed-walk-row" style="padding:0 16px 8px;"></div>
         <div id="state-b-content" style="padding-bottom: 24px;"></div>
       </div><!-- /state-b -->
 
@@ -5998,6 +6008,10 @@
     var overlay = document.getElementById('walk-detail-overlay');
     if (overlay) overlay.classList.add('open');
     setTimeout(function() { initWalkDetailMap(walk.lat, walk.lon, walk.name); }, 320);
+    if (typeof saveRecentWalk === 'function') {
+      saveRecentWalk(id);
+      renderRecentWalkChip();
+    }
   }
 
   function closeWalkDetail() {
@@ -9782,7 +9796,7 @@
     html += '<div class="walks-section">';
     html += '<div class="walks-section-label">Sniffout Picks</div>';
     if (curated.length) {
-      html += '<div class="trail-carousel">' + curated.map(renderTrailCard).join('') + '</div>';
+      html += '<div class="trail-fade-wrap"><div class="trail-carousel">' + curated.map(renderTrailCard).join('') + '</div></div>';
     } else {
       html += '<div style="padding:0 16px 16px"><p style="font-size:14px;color:var(--ink-2)">No walks found nearby. Try a wider radius.</p></div>';
     }
@@ -9839,7 +9853,7 @@
     html += '<div class="walks-section">';
     html += '<div class="walks-section-label">Sniffout Picks</div>';
     if (result && result.length) {
-      html += '<div class="trail-carousel">' + result.map(renderTrailCard).join('') + '</div>';
+      html += '<div class="trail-fade-wrap"><div class="trail-carousel">' + result.map(renderTrailCard).join('') + '</div></div>';
     } else {
       html += '<div class="walks-empty">Nothing matching those filters right now. <span style="color:var(--brand);cursor:pointer" onclick="document.getElementById(\'walks-filter-clear\').click();document.getElementById(\'walks-filter-apply\').click()">Show all walks \u2192</span></div>';
     }
@@ -9950,9 +9964,9 @@
         '<div class="section-title">Sniffout Picks nearby</div>' +
         '<span class="section-link" onclick="switchTab(\'walks\')">See all</span>' +
       '</div>' +
-      '<div class="hscroll-row" style="padding:0 16px 16px">' +
+      '<div class="trail-fade-wrap"><div class="hscroll-row" style="padding:0 16px 16px">' +
         nearest.map(function(w) { return renderPortraitCard(Object.assign({}, w, {badge: 'Sniffout Pick'})); }).join('') +
-      '</div>';
+      '</div></div>';
 
     // Hidden gems section
     var HIDDEN_GEM_THRESHOLD_KM = 50;
@@ -9975,9 +9989,9 @@
           '<div class="section-title">Hidden gems</div>' +
           '<span class="section-link" onclick="switchTab(\'walks\')">Explore →</span>' +
         '</div>' +
-        '<div class="hscroll-row" style="padding:0 16px 24px">' +
+        '<div class="trail-fade-wrap"><div class="hscroll-row" style="padding:0 16px 24px">' +
           hiddenGems.map(function(w) { return renderPortraitCard(Object.assign({}, w, {badge: 'Hidden gem'})); }).join('') +
-        '</div>';
+        '</div></div>';
     }
 
     // Also update Walks tab with sorted results
@@ -10498,6 +10512,30 @@
   /* ─── State A showcase carousel ─── */
   var PREVIEW_PICK_IDS = ['isabella-plantation', 'stanage-edge', 'balmaha-loch-lomond', 'rhossili-gower', 'seven-sisters', 'formby-beach-pinewoods', 'alnmouth-northumberland'];
 
+  function nudgeStateACTA() {
+    var btn = document.getElementById('btn-use-location');
+    if (!btn) return;
+    btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(function() {
+      btn.style.transition = 'transform 150ms ease';
+      btn.style.transform = 'scale(1.04)';
+      setTimeout(function() {
+        btn.style.transform = 'scale(1.0)';
+        setTimeout(function() {
+          btn.style.transition = '';
+          btn.style.transform = '';
+        }, 150);
+      }, 150);
+    }, 350);
+  }
+
+  function _stateACarouselCapture(e) {
+    if (e.target.closest('.trail-card')) {
+      e.stopPropagation();
+      nudgeStateACTA();
+    }
+  }
+
   function renderStateAPreviews() {
     var carousel = document.getElementById('preview-picks-carousel');
     if (!carousel) return;
@@ -10505,6 +10543,8 @@
       return WALKS_DB.filter(function(w) { return w.id === id; })[0];
     }).filter(Boolean);
     carousel.innerHTML = walks.map(renderTrailCard).join('');
+    carousel.removeEventListener('click', _stateACarouselCapture, true);
+    carousel.addEventListener('click', _stateACarouselCapture, true);
   }
 
   renderStateAPreviews();
@@ -10970,6 +11010,41 @@
     renderRecentPills();
   }
 
+  /* ─── Recently viewed walks (FIX 5) ─── */
+
+  var RECENT_WALKS_KEY = 'sniffout_recent_walks';
+  var RECENT_WALKS_MAX = 3;
+
+  function getRecentWalks() {
+    try { return JSON.parse(localStorage.getItem(RECENT_WALKS_KEY)) || []; } catch(e) { return []; }
+  }
+
+  function saveRecentWalk(id) {
+    if (!id) return;
+    var entries = getRecentWalks().filter(function(i) { return i !== id; });
+    entries.unshift(id);
+    if (entries.length > RECENT_WALKS_MAX) entries = entries.slice(0, RECENT_WALKS_MAX);
+    try { localStorage.setItem(RECENT_WALKS_KEY, JSON.stringify(entries)); } catch(e) {}
+  }
+
+  function renderRecentWalkChip() {
+    var row = document.getElementById('recently-viewed-walk-row');
+    if (!row) return;
+    var ids = getRecentWalks();
+    if (!ids.length) { row.innerHTML = ''; return; }
+    var walk = null;
+    for (var i = 0; i < WALKS_DB.length; i++) {
+      if (WALKS_DB[i].id === ids[0]) { walk = WALKS_DB[i]; break; }
+    }
+    if (!walk) { row.innerHTML = ''; return; }
+    var name = walk.name.length > 20 ? walk.name.slice(0, 20) + '\u2026' : walk.name;
+    row.innerHTML =
+      '<span class="recent-pill" onclick="openWalkDetail(\'' + escHtml(walk.id) + '\')" style="font-size:12px;">' +
+        luIcon('clock', 12) + '&nbsp;' + escHtml(name) +
+      '</span>';
+    syncIcons();
+  }
+
   /* Hook: save search on every successful manual geocode */
   var _origGeocodeByName = geocodeByName;
   geocodeByName = function(query) {
@@ -11103,6 +11178,7 @@
   var _showStateBOrig = showStateB;
   showStateB = function(locationName) {
     _showStateBOrig(locationName);
+    if (typeof renderRecentWalkChip === 'function') renderRecentWalkChip();
     // Close Today tab inline search
     var sbSearch = document.getElementById('state-b-search');
     var sbErr    = document.getElementById('state-b-search-error');
