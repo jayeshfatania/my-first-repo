@@ -3892,7 +3892,7 @@
         </button>
 
         <!-- Recently Viewed -->
-        <button class="me-entry-row" onclick="toggleRecentlyViewed()" id="entryRecentlyViewed">
+        <button class="me-entry-row" onclick="openMeSubpage('recentlyviewed')" id="entryRecentlyViewed">
           <div class="me-entry-icon">
             <i data-lucide="clock" style="width:20px;height:20px"></i>
           </div>
@@ -3902,10 +3902,9 @@
           </div>
           <div class="me-entry-right">
             <span class="me-entry-count" id="recentlyViewedCount"></span>
-            <svg class="me-entry-chevron" id="recentlyViewedChevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
         </button>
-        <div id="recently-viewed-list" style="display:none; padding: 4px 16px 8px;"></div>
 
         <!-- Badges — hidden until first badge earned -->
         <button class="me-entry-row" onclick="openMeSubpage('badges')" id="entryBadges" hidden>
@@ -8959,11 +8958,12 @@
   }
 
   function renderMeSubpageContent(id) {
-    if (id === 'journal')      renderSubpageJournal();
-    else if (id === 'badges')      renderSubpageBadges();
-    else if (id === 'savedwalks')  renderSubpageSavedWalks();
-    else if (id === 'savedplaces') renderSubpageSavedPlaces();
-    else if (id === 'dog')         populateDogSettings();
+    if (id === 'journal')           renderSubpageJournal();
+    else if (id === 'badges')           renderSubpageBadges();
+    else if (id === 'savedwalks')       renderSubpageSavedWalks();
+    else if (id === 'savedplaces')      renderSubpageSavedPlaces();
+    else if (id === 'recentlyviewed')   renderSubpageRecentlyViewed();
+    else if (id === 'dog')              populateDogSettings();
   }
 
   /* ─── Walk Journal subpage ─── */
@@ -11110,41 +11110,55 @@
     var ids = getRecentWalks();
     var preview = document.getElementById('recentlyViewedPreview');
     var count = document.getElementById('recentlyViewedCount');
-    var list = document.getElementById('recently-viewed-list');
     if (preview) preview.textContent = ids.length ? ids.length + ' walk' + (ids.length !== 1 ? 's' : '') : 'No walks viewed yet';
     if (count) count.textContent = ids.length ? ids.length : '';
-    if (!list) return;
-    if (!ids.length) { list.innerHTML = ''; return; }
+  }
+
+  function renderSubpageRecentlyViewed() {
+    var el = document.getElementById('recentlyViewedContent');
+    if (!el) return;
+    var ids = getRecentWalks();
+    if (!ids.length) {
+      el.innerHTML =
+        '<div class="me-subpage-empty">' +
+          '<div class="me-subpage-empty-icon">' +
+            '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true">' +
+              '<circle cx="12" cy="12" r="10"/>' +
+              '<polyline points="12 6 12 12 16 14"/>' +
+            '</svg>' +
+          '</div>' +
+          '<p class="me-subpage-empty-head">No walks viewed yet</p>' +
+          '<p class="me-subpage-empty-body">Tap any walk to view its details. Your recently viewed walks will appear here.</p>' +
+        '</div>';
+      return;
+    }
     var html = '';
+    var shown = 0;
     for (var i = 0; i < ids.length; i++) {
       var walk = null;
       for (var j = 0; j < WALKS_DB.length; j++) {
         if (WALKS_DB[j].id === ids[i]) { walk = WALKS_DB[j]; break; }
       }
       if (!walk) continue;
+      var isLast = (i === ids.length - 1);
       html +=
-        '<div onclick="onWalkTap(\'' + walk.id + '\')" style="display:flex;align-items:center;gap:10px;padding:10px 0;' +
-          (i < ids.length - 1 ? 'border-bottom:1px solid var(--border);' : '') + 'cursor:pointer;">' +
-          '<div style="flex-shrink:0;color:var(--ink-2);">' + luIcon('footprints', 16) + '</div>' +
+        '<div onclick="openRecentlyViewedWalk(\'' + walk.id + '\')" ' +
+          'style="display:flex;align-items:center;gap:12px;padding:14px 0;' +
+          (!isLast ? 'border-bottom:1px solid var(--border);' : '') + 'cursor:pointer;">' +
           '<div style="flex:1;min-width:0;">' +
-            '<div style="font-size:14px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escHtml(walk.name) + '</div>' +
-            '<div style="font-size:12px;color:var(--ink-2);">' + escHtml(walk.location) + ' · ' + walk.distance.toFixed(1) + ' mi</div>' +
+            '<div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escHtml(walk.name) + '</div>' +
+            '<div style="font-size:13px;color:var(--ink-2);">' + escHtml(walk.location) + ' · ' + walk.distance.toFixed(1) + ' mi</div>' +
           '</div>' +
           '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--ink-2);" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>' +
         '</div>';
+      shown++;
     }
-    list.innerHTML = html;
-    syncIcons();
+    el.innerHTML = html || '<div class="me-subpage-empty"><p class="me-subpage-empty-head">No walks found</p></div>';
   }
 
-  function toggleRecentlyViewed() {
-    var list = document.getElementById('recently-viewed-list');
-    var chevron = document.getElementById('recentlyViewedChevron');
-    if (!list) return;
-    var isOpen = list.style.display !== 'none';
-    list.style.display = isOpen ? 'none' : 'block';
-    if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(90deg)';
-    if (!isOpen) renderRecentlyViewedMe();
+  function openRecentlyViewedWalk(id) {
+    closeMeSubpage('recentlyviewed');
+    onWalkTap(id);
   }
 
   /* Hook: save search on every successful manual geocode */
@@ -11866,6 +11880,19 @@
   </div>
 </div>
 
+<!-- Recently Viewed subpage -->
+<div class="me-subpage" id="subpageRecentlyviewed" role="dialog" aria-modal="true" aria-label="Recently Viewed">
+  <div class="me-subpage-handle"></div>
+  <div class="me-subpage-header">
+    <button class="me-subpage-back" onclick="closeMeSubpage('recentlyviewed')" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 class="me-subpage-title">Recently Viewed</h2>
+    <div class="me-subpage-header-spacer"></div>
+  </div>
+  <div class="me-subpage-content" id="recentlyViewedContent"></div>
+</div>
+
 <script>
   /* ═══════════════════════════════
      FIX 2.2 — Radius filter UI (Walks + Nearby tabs)
@@ -12421,6 +12448,11 @@
     document.getElementById('subpageDog'),
     document.getElementById('dogSubpageContent'),
     function() { closeMeSubpage('dog'); }
+  );
+  addSheetSwipe(
+    document.getElementById('subpageRecentlyviewed'),
+    document.getElementById('recentlyViewedContent'),
+    function() { closeMeSubpage('recentlyviewed'); }
   );
 </script>
 
