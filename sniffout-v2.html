@@ -2859,6 +2859,59 @@
       background: linear-gradient(to right, transparent, var(--bg));
       pointer-events: none; z-index: 1;
     }
+
+    /* Map style toggle */
+    .map-style-row {
+      padding: 8px 16px 4px;
+      display: flex;
+      align-items: center;
+    }
+    .map-style-control {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: rgba(0,0,0,0.06);
+      border-radius: 10px;
+      padding: 3px;
+      height: 34px;
+      width: 160px;
+      box-sizing: border-box;
+    }
+    .map-style-pill {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: calc((100% - 6px) / 2);
+      height: calc(100% - 6px);
+      background: var(--surface);
+      border-radius: 7px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      transition: transform 200ms ease;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .map-style-pill[data-active="0"] { transform: translateX(0); }
+    .map-style-pill[data-active="1"] { transform: translateX(100%); }
+    .map-style-btn {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font: 500 12px/1 'Inter', sans-serif;
+      color: rgba(0,0,0,0.4);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      border-radius: 7px;
+      transition: color 200ms;
+      white-space: nowrap;
+    }
+    .map-style-btn.active { color: var(--ink); font-weight: 600; }
+    body.night .map-style-control { background: rgba(255,255,255,0.08); }
+    body.night .map-style-pill { background: rgba(255,255,255,0.18); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+    body.night .map-style-btn { color: rgba(255,255,255,0.4); }
+    body.night .map-style-btn.active { color: #FFFFFF; }
     .trail-card {
       flex-shrink: 0;
       width: 240px;
@@ -3848,6 +3901,13 @@
       </div>
       <div id="nearby-content">
         <div class="empty-state">Set your location on the Today tab to find dog-friendly places near you.</div>
+      </div>
+      <div id="nearby-map-style-row" class="map-style-row" style="display:none;">
+        <div class="map-style-control" id="nearby-map-style-control" role="group" aria-label="Map style">
+          <div class="map-style-pill" id="nearby-map-style-pill" aria-hidden="true"></div>
+          <button class="map-style-btn active" data-map-style="osm">Standard</button>
+          <button class="map-style-btn" data-map-style="leisure">OS Map</button>
+        </div>
       </div>
       <div id="nearby-map"></div>
     </div><!-- /tab-nearby -->
@@ -6668,6 +6728,9 @@
     if (!container) return;
     if (walkDetailMap) { walkDetailMap.remove(); walkDetailMap = null; }
 
+    var style = (typeof getSavedMapStyle === 'function') ? getSavedMapStyle() : 'osm';
+    var tileUrl   = (typeof OS_TILES !== 'undefined' && OS_TILES[style]) ? OS_TILES[style] : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
     walkDetailMap = L.map(container, {
       zoomControl: false,
       attributionControl: false,
@@ -6681,7 +6744,7 @@
     walkDetailMap.dragging.disable();
     walkDetailMap.touchZoom.disable();
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer(tileUrl, {
       maxZoom: 18
     }).addTo(walkDetailMap);
 
@@ -6692,6 +6755,19 @@
       .addTo(walkDetailMap);
 
     walkDetailMap.invalidateSize();
+
+    /* Wire toggle buttons (re-bound each open since overlay HTML is static) */
+    if (typeof applyMapStyleControl === 'function') {
+      applyMapStyleControl('detail-map-style-control', style);
+    }
+    var detailControl = document.getElementById('detail-map-style-control');
+    if (detailControl) {
+      detailControl.querySelectorAll('.map-style-btn').forEach(function(btn) {
+        btn.onclick = function() {
+          if (typeof setMapStyle === 'function') setMapStyle(btn.getAttribute('data-map-style'));
+        };
+      });
+    }
   }
 
   function shareWalk(walk) {
@@ -10091,7 +10167,64 @@
      PHASE E — Nearby / Places tab
   ═══════════════════════════════ */
 
+  /* ─── OS Maps constants ─── */
+  var OS_API_KEY = 'JcMmulbTghzn8pkYAGdxd8MH6GTK2314';
+  var OS_TILES = {
+    osm:     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    leisure: 'https://api.os.uk/maps/raster/v1/zxy/Leisure_3857/{z}/{x}/{y}.png?key=' + OS_API_KEY
+  };
+  var OS_ATTRIBUTION = {
+    osm:     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    leisure: '&copy; Crown copyright and database rights 2026 OS'
+  };
+  var MAP_STYLE_KEY = 'sniffout_map_style';
+
+  function getSavedMapStyle() {
+    try { return localStorage.getItem(MAP_STYLE_KEY) || 'osm'; } catch(e) { return 'osm'; }
+  }
+  function saveMapStyle(style) {
+    try { localStorage.setItem(MAP_STYLE_KEY, style); } catch(e) {}
+  }
+
+  /* Update pill position and button active states for a map style control */
+  function applyMapStyleControl(controlId, style) {
+    var control = document.getElementById(controlId);
+    if (!control) return;
+    var pill = control.querySelector('.map-style-pill');
+    var btns = control.querySelectorAll('.map-style-btn');
+    btns.forEach(function(btn, idx) {
+      var active = btn.getAttribute('data-map-style') === style;
+      btn.classList.toggle('active', active);
+      if (active && pill) pill.setAttribute('data-active', String(idx));
+    });
+  }
+
+  /* Swap tile layer on a Leaflet map instance */
+  function swapTileLayer(map, style, maxZoom) {
+    map.eachLayer(function(layer) {
+      if (layer instanceof L.TileLayer) map.removeLayer(layer);
+    });
+    return L.tileLayer(OS_TILES[style] || OS_TILES.osm, {
+      attribution: OS_ATTRIBUTION[style] || OS_ATTRIBUTION.osm,
+      maxZoom: maxZoom || 19
+    }).addTo(map);
+  }
+
+  /* Called by toggle buttons — updates preference, swaps layers on all live maps */
+  function setMapStyle(style) {
+    saveMapStyle(style);
+    if (nearbyMap) {
+      nearbyTileLayer = swapTileLayer(nearbyMap, style, 19);
+    }
+    if (typeof walkDetailMap !== 'undefined' && walkDetailMap) {
+      swapTileLayer(walkDetailMap, style, 18);
+    }
+    applyMapStyleControl('nearby-map-style-control', style);
+    applyMapStyleControl('detail-map-style-control', style);
+  }
+
   var nearbyMap          = null;
+  var nearbyTileLayer    = null;
   var nearbyVenues       = [];
   var nearbyGreenSpaces  = [];
   var nearbyPendingSort  = null; // set before renderNearbyTab/renderVenueList to apply a sort after fetch
@@ -10284,6 +10417,8 @@
       listBtn.classList.add('active'); mapBtn.classList.remove('active');
       var mapEl = document.getElementById('nearby-map');
       if (mapEl) mapEl.classList.remove('visible');
+      var styleRow = document.getElementById('nearby-map-style-row');
+      if (styleRow) styleRow.style.display = 'none';
       var venuesEl = document.getElementById('nearby-venues');
       if (venuesEl) venuesEl.style.display = '';
     });
@@ -10292,6 +10427,8 @@
       mapBtn.classList.add('active'); listBtn.classList.remove('active');
       var mapEl = document.getElementById('nearby-map');
       if (mapEl) mapEl.classList.add('visible');
+      var styleRow = document.getElementById('nearby-map-style-row');
+      if (styleRow) styleRow.style.display = '';
       var venuesEl = document.getElementById('nearby-venues');
       if (venuesEl) venuesEl.style.display = 'none';
       setTimeout(function() { initNearbyMap(lat, lon); }, 50);
@@ -10452,14 +10589,28 @@
     var mapEl = document.getElementById('nearby-map');
     if (!mapEl) return;
 
+    var style = getSavedMapStyle();
+
     if (!nearbyMap) {
       nearbyMap = L.map('nearby-map', { zoomControl: true }).setView([lat, lon], 14);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      nearbyTileLayer = L.tileLayer(OS_TILES[style] || OS_TILES.osm, {
+        attribution: OS_ATTRIBUTION[style] || OS_ATTRIBUTION.osm,
         maxZoom: 19
       }).addTo(nearbyMap);
+      applyMapStyleControl('nearby-map-style-control', style);
+      /* Wire up toggle buttons once on first map creation */
+      var nearbyStyleControl = document.getElementById('nearby-map-style-control');
+      if (nearbyStyleControl && !nearbyStyleControl._styleBound) {
+        nearbyStyleControl._styleBound = true;
+        nearbyStyleControl.querySelectorAll('.map-style-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            setMapStyle(btn.getAttribute('data-map-style'));
+          });
+        });
+      }
     } else {
       nearbyMap.setView([lat, lon], 14);
+      applyMapStyleControl('nearby-map-style-control', style);
     }
 
     nearbyMap.invalidateSize();
@@ -11532,6 +11683,13 @@
     </div>
     <div class="walk-detail-map-section">
       <div class="walk-detail-map-title">Location</div>
+      <div class="map-style-row" style="padding:6px 0 4px;">
+        <div class="map-style-control" id="detail-map-style-control" role="group" aria-label="Map style">
+          <div class="map-style-pill" id="detail-map-style-pill" aria-hidden="true"></div>
+          <button class="map-style-btn active" data-map-style="osm">Standard</button>
+          <button class="map-style-btn" data-map-style="leisure">OS Map</button>
+        </div>
+      </div>
       <div class="walk-detail-map" id="walk-detail-map"></div>
       <a class="walk-detail-maps-link" id="walk-detail-maps-link" target="_blank" rel="noopener">Open in Google Maps →</a>
     </div>
