@@ -1,8 +1,8 @@
 # Sniffout — Session Handoff Note
-**Date:** 20 March 2026
+**Date:** 20 March 2026 (last updated: 21 March 2026)
 **Prepared by:** Product Owner agent
 **Purpose:** Complete context handoff for the next Claude chat session. A new session reading this document should be able to pick up immediately with zero loss of context.
-**Replaces:** session-handoff-march-19.md (still in repo as historical record)
+**Replaces:** session-handoff-march-19.md (still in repo as historical record at `docs/handoffs/session-handoff-march-19.md`)
 
 ---
 
@@ -86,6 +86,7 @@ No branches, no PRs, no staging environment. Push directly to main. GitHub Pages
 | PWA manifest | `manifest.json` — `start_url` set to `/sniffout-v2.html`, `theme_color` `#3B5C2A` |
 | Brand colour | `#3B5C2A` (Meadow Green) — fully implemented throughout |
 | Firebase | Compat SDK v10.12.0 (CDN) — project `sniffout-fe976`, region `europe-west2`. Anonymous auth + Firestore dual-write + Storage. Foundation only — full migration is Phase 3. |
+| OS Maps | Ordnance Survey Data Hub. Standard/OS Map toggle above map on Walks and Nearby tabs. ZXY endpoint: `https://api.os.uk/maps/raster/v1/zxy/{style}_3857/{z}/{x}/{y}.png`. API key: `JcMmulbTghzn8pkYAGdxd8MH6GTK2314`. Premium Data Plan active. Leisure tiles not yet activated — check 22 March. Currently defaults to Standard (OSM). **Note: API key is currently in page source — review security before launch.** |
 
 ### Local dev
 
@@ -139,7 +140,7 @@ These apply in every session without exception:
 - **When badge icons or similar asset implementations fail silently**, check for duplicate function names and mismatched render paths before assuming an ID mismatch. This was the root cause of the badge icon issue in Round 26/27 — a duplicate `renderMeBadges` function was silently taking precedence.
 - **Free-form walk logging is live.** The walk journal now accepts both curated (`type: "curated"`) and user-created entries (`type: "custom"`). All functions that work with the walk log must handle both types correctly.
 - **Wishlist = "On my sniff list", Favourites = "Sniffed and approved".** These are confirmed brand names. Any Developer brief or copy touching these features must use these exact labels.
-- **A second UX/UI review pass will be needed** after State A first-run redesign and dark mode colour rethink are implemented. Do not treat Round 31/32 as the final UX review.
+- **UX review march-21 was completed** — first full review pass done, saved to `docs/ux-reviews/ux-review-march-21.md`. Round 1 UX fixes implemented. Some items still outstanding — a follow-up review pass is needed before beta launch.
 - **Screenshot context has limits.** In sessions where many screenshots have been shared, the chat context can become constrained. Where possible, prefer terminal output and plain descriptions of issues over screenshots. Reserve screenshots for cases where visual inspection is genuinely necessary.
 - **`locationRestriction` must not be used** on the Nearby tab. It is incompatible with the `searchText` endpoint and causes empty results. Radius is enforced client-side. Do not reintroduce it.
 
@@ -246,7 +247,7 @@ BATCHING AND TESTING:
 ROUND NUMBERING:
 - Last saved brief file was developer-brief-round15.md
 - Rounds 16 onwards briefed directly in chat
-- Currently at approximately Round 33+
+- Currently at approximately Round 35+
 - Not all rounds have saved brief files - this is normal
 
 CONTENT PIPELINE:
@@ -556,6 +557,50 @@ Full dog profile system:
 - **New logo icons** — updated PWA icon assets integrated. `manifest.json` updated to reference new icon files.
 - **Paw-print icon unified** — paw-print icon standardised across all uses in the app. Single consistent SVG path used everywhere.
 
+### Completed — 21 March 2026
+
+**UX review and Round 1 fixes:**
+- **Full UX review conducted** — saved to `docs/ux-reviews/ux-review-march-21.md`. Full review of all tabs and states against the current build.
+- **Meta description added** — HTML `<meta name="description">` added to `sniffout-v2.html`.
+- **Tap targets** — further tap target fixes applied across sheets and buttons following the review.
+- **`meDisplayName` empty state fixed** — Me tab header no longer shows blank when no display name is set.
+- **Sheet handle sizes unified** — drag handle dimensions standardised across all bottom sheets.
+- **Walk rating size** — adjusted per review recommendation.
+- **`me-stat-card--primary` number colour** — locked to `var(--ink)` in both light and dark mode. Documented in CLAUDE.md. Do not override without explicit owner instruction.
+- **Walk tag `border-radius`** — updated per review.
+- **Gear/back button tap targets** — increased to minimum 44px.
+- **Radius picker units** — fixed to show correct unit label.
+- **Saved Walks bookmark icon** — corrected.
+- **`--amber` token** — value corrected.
+- **Dark mode active chip and H4 contrast** — reviewed; owner is happy with current state. No change made.
+- **Swipe-to-dismiss audit** — 3 sheets were missing swipe-to-dismiss (Walks filter, Nearby filter, Log a walk). All three fixed.
+
+**OS Maps integration:**
+- **OS Data Hub account created** — project "sniffout" created. OS Maps API and Premium Data Plan added, card verified.
+- **OS Maps toggle implemented** — Standard/OS Map pill above map on Walks and Nearby tabs. Tapping switches the map tile layer.
+- **Leisure tiles not yet activating** — Premium plan is active but Leisure tiles are pending. App currently defaults to Standard (OSM). Check again 22 March.
+- **API key in page source** — OS Maps key (`JcMmulbTghzn8pkYAGdxd8MH6GTK2314`) is currently hardcoded in `sniffout-v2.html`. Needs security review before launch (equivalent of T1 for Google Places).
+
+**Me tab — Recently Viewed:**
+- **Recently Viewed entry row added** — positioned between Walk Journal and Badges in the Me tab entry rows list.
+- **Subpage overlay pattern** — uses full subpage overlay (consistent with all other Me tab entry rows, not an accordion).
+- **localStorage key `sniffout_recent_walks`** — stores up to 10 recently viewed curated walk IDs (most recent first). Removed from Today tab pills, now lives in Me tab only.
+
+**Walk cards:**
+- **Distance from user location** — walk cards in Walks tab list view now show "X.X km away" or "X.X mi away", respecting the units setting.
+
+**UX/copy fixes:**
+- **"Contributions" stat renamed** — Me tab stat now reads "condition reports".
+- **Social proof strip updated** — "Find the spots" changed to "Find dog-friendly spots".
+- **Lucide pinned to version 0.577.0** — version locked in CDN import to prevent icon changes on upstream updates.
+- **Dead CSS cleanup** — 14 unused classes removed, duplicate CSS definitions removed.
+- **Walk save actions simplified** — heart button removed from walk detail overlay. Bookmark button labelled "Add to our walk list".
+
+**Repo restructure:**
+- **All documentation files moved into `docs/` subfolders** — structure: `docs/specs`, `docs/research`, `docs/briefs`, `docs/content`, `docs/handoffs`, `docs/po`, `docs/mockups`, `docs/ux-reviews`, `docs/archive`.
+- **CLAUDE.md updated** — all file path references updated to reflect new locations.
+- **`repo-restructure-brief.md` moved to `docs/archive/`**.
+
 ---
 
 ## SECTION 6 — KEY DECISIONS ON RECORD
@@ -578,9 +623,19 @@ FIX 23.2 is a permanent revert. Brief at `docs/briefs/developer-brief-restaurant
 
 Gear icon opens settings only. "Your Dog" entry row opens dog profile subpage. These are two distinct things and must not be merged.
 
-### Logo rebuild
+### Logo rebuild — complete
 
-Owner creating in Illustrator. Required exports when ready: `icon.svg`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180x180), `favicon.svg`. No Developer work until exports delivered.
+Logo rebuild is complete. All icon files are in the repo and wired up:
+
+- `apple-touch-icon.png` (180x180)
+- `favicon.svg`
+- `icon-green.svg`
+- `icon-new-192.png` (192x192)
+- `icon-new-512.png` (512x512)
+- `icon-512-green.png` (maskable, brand green background)
+- `icon.svg`
+
+Splash screen and home screen icon are working correctly on device. No further Developer action needed unless the owner creates new Illustrator exports.
 
 ### Units
 
@@ -665,6 +720,42 @@ Me tab shows a dismissible install prompt card. Dismissed state persists in `sni
 
 Unified across all uses. Single consistent SVG path. Do not introduce a second paw-print variant.
 
+### OS Maps toggle
+
+Standard/OS Map pill is live above the map on Walks and Nearby tabs. Ordnance Survey ZXY tile layer. API key is currently in page source — this is a pre-launch security item (equivalent to T1). Leisure tiles pending activation. Default is Standard (OSM) until Leisure activates.
+
+### Recently Viewed walks
+
+`sniffout_recent_walks` localStorage key. Stores up to 10 recently viewed curated walk IDs, most recent first. Entry row in Me tab between Walk Journal and Badges. Uses subpage overlay pattern, not accordion. Previously surfaced as pills on Today tab — removed from there.
+
+### Distance from user location on walk cards
+
+Walk cards in Walks tab list view show "X.X km away" / "X.X mi away" based on `sniffout_units` setting. Uses the user's current location.
+
+### Walk save actions — simplified
+
+Heart button removed from walk detail overlay. Only the bookmark button remains, labelled "Add to our walk list". Cleaner single save action per walk.
+
+### Social proof strip — updated
+
+"Find dog-friendly spots" (not "Find the spots"). Do not revert to the shorter version.
+
+### Lucide icon library — version pinned
+
+Lucide pinned to version 0.577.0 in the CDN import. Do not change the version without explicit instruction — upstream changes have broken icons in the past.
+
+### Primary stat card number colour — locked
+
+`me-stat-card--primary` number colour is `var(--ink)` in both light and dark mode. Documented in CLAUDE.md. Do not add a colour override without explicit owner instruction.
+
+### Dark mode Today tab hero background
+
+Updated to `#5C7A63` (matches `--brand` dark mode value). Previous value was `#1E3D2A`.
+
+### Dark mode active chip and H4 contrast
+
+Reviewed in UX review march-21. Owner is happy with current state. No change required.
+
 ### Pre-launch blockers — current status
 
 T1 (API key) and T14 (manifest start_url) resolved on 19 March 2026. All remaining blockers are legal and solicitor-dependent.
@@ -723,9 +814,15 @@ Five personas defined in `docs/content/copywriter-personas.md`. Rules carry forw
 
 ## SECTION 8 — WHAT IS IN PROGRESS RIGHT NOW
 
-As of end of day 20 March 2026:
+As of end of day 21 March 2026:
 
-### 1. Photos for 7 showcase carousel walks (priority — owner action)
+### 1. OS Maps Leisure tiles (check 22 March)
+
+Premium Data Plan is active but Leisure tiles are not yet rendering. This may simply need 24 hours to propagate after the plan was activated.
+
+**Next action:** Check tomorrow (22 March). If still not working, raise a support ticket with OS Data Hub.
+
+### 2. Photos for 7 showcase carousel walks (priority — owner action)
 
 The State A showcase carousel features 7 specific walks. These are the most visible walks in the app for a first-time user. Real photos should be sourced for these walks first.
 
@@ -733,31 +830,19 @@ Walks: `isabella-plantation`, `stanage-edge`, `balmaha-loch-lomond`, `rhossili-g
 
 **Next action:** Owner to source photos. Push image files to repo before referencing in `WALKS_DB`.
 
-### 2. Second UX/UI review pass (NOW UNBLOCKED)
+### 3. Second UX review follow-up (outstanding items)
 
-Dark mode Scheme B has been implemented. The second UX/UI review pass is now unblocked. This is a full Designer-led review pass across all tabs and states.
+UX review march-21 was completed and Round 1 fixes implemented. Some items from the review remain outstanding. A follow-up review pass is needed before beta launch.
 
-**Next action:** Issue Designer prompt for second UX/UI review when owner is ready to start the next round.
+**Next action:** Check `docs/ux-reviews/ux-review-march-21.md` for outstanding items. Issue follow-up when owner is ready.
 
-### 3. Walk image sourcing — 97 remaining (ongoing — owner action)
+### 4. Walk image sourcing — 97 remaining (ongoing — owner action)
 
-97 walks still use `placeholder-walk.jpg`. 3 have real photos. Showcase carousel walks (item 1 above) are the priority.
+97 walks still use `placeholder-walk.jpg`. 3 have real photos. Showcase carousel walks (item 2 above) are the priority.
 
 **Next action:** Owner to direct sourcing strategy.
 
-### 4. Folder restructure (PO task)
-
-A folder restructure to organise spec files, research files, and content pipeline files may be worth doing — issue as a PO task before next major round.
-
-**Next action:** PO to assess and brief if needed.
-
-### 5. Logo rebuild (owner action)
-
-Owner is creating new logo in Illustrator. No Developer action until exports are delivered.
-
-**Next action:** When exports are ready, issue Developer brief to replace icon files in repo.
-
-### 6. GDPR solicitor (owner action — outstanding blocker)
+### 5. GDPR solicitor (owner action — outstanding blocker)
 
 L1, L2/L3, L4, and L5 all blocked on solicitor engagement.
 
@@ -769,13 +854,13 @@ L1, L2/L3, L4, and L5 all blocked on solicitor engagement.
 
 ### Immediate (in priority order)
 
-1. **Photos for 7 showcase carousel walks** — owner to source. These are the most visible walks in the app (State A carousel). Priority over other walk photos.
-2. **Second UX/UI review pass** — NOW UNBLOCKED. Dark mode Scheme B is implemented. Issue Designer prompt for full review across all tabs and states.
-3. **Walk image sourcing** — 97 walks need photos. Owner to direct.
-4. **Nearby places placeholder image** — owner to create in Illustrator. Separate from `placeholder-walk.jpg`.
-5. **Copy review session** — all UI copy reviewed against brand voice. Includes "Not to be sniffed at" Me tab tertiary stat.
-6. **Logo rebuild** — owner delivers Illustrator exports, Developer replaces icon files.
-7. **Folder restructure** — PO task. Assess and brief if needed.
+1. **OS Maps Leisure tiles** — check 22 March if Premium plan has activated. If not, raise support ticket with OS Data Hub.
+2. **Photos for 7 showcase carousel walks** — owner to source. These are the most visible walks in the app (State A carousel). Priority over other walk photos.
+3. **Second UX review follow-up** — outstanding items from `docs/ux-reviews/ux-review-march-21.md`. Follow-up pass needed before beta launch.
+4. **Walk image sourcing** — 97 walks need photos. Owner to direct.
+5. **Copy review session** — all UI copy reviewed against brand voice.
+6. **Nearby places placeholder image** — owner to create in Illustrator. Separate from `placeholder-walk.jpg`.
+7. **MoSCoW prioritisation** — owner to complete when ready to triage the backlog.
 
 ### Soon (Phase 2 remaining)
 
@@ -861,6 +946,8 @@ All files in `~/Desktop/my-first-repo/`.
 | `docs/specs/state-a-redesign-spec.md` | Designer spec for State A first-run screen redesign. Implemented 20 March 2026. |
 | `docs/specs/dog-diary-feature-scope.md` | Strategic scoping for dog diary feature. Deferred to Phase 2b post-launch. |
 | `docs/specs/dark-mode-schemes.md` | Dark mode colour scheme options. Scheme B (Dark Slate) confirmed and implemented. |
+| `docs/specs/install-prompt-spec.md` | PWA install prompt card spec. Implemented 20 March 2026. |
+| `docs/specs/os-maps-research.md` | OS Maps API research and integration notes. |
 
 ### Content pipeline files
 
@@ -880,6 +967,13 @@ All files in `~/Desktop/my-first-repo/`.
 | `docs/research/dog-friendly-venues-research.md` | Research on dog-friendly venue data sources for Nearby tab. |
 | `docs/specs/me-tab-dashboard-research.md` | Research on personal stats design. |
 | `docs/research/firebase-setup-plan.md` | Firebase architecture and setup plan for Phase 3. Produced by Researcher 20 March 2026. |
+
+### UX reviews
+
+| File | Purpose |
+|------|---------|
+| `docs/ux-reviews/ux-review-march-19.md` | UX review conducted 19 March 2026. Historical. |
+| `docs/ux-reviews/ux-review-march-21.md` | **Current UX review.** Conducted 21 March 2026. Round 1 fixes implemented. Follow-up items still outstanding. |
 
 ### Session handoff notes
 
@@ -1018,12 +1112,17 @@ Confirm push by checking `https://sniffout.app/sniffout-v2.html` — allow ~1 mi
 9. **Walk card placeholder is `placeholder-walk.jpg`** — single illustrated image. No gradients.
 10. **L1-L5 are all legal blockers** — all solicitor-dependent. Owner must engage solicitor. L5 is T&C consent screen — hard go-live blocker.
 11. **`locationRestriction` must not be used** on Nearby tab — causes empty results. Radius enforced client-side.
-12. **Logo rebuild in progress** — owner creating in Illustrator, five exports needed.
+12. **Logo rebuild complete** — all icon files in repo and wired up. Splash screen and home screen icon working. No further action needed unless owner creates new exports.
 13. **Firebase first in Phase 3** — personal data (journal, notes, photos) cannot safely live in localStorage long-term. `docs/research/firebase-setup-plan.md` produced by Researcher.
 14. **Today tab = Lucide icons, Weather tab = Yr.no icons** — confirmed design decision, do not merge.
-15. **State A headline is "Paws before you go."** — implemented. Social proof strip: "Know the route · Own the weather · Find the spots". Do not revert to old hero copy.
-16. **Second UX review is NOW UNBLOCKED** — dark mode Scheme B is implemented. Issue Designer prompt when owner is ready.
-17. **Dark mode Scheme B is live** — Dark Slate palette. `--bg #141414`, `--surface #1F1F1F`. Spec in `docs/specs/dark-mode-schemes.md`. Do not revert to old dark mode colours.
-18. **Firebase foundation is live — boundary is firm** — anonymous auth, Firestore dual-write, Storage active. Full migration (auth, server reads, localStorage migration) is Phase 3, gated on L1 (GDPR). Do not add Firebase reads to critical render path.
+15. **State A headline is "Paws before you go."** — implemented. Social proof strip: "Know the route · Own the weather · Find dog-friendly spots". Do not revert.
+16. **UX review march-21 done — follow-up items outstanding** — Round 1 fixes implemented. Check `docs/ux-reviews/ux-review-march-21.md` for remaining items before beta launch.
+17. **Dark mode Scheme B is live** — Dark Slate palette. `--bg #141414`, `--surface #1F1F1F`. Today tab hero `#5C7A63`. Spec in `docs/specs/dark-mode-schemes.md`. Do not revert.
+18. **Firebase foundation is live — boundary is firm** — anonymous auth, Firestore dual-write, Storage active. Full migration is Phase 3, gated on L1 (GDPR). Do not add Firebase reads to critical render path.
 19. **PWA install prompt card in Me tab** — dismissible, persists to `sniffout_hide_install_prompt`. Does not reappear once dismissed.
 20. **Silent auto-refresh via `silentWeatherRefresh()`** — triggers on `visibilitychange` and tab switch, 5-minute threshold. Runs silently, no UI blocking.
+21. **OS Maps toggle is live** — Standard/OS Map pill on Walks and Nearby tabs. Leisure tiles not yet active — check 22 March. API key currently in page source — security review needed before launch.
+22. **Recently Viewed is in Me tab** — subpage overlay, `sniffout_recent_walks`, up to 10 walks. Removed from Today tab pills.
+23. **Walk cards show distance from user** — "X.X km away" / "X.X mi away" in Walks tab list view.
+24. **Lucide pinned to version 0.577.0** — do not change the CDN version without explicit instruction.
+25. **`me-stat-card--primary` number colour is `var(--ink)`** — in both light and dark mode. Do not override without explicit owner instruction.
