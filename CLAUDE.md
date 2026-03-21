@@ -144,7 +144,7 @@ All inline. Light mode token set:
 | `--border` | `rgba(0,0,0,0.08)` | Card borders |
 | `--ink` | `#1A1A1A` | Primary text |
 | `--ink-2` | `#6B6B6B` | Secondary text |
-| `--amber` | `#F59E0B` | Warnings |
+| `--amber` | `#D97706` | Warnings |
 | `--red` | `#EF4444` | Danger/errors |
 
 Dark mode — Scheme B (Dark Slate), applied via `body.night` class. Token overrides:
