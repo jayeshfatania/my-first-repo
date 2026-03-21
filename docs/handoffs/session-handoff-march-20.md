@@ -256,10 +256,10 @@ CONTENT PIPELINE:
 - Batch content updates where possible
 
 DOCS AND HANDOFF:
-- After significant rounds brief PO to update po-action-plan-round24.md and session handoff
+- After significant rounds brief PO to update docs/po/po-action-plan-round24.md and session handoff
 - Do not let too many rounds accumulate without a docs update
-- Active PO document: po-action-plan-round24.md
-- Active handoff: session-handoff-march-20.md (this document)
+- Active PO document: docs/po/po-action-plan-round24.md
+- Active handoff: docs/handoffs/session-handoff-march-20.md (this document)
 
 WALK PHOTOS:
 - Hosted on GitHub as raw URLs
@@ -348,8 +348,8 @@ All agents run as Claude Code sessions in tmux panes, operating on the repositor
 
 - **FIX 16.1** — Recent and starred searches extended to State B (inline location-change panel)
 - **FIX 16.2** — Place favouriting: heart icon on Nearby tab venue cards, `sniffout_place_favs` localStorage, count in Me tab stats
-- **FIX 16.3** — Me tab rethink (from `me-tab-rethink-v2-spec.md`): miles hero stat, earned badges only, walk log
-- **FIX 16.4** — Badge system replacement (from `badge-system-rethink.md`): 10 new badges, hidden until earned, earned moment copy, toast reveal, inline detail on chip tap
+- **FIX 16.3** — Me tab rethink (from `docs/specs/me-tab-rethink-v2-spec.md`): miles hero stat, earned badges only, walk log
+- **FIX 16.4** — Badge system replacement (from `docs/specs/badge-system-rethink.md`): 10 new badges, hidden until earned, earned moment copy, toast reveal, inline detail on chip tap
 - **FIX 16.5** — Android back button refinement
 
 ### Round 16 — See all favourites, weather swipe, icon consistency, conditions back button
@@ -416,7 +416,7 @@ Full dog profile system:
 ### Round 23 — Dog profile prompt in Me tab, pubs/restaurants (later reverted)
 
 - **FIX 23.1** — Dog profile prompt added to Me tab. Intact.
-- **FIX 23.2** — Pubs and restaurants added to Nearby tab. **Permanently reverted.** Too many non-dog-friendly results. Pubs restored as standalone category. `developer-brief-restaurants.md` documents the intended future implementation.
+- **FIX 23.2** — Pubs and restaurants added to Nearby tab. **Permanently reverted.** Too many non-dog-friendly results. Pubs restored as standalone category. `docs/briefs/developer-brief-restaurants.md` documents the intended future implementation.
 
 ### Round 24 — Me tab polish, dark mode toggle, settings separation
 
@@ -528,14 +528,14 @@ Full dog profile system:
 - **Info button moved** — far right of weather pills row.
 - **Me tab stats card padding normalised.**
 - **Dark mode toggle renamed** from "Match device" to "Auto".
-- **Tappable temperature feature implemented then reverted** — replaced by the hourly forecast bar approach. `temperature-tap-spec.md` exists but feature was removed from `sniffout-v2.html`. Superseded.
+- **Tappable temperature feature implemented then reverted** — replaced by the hourly forecast bar approach. `docs/specs/temperature-tap-spec.md` exists but feature was removed from `sniffout-v2.html`. Superseded.
 - **T&C consent screen added as L5** — hard go-live blocker. Requires ToS (L3) to be complete first.
 
 ### Completed — 20 March 2026 afternoon session
 
-- **Hourly forecast bar added to Weather tab** — "Hour by hour" card added as Card 2 on the Weather tab. Walk Window card is **kept** (not removed) and updated to whole-day scope (6am to midnight). Walk Window is Card 1, Hour by hour is Card 2. Walk Window footer shows rain summary only. `hourly-forecast-layout-rec.md` produced by Designer.
+- **Hourly forecast bar added to Weather tab** — "Hour by hour" card added as Card 2 on the Weather tab. Walk Window card is **kept** (not removed) and updated to whole-day scope (6am to midnight). Walk Window is Card 1, Hour by hour is Card 2. Walk Window footer shows rain summary only. `docs/specs/hourly-forecast-layout-rec.md` produced by Designer.
 - **Dynamic walk count implemented** — all hardcoded "25 handpicked walks" references replaced with `WALKS_DB.length`. Walk count displays correctly regardless of database size. Never hardcode a walk count number again.
-- **State A full redesign implemented** — spec in `state-a-redesign-spec.md`. Changes:
+- **State A full redesign implemented** — spec in `docs/specs/state-a-redesign-spec.md`. Changes:
   - Headline: "Paws before you go."
   - Hero body copy paragraph removed
   - CTA card wrapper removed
@@ -543,13 +543,13 @@ Full dog profile system:
   - Showcase carousel: 7 hardcoded walks (`isabella-plantation`, `stanage-edge`, `balmaha-loch-lomond`, `rhossili-gower`, `seven-sisters`, `formby-beach-pinewoods`, `alnmouth-northumberland`)
   - Social proof strip: "Know the route · Own the weather · Find the spots"
 - **Batch 02 and 03 content added to app** — walk count is now **100**. The previous handoff was out of date on this — both batches are now live in `WALKS_DB`.
-- **`firebase-setup-plan.md` created** — by Researcher. Firebase architecture and setup plan documented for Phase 3 reference.
-- **`state-a-redesign-spec.md` created** — by Designer. State A redesign spec.
-- **`hourly-forecast-layout-rec.md` created** — by Designer. Layout recommendation for the hourly forecast bar implementation.
+- **`docs/research/firebase-setup-plan.md` created** — by Researcher. Firebase architecture and setup plan documented for Phase 3 reference.
+- **`docs/specs/state-a-redesign-spec.md` created** — by Designer. State A redesign spec.
+- **`docs/specs/hourly-forecast-layout-rec.md` created** — by Designer. Layout recommendation for the hourly forecast bar implementation.
 
 ### Completed — 20 March 2026 evening session
 
-- **Dark mode Scheme B implemented** — new dark palette ("Dark Slate") applied via `body.night`. Tokens: `--bg #141414`, `--surface #1F1F1F`, `--border rgba(255,255,255,0.08)`, `--ink #F4F2EE`, `--ink-2 #8A8A8A`, `--brand #5C7A63`, `--chip-off #2A2A2A`. Weather tab hero card overrides to `#1A3522`. Spec in `dark-mode-schemes.md`. Dark mode colour rethink is now DONE — second UX review is unblocked.
+- **Dark mode Scheme B implemented** — new dark palette ("Dark Slate") applied via `body.night`. Tokens: `--bg #141414`, `--surface #1F1F1F`, `--border rgba(255,255,255,0.08)`, `--ink #F4F2EE`, `--ink-2 #8A8A8A`, `--brand #5C7A63`, `--chip-off #2A2A2A`. Weather tab hero card overrides to `#1A3522`. Spec in `docs/specs/dark-mode-schemes.md`. Dark mode colour rethink is now DONE — second UX review is unblocked.
 - **Firebase foundation implemented** — Firebase SDK (compat v10.12.0, CDN) integrated into `sniffout-v2.html`. Project: `sniffout-fe976`, region `europe-west2`. Anonymous auth fires on load — UID used for Firestore document paths. Firestore dual-write active for walk log entries (writes to both localStorage and Firestore). Firebase Storage configured. **This is foundation only — the full migration (authenticated accounts, server-side reads, localStorage migration) remains Phase 3, gated on GDPR sign-off (L1).** Do not add Firebase reads to the critical render path.
 - **PWA install prompt card added to Me tab** — dismissible card prompting user to install the app to their home screen. Dismissed state saves to `sniffout_hide_install_prompt` in localStorage. Does not reappear once dismissed.
 - **Silent auto-refresh implemented** — `silentWeatherRefresh()` function. Triggers on `visibilitychange` event (app comes back to foreground) and on tab switch. Re-fetches weather if data is older than 5 minutes. Runs silently — no loading state, no UI blocking. Replaces the previous "always fetch on load" approach for background refreshes.
@@ -572,7 +572,7 @@ Always fetch fresh. App renders instantly with cached data, re-renders when live
 
 ### Pubs and restaurants in Nearby tab — permanently removed
 
-FIX 23.2 is a permanent revert. Brief at `developer-brief-restaurants.md`. Do not re-implement without a dedicated design round.
+FIX 23.2 is a permanent revert. Brief at `docs/briefs/developer-brief-restaurants.md`. Do not re-implement without a dedicated design round.
 
 ### Settings and dog profile separation
 
@@ -596,7 +596,7 @@ Built in Round 30. Walk log has a `type` field: `"curated"` for WALKS_DB walks, 
 
 ### Dog diary
 
-Scoped in `dog-diary-feature-scope.md`. Deferred to post-launch Phase 2b. New localStorage key `sniffout_dog_diary`.
+Scoped in `docs/specs/dog-diary-feature-scope.md`. Deferred to post-launch Phase 2b. New localStorage key `sniffout_dog_diary`.
 
 ### Sniff list and Favourites brand names
 
@@ -631,11 +631,11 @@ Today, Walks, and Nearby tabs all have a tappable location line with inline sear
 
 ### Hourly forecast bar and Walk Window — both live on Weather tab
 
-The tappable temperature hero approach (`temperature-tap-spec.md`) was implemented and then reverted. The replacement is an **hourly forecast bar** ("Hour by hour" card) on the Weather tab — now implemented.
+The tappable temperature hero approach (`docs/specs/temperature-tap-spec.md`) was implemented and then reverted. The replacement is an **hourly forecast bar** ("Hour by hour" card) on the Weather tab — now implemented.
 
 **Key structural decision:** The Walk Window card is **kept**, not removed. It has been updated to whole-day scope (6am to midnight). Walk Window is Card 1, Hour by hour is Card 2 on the Weather tab. Walk Window footer shows rain summary only.
 
-Designer spec: `hourly-forecast-spec.md`. Layout recommendation: `hourly-forecast-layout-rec.md`.
+Designer spec: `docs/specs/hourly-forecast-spec.md`. Layout recommendation: `docs/specs/hourly-forecast-layout-rec.md`.
 
 ### T&C consent screen is a hard go-live blocker
 
@@ -651,7 +651,7 @@ Renamed from "Match device" to "Auto".
 
 ### Dark mode Scheme B — confirmed and implemented
 
-Dark Slate palette is live. Tokens documented in CLAUDE.md. Previous dark mode card surfaces (`#243A2C`, mint/sage tones) replaced. Spec in `dark-mode-schemes.md`. Do not revert to old dark mode colours.
+Dark Slate palette is live. Tokens documented in CLAUDE.md. Previous dark mode card surfaces (`#243A2C`, mint/sage tones) replaced. Spec in `docs/specs/dark-mode-schemes.md`. Do not revert to old dark mode colours.
 
 ### Firebase foundation — live but boundary is firm
 
@@ -707,7 +707,7 @@ Image files must be pushed to the repo before being referenced in `WALKS_DB`.
 
 ### Copywriter personas
 
-Five personas defined in `copywriter-personas.md`. Rules carry forward across all batches:
+Five personas defined in `docs/content/copywriter-personas.md`. Rules carry forward across all batches:
 
 | Persona | Username | Dog | Notes |
 |---------|----------|-----|-------|
@@ -781,7 +781,7 @@ L1, L2/L3, L4, and L5 all blocked on solicitor engagement.
 
 - **Walk Wrapped summary** — twice yearly (July and December/January). Walk log foundation exists. Needs Designer spec.
 - **Brand guidelines document** — Meadow Green `#3B5C2A` confirmed but full guidelines not yet produced.
-- **Dog-friendly restaurants in Nearby tab** — permanently removed. Brief at `developer-brief-restaurants.md` for a future dedicated round.
+- **Dog-friendly restaurants in Nearby tab** — permanently removed. Brief at `docs/briefs/developer-brief-restaurants.md` for a future dedicated round.
 - **Me tab dashboard alignment polish** — deferred.
 - **Bottom nav active tab contrast** — may need further iteration.
 - **Walk empty state copy** — deferred until Firebase walk submission is built.
@@ -836,58 +836,58 @@ All files in `~/Desktop/my-first-repo/`.
 
 | File | Purpose |
 |------|---------|
-| `po-action-plan-round24.md` | **Active PO document.** Replaces `po-action-plan-round12.md`. Current round status, decisions, next up. |
-| `po-action-plan-round12.md` | Historical record. PO decisions from Rounds 12-23. |
-| `product-vision-update.md` | Strategic vision. Discovery → personal record reframe. |
-| `community-gamification-roadmap.md` | Phase 2/3/4 roadmap. |
-| `pre-launch-checklist.md` | 47-item checklist. T1 and T14 resolved. Four legal blockers outstanding (L1, L2/L3, L4, L5). |
+| `docs/po/po-action-plan-round24.md` | **Active PO document.** Replaces `docs/po/po-action-plan-round12.md`. Current round status, decisions, next up. |
+| `docs/po/po-action-plan-round12.md` | Historical record. PO decisions from Rounds 12-23. |
+| `docs/po/product-vision-update.md` | Strategic vision. Discovery → personal record reframe. |
+| `docs/po/community-gamification-roadmap.md` | Phase 2/3/4 roadmap. |
+| `docs/po/pre-launch-checklist.md` | 47-item checklist. T1 and T14 resolved. Four legal blockers outstanding (L1, L2/L3, L4, L5). |
 
 ### Design specs
 
 | File | Purpose |
 |------|---------|
-| `me-tab-rethink-v2-spec.md` | Me tab redesign spec (implemented Round 15+). |
-| `me-tab-subpages-spec.md` | Me tab subpage architecture (implemented Round 28). |
-| `dog-profile-spec.md` | Dog profile spec (implemented Round 19). |
-| `badge-system-rethink.md` | 10 badge definitions, triggers, earned moment copy. |
-| `weather-tab-redesign-spec.md` | Weather tab redesign spec. |
-| `weather-icon-consistency-spec.md` | Icon sizes: Today 72px/6px, Weather 96px/14px. |
-| `disclaimer-design-spec.md` | Walk disclaimer design (implemented Round 13). |
-| `brand-colour-proposal.md` | 8 colour options. Option G (Meadow Green `#3B5C2A`) confirmed. |
-| `developer-brief-restaurants.md` | Brief for dog-friendly restaurants/pubs. Permanently deferred. |
-| `hourly-forecast-spec.md` | Hourly forecast bar spec (Designer). Feature implemented — "Hour by hour" is Card 2 on Weather tab. |
-| `hourly-forecast-layout-rec.md` | Designer layout recommendation for hourly forecast bar. Used during implementation. |
-| `temperature-tap-spec.md` | Tappable temperature spec. Feature was implemented and then reverted in favour of hourly forecast bar. Superseded. |
-| `state-a-redesign-spec.md` | Designer spec for State A first-run screen redesign. Implemented 20 March 2026. |
-| `dog-diary-feature-scope.md` | Strategic scoping for dog diary feature. Deferred to Phase 2b post-launch. |
-| `dark-mode-schemes.md` | Dark mode colour scheme options. Scheme B (Dark Slate) confirmed and implemented. |
+| `docs/specs/me-tab-rethink-v2-spec.md` | Me tab redesign spec (implemented Round 15+). |
+| `docs/specs/me-tab-subpages-spec.md` | Me tab subpage architecture (implemented Round 28). |
+| `docs/specs/dog-profile-spec.md` | Dog profile spec (implemented Round 19). |
+| `docs/specs/badge-system-rethink.md` | 10 badge definitions, triggers, earned moment copy. |
+| `docs/specs/weather-tab-redesign-spec.md` | Weather tab redesign spec. |
+| `docs/specs/weather-icon-consistency-spec.md` | Icon sizes: Today 72px/6px, Weather 96px/14px. |
+| `docs/specs/disclaimer-design-spec.md` | Walk disclaimer design (implemented Round 13). |
+| `docs/research/brand-colour-proposal.md` | 8 colour options. Option G (Meadow Green `#3B5C2A`) confirmed. |
+| `docs/briefs/developer-brief-restaurants.md` | Brief for dog-friendly restaurants/pubs. Permanently deferred. |
+| `docs/specs/hourly-forecast-spec.md` | Hourly forecast bar spec (Designer). Feature implemented — "Hour by hour" is Card 2 on Weather tab. |
+| `docs/specs/hourly-forecast-layout-rec.md` | Designer layout recommendation for hourly forecast bar. Used during implementation. |
+| `docs/specs/temperature-tap-spec.md` | Tappable temperature spec. Feature was implemented and then reverted in favour of hourly forecast bar. Superseded. |
+| `docs/specs/state-a-redesign-spec.md` | Designer spec for State A first-run screen redesign. Implemented 20 March 2026. |
+| `docs/specs/dog-diary-feature-scope.md` | Strategic scoping for dog diary feature. Deferred to Phase 2b post-launch. |
+| `docs/specs/dark-mode-schemes.md` | Dark mode colour scheme options. Scheme B (Dark Slate) confirmed and implemented. |
 
 ### Content pipeline files
 
 | File | Purpose |
 |------|---------|
-| `copywriter-personas.md` | Five persona definitions. Must be read before any Copywriter or Editor work. |
-| `uk-dog-breeds.md` | 62 UK dog breeds for the breed dropdown. |
-| `walks-batch-01-data.md` through `walks-batch-03-data.md` | Researcher data for each batch. |
-| `descriptions-batch-01.md` through `descriptions-batch-03.md` | Copywriter descriptions for each batch. |
-| `editor-review-batch-01.md` through `editor-review-batch-03.md` | Editor-reviewed descriptions. |
-| `validation-report-batch-01.md` through `validation-report-batch-03.md` | Validator sign-off. Batch 03 all issues resolved. Ready for Developer update. |
+| `docs/content/copywriter-personas.md` | Five persona definitions. Must be read before any Copywriter or Editor work. |
+| `docs/content/uk-dog-breeds.md` | 62 UK dog breeds for the breed dropdown. |
+| `docs/content/walks-batch-01-data.md` through `docs/content/walks-batch-03-data.md` | Researcher data for each batch. |
+| `docs/content/descriptions-batch-01.md` through `docs/content/descriptions-batch-03.md` | Copywriter descriptions for each batch. |
+| `docs/content/editor-review-batch-01.md` through `docs/content/editor-review-batch-03.md` | Editor-reviewed descriptions. |
+| `docs/content/validation-report-batch-01.md` through `docs/content/validation-report-batch-03.md` | Validator sign-off. Batch 03 all issues resolved. Ready for Developer update. |
 
 ### Research
 
 | File | Purpose |
 |------|---------|
-| `dog-friendly-venues-research.md` | Research on dog-friendly venue data sources for Nearby tab. |
-| `me-tab-dashboard-research.md` | Research on personal stats design. |
-| `firebase-setup-plan.md` | Firebase architecture and setup plan for Phase 3. Produced by Researcher 20 March 2026. |
+| `docs/research/dog-friendly-venues-research.md` | Research on dog-friendly venue data sources for Nearby tab. |
+| `docs/specs/me-tab-dashboard-research.md` | Research on personal stats design. |
+| `docs/research/firebase-setup-plan.md` | Firebase architecture and setup plan for Phase 3. Produced by Researcher 20 March 2026. |
 
 ### Session handoff notes
 
 | File | Purpose |
 |------|---------|
-| `session-handoff-march-18.md` | Historical. |
-| `session-handoff-march-19.md` | Historical. |
-| `session-handoff-march-20.md` | **This document. Current active handoff.** |
+| `docs/handoffs/session-handoff-march-18.md` | Historical. |
+| `docs/handoffs/session-handoff-march-19.md` | Historical. |
+| `docs/handoffs/session-handoff-march-20.md` | **This document. Current active handoff.** |
 
 ---
 
@@ -1009,21 +1009,21 @@ Confirm push by checking `https://sniffout.app/sniffout-v2.html` — allow ~1 mi
 
 1. **Never touch `dog-walk-dashboard.html`** — live production v1, protected per CLAUDE.md
 2. **Cloudflare Worker proxy is fully working** — `places-proxy.sniffout.app`. Do not revert to direct Google URL under any circumstances.
-3. **Pubs/restaurants permanently removed** — quality issues. Brief at `developer-brief-restaurants.md`. Do not re-add without a dedicated design round.
+3. **Pubs/restaurants permanently removed** — quality issues. Brief at `docs/briefs/developer-brief-restaurants.md`. Do not re-add without a dedicated design round.
 4. **All batches complete — walk count is 100** — Batches 01, 02, and 03 all live in WALKS_DB. Use `WALKS_DB.length` dynamically, never hardcode a number.
 5. **Brand colour is `#3B5C2A` (Meadow Green)** — fully implemented. No `#1E4D3A` references should remain.
-6. **Hourly forecast bar is LIVE** — "Hour by hour" is Card 2 on Weather tab. Walk Window is Card 1 (kept, updated to 6am-midnight scope). Tappable temperature spec (`temperature-tap-spec.md`) is superseded — do not re-implement.
+6. **Hourly forecast bar is LIVE** — "Hour by hour" is Card 2 on Weather tab. Walk Window is Card 1 (kept, updated to 6am-midnight scope). Tappable temperature spec (`docs/specs/temperature-tap-spec.md`) is superseded — do not re-implement.
 7. **97 walks still need photos** — 3 have real photos. 7 showcase carousel walks are priority.
 8. **Brand language: "On my sniff list" and "Sniffed and approved"** — confirmed names for Wishlist and Favourites. Do not revert.
 9. **Walk card placeholder is `placeholder-walk.jpg`** — single illustrated image. No gradients.
 10. **L1-L5 are all legal blockers** — all solicitor-dependent. Owner must engage solicitor. L5 is T&C consent screen — hard go-live blocker.
 11. **`locationRestriction` must not be used** on Nearby tab — causes empty results. Radius enforced client-side.
 12. **Logo rebuild in progress** — owner creating in Illustrator, five exports needed.
-13. **Firebase first in Phase 3** — personal data (journal, notes, photos) cannot safely live in localStorage long-term. `firebase-setup-plan.md` produced by Researcher.
+13. **Firebase first in Phase 3** — personal data (journal, notes, photos) cannot safely live in localStorage long-term. `docs/research/firebase-setup-plan.md` produced by Researcher.
 14. **Today tab = Lucide icons, Weather tab = Yr.no icons** — confirmed design decision, do not merge.
 15. **State A headline is "Paws before you go."** — implemented. Social proof strip: "Know the route · Own the weather · Find the spots". Do not revert to old hero copy.
 16. **Second UX review is NOW UNBLOCKED** — dark mode Scheme B is implemented. Issue Designer prompt when owner is ready.
-17. **Dark mode Scheme B is live** — Dark Slate palette. `--bg #141414`, `--surface #1F1F1F`. Spec in `dark-mode-schemes.md`. Do not revert to old dark mode colours.
+17. **Dark mode Scheme B is live** — Dark Slate palette. `--bg #141414`, `--surface #1F1F1F`. Spec in `docs/specs/dark-mode-schemes.md`. Do not revert to old dark mode colours.
 18. **Firebase foundation is live — boundary is firm** — anonymous auth, Firestore dual-write, Storage active. Full migration (auth, server reads, localStorage migration) is Phase 3, gated on L1 (GDPR). Do not add Firebase reads to critical render path.
 19. **PWA install prompt card in Me tab** — dismissible, persists to `sniffout_hide_install_prompt`. Does not reappear once dismissed.
 20. **Silent auto-refresh via `silentWeatherRefresh()`** — triggers on `visibilitychange` and tab switch, 5-minute threshold. Runs silently, no UI blocking.

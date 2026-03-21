@@ -162,7 +162,7 @@ Dark mode — Scheme B (Dark Slate), applied via `body.night` class. Token overr
 | `--chip-off` | `#2A2A2A` | Off/inactive chip background |
 | Weather hero bg | `#1A3522` | Weather tab hero card override only |
 
-Dark mode is toggled manually by the user via Settings. "Auto" option uses `prefers-color-scheme`. Default for new users is light mode. Spec in `dark-mode-schemes.md`.
+Dark mode is toggled manually by the user via Settings. "Auto" option uses `prefers-color-scheme`. Default for new users is light mode. Spec in `docs/specs/dark-mode-schemes.md`.
 
 ### Key Function Groups (v2)
 
@@ -186,6 +186,6 @@ Dark mode is toggled manually by the user via Settings. "Auto" option uses `pref
 - **Page title:** `Sniffout — Dog walks & weather for the UK`
 - **Nav labels:** Today · Weather · Walks · Nearby · Me
 - **Walk count references:** Use `WALKS_DB.length` dynamically — never hardcode a number
-- All weather verdict strings, hazard titles, and paw safety strings: see `copy-review.md` and `po-action-plan-round24.md`
+- All weather verdict strings, hazard titles, and paw safety strings: see `docs/po/copy-review.md` and `docs/po/po-action-plan-round24.md`
 
 Do not use "free", "no sign-up", "no account", or "no login" anywhere in the app.
