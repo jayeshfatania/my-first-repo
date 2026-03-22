@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Sniffout - handpicked UK dog walks with live weather, hazard alerts and dog-friendly spots." id="meta-description">
+  <meta name="description" content="Sniffout - handpicked UK dog walks with live weather checks, paw safety alerts and dog-friendly spots." id="meta-description">
   <title>Sniffout — Dog walks &amp; weather for the UK</title>
 
   <!-- Icons -->
@@ -3826,17 +3826,17 @@
       <!-- Stats dashboard -->
       <div class="me-stats-dashboard" id="meStatsDashboard">
         <div class="me-stats-row">
-          <div class="me-stat-card me-stat-card--primary">
-            <span class="me-stat-number" id="statMiles">0</span>
+          <div class="me-stat-card">
+            <span class="me-stat-number" id="statMiles">-</span>
             <span class="me-stat-label" id="statMilesLabel">miles walked</span>
           </div>
           <div class="me-stat-card">
-            <span class="me-stat-number" id="statWalks">0</span>
+            <span class="me-stat-number" id="statWalks">-</span>
             <span class="me-stat-label">walks logged</span>
           </div>
         </div>
         <div class="me-stat-card me-stat-card--secondary">
-          <span class="me-stat-number me-stat-number--sm" id="statContribs">0</span>
+          <span class="me-stat-number me-stat-number--sm" id="statContribs">-</span>
           <span class="me-stat-label">condition reports</span>
         </div>
       </div>
@@ -5139,7 +5139,7 @@
             '<div class="wx-tile-label">' +
               '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="19" x2="8" y2="21"/><line x1="8" y1="13" x2="8" y2="15"/><line x1="16" y1="19" x2="16" y2="21"/><line x1="16" y1="13" x2="16" y2="15"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="12" y1="15" x2="12" y2="17"/><path d="M20 16.58A5 5 0 0018 7h-1.26A8 8 0 104 15.25"/></svg>' +
               '<span class="wx-tile-name">Rain chance</span>' +
-              '<span class="wx-tile-chevron" aria-hidden="true">&#8250;</span>' +
+              '<span class="wx-tile-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></span>' +
             '</div>' +
             '<div class="wx-tile-value">' + maxRainProb + '<small>%</small></div>' +
             '<div class="wx-tile-desc ' + rl.cls + '">' + rl.text + '</div>' +
@@ -5151,7 +5151,7 @@
             '<div class="wx-tile-label">' +
               '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.59 4.59A2 2 0 1111 8H2m10.59 11.41A2 2 0 1014 16H2m15.73-8.27A2.5 2.5 0 1119.5 12H2"/></svg>' +
               '<span class="wx-tile-name">Wind</span>' +
-              '<span class="wx-tile-chevron" aria-hidden="true">&#8250;</span>' +
+              '<span class="wx-tile-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></span>' +
             '</div>' +
             '<div class="wx-tile-value">' + windMph + '<small> mph</small></div>' +
             '<div class="wx-tile-desc ' + wl.cls + '">' + wl.text + '</div>' +
@@ -5163,7 +5163,7 @@
             '<div class="wx-tile-label">' +
               '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' +
               '<span class="wx-tile-name">UV index</span>' +
-              '<span class="wx-tile-chevron" aria-hidden="true">&#8250;</span>' +
+              '<span class="wx-tile-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></span>' +
             '</div>' +
             '<div class="wx-tile-value">' + currentUV + '</div>' +
             '<div class="wx-tile-desc ' + ul.cls + '">' + ul.text + '</div>' +
@@ -5175,7 +5175,7 @@
             '<div class="wx-tile-label">' +
               '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>' +
               '<span class="wx-tile-name">Humidity</span>' +
-              '<span class="wx-tile-chevron" aria-hidden="true">&#8250;</span>' +
+              '<span class="wx-tile-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></span>' +
             '</div>' +
             '<div class="wx-tile-value">' + humidity + '<small>%</small></div>' +
             '<div class="wx-tile-desc ' + hl.cls + '">' + hl.text + '</div>' +
@@ -6126,7 +6126,7 @@
       isDragging = false;
       var deltaY = e.changedTouches[0].clientY - startY;
       overlay.style.transition = '';
-      if (deltaY > 150) {
+      if (deltaY > 100) {
         closeWalkDetail();
       } else {
         overlay.style.transform = 'translateY(0)';
@@ -6608,7 +6608,7 @@
       html +=
         '<button class="cond-older-toggle" id="cond-older-toggle-' + walkId + '" ' +
           'onclick="toggleOlderReports(\'' + walkId + '\')">' +
-          'Older reports <span id="cond-older-arrow-' + walkId + '">↓</span>' +
+          'Older reports <span id="cond-older-arrow-' + walkId + '">' + luIcon('chevron-down', 14) + '</span>' +
         '</button>' +
         '<div id="cond-older-rows-' + walkId + '" style="display:none">' +
           olderTags.map(function(t) {
@@ -6636,7 +6636,10 @@
     if (!rows) return;
     var open = rows.style.display !== 'none';
     rows.style.display  = open ? 'none' : '';
-    if (arrow) arrow.textContent = open ? '↓' : '↑';
+    if (arrow) {
+      arrow.innerHTML = open ? luIcon('chevron-down', 14) : luIcon('chevron-up', 14);
+      syncIcons();
+    }
   }
 
   function initWalkDetailMap(lat, lon, name) {
@@ -8823,7 +8826,7 @@
     if (seeAllEl) {
       if (hasMore) {
         seeAllEl.style.display = '';
-        seeAllEl.textContent = 'See all ' + reversed.length + ' ->';
+        seeAllEl.textContent = 'See all ' + reversed.length + ' \u2192';
       } else {
         seeAllEl.style.display = 'none';
       }
@@ -9635,7 +9638,7 @@
           '</button>' +
         '</div>' +
         '<div class="walk-body">' +
-          '<div class="walk-name">' + walk.name + '</div>' +
+          '<div class="walk-name">' + escHtml(walk.name) + '</div>' +
           ratingHTML +
           '<div class="walk-meta">' +
             '<span class="walk-meta-item">' + formatDist(walk.distance) + '</span>' +
@@ -9653,7 +9656,7 @@
 
   function renderPortraitCard(walk) {
     var fav = isFavourited(walk.id);
-    var photoStyle = walk.imageUrl ? '' : '';
+    var photoStyle = walk.imageUrl ? '' : 'background:var(--brand);';
     var photoInner = walk.imageUrl ? '<img src="' + walk.imageUrl + '" alt="' + walk.name + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">' : '';
     var badgeHTML  = walk.badge ? '<div class="portrait-badge">' + walk.badge + '</div>' : '';
 
@@ -9739,9 +9742,14 @@
 
   function renderGreenSpaceCard(gs, refLat, refLon) {
     var distKm = haversineKm(refLat, refLon, gs.lat, gs.lon);
-    var distText = distKm < 1
-      ? Math.round(distKm * 1000) + 'm away'
-      : distKm.toFixed(1) + ' km away';
+    var distText;
+    if (getSavedUnits() === 'mi') {
+      distText = (distKm / 1.60934).toFixed(1) + ' mi away';
+    } else {
+      distText = distKm < 1
+        ? Math.round(distKm * 1000) + 'm away'
+        : distKm.toFixed(1) + ' km away';
+    }
     var mapsUrl = gs.mapsUrl
       ? gs.mapsUrl
       : (gs.lat && gs.lon)
@@ -10222,11 +10230,11 @@
   ];
 
   var CATEGORY_ICON = {
-    pub:    '🍺',
-    cafe:   '☕',
-    vet:    '🏥',
-    shop:   '🛍️',
-    other:  '📍'
+    pub:    luIcon('beer', 16),
+    cafe:   luIcon('coffee', 16),
+    vet:    luIcon('stethoscope', 16),
+    shop:   luIcon('shopping-bag', 16),
+    other:  luIcon('map-pin', 16)
   };
 
   var CATEGORY_LABEL = {
