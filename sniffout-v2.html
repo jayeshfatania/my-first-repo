@@ -4038,6 +4038,570 @@
 </div><!-- /app -->
 
 
+
+<!-- Weather info modal -->
+<div class="modal-overlay" id="weather-info-modal" onclick="if(event.target===this)closeWeatherModal()">
+  <div class="modal-sheet" id="weather-info-sheet">
+    <div class="me-settings-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">What you'll see here</div>
+      <button class="modal-close" onclick="closeWeatherModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>We show live weather conditions for your location. On normal days, you'll see a walk verdict and current conditions.</p>
+      <p>If weather is extreme - very hot, freezing, stormy, or dangerously windy - we'll show a specific caution to help you plan your walk safely and protect your dog.</p>
+      <p>Paw safety warnings appear only when pavement temperatures are genuinely dangerous (above 25°C or below 0°C).</p>
+    </div>
+  </div>
+</div>
+
+<!-- Walks filter sheet -->
+<div class="filter-backdrop" id="walks-filter-backdrop"></div>
+<div class="filter-sheet" id="walks-filter-sheet" role="dialog" aria-modal="true" aria-label="Filter walks">
+  <div class="filter-handle"></div>
+  <div class="filter-header">
+    <span class="filter-title">Filter &amp; Sort</span>
+    <button class="filter-close-btn" id="walks-filter-close" aria-label="Close">&#x2715;</button>
+  </div>
+  <div class="filter-body">
+
+    <div class="filter-section">
+      <div class="filter-section-label">Sort by</div>
+      <div class="filter-sort-row" data-sort="distance">
+        <div class="filter-radio selected" id="walks-sort-distance"></div>
+        <span class="filter-sort-label">Distance</span>
+      </div>
+      <div class="filter-sort-row" data-sort="rating">
+        <div class="filter-radio" id="walks-sort-rating"></div>
+        <span class="filter-sort-label">Rating</span>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Radius</div>
+      <div class="filter-chip-row" id="walks-radius-chips">
+        <button class="chip" data-walks-radius="1">1 km</button>
+        <button class="chip" data-walks-radius="3">3 km</button>
+        <button class="chip active" data-walks-radius="5">5 km</button>
+        <button class="chip" data-walks-radius="10">10 km</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Surface</div>
+      <div class="filter-chip-row" id="walks-surface-chips">
+        <button class="chip active" data-walks-surface="any">Any</button>
+        <button class="chip" data-walks-surface="paved">Paved</button>
+        <button class="chip" data-walks-surface="muddy">Muddy</button>
+        <button class="chip" data-walks-surface="mixed">Mixed</button>
+        <button class="chip" data-walks-surface="rocky">Rocky</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Environment</div>
+      <div class="filter-chip-row" id="walks-env-chips">
+        <button class="chip active" data-walks-env="any">Any</button>
+        <button class="chip" data-walks-env="woodland">Woodland</button>
+        <button class="chip" data-walks-env="coastal">Coastal</button>
+        <button class="chip" data-walks-env="urban">Urban</button>
+        <button class="chip" data-walks-env="moorland">Moorland</button>
+        <button class="chip" data-walks-env="heathland">Heathland</button>
+        <button class="chip" data-walks-env="open">Open</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Duration</div>
+      <div class="filter-chip-row" id="walks-duration-chips">
+        <button class="chip active" data-walks-duration="any">Any</button>
+        <button class="chip" data-walks-duration="short">Short &lt;1hr</button>
+        <button class="chip" data-walks-duration="medium">Medium 1&#x2013;2hr</button>
+        <button class="chip" data-walks-duration="long">Long 2hr+</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Off-lead</div>
+      <div class="filter-chip-row" id="walks-offlead-chips">
+        <button class="chip active" data-walks-offlead="any">Any</button>
+        <button class="chip" data-walks-offlead="full">Full off-lead</button>
+        <button class="chip" data-walks-offlead="partial">Partial</button>
+        <button class="chip" data-walks-offlead="none">On-lead only</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Difficulty</div>
+      <div class="filter-chip-row" id="walks-difficulty-chips">
+        <button class="chip active" data-walks-difficulty="any">Any</button>
+        <button class="chip" data-walks-difficulty="easy">Easy</button>
+        <button class="chip" data-walks-difficulty="moderate">Moderate</button>
+        <button class="chip" data-walks-difficulty="hard">Hard</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="filter-footer">
+    <button class="filter-clear-btn" id="walks-filter-clear">Clear all</button>
+    <button class="filter-apply-btn" id="walks-filter-apply">Show walks</button>
+  </div>
+</div>
+
+<!-- Nearby filter sheet -->
+<div class="filter-backdrop" id="nearby-filter-backdrop"></div>
+<div class="filter-sheet" id="nearby-filter-sheet" role="dialog" aria-modal="true" aria-label="Filter nearby places">
+  <div class="filter-handle"></div>
+  <div class="filter-header">
+    <span class="filter-title">Filter &amp; Sort</span>
+    <button class="filter-close-btn" id="nearby-filter-close" aria-label="Close">&#x2715;</button>
+  </div>
+  <div class="filter-body">
+
+    <div class="filter-section">
+      <div class="filter-section-label">Sort by</div>
+      <div class="filter-sort-row" data-sort="distance">
+        <div class="filter-radio selected" id="nearby-sort-distance"></div>
+        <span class="filter-sort-label">Distance</span>
+      </div>
+      <div class="filter-sort-row" data-sort="rating">
+        <div class="filter-radio" id="nearby-sort-rating"></div>
+        <span class="filter-sort-label">Rating</span>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-label">Radius</div>
+      <div class="filter-chip-row" id="nearby-radius-chips">
+        <button class="chip" data-nearby-radius="1">1 km</button>
+        <button class="chip" data-nearby-radius="3">3 km</button>
+        <button class="chip active" data-nearby-radius="5">5 km</button>
+        <button class="chip" data-nearby-radius="10">10 km</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="filter-footer">
+    <button class="filter-clear-btn" id="nearby-filter-clear">Clear all</button>
+    <button class="filter-apply-btn" id="nearby-filter-apply">Show venues</button>
+  </div>
+</div>
+
+<!-- Condition tag sheet -->
+<div class="filter-backdrop" id="cond-tag-backdrop" onclick="closeCondTagSheet()"></div>
+<div class="filter-sheet" id="cond-tag-sheet">
+  <div class="filter-handle"></div>
+  <div id="cond-tag-sheet-inner" style="overflow-y:auto; max-height:calc(65vh - 60px); padding:0 0 8px;"></div>
+  <div style="display:flex; gap:12px; padding:12px 16px 16px; border-top:1px solid var(--border);">
+    <button class="sheet-btn-ghost" id="cond-tag-skip" onclick="closeCondTagSheet()">Skip</button>
+    <button class="sheet-btn-primary" id="cond-tag-done" onclick="submitCondTags()">Done</button>
+  </div>
+</div>
+
+<!-- Me tab settings sheet -->
+<div class="me-settings-overlay" id="meSettingsOverlay" onclick="closeMeSettingsSheet()"></div>
+<div class="me-settings-sheet" id="meSettingsSheet">
+  <div class="me-settings-handle"></div>
+  <div class="me-settings-title">Settings</div>
+  <!-- Display mode -->
+  <div class="me-settings-section">
+    <div class="segment-label">Display mode</div>
+    <div class="segment-control" id="segment-control-dark" role="group" aria-label="Display mode">
+      <div class="segment-pill" id="segment-pill-dark" aria-hidden="true"></div>
+      <button class="segment-btn" data-mode="light" aria-pressed="false">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <span>Light</span>
+      </button>
+      <button class="segment-btn" data-mode="auto" aria-pressed="false">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a9 9 0 0 0 0 18V3z"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        <span>Auto</span>
+      </button>
+      <button class="segment-btn" data-mode="dark" aria-pressed="false">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span>Dark</span>
+      </button>
+    </div>
+  </div>
+  <!-- Search radius -->
+  <div class="me-settings-section">
+    <div class="segment-label">Search radius</div>
+    <div class="segment-control me-radius-control" id="segment-control-radius" role="group" aria-label="Search radius">
+      <div class="segment-pill" id="segment-pill-radius" aria-hidden="true"></div>
+      <button class="segment-btn" data-radius="1" aria-pressed="false"><span>1 mi</span></button>
+      <button class="segment-btn" data-radius="3" aria-pressed="false"><span>3 mi</span></button>
+      <button class="segment-btn" data-radius="5" aria-pressed="false"><span>5 mi</span></button>
+      <button class="segment-btn" data-radius="10" aria-pressed="false"><span>10 mi</span></button>
+    </div>
+  </div>
+  <!-- Units -->
+  <div class="me-settings-section">
+    <div class="segment-label">Distance units</div>
+    <div class="segment-control me-units-control" id="segment-control-units" role="group" aria-label="Distance units">
+      <div class="segment-pill" id="segment-pill-units" aria-hidden="true"></div>
+      <button class="segment-btn" data-units="km" aria-pressed="false"><span>km</span></button>
+      <button class="segment-btn" data-units="mi" aria-pressed="false"><span>miles</span></button>
+    </div>
+  </div>
+  <!-- Phase 3 hook: following/followers row here (not built) -->
+  <div class="me-settings-note">Your walks, favourites, and reviews are saved on this device. Sync across devices is coming in a future update.</div>
+</div>
+
+<!-- Favourites sheet -->
+<div class="filter-backdrop" id="favs-sheet-backdrop" onclick="closeFavsSheet()"></div>
+<div class="filter-sheet" id="favs-sheet">
+  <div class="filter-handle"></div>
+  <div style="padding:16px 16px 12px; border-bottom:1px solid var(--border);">
+    <div style="font-size:16px;font-weight:700;color:var(--ink);">Favourites</div>
+  </div>
+  <div id="favs-sheet-inner" style="overflow-y:auto; max-height:calc(65vh - 60px); padding:0 16px; overflow-x:hidden;"></div>
+</div>
+
+<!-- Walk log sheet — FIX 14.5 -->
+<div class="filter-backdrop" id="walk-log-backdrop" onclick="closeWalkLogSheet()"></div>
+<div class="filter-sheet" id="walk-log-sheet">
+  <div class="filter-handle"></div>
+  <div style="padding:16px 16px 4px; border-bottom:1px solid var(--border);">
+    <div id="walk-log-sheet-title" style="font-size:16px;font-weight:700;color:var(--ink);">Your walks</div>
+  </div>
+  <div id="walk-log-sheet-inner" style="overflow-y:auto; max-height:calc(65vh - 80px); padding:0 16px 8px;"></div>
+  <div style="padding:12px 16px 16px; border-top:1px solid var(--border);">
+    <button class="sheet-btn-ghost" onclick="closeWalkLogSheet()">Close</button>
+  </div>
+</div>
+
+<!-- Log a walk sheet — FIX 30.2 -->
+<div class="filter-backdrop" id="log-walk-backdrop" onclick="closeLogWalkSheet()"></div>
+<div class="log-walk-sheet" id="logWalkSheet" role="dialog" aria-modal="true" aria-label="Log a walk">
+  <div class="me-settings-handle"></div>
+  <div class="log-walk-title">Log a walk</div>
+  <div class="log-walk-field">
+    <label class="log-walk-label" for="logWalkName">Walk name (required)</label>
+    <input class="log-walk-input" id="logWalkName" type="text" maxlength="50" placeholder="e.g. Victoria Park" autocomplete="off">
+    <span class="log-walk-error" id="logWalkError"></span>
+  </div>
+  <div class="log-walk-field">
+    <label class="log-walk-label" for="logWalkDate">Date</label>
+    <input class="log-walk-input" id="logWalkDate" type="date">
+  </div>
+  <div class="log-walk-row">
+    <div class="log-walk-field">
+      <label class="log-walk-label" for="logWalkDist" id="logWalkDistLabel">Distance (optional)</label>
+      <input class="log-walk-input" id="logWalkDist" type="number" min="0" step="0.1" placeholder="0.0">
+    </div>
+    <div class="log-walk-field">
+      <label class="log-walk-label" for="logWalkDur">Duration (optional, mins)</label>
+      <input class="log-walk-input" id="logWalkDur" type="number" min="0" step="1" placeholder="0">
+    </div>
+  </div>
+  <div class="log-walk-field">
+    <label class="log-walk-label" for="logWalkNote">Notes (optional)</label>
+    <textarea class="log-walk-textarea" id="logWalkNote" rows="3" placeholder="Add a note about this walk..."></textarea>
+  </div>
+  <button class="log-walk-save-btn" onclick="saveCustomWalk()">Save</button>
+  <button class="log-walk-cancel-btn" onclick="closeLogWalkSheet()">Cancel</button>
+</div>
+
+<!-- Walk detail overlay — FIX 12.1 -->
+<div id="walk-detail-overlay" class="walk-detail-overlay" role="dialog" aria-modal="true" aria-label="Walk detail">
+  <div class="walk-detail-drag-handle"></div>
+  <div class="walk-detail-header">
+    <button class="walk-detail-back" onclick="closeWalkDetail()" aria-label="Back"><i data-lucide="arrow-left" style="width:20px;height:20px"></i></button>
+    <div class="walk-detail-header-name" id="walk-detail-header-name"></div>
+    <button class="walk-detail-share-btn" id="walk-detail-share-btn" aria-label="Share this walk"><i data-lucide="share-2" style="width:20px;height:20px"></i></button>
+  </div>
+  <div class="walk-detail-scroll" id="walk-detail-scroll">
+    <div class="walk-detail-hero" id="walk-detail-hero">
+      <div class="walk-detail-hero-badge" id="walk-detail-hero-badge"></div>
+    </div>
+    <div class="walk-detail-info">
+      <h1 class="walk-detail-name" id="walk-detail-name"></h1>
+      <div class="walk-detail-location" id="walk-detail-location"></div>
+      <div class="walk-detail-rating" id="walk-detail-rating"></div>
+      <div class="walk-detail-stats">
+        <div class="detail-stat">
+          <div class="detail-stat-value" id="walk-detail-dist"></div>
+          <div class="detail-stat-label">Distance</div>
+        </div>
+        <div class="detail-stat-divider"></div>
+        <div class="detail-stat">
+          <div class="detail-stat-value" id="walk-detail-dur"></div>
+          <div class="detail-stat-label">Duration</div>
+        </div>
+        <div class="detail-stat-divider"></div>
+        <div class="detail-stat">
+          <div class="detail-stat-value" id="walk-detail-diff"></div>
+          <div class="detail-stat-label">Difficulty</div>
+        </div>
+      </div>
+    </div>
+    <div class="walk-detail-tags-section" id="walk-detail-tags-section"></div>
+    <div class="walk-detail-desc" id="walk-detail-desc"></div>
+    <div class="walk-detail-conditions">
+      <div class="walk-detail-conditions-heading">Current conditions</div>
+      <div class="walk-detail-conditions-disclaimer">Community reported - not verified by Sniffout</div>
+      <div id="walk-detail-cond-tags"></div>
+    </div>
+    <div class="walk-detail-actions">
+      <button class="walked-btn" id="walk-detail-walked-btn" data-walk-id=""></button>
+    </div>
+    <div class="walk-detail-map-section">
+      <div class="walk-detail-map-title">Location</div>
+      <div class="map-style-row" style="padding:6px 0 4px;">
+        <div class="map-style-control" id="detail-map-style-control" role="group" aria-label="Map style">
+          <div class="map-style-pill" id="detail-map-style-pill" aria-hidden="true"></div>
+          <button class="map-style-btn active" data-map-style="osm">Standard</button>
+          <button class="map-style-btn" data-map-style="leisure">OS Map</button>
+        </div>
+      </div>
+      <div class="walk-detail-map" id="walk-detail-map"></div>
+      <a class="walk-detail-maps-link" id="walk-detail-maps-link" target="_blank" rel="noopener">Open in Google Maps →</a>
+    </div>
+    <div class="walk-detail-disclaimer">
+      <svg class="walk-detail-disclaimer-icon" aria-hidden="true"
+           xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+           viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="16" x2="12" y2="12"/>
+        <line x1="12" y1="8" x2="12.01" y2="8"/>
+      </svg>
+      <span>Walk details are checked at the time of listing, but conditions, access, and facilities can change. Verify before you go.</span>
+    </div>
+    <div class="walk-detail-bottom-pad"></div>
+    <button class="walk-detail-close-btn" onclick="closeWalkDetail()">✕&nbsp;&nbsp;Close</button>
+  </div>
+</div>
+
+<!-- Full-screen image viewer -->
+<div id="img-viewer-overlay" class="img-viewer-overlay" role="dialog" aria-modal="true" aria-label="Full screen image">
+  <button class="img-viewer-close" onclick="closeImageViewer()" aria-label="Close image">&#x2715;</button>
+  <img id="img-viewer-img" class="img-viewer-img" src="" alt="">
+</div>
+
+<!-- ══════════ ME TAB SUBPAGES ══════════ -->
+
+<!-- Walk Journal subpage -->
+<div class="me-subpage" id="subpageJournal" role="dialog" aria-modal="true" aria-label="Walk Journal">
+  <div class="me-subpage-handle"></div>
+  <div class="me-subpage-header">
+    <button class="me-subpage-back" onclick="closeMeSubpage('journal')" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 class="me-subpage-title">Walk Journal</h2>
+    <button class="me-subpage-log-btn" onclick="openLogWalkSheet()">+ Log a walk</button>
+  </div>
+  <div class="me-subpage-content" id="journalContent"></div>
+</div>
+
+<!-- Badges subpage -->
+<div class="me-subpage" id="subpageBadges" role="dialog" aria-modal="true" aria-label="Badges">
+  <div class="me-subpage-handle"></div>
+  <div class="me-subpage-header">
+    <button class="me-subpage-back" onclick="closeMeSubpage('badges')" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 class="me-subpage-title">Badges</h2>
+    <div class="me-subpage-header-spacer"></div>
+  </div>
+  <div class="me-subpage-content" id="badgesContent"></div>
+</div>
+
+<!-- Saved Walks subpage -->
+<div class="me-subpage" id="subpageSavedwalks" role="dialog" aria-modal="true" aria-label="Saved Walks">
+  <div class="me-subpage-handle"></div>
+  <div class="me-subpage-header">
+    <button class="me-subpage-back" onclick="closeMeSubpage('savedwalks')" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 class="me-subpage-title">Saved Walks</h2>
+    <div class="me-subpage-header-spacer"></div>
+  </div>
+  <div class="me-subpage-content" id="savedWalksContent"></div>
+</div>
+
+<!-- Saved Places subpage -->
+<div class="me-subpage" id="subpageSavedplaces" role="dialog" aria-modal="true" aria-label="Saved Places">
+  <div class="me-subpage-handle"></div>
+  <div class="me-subpage-header">
+    <button class="me-subpage-back" onclick="closeMeSubpage('savedplaces')" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 class="me-subpage-title">Saved Places</h2>
+    <div class="me-subpage-header-spacer"></div>
+  </div>
+  <div class="me-subpage-content" id="savedPlacesContent"></div>
+</div>
+
+<!-- Your Dog subpage -->
+<div class="me-subpage" id="subpageDog" role="dialog" aria-modal="true" aria-label="Your Dog">
+  <div class="me-subpage-handle"></div>
+  <div class="me-subpage-header">
+    <button class="me-subpage-back" onclick="closeMeSubpage('dog')" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 class="me-subpage-title">Your Dog</h2>
+    <div class="me-subpage-header-spacer"></div>
+  </div>
+  <div class="me-subpage-content" id="dogSubpageContent">
+    <div class="dog-subpage-inner">
+      <div class="dog-settings-field">
+        <label class="dog-settings-label" for="dogSettingsName">Name</label>
+        <input class="dog-settings-input" id="dogSettingsName" type="text" maxlength="24" placeholder="e.g. Luna" autocomplete="off" autocapitalize="words">
+      </div>
+      <div class="dog-settings-field">
+        <label class="dog-settings-label" for="dogSettingsBreed">Breed</label>
+        <select class="dog-settings-select" id="dogSettingsBreed" onchange="handleDogBreedChange()">
+          <option value="">Select breed</option>
+          <option>Labrador</option>
+          <option>Cocker Spaniel</option>
+          <option>Springer Spaniel</option>
+          <option>Golden Retriever</option>
+          <option>French Bulldog</option>
+          <option>Border Collie</option>
+          <option>German Shepherd</option>
+          <option>Staffordshire Bull Terrier</option>
+          <option>Cavalier King Charles Spaniel</option>
+          <option>Pug</option>
+          <option>Beagle</option>
+          <option>Boxer</option>
+          <option>Dachshund</option>
+          <option>Shih Tzu</option>
+          <option>Jack Russell Terrier</option>
+          <option>Yorkshire Terrier</option>
+          <option>Whippet</option>
+          <option>Greyhound</option>
+          <option>Vizsla</option>
+          <option>Weimaraner</option>
+          <option>Dalmatian</option>
+          <option>Border Terrier</option>
+          <option>West Highland Terrier</option>
+          <option>Scottish Terrier</option>
+          <option>Cairn Terrier</option>
+          <option>Schnauzer</option>
+          <option>Dobermann</option>
+          <option>Rottweiler</option>
+          <option>Great Dane</option>
+          <option>Hungarian Vizsla</option>
+          <option>Pointer</option>
+          <option>Setter</option>
+          <option>Brittany Spaniel</option>
+          <option>Basset Hound</option>
+          <option>Bloodhound</option>
+          <option>Shar Pei</option>
+          <option>Chow Chow</option>
+          <option>Samoyed</option>
+          <option>Husky</option>
+          <option>Alaskan Malamute</option>
+          <option>Bernese Mountain Dog</option>
+          <option>St Bernard</option>
+          <option>Newfoundland</option>
+          <option>Irish Wolfhound</option>
+          <option>Lurcher</option>
+          <option>Saluki</option>
+          <option>Afghan Hound</option>
+          <option>Borzoi</option>
+          <option>Italian Greyhound</option>
+          <option>Maltese</option>
+          <option>Pomeranian</option>
+          <option>Chihuahua</option>
+          <option>Cockapoo</option>
+          <option>Labradoodle</option>
+          <option>Cavapoo</option>
+          <option>Goldendoodle</option>
+          <option>Sprocker</option>
+          <option>Jackapoo</option>
+          <option>Schnoodle</option>
+          <option value="Mixed breed / crossbreed">Mixed breed / crossbreed</option>
+          <option value="Not sure / rescue">Not sure / rescue</option>
+          <option value="Other (please specify)">Other (please specify)</option>
+        </select>
+        <input class="dog-settings-input dog-settings-other-input" id="dogSettingsBreedOther" type="text" maxlength="48" placeholder="Please specify" style="display:none">
+      </div>
+      <div class="dog-settings-field">
+        <div class="dog-settings-label">Size</div>
+        <div class="segment-control me-size-control" id="segment-control-size" role="group" aria-label="Dog size">
+          <div class="segment-pill" id="segment-pill-size" aria-hidden="true"></div>
+          <button class="segment-btn" data-size="small" aria-pressed="false"><span>Small</span></button>
+          <button class="segment-btn" data-size="medium" aria-pressed="false"><span>Medium</span></button>
+          <button class="segment-btn" data-size="large" aria-pressed="false"><span>Large</span></button>
+        </div>
+      </div>
+      <div class="dog-settings-field">
+        <div class="dog-settings-label" id="dogTagsLabel">About your dog</div>
+        <div class="dog-tags-row" id="dogTagsRow">
+          <button class="dog-tag-chip" data-tag="Energetic" onclick="toggleDogTag(this)">Energetic</button>
+          <button class="dog-tag-chip" data-tag="Nervous" onclick="toggleDogTag(this)">Nervous</button>
+          <button class="dog-tag-chip" data-tag="Elderly" onclick="toggleDogTag(this)">Elderly</button>
+          <button class="dog-tag-chip" data-tag="Good recall" onclick="toggleDogTag(this)">Good recall</button>
+          <button class="dog-tag-chip" data-tag="Reactive" onclick="toggleDogTag(this)">Reactive</button>
+          <button class="dog-tag-chip" data-tag="Loves water" onclick="toggleDogTag(this)">Loves water</button>
+          <button class="dog-tag-chip" data-tag="Mud-happy" onclick="toggleDogTag(this)">Mud-happy</button>
+          <button class="dog-tag-chip" data-tag="Sociable" onclick="toggleDogTag(this)">Sociable</button>
+        </div>
+      </div>
+      <div class="dog-settings-field">
+        <div class="dog-settings-label">Birthday (optional)</div>
+        <div class="dog-birthday-row">
+          <select class="dog-settings-select" id="dogSettingsBdDay">
+            <option value="">Day</option>
+          </select>
+          <select class="dog-settings-select" id="dogSettingsBdMonth">
+            <option value="">Month</option>
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+          <select class="dog-settings-select" id="dogSettingsBdYear">
+            <option value="">Year</option>
+          </select>
+        </div>
+      </div>
+      <button class="dog-settings-save-btn" onclick="saveDogSettings()">Save dog profile</button>
+      <button class="dog-settings-remove-link" id="dogSettingsRemoveBtn" onclick="showDogRemoveConfirm()" style="display:none">Remove dog profile</button>
+      <div class="dog-settings-confirm" id="dogSettingsConfirm">
+        <p class="dog-settings-confirm-text" id="dogSettingsConfirmText">Remove your dog? This will not delete your walks.</p>
+        <div class="dog-settings-confirm-row">
+          <button class="dog-settings-confirm-yes" onclick="executeDogRemove()">Remove</button>
+          <button class="dog-settings-confirm-no" onclick="cancelDogRemove()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recently Viewed subpage -->
+<div class="me-subpage" id="subpageRecentlyviewed" role="dialog" aria-modal="true" aria-label="Recently Viewed">
+  <div class="me-subpage-handle"></div>
+  <div class="me-subpage-header">
+    <button class="me-subpage-back" onclick="closeMeSubpage('recentlyviewed')" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 class="me-subpage-title">Recently Viewed</h2>
+    <div class="me-subpage-header-spacer"></div>
+  </div>
+  <div class="me-subpage-content" id="recentlyViewedContent"></div>
+</div>
+
+
+<!-- Metric detail bottom sheet -->
+<div class="wx-sheet-overlay" id="wxSheetOverlay" hidden></div>
+<div class="wx-sheet" id="wxSheet" hidden>
+  <div class="wx-sheet-handle"></div>
+  <div class="wx-sheet-title" id="wxSheetTitle"></div>
+  <div class="wx-sheet-rows" id="wxSheetRows"></div>
+  <div class="wx-sheet-note" id="wxSheetNote"></div>
+</div>
+
+
 <script>
   /* ═══════════════════════════════
      PHASE B — Navigation & tab switching
@@ -4255,9 +4819,6 @@
       switchTab(saved);
     }
   }
-</script>
-
-<script>
   /* ═══════════════════════════════
      PHASE C — Weather integration
   ═══════════════════════════════ */
@@ -5434,9 +5995,6 @@
   });
 
   /* ─── Init: session restore is handled by initApp() at end of all phases ─── */
-</script>
-
-<script>
   /* ═══════════════════════════════
      FIX 9.1 — Condition tags data model + helpers
   ═══════════════════════════════ */
@@ -6814,9 +7372,6 @@
     }
     closeCondTagSheet();
   }
-</script>
-
-<script>
   /* ═══════════════════════════════
      PHASE D — WALKS_DB + Walk cards
   ═══════════════════════════════ */
@@ -10142,9 +10697,6 @@
   updateMeStats();
   renderWalkLogSection();
   renderMeBadges();
-</script>
-
-<script>
   /* ═══════════════════════════════
      PHASE E — Nearby / Places tab
   ═══════════════════════════════ */
@@ -10681,9 +11233,6 @@
   }
 
   renderStateAPreviews();
-</script>
-
-<script>
   /* ═══════════════════════════════
      PHASE F — Me tab & localStorage
   ═══════════════════════════════ */
@@ -10990,9 +11539,6 @@
       if (_initRadiusPill) _initRadiusPill.style.transition = '';
     });
   });
-</script>
-
-<script>
   /* ═══════════════════════════════
      PHASE G — PWA + final polish
   ═══════════════════════════════ */
@@ -11064,9 +11610,6 @@
       silentWeatherRefresh();
     }
   };
-</script>
-
-<script>
   /* ═══════════════════════════════
      FIX 1.2 — Recent searches
   ═══════════════════════════════ */
@@ -11270,9 +11813,6 @@
 
   /* Init */
   renderRecentPills();
-</script>
-
-<script>
   /* ═══════════════════════════════
      FIX 2.5 — Weather info modal
   ═══════════════════════════════ */
@@ -11317,9 +11857,6 @@
       }
     });
   }
-</script>
-
-<script>
   /* ═══════════════════════════════
      FIX — State B inline location change
   ═══════════════════════════════ */
@@ -11387,561 +11924,6 @@
       }
     });
   }
-</script>
-
-<!-- Weather info modal -->
-<div class="modal-overlay" id="weather-info-modal" onclick="if(event.target===this)closeWeatherModal()">
-  <div class="modal-sheet" id="weather-info-sheet">
-    <div class="me-settings-handle"></div>
-    <div class="modal-header">
-      <div class="modal-title">What you'll see here</div>
-      <button class="modal-close" onclick="closeWeatherModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <p>We show live weather conditions for your location. On normal days, you'll see a walk verdict and current conditions.</p>
-      <p>If weather is extreme - very hot, freezing, stormy, or dangerously windy - we'll show a specific caution to help you plan your walk safely and protect your dog.</p>
-      <p>Paw safety warnings appear only when pavement temperatures are genuinely dangerous (above 25°C or below 0°C).</p>
-    </div>
-  </div>
-</div>
-
-<!-- Walks filter sheet -->
-<div class="filter-backdrop" id="walks-filter-backdrop"></div>
-<div class="filter-sheet" id="walks-filter-sheet" role="dialog" aria-modal="true" aria-label="Filter walks">
-  <div class="filter-handle"></div>
-  <div class="filter-header">
-    <span class="filter-title">Filter &amp; Sort</span>
-    <button class="filter-close-btn" id="walks-filter-close" aria-label="Close">&#x2715;</button>
-  </div>
-  <div class="filter-body">
-
-    <div class="filter-section">
-      <div class="filter-section-label">Sort by</div>
-      <div class="filter-sort-row" data-sort="distance">
-        <div class="filter-radio selected" id="walks-sort-distance"></div>
-        <span class="filter-sort-label">Distance</span>
-      </div>
-      <div class="filter-sort-row" data-sort="rating">
-        <div class="filter-radio" id="walks-sort-rating"></div>
-        <span class="filter-sort-label">Rating</span>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Radius</div>
-      <div class="filter-chip-row" id="walks-radius-chips">
-        <button class="chip" data-walks-radius="1">1 km</button>
-        <button class="chip" data-walks-radius="3">3 km</button>
-        <button class="chip active" data-walks-radius="5">5 km</button>
-        <button class="chip" data-walks-radius="10">10 km</button>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Surface</div>
-      <div class="filter-chip-row" id="walks-surface-chips">
-        <button class="chip active" data-walks-surface="any">Any</button>
-        <button class="chip" data-walks-surface="paved">Paved</button>
-        <button class="chip" data-walks-surface="muddy">Muddy</button>
-        <button class="chip" data-walks-surface="mixed">Mixed</button>
-        <button class="chip" data-walks-surface="rocky">Rocky</button>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Environment</div>
-      <div class="filter-chip-row" id="walks-env-chips">
-        <button class="chip active" data-walks-env="any">Any</button>
-        <button class="chip" data-walks-env="woodland">Woodland</button>
-        <button class="chip" data-walks-env="coastal">Coastal</button>
-        <button class="chip" data-walks-env="urban">Urban</button>
-        <button class="chip" data-walks-env="moorland">Moorland</button>
-        <button class="chip" data-walks-env="heathland">Heathland</button>
-        <button class="chip" data-walks-env="open">Open</button>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Duration</div>
-      <div class="filter-chip-row" id="walks-duration-chips">
-        <button class="chip active" data-walks-duration="any">Any</button>
-        <button class="chip" data-walks-duration="short">Short &lt;1hr</button>
-        <button class="chip" data-walks-duration="medium">Medium 1&#x2013;2hr</button>
-        <button class="chip" data-walks-duration="long">Long 2hr+</button>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Off-lead</div>
-      <div class="filter-chip-row" id="walks-offlead-chips">
-        <button class="chip active" data-walks-offlead="any">Any</button>
-        <button class="chip" data-walks-offlead="full">Full off-lead</button>
-        <button class="chip" data-walks-offlead="partial">Partial</button>
-        <button class="chip" data-walks-offlead="none">On-lead only</button>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Difficulty</div>
-      <div class="filter-chip-row" id="walks-difficulty-chips">
-        <button class="chip active" data-walks-difficulty="any">Any</button>
-        <button class="chip" data-walks-difficulty="easy">Easy</button>
-        <button class="chip" data-walks-difficulty="moderate">Moderate</button>
-        <button class="chip" data-walks-difficulty="hard">Hard</button>
-      </div>
-    </div>
-
-  </div>
-  <div class="filter-footer">
-    <button class="filter-clear-btn" id="walks-filter-clear">Clear all</button>
-    <button class="filter-apply-btn" id="walks-filter-apply">Show walks</button>
-  </div>
-</div>
-
-<!-- Nearby filter sheet -->
-<div class="filter-backdrop" id="nearby-filter-backdrop"></div>
-<div class="filter-sheet" id="nearby-filter-sheet" role="dialog" aria-modal="true" aria-label="Filter nearby places">
-  <div class="filter-handle"></div>
-  <div class="filter-header">
-    <span class="filter-title">Filter &amp; Sort</span>
-    <button class="filter-close-btn" id="nearby-filter-close" aria-label="Close">&#x2715;</button>
-  </div>
-  <div class="filter-body">
-
-    <div class="filter-section">
-      <div class="filter-section-label">Sort by</div>
-      <div class="filter-sort-row" data-sort="distance">
-        <div class="filter-radio selected" id="nearby-sort-distance"></div>
-        <span class="filter-sort-label">Distance</span>
-      </div>
-      <div class="filter-sort-row" data-sort="rating">
-        <div class="filter-radio" id="nearby-sort-rating"></div>
-        <span class="filter-sort-label">Rating</span>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-section-label">Radius</div>
-      <div class="filter-chip-row" id="nearby-radius-chips">
-        <button class="chip" data-nearby-radius="1">1 km</button>
-        <button class="chip" data-nearby-radius="3">3 km</button>
-        <button class="chip active" data-nearby-radius="5">5 km</button>
-        <button class="chip" data-nearby-radius="10">10 km</button>
-      </div>
-    </div>
-
-  </div>
-  <div class="filter-footer">
-    <button class="filter-clear-btn" id="nearby-filter-clear">Clear all</button>
-    <button class="filter-apply-btn" id="nearby-filter-apply">Show venues</button>
-  </div>
-</div>
-
-<!-- Condition tag sheet -->
-<div class="filter-backdrop" id="cond-tag-backdrop" onclick="closeCondTagSheet()"></div>
-<div class="filter-sheet" id="cond-tag-sheet">
-  <div class="filter-handle"></div>
-  <div id="cond-tag-sheet-inner" style="overflow-y:auto; max-height:calc(65vh - 60px); padding:0 0 8px;"></div>
-  <div style="display:flex; gap:12px; padding:12px 16px 16px; border-top:1px solid var(--border);">
-    <button class="sheet-btn-ghost" id="cond-tag-skip" onclick="closeCondTagSheet()">Skip</button>
-    <button class="sheet-btn-primary" id="cond-tag-done" onclick="submitCondTags()">Done</button>
-  </div>
-</div>
-
-<!-- Me tab settings sheet -->
-<div class="me-settings-overlay" id="meSettingsOverlay" onclick="closeMeSettingsSheet()"></div>
-<div class="me-settings-sheet" id="meSettingsSheet">
-  <div class="me-settings-handle"></div>
-  <div class="me-settings-title">Settings</div>
-  <!-- Display mode -->
-  <div class="me-settings-section">
-    <div class="segment-label">Display mode</div>
-    <div class="segment-control" id="segment-control-dark" role="group" aria-label="Display mode">
-      <div class="segment-pill" id="segment-pill-dark" aria-hidden="true"></div>
-      <button class="segment-btn" data-mode="light" aria-pressed="false">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        <span>Light</span>
-      </button>
-      <button class="segment-btn" data-mode="auto" aria-pressed="false">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a9 9 0 0 0 0 18V3z"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-        <span>Auto</span>
-      </button>
-      <button class="segment-btn" data-mode="dark" aria-pressed="false">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        <span>Dark</span>
-      </button>
-    </div>
-  </div>
-  <!-- Search radius -->
-  <div class="me-settings-section">
-    <div class="segment-label">Search radius</div>
-    <div class="segment-control me-radius-control" id="segment-control-radius" role="group" aria-label="Search radius">
-      <div class="segment-pill" id="segment-pill-radius" aria-hidden="true"></div>
-      <button class="segment-btn" data-radius="1" aria-pressed="false"><span>1 mi</span></button>
-      <button class="segment-btn" data-radius="3" aria-pressed="false"><span>3 mi</span></button>
-      <button class="segment-btn" data-radius="5" aria-pressed="false"><span>5 mi</span></button>
-      <button class="segment-btn" data-radius="10" aria-pressed="false"><span>10 mi</span></button>
-    </div>
-  </div>
-  <!-- Units -->
-  <div class="me-settings-section">
-    <div class="segment-label">Distance units</div>
-    <div class="segment-control me-units-control" id="segment-control-units" role="group" aria-label="Distance units">
-      <div class="segment-pill" id="segment-pill-units" aria-hidden="true"></div>
-      <button class="segment-btn" data-units="km" aria-pressed="false"><span>km</span></button>
-      <button class="segment-btn" data-units="mi" aria-pressed="false"><span>miles</span></button>
-    </div>
-  </div>
-  <!-- Phase 3 hook: following/followers row here (not built) -->
-  <div class="me-settings-note">Your walks, favourites, and reviews are saved on this device. Sync across devices is coming in a future update.</div>
-</div>
-
-<!-- Favourites sheet -->
-<div class="filter-backdrop" id="favs-sheet-backdrop" onclick="closeFavsSheet()"></div>
-<div class="filter-sheet" id="favs-sheet">
-  <div class="filter-handle"></div>
-  <div style="padding:16px 16px 12px; border-bottom:1px solid var(--border);">
-    <div style="font-size:16px;font-weight:700;color:var(--ink);">Favourites</div>
-  </div>
-  <div id="favs-sheet-inner" style="overflow-y:auto; max-height:calc(65vh - 60px); padding:0 16px; overflow-x:hidden;"></div>
-</div>
-
-<!-- Walk log sheet — FIX 14.5 -->
-<div class="filter-backdrop" id="walk-log-backdrop" onclick="closeWalkLogSheet()"></div>
-<div class="filter-sheet" id="walk-log-sheet">
-  <div class="filter-handle"></div>
-  <div style="padding:16px 16px 4px; border-bottom:1px solid var(--border);">
-    <div id="walk-log-sheet-title" style="font-size:16px;font-weight:700;color:var(--ink);">Your walks</div>
-  </div>
-  <div id="walk-log-sheet-inner" style="overflow-y:auto; max-height:calc(65vh - 80px); padding:0 16px 8px;"></div>
-  <div style="padding:12px 16px 16px; border-top:1px solid var(--border);">
-    <button class="sheet-btn-ghost" onclick="closeWalkLogSheet()">Close</button>
-  </div>
-</div>
-
-<!-- Log a walk sheet — FIX 30.2 -->
-<div class="filter-backdrop" id="log-walk-backdrop" onclick="closeLogWalkSheet()"></div>
-<div class="log-walk-sheet" id="logWalkSheet" role="dialog" aria-modal="true" aria-label="Log a walk">
-  <div class="me-settings-handle"></div>
-  <div class="log-walk-title">Log a walk</div>
-  <div class="log-walk-field">
-    <label class="log-walk-label" for="logWalkName">Walk name (required)</label>
-    <input class="log-walk-input" id="logWalkName" type="text" maxlength="50" placeholder="e.g. Victoria Park" autocomplete="off">
-    <span class="log-walk-error" id="logWalkError"></span>
-  </div>
-  <div class="log-walk-field">
-    <label class="log-walk-label" for="logWalkDate">Date</label>
-    <input class="log-walk-input" id="logWalkDate" type="date">
-  </div>
-  <div class="log-walk-row">
-    <div class="log-walk-field">
-      <label class="log-walk-label" for="logWalkDist" id="logWalkDistLabel">Distance (optional)</label>
-      <input class="log-walk-input" id="logWalkDist" type="number" min="0" step="0.1" placeholder="0.0">
-    </div>
-    <div class="log-walk-field">
-      <label class="log-walk-label" for="logWalkDur">Duration (optional, mins)</label>
-      <input class="log-walk-input" id="logWalkDur" type="number" min="0" step="1" placeholder="0">
-    </div>
-  </div>
-  <div class="log-walk-field">
-    <label class="log-walk-label" for="logWalkNote">Notes (optional)</label>
-    <textarea class="log-walk-textarea" id="logWalkNote" rows="3" placeholder="Add a note about this walk..."></textarea>
-  </div>
-  <button class="log-walk-save-btn" onclick="saveCustomWalk()">Save</button>
-  <button class="log-walk-cancel-btn" onclick="closeLogWalkSheet()">Cancel</button>
-</div>
-
-<!-- Walk detail overlay — FIX 12.1 -->
-<div id="walk-detail-overlay" class="walk-detail-overlay" role="dialog" aria-modal="true" aria-label="Walk detail">
-  <div class="walk-detail-drag-handle"></div>
-  <div class="walk-detail-header">
-    <button class="walk-detail-back" onclick="closeWalkDetail()" aria-label="Back"><i data-lucide="arrow-left" style="width:20px;height:20px"></i></button>
-    <div class="walk-detail-header-name" id="walk-detail-header-name"></div>
-    <button class="walk-detail-share-btn" id="walk-detail-share-btn" aria-label="Share this walk"><i data-lucide="share-2" style="width:20px;height:20px"></i></button>
-  </div>
-  <div class="walk-detail-scroll" id="walk-detail-scroll">
-    <div class="walk-detail-hero" id="walk-detail-hero">
-      <div class="walk-detail-hero-badge" id="walk-detail-hero-badge"></div>
-    </div>
-    <div class="walk-detail-info">
-      <h1 class="walk-detail-name" id="walk-detail-name"></h1>
-      <div class="walk-detail-location" id="walk-detail-location"></div>
-      <div class="walk-detail-rating" id="walk-detail-rating"></div>
-      <div class="walk-detail-stats">
-        <div class="detail-stat">
-          <div class="detail-stat-value" id="walk-detail-dist"></div>
-          <div class="detail-stat-label">Distance</div>
-        </div>
-        <div class="detail-stat-divider"></div>
-        <div class="detail-stat">
-          <div class="detail-stat-value" id="walk-detail-dur"></div>
-          <div class="detail-stat-label">Duration</div>
-        </div>
-        <div class="detail-stat-divider"></div>
-        <div class="detail-stat">
-          <div class="detail-stat-value" id="walk-detail-diff"></div>
-          <div class="detail-stat-label">Difficulty</div>
-        </div>
-      </div>
-    </div>
-    <div class="walk-detail-tags-section" id="walk-detail-tags-section"></div>
-    <div class="walk-detail-desc" id="walk-detail-desc"></div>
-    <div class="walk-detail-conditions">
-      <div class="walk-detail-conditions-heading">Current conditions</div>
-      <div class="walk-detail-conditions-disclaimer">Community reported - not verified by Sniffout</div>
-      <div id="walk-detail-cond-tags"></div>
-    </div>
-    <div class="walk-detail-actions">
-      <button class="walked-btn" id="walk-detail-walked-btn" data-walk-id=""></button>
-    </div>
-    <div class="walk-detail-map-section">
-      <div class="walk-detail-map-title">Location</div>
-      <div class="map-style-row" style="padding:6px 0 4px;">
-        <div class="map-style-control" id="detail-map-style-control" role="group" aria-label="Map style">
-          <div class="map-style-pill" id="detail-map-style-pill" aria-hidden="true"></div>
-          <button class="map-style-btn active" data-map-style="osm">Standard</button>
-          <button class="map-style-btn" data-map-style="leisure">OS Map</button>
-        </div>
-      </div>
-      <div class="walk-detail-map" id="walk-detail-map"></div>
-      <a class="walk-detail-maps-link" id="walk-detail-maps-link" target="_blank" rel="noopener">Open in Google Maps →</a>
-    </div>
-    <div class="walk-detail-disclaimer">
-      <svg class="walk-detail-disclaimer-icon" aria-hidden="true"
-           xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-           viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="16" x2="12" y2="12"/>
-        <line x1="12" y1="8" x2="12.01" y2="8"/>
-      </svg>
-      <span>Walk details are checked at the time of listing, but conditions, access, and facilities can change. Verify before you go.</span>
-    </div>
-    <div class="walk-detail-bottom-pad"></div>
-    <button class="walk-detail-close-btn" onclick="closeWalkDetail()">✕&nbsp;&nbsp;Close</button>
-  </div>
-</div>
-
-<!-- Full-screen image viewer -->
-<div id="img-viewer-overlay" class="img-viewer-overlay" role="dialog" aria-modal="true" aria-label="Full screen image">
-  <button class="img-viewer-close" onclick="closeImageViewer()" aria-label="Close image">&#x2715;</button>
-  <img id="img-viewer-img" class="img-viewer-img" src="" alt="">
-</div>
-
-<!-- ══════════ ME TAB SUBPAGES ══════════ -->
-
-<!-- Walk Journal subpage -->
-<div class="me-subpage" id="subpageJournal" role="dialog" aria-modal="true" aria-label="Walk Journal">
-  <div class="me-subpage-handle"></div>
-  <div class="me-subpage-header">
-    <button class="me-subpage-back" onclick="closeMeSubpage('journal')" aria-label="Close">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <h2 class="me-subpage-title">Walk Journal</h2>
-    <button class="me-subpage-log-btn" onclick="openLogWalkSheet()">+ Log a walk</button>
-  </div>
-  <div class="me-subpage-content" id="journalContent"></div>
-</div>
-
-<!-- Badges subpage -->
-<div class="me-subpage" id="subpageBadges" role="dialog" aria-modal="true" aria-label="Badges">
-  <div class="me-subpage-handle"></div>
-  <div class="me-subpage-header">
-    <button class="me-subpage-back" onclick="closeMeSubpage('badges')" aria-label="Close">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <h2 class="me-subpage-title">Badges</h2>
-    <div class="me-subpage-header-spacer"></div>
-  </div>
-  <div class="me-subpage-content" id="badgesContent"></div>
-</div>
-
-<!-- Saved Walks subpage -->
-<div class="me-subpage" id="subpageSavedwalks" role="dialog" aria-modal="true" aria-label="Saved Walks">
-  <div class="me-subpage-handle"></div>
-  <div class="me-subpage-header">
-    <button class="me-subpage-back" onclick="closeMeSubpage('savedwalks')" aria-label="Close">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <h2 class="me-subpage-title">Saved Walks</h2>
-    <div class="me-subpage-header-spacer"></div>
-  </div>
-  <div class="me-subpage-content" id="savedWalksContent"></div>
-</div>
-
-<!-- Saved Places subpage -->
-<div class="me-subpage" id="subpageSavedplaces" role="dialog" aria-modal="true" aria-label="Saved Places">
-  <div class="me-subpage-handle"></div>
-  <div class="me-subpage-header">
-    <button class="me-subpage-back" onclick="closeMeSubpage('savedplaces')" aria-label="Close">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <h2 class="me-subpage-title">Saved Places</h2>
-    <div class="me-subpage-header-spacer"></div>
-  </div>
-  <div class="me-subpage-content" id="savedPlacesContent"></div>
-</div>
-
-<!-- Your Dog subpage -->
-<div class="me-subpage" id="subpageDog" role="dialog" aria-modal="true" aria-label="Your Dog">
-  <div class="me-subpage-handle"></div>
-  <div class="me-subpage-header">
-    <button class="me-subpage-back" onclick="closeMeSubpage('dog')" aria-label="Close">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <h2 class="me-subpage-title">Your Dog</h2>
-    <div class="me-subpage-header-spacer"></div>
-  </div>
-  <div class="me-subpage-content" id="dogSubpageContent">
-    <div class="dog-subpage-inner">
-      <div class="dog-settings-field">
-        <label class="dog-settings-label" for="dogSettingsName">Name</label>
-        <input class="dog-settings-input" id="dogSettingsName" type="text" maxlength="24" placeholder="e.g. Luna" autocomplete="off" autocapitalize="words">
-      </div>
-      <div class="dog-settings-field">
-        <label class="dog-settings-label" for="dogSettingsBreed">Breed</label>
-        <select class="dog-settings-select" id="dogSettingsBreed" onchange="handleDogBreedChange()">
-          <option value="">Select breed</option>
-          <option>Labrador</option>
-          <option>Cocker Spaniel</option>
-          <option>Springer Spaniel</option>
-          <option>Golden Retriever</option>
-          <option>French Bulldog</option>
-          <option>Border Collie</option>
-          <option>German Shepherd</option>
-          <option>Staffordshire Bull Terrier</option>
-          <option>Cavalier King Charles Spaniel</option>
-          <option>Pug</option>
-          <option>Beagle</option>
-          <option>Boxer</option>
-          <option>Dachshund</option>
-          <option>Shih Tzu</option>
-          <option>Jack Russell Terrier</option>
-          <option>Yorkshire Terrier</option>
-          <option>Whippet</option>
-          <option>Greyhound</option>
-          <option>Vizsla</option>
-          <option>Weimaraner</option>
-          <option>Dalmatian</option>
-          <option>Border Terrier</option>
-          <option>West Highland Terrier</option>
-          <option>Scottish Terrier</option>
-          <option>Cairn Terrier</option>
-          <option>Schnauzer</option>
-          <option>Dobermann</option>
-          <option>Rottweiler</option>
-          <option>Great Dane</option>
-          <option>Hungarian Vizsla</option>
-          <option>Pointer</option>
-          <option>Setter</option>
-          <option>Brittany Spaniel</option>
-          <option>Basset Hound</option>
-          <option>Bloodhound</option>
-          <option>Shar Pei</option>
-          <option>Chow Chow</option>
-          <option>Samoyed</option>
-          <option>Husky</option>
-          <option>Alaskan Malamute</option>
-          <option>Bernese Mountain Dog</option>
-          <option>St Bernard</option>
-          <option>Newfoundland</option>
-          <option>Irish Wolfhound</option>
-          <option>Lurcher</option>
-          <option>Saluki</option>
-          <option>Afghan Hound</option>
-          <option>Borzoi</option>
-          <option>Italian Greyhound</option>
-          <option>Maltese</option>
-          <option>Pomeranian</option>
-          <option>Chihuahua</option>
-          <option>Cockapoo</option>
-          <option>Labradoodle</option>
-          <option>Cavapoo</option>
-          <option>Goldendoodle</option>
-          <option>Sprocker</option>
-          <option>Jackapoo</option>
-          <option>Schnoodle</option>
-          <option value="Mixed breed / crossbreed">Mixed breed / crossbreed</option>
-          <option value="Not sure / rescue">Not sure / rescue</option>
-          <option value="Other (please specify)">Other (please specify)</option>
-        </select>
-        <input class="dog-settings-input dog-settings-other-input" id="dogSettingsBreedOther" type="text" maxlength="48" placeholder="Please specify" style="display:none">
-      </div>
-      <div class="dog-settings-field">
-        <div class="dog-settings-label">Size</div>
-        <div class="segment-control me-size-control" id="segment-control-size" role="group" aria-label="Dog size">
-          <div class="segment-pill" id="segment-pill-size" aria-hidden="true"></div>
-          <button class="segment-btn" data-size="small" aria-pressed="false"><span>Small</span></button>
-          <button class="segment-btn" data-size="medium" aria-pressed="false"><span>Medium</span></button>
-          <button class="segment-btn" data-size="large" aria-pressed="false"><span>Large</span></button>
-        </div>
-      </div>
-      <div class="dog-settings-field">
-        <div class="dog-settings-label" id="dogTagsLabel">About your dog</div>
-        <div class="dog-tags-row" id="dogTagsRow">
-          <button class="dog-tag-chip" data-tag="Energetic" onclick="toggleDogTag(this)">Energetic</button>
-          <button class="dog-tag-chip" data-tag="Nervous" onclick="toggleDogTag(this)">Nervous</button>
-          <button class="dog-tag-chip" data-tag="Elderly" onclick="toggleDogTag(this)">Elderly</button>
-          <button class="dog-tag-chip" data-tag="Good recall" onclick="toggleDogTag(this)">Good recall</button>
-          <button class="dog-tag-chip" data-tag="Reactive" onclick="toggleDogTag(this)">Reactive</button>
-          <button class="dog-tag-chip" data-tag="Loves water" onclick="toggleDogTag(this)">Loves water</button>
-          <button class="dog-tag-chip" data-tag="Mud-happy" onclick="toggleDogTag(this)">Mud-happy</button>
-          <button class="dog-tag-chip" data-tag="Sociable" onclick="toggleDogTag(this)">Sociable</button>
-        </div>
-      </div>
-      <div class="dog-settings-field">
-        <div class="dog-settings-label">Birthday (optional)</div>
-        <div class="dog-birthday-row">
-          <select class="dog-settings-select" id="dogSettingsBdDay">
-            <option value="">Day</option>
-          </select>
-          <select class="dog-settings-select" id="dogSettingsBdMonth">
-            <option value="">Month</option>
-            <option value="1">January</option>
-            <option value="2">February</option>
-            <option value="3">March</option>
-            <option value="4">April</option>
-            <option value="5">May</option>
-            <option value="6">June</option>
-            <option value="7">July</option>
-            <option value="8">August</option>
-            <option value="9">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
-          </select>
-          <select class="dog-settings-select" id="dogSettingsBdYear">
-            <option value="">Year</option>
-          </select>
-        </div>
-      </div>
-      <button class="dog-settings-save-btn" onclick="saveDogSettings()">Save dog profile</button>
-      <button class="dog-settings-remove-link" id="dogSettingsRemoveBtn" onclick="showDogRemoveConfirm()" style="display:none">Remove dog profile</button>
-      <div class="dog-settings-confirm" id="dogSettingsConfirm">
-        <p class="dog-settings-confirm-text" id="dogSettingsConfirmText">Remove your dog? This will not delete your walks.</p>
-        <div class="dog-settings-confirm-row">
-          <button class="dog-settings-confirm-yes" onclick="executeDogRemove()">Remove</button>
-          <button class="dog-settings-confirm-no" onclick="cancelDogRemove()">Cancel</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Recently Viewed subpage -->
-<div class="me-subpage" id="subpageRecentlyviewed" role="dialog" aria-modal="true" aria-label="Recently Viewed">
-  <div class="me-subpage-handle"></div>
-  <div class="me-subpage-header">
-    <button class="me-subpage-back" onclick="closeMeSubpage('recentlyviewed')" aria-label="Close">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <h2 class="me-subpage-title">Recently Viewed</h2>
-    <div class="me-subpage-header-spacer"></div>
-  </div>
-  <div class="me-subpage-content" id="recentlyViewedContent"></div>
-</div>
-
-<script>
   /* ═══════════════════════════════
      FIX 2.2 — Radius filter UI (Walks + Nearby tabs)
   ═══════════════════════════════ */
@@ -12204,9 +12186,6 @@
 
   // Sync radius chips on load
   syncRadiusChips();
-</script>
-
-<script>
   /* ═══════════════════════════════
      FIREBASE — Initialisation, Auth, Firestore helpers
   ═══════════════════════════════ */
@@ -12369,9 +12348,6 @@
       console.warn('fsWriteUserProfile error:', e);
     }
   }
-</script>
-
-<script>
   /* ═══════════════════════════════
      INIT — Runs after all phases are defined
   ═══════════════════════════════ */
@@ -12510,19 +12486,6 @@
     document.getElementById('recentlyViewedContent'),
     function() { closeMeSubpage('recentlyviewed'); }
   );
-</script>
-
-<!-- Metric detail bottom sheet -->
-<div class="wx-sheet-overlay" id="wxSheetOverlay" hidden></div>
-<div class="wx-sheet" id="wxSheet" hidden>
-  <div class="wx-sheet-handle"></div>
-  <div class="wx-sheet-title" id="wxSheetTitle"></div>
-  <div class="wx-sheet-rows" id="wxSheetRows"></div>
-  <div class="wx-sheet-note" id="wxSheetNote"></div>
-</div>
-
-
-<script>
 (function() {
   var count = WALKS_DB.length + '+ walks';
   document.getElementById('meta-description').setAttribute('content',
