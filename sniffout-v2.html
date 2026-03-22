@@ -10471,6 +10471,7 @@
   /* ─── Fetch green spaces for Walks tab supplement ─── */
 
   var WALKS_GS_CACHE_KEY = 'sniffout_walks_gs';
+  try { sessionStorage.removeItem('sniffout_walks_gs'); } catch(e) {}
 
   function fetchGreenSpacesForWalks(lat, lon, locationName, cb) {
     var radius   = getSavedRadius() * 1000;
@@ -10488,7 +10489,7 @@
         method: 'POST',
         headers: {
           'Content-Type':     'application/json',
-          'X-Goog-FieldMask': 'places.displayName,places.location,places.photos,places.rating,places.googleMapsUri'
+          'X-Goog-FieldMask': 'places.displayName,places.location,places.photos,places.rating,places.googleMapsUri,places.primaryType'
         },
         body: JSON.stringify({ textQuery: q, locationBias: locationBias, maxResultCount: 20, languageCode: 'en-GB' })
       })
@@ -10503,7 +10504,7 @@
           var photoUrl = (p.photos && p.photos.length > 0)
             ? PLACES_PROXY + '/v1/' + p.photos[0].name + '/media?maxWidthPx=400&skipHttpRedirect=true'
             : null;
-          return { name: name, lat: plat, lon: plon, photoUrl: photoUrl, rating: p.rating || null, mapsUrl: p.googleMapsUri || null };
+          return { name: name, lat: plat, lon: plon, photoUrl: photoUrl, rating: p.rating || null, mapsUrl: p.googleMapsUri || null, primaryType: (p.primaryType || null) };
         }).filter(Boolean);
       })
       .catch(function() { return []; });
@@ -10512,6 +10513,23 @@
     Promise.all(queries.map(runQuery)).then(function(arrays) {
       var merged = [];
       arrays.forEach(function(arr) { merged = merged.concat(arr); });
+
+      // Filter out car parks
+      var EXCLUDE_PRIMARY_TYPES = [
+        'parking', 'parking_lot', 'parking_garage', 'parking_meter'
+      ];
+      var EXCLUDE_NAME_KEYWORDS = [
+        'car park', 'parking', 'park and ride', 'p&r', 'multistorey',
+        'multi-storey', 'ncp'
+      ];
+      merged = merged.filter(function(gs) {
+        if (gs.primaryType && EXCLUDE_PRIMARY_TYPES.indexOf(gs.primaryType) !== -1) return false;
+        var nameLower = (gs.name || '').toLowerCase();
+        for (var i = 0; i < EXCLUDE_NAME_KEYWORDS.length; i++) {
+          if (nameLower.indexOf(EXCLUDE_NAME_KEYWORDS[i]) !== -1) return false;
+        }
+        return true;
+      });
 
       // Deduplicate by proximity (0.1km) — keep higher-rated result
       var deduped = [];
