@@ -9816,17 +9816,12 @@
 
     // Fetch and append green spaces below community trails
     fetchGreenSpacesForWalks(lat, lon, locationName, function(greenSpaces) {
-      var filtered = greenSpaces.filter(function(gs) {
-        return !curated.some(function(c) {
-          return haversineKm(gs.lat, gs.lon, c.lat, c.lon) < 0.3;
-        });
-      });
       var gsList = document.getElementById('gs-list');
       var gsSection = document.getElementById('gs-section');
       if (!gsList) return;
-      if (filtered.length) {
-        nearbyGreenSpaces = filtered;
-        gsList.innerHTML = filtered.map(function(gs) {
+      if (greenSpaces.length) {
+        nearbyGreenSpaces = greenSpaces;
+        gsList.innerHTML = greenSpaces.map(function(gs) {
           return renderGreenSpaceCard(gs, lat, lon);
         }).join('');
         resolvePhotos(gsList);
