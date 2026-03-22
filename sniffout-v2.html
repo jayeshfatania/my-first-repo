@@ -9907,7 +9907,7 @@
     } catch(e) {}
 
     var body = {
-      textQuery:      'parks and nature reserves near ' + locationName,
+      textQuery:      'parks and green spaces',
       locationBias:   { circle: { center: { latitude: lat, longitude: lon }, radius: radius } },
       maxResultCount: 20,
       languageCode:   'en-GB'
@@ -10639,8 +10639,8 @@
   /* ─── Read helpers ─── */
 
   function getSavedUsername()  { try { return localStorage.getItem(USERNAME_KEY)  || ''; } catch(e) { return ''; } }
-  function getSavedRadius()    { try { return parseInt(localStorage.getItem(RADIUS_KEY))  || 5; } catch(e) { return 5; } }
-  function saveRadius(km)      { try { localStorage.setItem(RADIUS_KEY, km); } catch(e) {} }
+  function getSavedRadius()    { try { return Math.round((parseInt(localStorage.getItem(RADIUS_KEY)) || 5) * 1.60934); } catch(e) { return Math.round(5 * 1.60934); } }
+  function saveRadius(mi)      { try { localStorage.setItem(RADIUS_KEY, mi); } catch(e) {} }
   function getSavedUnits()     { try { return localStorage.getItem(UNITS_KEY) || 'km'; } catch(e) { return 'km'; } }
   function saveUnits(u)        { try { localStorage.setItem(UNITS_KEY, u); } catch(e) {} }
   function getSavedDarkMode() {
@@ -10778,7 +10778,10 @@
   function applyRadiusPreference(mi) {
     var btns = document.querySelectorAll('#segment-control-radius .segment-btn');
     var pill = document.getElementById('segment-pill-radius');
-    var idx  = RADIUS_MI_OPTIONS.indexOf(mi);
+    var nearestMi = RADIUS_MI_OPTIONS.reduce(function(prev, curr) {
+      return Math.abs(curr - mi) < Math.abs(prev - mi) ? curr : prev;
+    });
+    var idx = RADIUS_MI_OPTIONS.indexOf(nearestMi);
     if (idx < 0) idx = 2;
     btns.forEach(function(btn, i) {
       btn.classList.toggle('active', i === idx);
@@ -11945,12 +11948,16 @@
   }
 
   function syncFilterSheetState(tab) {
-    var r = getSavedRadius();
+    var savedKm = getSavedRadius(); // returns km
+    var kmOptions = [1, 3, 5, 10];
+    var nearestKm = kmOptions.reduce(function(prev, curr) {
+      return Math.abs(curr - savedKm) < Math.abs(prev - savedKm) ? curr : prev;
+    });
     var prefix = tab === 'walks' ? 'walks' : 'nearby';
     var radiusChips = document.querySelectorAll('[data-' + prefix + '-radius]');
     radiusChips.forEach(function(btn) {
       var val = parseInt(btn.getAttribute('data-' + prefix + '-radius'), 10);
-      btn.classList.toggle('active', val === r);
+      btn.classList.toggle('active', val === nearestKm);
     });
   }
 
@@ -12056,7 +12063,9 @@
 
     var activeRadiusBtn = sheet.querySelector('[data-walks-radius].active');
     var activeRadius = activeRadiusBtn ? parseInt(activeRadiusBtn.dataset.walksRadius, 10) : getSavedRadius();
-    saveRadius(activeRadius);
+    var activeRadiusMi = activeRadius / 1.60934; // convert km chip to miles for RADIUS_KEY storage
+    saveRadius(activeRadiusMi);
+    applyRadiusPreference(activeRadiusMi); // keep Settings control in sync
 
     var surfaceBtn    = sheet.querySelector('[data-walks-surface].active');
     var envBtn        = sheet.querySelector('[data-walks-env].active');
@@ -12118,8 +12127,10 @@
     var activeRadiusBtn = sheet.querySelector('[data-nearby-radius].active');
     var activeRadius = activeRadiusBtn ? parseInt(activeRadiusBtn.dataset.nearbyRadius, 10) : getSavedRadius();
     var radiusChanged = activeRadius !== getSavedRadius();
+    var activeRadiusMi = activeRadius / 1.60934; // convert km chip to miles for RADIUS_KEY storage
     if (radiusChanged) {
-      saveRadius(activeRadius);
+      saveRadius(activeRadiusMi);
+      applyRadiusPreference(activeRadiusMi); // keep Settings control in sync
       NEARBY_GOOGLE_CACHE = {};
     }
 
