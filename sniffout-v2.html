@@ -10814,7 +10814,7 @@
 
     var cfg  = CAT_GOOGLE_CONFIG[cat] || CAT_GOOGLE_CONFIG.pub;
     var body = {
-      textQuery:           cfg.query + ' near ' + locationName,
+      textQuery:           cfg.query,
       locationBias: { circle: { center: { latitude: lat, longitude: lon }, radius: radius } },
       maxResultCount: 20,
       languageCode:  'en-GB'
