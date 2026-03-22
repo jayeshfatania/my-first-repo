@@ -10098,6 +10098,25 @@
     });
   });
 
+  /* ─── Hoisted: units helpers (needed by init) ─── */
+  var UNITS_KEY = 'sniffout_units';
+  function getSavedUnits() { try { return localStorage.getItem(UNITS_KEY) || 'km'; } catch(e) { return 'km'; } }
+  function saveUnits(u)    { try { localStorage.setItem(UNITS_KEY, u); } catch(e) {} }
+
+  /* ─── Hoisted: recently viewed helpers (needed by init) ─── */
+  var RECENT_WALKS_KEY = 'sniffout_recent_walks';
+  var RECENT_WALKS_MAX = 10;
+  function getRecentWalks() {
+    try { return JSON.parse(localStorage.getItem(RECENT_WALKS_KEY)) || []; } catch(e) { return []; }
+  }
+  function renderRecentlyViewedMe() {
+    var ids = getRecentWalks();
+    var preview = document.getElementById('recentlyViewedPreview');
+    var count   = document.getElementById('recentlyViewedCount');
+    if (preview) preview.textContent = ids.length ? ids.length + ' walk' + (ids.length !== 1 ? 's' : '') : 'No walks viewed yet';
+    if (count)   count.textContent   = ids.length ? ids.length : '';
+  }
+
   /* ─── Init ─── */
   renderWalksTab();
   renderFavouritesList();
@@ -10653,7 +10672,7 @@
   var USERNAME_KEY  = 'sniffout_username';
   var RADIUS_KEY    = 'sniffout_radius';
   var DARKMODE_KEY  = 'sniffout_darkmode';
-  var UNITS_KEY     = 'sniffout_units';
+  /* UNITS_KEY hoisted to before init block */
 
   var RADIUS_OPTIONS  = [5, 10, 25, 50];
 
@@ -10662,8 +10681,7 @@
   function getSavedUsername()  { try { return localStorage.getItem(USERNAME_KEY)  || ''; } catch(e) { return ''; } }
   function getSavedRadius()    { try { return parseInt(localStorage.getItem(RADIUS_KEY)) || 5; } catch(e) { return 5; } }
   function saveRadius(km)      { try { localStorage.setItem(RADIUS_KEY, km); } catch(e) {} }
-  function getSavedUnits()     { try { return localStorage.getItem(UNITS_KEY) || 'km'; } catch(e) { return 'km'; } }
-  function saveUnits(u)        { try { localStorage.setItem(UNITS_KEY, u); } catch(e) {} }
+  /* getSavedUnits / saveUnits hoisted to before init block */
   function getSavedDarkMode() {
     try {
       var saved = localStorage.getItem(DARKMODE_KEY) || 'light';
@@ -11113,13 +11131,7 @@
   }
 
   /* ─── Recently viewed walks (FIX 5) ─── */
-
-  var RECENT_WALKS_KEY = 'sniffout_recent_walks';
-  var RECENT_WALKS_MAX = 10;
-
-  function getRecentWalks() {
-    try { return JSON.parse(localStorage.getItem(RECENT_WALKS_KEY)) || []; } catch(e) { return []; }
-  }
+  /* RECENT_WALKS_KEY, RECENT_WALKS_MAX, getRecentWalks, renderRecentlyViewedMe hoisted to before init block */
 
   function saveRecentWalk(id) {
     if (!id) return;
@@ -11129,13 +11141,7 @@
     try { localStorage.setItem(RECENT_WALKS_KEY, JSON.stringify(entries)); } catch(e) {}
   }
 
-  function renderRecentlyViewedMe() {
-    var ids = getRecentWalks();
-    var preview = document.getElementById('recentlyViewedPreview');
-    var count = document.getElementById('recentlyViewedCount');
-    if (preview) preview.textContent = ids.length ? ids.length + ' walk' + (ids.length !== 1 ? 's' : '') : 'No walks viewed yet';
-    if (count) count.textContent = ids.length ? ids.length : '';
-  }
+  /* renderRecentlyViewedMe hoisted to before init block */
 
   function renderSubpageRecentlyViewed() {
     var el = document.getElementById('recentlyViewedContent');
