@@ -9916,7 +9916,7 @@
           'Content-Type':     'application/json',
           'X-Goog-FieldMask': 'places.displayName,places.location,places.photos,places.rating,places.googleMapsUri'
         },
-        body: JSON.stringify({ textQuery: q, locationBias: locationBias, maxResultCount: 10, languageCode: 'en-GB' })
+        body: JSON.stringify({ textQuery: q, locationBias: locationBias, maxResultCount: 20, languageCode: 'en-GB' })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
