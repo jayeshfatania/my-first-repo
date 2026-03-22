@@ -1072,6 +1072,7 @@
     .wx-verdict svg { width: 16px; height: 16px; flex-shrink: 0; }
     .wx-verdict--approved  { background: var(--brand); }
     .wx-verdict--caveat    { background: #2D7A5A; }
+    body.night .wx-verdict--caveat { background: rgba(92, 122, 99, 0.25); }
     .wx-verdict--caution   { background: var(--amber); }
     .wx-verdict--avoid     { background: var(--red); }
 
@@ -5398,10 +5399,12 @@
     var hourly = data.hourly;
     var daily  = data.daily;
 
-    if (cur.is_day === 0) {
-      document.body.classList.add('night');
-    } else {
-      document.body.classList.remove('night');
+    if (getSavedDarkMode() === 'auto') {
+      if (cur.is_day === 0) {
+        document.body.classList.add('night');
+      } else {
+        document.body.classList.remove('night');
+      }
     }
 
     var verdict = getWalkVerdict(cur, hourly);
@@ -5684,7 +5687,11 @@
 
   /* ─── Device fingerprint + rate limit ─── */
   function getDeviceId() {
-    return btoa(navigator.userAgent + screen.width + screen.height);
+    try {
+      return btoa(unescape(encodeURIComponent(navigator.userAgent + screen.width + screen.height)));
+    } catch(e) {
+      return 'unknown-device';
+    }
   }
   function hasSubmittedToday(walkId) {
     var all    = getConditionTags();
@@ -9664,7 +9671,7 @@
         '</div>' +
         '<div class="portrait-body">' +
           '<div class="portrait-name">' + walk.name + '</div>' +
-          '<div class="portrait-meta">' + walk.distance.toFixed(1) + ' mi · ' + difficultyLabel(walk.difficulty) + '</div>' +
+          '<div class="portrait-meta">' + formatDist(walk.distance) + ' · ' + difficultyLabel(walk.difficulty) + '</div>' +
         '</div>' +
       '</div>'
     );
@@ -9700,7 +9707,7 @@
       chips.push('<span class="trail-tag">' + walk.terrain.charAt(0).toUpperCase() + walk.terrain.slice(1) + '</span>');
     }
     var condDot = getDisplayTags(walk.id).length > 0 ? '<div class="trail-card-condition-dot"></div>' : '';
-    var metaText = walk.distance.toFixed(1) + ' mi · ' + walk.difficulty.charAt(0).toUpperCase() + walk.difficulty.slice(1);
+    var metaText = formatDist(walk.distance) + ' · ' + walk.difficulty.charAt(0).toUpperCase() + walk.difficulty.slice(1);
     var distAwayHtml = '';
     if (walksUserLat !== null && walksUserLon !== null) {
       var usesMi = getSavedUnits() === 'mi';
@@ -9780,9 +9787,11 @@
     } catch(e) {}
 
     var radiusKm = getSavedRadius();
+    var unit = getSavedUnits() === 'mi' ? 'mi' : 'km';
+    var displayRadius = getSavedUnits() === 'mi' ? Math.round(radiusKm / 1.60934) : radiusKm;
     var locationCtx = locationName
-      ? 'Within ' + radiusKm + ' km of ' + locationName
-      : 'Within ' + radiusKm + ' km';
+      ? 'Within ' + displayRadius + ' ' + unit + ' of ' + locationName
+      : 'Within ' + displayRadius + ' ' + unit;
 
     // Filter and sort curated walks by proximity
     var curated = WALKS_DB.slice().filter(function(w) {
@@ -9844,9 +9853,11 @@
       var sess = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}');
       locationName = (sess && sess.location) ? sess.location : '';
     } catch(e) {}
+    var unit = getSavedUnits() === 'mi' ? 'mi' : 'km';
+    var displayRadius = getSavedUnits() === 'mi' ? Math.round(radiusKm / 1.60934) : radiusKm;
     var locationCtx = locationName
-      ? 'Within ' + radiusKm + ' km of ' + locationName
-      : 'Within ' + radiusKm + ' km';
+      ? 'Within ' + displayRadius + ' ' + unit + ' of ' + locationName
+      : 'Within ' + displayRadius + ' ' + unit;
 
     var html = '<div class="walks-location-header"><div class="walks-location-text">' + locationCtx + '</div></div>';
     html += '<div class="walks-section">';
