@@ -10639,8 +10639,8 @@
   /* ─── Read helpers ─── */
 
   function getSavedUsername()  { try { return localStorage.getItem(USERNAME_KEY)  || ''; } catch(e) { return ''; } }
-  function getSavedRadius()    { try { return Math.round((parseInt(localStorage.getItem(RADIUS_KEY)) || 5) * 1.60934); } catch(e) { return Math.round(5 * 1.60934); } }
-  function saveRadius(mi)      { try { localStorage.setItem(RADIUS_KEY, mi); } catch(e) {} }
+  function getSavedRadius()    { try { return parseInt(localStorage.getItem(RADIUS_KEY)) || 5; } catch(e) { return 5; } }
+  function saveRadius(km)      { try { localStorage.setItem(RADIUS_KEY, km); } catch(e) {} }
   function getSavedUnits()     { try { return localStorage.getItem(UNITS_KEY) || 'km'; } catch(e) { return 'km'; } }
   function saveUnits(u)        { try { localStorage.setItem(UNITS_KEY, u); } catch(e) {} }
   function getSavedDarkMode() {
@@ -10771,8 +10771,11 @@
   var RADIUS_MI_OPTIONS = [1, 3, 5, 10];
 
   function getSavedRadiusMi() {
-    var saved = parseInt(localStorage.getItem(RADIUS_KEY)) || 5;
-    return RADIUS_MI_OPTIONS.indexOf(saved) >= 0 ? saved : 5;
+    var savedKm = parseInt(localStorage.getItem(RADIUS_KEY)) || 5;
+    var mi = savedKm / 1.60934;
+    return RADIUS_MI_OPTIONS.reduce(function(prev, curr) {
+      return Math.abs(curr - mi) < Math.abs(prev - mi) ? curr : prev;
+    });
   }
 
   function applyRadiusPreference(mi) {
@@ -10804,9 +10807,10 @@
     document.querySelectorAll('#segment-control-radius .segment-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var mi = parseInt(btn.getAttribute('data-radius'));
-        try { localStorage.setItem(RADIUS_KEY, mi); } catch(e) {}
+        var km = Math.round(mi * 1.60934);
+        saveRadius(km);
         applyRadiusPreference(mi);
-        setRadius(mi);
+        setRadius(km);
       });
     });
   });
@@ -12063,9 +12067,8 @@
 
     var activeRadiusBtn = sheet.querySelector('[data-walks-radius].active');
     var activeRadius = activeRadiusBtn ? parseInt(activeRadiusBtn.dataset.walksRadius, 10) : getSavedRadius();
-    var activeRadiusMi = activeRadius / 1.60934; // convert km chip to miles for RADIUS_KEY storage
-    saveRadius(activeRadiusMi);
-    applyRadiusPreference(activeRadiusMi); // keep Settings control in sync
+    saveRadius(activeRadius);
+    applyRadiusPreference(getSavedRadiusMi());
 
     var surfaceBtn    = sheet.querySelector('[data-walks-surface].active');
     var envBtn        = sheet.querySelector('[data-walks-env].active');
@@ -12126,13 +12129,9 @@
 
     var activeRadiusBtn = sheet.querySelector('[data-nearby-radius].active');
     var activeRadius = activeRadiusBtn ? parseInt(activeRadiusBtn.dataset.nearbyRadius, 10) : getSavedRadius();
-    var radiusChanged = activeRadius !== getSavedRadius();
-    var activeRadiusMi = activeRadius / 1.60934; // convert km chip to miles for RADIUS_KEY storage
-    if (radiusChanged) {
-      saveRadius(activeRadiusMi);
-      applyRadiusPreference(activeRadiusMi); // keep Settings control in sync
-      NEARBY_GOOGLE_CACHE = {};
-    }
+    var previousRadius = getSavedRadius();
+    saveRadius(activeRadius);
+    applyRadiusPreference(getSavedRadiusMi());
 
     // Set pending sort — applied inside renderVenueList() when it runs (sync or after async fetch)
     nearbyPendingSort = activeSort;
@@ -12141,11 +12140,12 @@
     var sortIsDistance = (activeSort === 'distance');
     nearbyBtn.classList.toggle('has-filter', !sortIsDistance);
 
-    if (radiusChanged) {
-      // Re-fetch with new radius; nearbyPendingSort will be consumed in the fetch callback
+    if (activeRadius !== previousRadius) {
+      // Radius changed — clear cache and re-fetch
+      NEARBY_GOOGLE_CACHE = {};
       renderNearbyTab(nearbyUserLat, nearbyUserLon, nearbyLocationName);
     } else {
-      // Re-render current venues with the pending sort applied
+      // Radius unchanged — re-render current venues with the pending sort applied
       renderVenueList();
     }
 
