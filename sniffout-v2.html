@@ -9939,6 +9939,11 @@
         return haversineKm(lat, lon, a.lat, a.lon) - haversineKm(lat, lon, b.lat, b.lon);
       });
 
+      var savedRadiusKm = getSavedRadius();
+      results = results.filter(function(gs) {
+        return haversineKm(lat, lon, gs.lat, gs.lon) <= savedRadiusKm;
+      });
+
       try { sessionStorage.setItem(WALKS_GS_CACHE_KEY, JSON.stringify({ key: cacheKey, results: results })); } catch(e) {}
       cb(results);
     })
