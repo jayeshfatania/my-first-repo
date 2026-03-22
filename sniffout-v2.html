@@ -1922,6 +1922,11 @@
     .dog-settings-section-label { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.5px; margin: 4px 0 14px; }
     .dog-settings-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
     .dog-settings-label { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); }
+    .dog-settings-helper { font: 400 12px/1.4 'Inter', sans-serif; color: var(--ink-2); margin-top: -2px; }
+    .dog-yesno-control .segment-pill { width: calc((100% - 6px) / 2); }
+    .dog-yesno-control .segment-pill[data-active="0"] { transform: translateX(0); }
+    .dog-yesno-control .segment-pill[data-active="1"] { transform: translateX(100%); }
+    .hazard-disclaimer { font-size: 11px; color: var(--ink-2); margin-top: 6px; }
     .dog-settings-input, .dog-settings-select { width: 100%; height: 44px; padding: 0 12px; font: 400 15px/1 'Inter', sans-serif; color: var(--ink); background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; outline: none; box-sizing: border-box; -webkit-appearance: none; appearance: none; }
     .dog-settings-input:focus, .dog-settings-select:focus { border-color: var(--brand); }
     .dog-settings-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6B6B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
@@ -4244,6 +4249,7 @@
   </div>
   <!-- Phase 3 hook: following/followers row here (not built) -->
   <div class="me-settings-note">Your walks, favourites, and reviews are saved on this device. Sync across devices is coming in a future update.</div>
+  <div class="me-settings-note" style="margin-top:8px;">Weather guidance is general only and is not a substitute for veterinary advice.</div>
 </div>
 
 <!-- Favourites sheet -->
@@ -4516,6 +4522,24 @@
           <option value="Other (please specify)">Other (please specify)</option>
         </select>
         <input class="dog-settings-input dog-settings-other-input" id="dogSettingsBreedOther" type="text" maxlength="48" placeholder="Please specify" style="display:none">
+      </div>
+      <div class="dog-settings-field">
+        <div class="dog-settings-label">Flat-faced breed?</div>
+        <div class="dog-settings-helper">(e.g. Bulldog, French Bulldog, Pug, Boxer, Shih Tzu, Cavalier)</div>
+        <div class="segment-control dog-yesno-control" id="segment-control-brachycephalic" role="group" aria-label="Flat-faced breed">
+          <div class="segment-pill" id="segment-pill-brachycephalic" data-active="0" aria-hidden="true"></div>
+          <button class="segment-btn active" data-yesno="no" aria-pressed="true" onclick="toggleDogYesNo(this,'brachycephalic')"><span>No</span></button>
+          <button class="segment-btn" data-yesno="yes" aria-pressed="false" onclick="toggleDogYesNo(this,'brachycephalic')"><span>Yes</span></button>
+        </div>
+      </div>
+      <div class="dog-settings-field">
+        <div class="dog-settings-label">Double-coated breed?</div>
+        <div class="dog-settings-helper">(e.g. Husky, Malamute, Samoyed, Bernese, Golden Retriever)</div>
+        <div class="segment-control dog-yesno-control" id="segment-control-doublecoat" role="group" aria-label="Double-coated breed">
+          <div class="segment-pill" id="segment-pill-doublecoat" data-active="0" aria-hidden="true"></div>
+          <button class="segment-btn active" data-yesno="no" aria-pressed="true" onclick="toggleDogYesNo(this,'doublecoat')"><span>No</span></button>
+          <button class="segment-btn" data-yesno="yes" aria-pressed="false" onclick="toggleDogYesNo(this,'doublecoat')"><span>Yes</span></button>
+        </div>
       </div>
       <div class="dog-settings-field">
         <div class="dog-settings-label">Size</div>
@@ -5277,6 +5301,19 @@
     return false;
   }
 
+  /* ─── Seasonal hazard triggers ─── */
+
+  function getSeasonalHazards(currentTemp) {
+    var month   = new Date().getMonth() + 1;
+    var hazards = [];
+    if (month >= 5 && month <= 9 && currentTemp >= 20) hazards.push('algae');
+    if (month >= 4 && month <= 6)                      hazards.push('adder');
+    if (month >= 6 && month <= 8)                      hazards.push('grassseeds');
+    if (month >= 8 && month <= 10)                     hazards.push('harvestmites');
+    if (month >= 11 || month <= 3)                     hazards.push('rocksalt');
+    return hazards;
+  }
+
   /* ─── Hazard detection (Section 9 titles) ─── */
 
   function detectHazards(cur) {
@@ -5286,38 +5323,143 @@
     var feels = cur.apparent_temperature;
     var gusts = cur.wind_gusts_10m;
 
-    if (temp > 32) {
-      hazards.push({ title: '🌡️ Too hot to walk safely', body: 'Pavement temperatures at this level are dangerous for paws. Avoid midday walks entirely.' });
-    } else if (temp >= 25) {
-      hazards.push({ title: '☀️ Hot enough to hurt paws', body: 'Press your hand on the pavement - if you can\'t hold it for 7 seconds, it\'s too hot for your dog.' });
+    // Dog profile resolution
+    var dog          = getDog();
+    var tags         = dog ? (dog.tags || []) : [];
+    var isBrachy     = tags.indexOf('brachycephalic') !== -1;
+    var isDoubleCoat = tags.indexOf('double-coat') !== -1;
+    var dogSize      = dog ? dog.size : null;
+    var dogBirthday  = dog ? dog.birthday : null;
+    var isSenior = false;
+    var isPuppy  = false;
+    if (dogBirthday && dogBirthday.month && dogBirthday.year) {
+      var now       = new Date();
+      var ageMonths = (now.getFullYear() - dogBirthday.year) * 12
+                      + ((now.getMonth() + 1) - dogBirthday.month);
+      isSenior = ageMonths >= 84;
+      isPuppy  = ageMonths < 6;
     }
+    var heatThreshold = Math.min(
+      isBrachy     ? 27 : 32,
+      isDoubleCoat ? 30 : 32,
+      isSenior     ? 30 : 32
+    );
+    var coldThreshold = -5;
+    if (isSenior) coldThreshold = Math.max(coldThreshold, -2);
+    var dogName = getDogName() || 'your dog';
+    var DISC = '<div class="hazard-disclaimer">Every dog is different - if in doubt, ask your vet.</div>';
+
+    // Heat hazards
+    if (temp > heatThreshold) {
+      var heatTitle, heatBody, heatDisc = '';
+      if (isBrachy) {
+        heatTitle = 'Too hot for a flat-faced breed';
+        heatBody  = dogName + ' is a flat-faced breed, which means they can find warm weather much harder going. Try an early morning or late evening walk instead of heading out now.';
+        heatDisc  = DISC;
+      } else if (isDoubleCoat) {
+        heatTitle = 'Too warm for a double-coated breed';
+        heatBody  = dogName + '\'s double coat keeps them warm in winter, but it works both ways. Keep walks cool and short today, and make sure there is plenty of water available.';
+        heatDisc  = DISC;
+      } else if (isSenior) {
+        heatTitle = 'Too warm for an older dog';
+        heatBody  = 'Older dogs feel the heat more than younger ones and may not always show it. Keep today\'s walk short and in the shade where you can.';
+        heatDisc  = DISC;
+      } else {
+        heatTitle = 'Too hot to walk safely';
+        heatBody  = 'Pavement temperatures at this level are dangerous for paws. Avoid midday walks entirely.';
+      }
+      hazards.push({ title: heatTitle, body: heatBody + heatDisc });
+    } else if (temp >= 25) {
+      hazards.push({ title: 'Hot enough to hurt paws', body: 'Press your hand on the pavement - if you can\'t hold it for 7 seconds, it\'s too hot for your dog.' });
+    }
+
+    // Storm and wind
     if (isStormCode(code)) {
-      hazards.push({ title: '⛈️ Thunderstorm warning - stay inside', body: 'Avoid open areas, water, and tall trees. Keep your dog indoors.' });
+      hazards.push({ title: 'Thunderstorm warning - stay inside', body: 'Avoid open areas, water, and tall trees. Keep your dog indoors.' });
     }
     if (gusts >= 60) {
-      hazards.push({ title: '💨 Dangerous winds - don\'t go out', body: 'Risk of falling branches and debris on exposed routes.' });
+      hazards.push({ title: 'Dangerous winds - don\'t go out', body: 'Risk of falling branches and debris on exposed routes.' });
     } else if (gusts >= 45) {
-      hazards.push({ title: '💨 Very gusty - choose sheltered routes', body: 'Stick to woodland or valley routes where possible.' });
+      hazards.push({ title: 'Very gusty - choose sheltered routes', body: 'Stick to woodland or valley routes where possible.' });
     }
-    if (feels < -5) {
-      hazards.push({ title: '🧊 Very cold - brief outings only', body: 'Keep walks short and dry your dog thoroughly when you return.' });
+
+    // Cold hazards
+    if (feels < coldThreshold) {
+      var coldTitle, coldBody, coldDisc = '';
+      if (isSenior && coldThreshold > -5) {
+        coldTitle = 'Very cold - take it easy today';
+        coldBody  = 'Cold weather is harder on older dogs. A shorter walk today might be the right call, and watch for any stiffness once you get back inside.';
+        coldDisc  = DISC;
+      } else {
+        coldTitle = 'Very cold - brief outings only';
+        coldBody  = 'Keep walks short and dry your dog thoroughly when you return.';
+      }
+      hazards.push({ title: coldTitle, body: coldBody + coldDisc });
     } else if (temp <= 0) {
-      hazards.push({ title: '❄️ Freezing - watch for grit and ice', body: 'Rinse paws after walking on gritted paths to prevent irritation.' });
+      hazards.push({ title: 'Freezing - watch for grit and ice', body: 'Rinse paws after walking on gritted paths to prevent irritation.' });
     }
+
+    // Small dog cold advisory
+    if (dogSize === 'small' && feels < 5) {
+      hazards.push({ title: 'Chilly for a small dog', body: 'Small dogs feel the cold more. If ' + dogName + ' does not have much of a coat, today might be a good day to layer up.' + DISC });
+    }
+
+    // Puppy cold advisory
+    if (isPuppy && temp <= 2) {
+      hazards.push({ title: 'Cold for a young dog', body: 'Young dogs are still getting used to cold weather. Keep today\'s walk short and check ' + dogName + ' is not shivering.' + DISC });
+    }
+
+    // Double-coat cold reassurance
+    if (isDoubleCoat && feels < 0) {
+      hazards.push({ title: dogName + '\'s coat handles the cold well', body: 'Double-coated breeds are well insulated in cold weather. Just watch for ice on paws.' + DISC });
+    }
+
+    // Seasonal hazards
+    var seasonal = getSeasonalHazards(temp);
+    seasonal.forEach(function(key) {
+      if (key === 'algae') {
+        hazards.push({ title: 'Algae alert', body: 'Hot weather brings the risk of toxic algae in still water. If water looks blue-green or murky, keep ' + dogName + ' out. If they get in and seem unwell, call your vet straight away.' });
+      } else if (key === 'adder') {
+        hazards.push({ title: 'Adder season', body: 'Adders are active in spring. Stick to clear paths and give long grass, heathland, and sunny banks some space.' });
+      } else if (key === 'grassseeds') {
+        hazards.push({ title: 'Grass seed season', body: 'After walks in long grass, check ' + dogName + '\'s paws, ears, and coat for seeds. Small but they can cause real problems if they burrow in.' });
+      } else if (key === 'harvestmites') {
+        hazards.push({ title: 'Harvest mite season', body: 'Tiny orange larvae in long grass can make dogs very itchy, especially around the paws and belly. A quick paw rinse after walks helps.' });
+      } else if (key === 'rocksalt' && temp < 3) {
+        hazards.push({ title: 'Rock salt on paths', body: 'Paths may have grit and rock salt today. Rinse ' + dogName + '\'s paws when you get home and check they are not licking them.' });
+      }
+    });
+
     return hazards;
   }
 
   /* ─── Paw safety (Section 9) ─── */
 
   function getPawSafety(tempC) {
+    // Dog profile resolution
+    var dog          = getDog();
+    var tags         = dog ? (dog.tags || []) : [];
+    var isBrachy     = tags.indexOf('brachycephalic') !== -1;
+    var pawThreshold = isBrachy ? 22 : 25;
+    var DISC = '<div class="hazard-disclaimer">Every dog is different - if in doubt, ask your vet.</div>';
+
     if (tempC >= 35) {
       return { state: 'danger', title: '🐾 Too hot for paws', body: 'Pavement can reach 70°C in direct sun at this temperature. Use the 7-second test - press your hand on the tarmac. If you can\'t hold it for 7 seconds, it\'s too hot for your dog\'s paws.' };
     }
-    if (tempC >= 25) {
-      return { state: 'caution', title: '🐾 Paw check needed', body: 'At ' + Math.round(tempC) + '°C, pavement may be getting warm. Press your hand on the tarmac before setting off - if it\'s uncomfortable to hold for 7 seconds, choose a shaded route or walk on grass.' };
+    if (tempC >= pawThreshold) {
+      if (isBrachy && tempC < 25) {
+        return { state: 'caution', title: '🐾 Paw check needed', body: 'Flat-faced breeds can find warm weather harder going. At ' + Math.round(tempC) + '\u00b0C, choose shaded routes or walk on grass and keep the outing short.' + DISC };
+      }
+      return { state: 'caution', title: '🐾 Paw check needed', body: 'At ' + Math.round(tempC) + '\u00b0C, pavement may be getting warm. Press your hand on the tarmac before setting off - if it\'s uncomfortable to hold for 7 seconds, choose a shaded route or walk on grass.' };
     }
     if (tempC <= 0) {
       return { state: 'caution', title: '🐾 Paw check needed', body: 'Freezing temperatures mean ice and grit on paths. Rinse paws when you get back - road salt can irritate skin if licked.' };
+    }
+    // Rock salt seasonal paw advisory (Nov-Mar, temp < 3)
+    var month = new Date().getMonth() + 1;
+    if ((month >= 11 || month <= 3) && tempC < 3) {
+      var dogName = getDogName() || 'your dog';
+      return { state: 'caution', title: '🐾 Paw check needed', body: 'Paths may have grit and rock salt down today. Rinse ' + dogName + '\'s paws when you get home and check they are not licking them.' };
     }
     return null;
   }
@@ -10016,6 +10158,9 @@
     chips.forEach(function(chip) {
       chip.classList.toggle('active', activeTags.indexOf(chip.getAttribute('data-tag')) !== -1);
     });
+    // Characteristic toggles
+    applyDogYesNo('brachycephalic', activeTags.indexOf('brachycephalic') !== -1);
+    applyDogYesNo('doublecoat',     activeTags.indexOf('double-coat')     !== -1);
     // Birthday - populate day dropdown if needed
     var bdDay = document.getElementById('dogSettingsBdDay');
     if (bdDay && bdDay.options.length <= 1) {
@@ -10059,6 +10204,32 @@
     if (isOther) otherEl.focus();
   }
 
+  function toggleDogYesNo(btn, controlId) {
+    var control = document.getElementById('segment-control-' + controlId);
+    if (!control) return;
+    var btns = control.querySelectorAll('.segment-btn');
+    var pill = control.querySelector('.segment-pill');
+    btns.forEach(function(b, i) {
+      var isThis = (b === btn);
+      b.classList.toggle('active', isThis);
+      b.setAttribute('aria-pressed', isThis ? 'true' : 'false');
+      if (isThis && pill) pill.setAttribute('data-active', String(i));
+    });
+  }
+
+  function applyDogYesNo(controlId, isYes) {
+    var control = document.getElementById('segment-control-' + controlId);
+    if (!control) return;
+    var btns = control.querySelectorAll('.segment-btn');
+    var pill = control.querySelector('.segment-pill');
+    var activeIdx = isYes ? 1 : 0;
+    btns.forEach(function(btn, i) {
+      btn.classList.toggle('active', i === activeIdx);
+      btn.setAttribute('aria-pressed', i === activeIdx ? 'true' : 'false');
+    });
+    if (pill) pill.setAttribute('data-active', String(activeIdx));
+  }
+
   function toggleDogTag(chip) {
     var isActive = chip.classList.contains('active');
     if (!isActive) {
@@ -10093,6 +10264,11 @@
     document.querySelectorAll('#dogTagsRow .dog-tag-chip.active').forEach(function(chip) {
       activeTags.push(chip.getAttribute('data-tag'));
     });
+    // Characteristic tags from Yes/No toggles (independent of chip limit)
+    var brachyYes = document.querySelector('#segment-control-brachycephalic .segment-btn[data-yesno="yes"].active');
+    if (brachyYes) { activeTags.push('brachycephalic'); }
+    var doubleCoatYes = document.querySelector('#segment-control-doublecoat .segment-btn[data-yesno="yes"].active');
+    if (doubleCoatYes) { activeTags.push('double-coat'); }
     var bdDay    = bdDayEl   && bdDayEl.value   ? parseInt(bdDayEl.value)   : null;
     var bdMonth  = bdMonthEl && bdMonthEl.value ? parseInt(bdMonthEl.value) : null;
     var bdYear   = bdYearEl  && bdYearEl.value  ? parseInt(bdYearEl.value)  : null;
