@@ -12096,6 +12096,8 @@
     var activeRadius = activeRadiusBtn ? parseInt(activeRadiusBtn.dataset.walksRadius, 10) : getSavedRadius();
     saveRadius(activeRadius);
     applyRadiusPreference(getSavedRadiusMi());
+    NEARBY_GOOGLE_CACHE = {};
+    try { sessionStorage.removeItem('sniffout_walks_gs'); } catch(e) {}
 
     var surfaceBtn    = sheet.querySelector('[data-walks-surface].active');
     var envBtn        = sheet.querySelector('[data-walks-env].active');
@@ -12159,6 +12161,8 @@
     var previousRadius = getSavedRadius();
     saveRadius(activeRadius);
     applyRadiusPreference(getSavedRadiusMi());
+    NEARBY_GOOGLE_CACHE = {};
+    try { sessionStorage.removeItem('sniffout_walks_gs'); } catch(e) {}
 
     // Set pending sort — applied inside renderVenueList() when it runs (sync or after async fetch)
     nearbyPendingSort = activeSort;
