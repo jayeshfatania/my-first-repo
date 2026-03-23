@@ -33,15 +33,16 @@ The Researcher's five features are the mechanism for this shift. This document a
 
 **What can be built without Firebase:** The full dog profile experience.
 
-The profile is a single localStorage object (`sniffout_dog_profile`) containing:
+The profile is stored in `sniffout_dogs` (a localStorage array of dog profile objects — multiple dogs supported). Note: `sniffout_dog_profile` and `sniffout_dog` (singular) are deprecated keys and should not be used.
 
 ```
-{
+// sniffout_dogs (array of dog objects)
+[{
   name:  "Biscuit",
   breed: "Golden Retriever",  // free text or dropdown — see Decision 1 below
   size:  "large",             // small | medium | large
   age:   "adult"              // puppy | adult | senior
-}
+}]
 ```
 
 **What Phase 2 enables immediately:**
@@ -55,7 +56,7 @@ The profile is a single localStorage object (`sniffout_dog_profile`) containing:
 
 **Build notes:** Profile setup belongs in the settings sheet (the gear icon on the Me tab). The onboarding question ("Tell us about your dog") should appear once, optionally, when the user first reaches the Me tab — not as a hard gate. If skipped, stats default to "you" framing. Dog profile can be updated at any time via the settings sheet.
 
-**Phase 2 decisions required:** See Decision 1 (breed field format), Decision 2 (size categories), Decision 3 (age format), Decision 4 (single dog or multiple).
+**Phase 2 decisions required:** See Decision 1 (breed field format), Decision 2 (size categories), Decision 3 (age format). Decision 4 (single vs multiple dogs) is resolved — see above.
 
 ---
 
@@ -66,7 +67,7 @@ The profile is a single localStorage object (`sniffout_dog_profile`) containing:
 **What Phase 3 adds:**
 - Profile syncs across devices (the owner's phone and a partner's phone both show Biscuit)
 - Dog profile photo — an optional field, not required, but powerful. A dog's photo in the app creates the strongest emotional connection and is the thing that gets screenshotted and shared.
-- Multiple dogs: if an owner has two dogs, they can maintain separate walk logs for each. Phase 3 supports this; Phase 2 does not.
+- Multiple dogs: the `sniffout_dogs` array supports multiple dogs in Phase 2. A dog switcher UI (to select the active dog) is Phase 2b scope. Full cross-device sync for multiple dogs is Phase 3.
 
 **Breed-specific filtering (Phase 3 scope):** Once users have breed data stored, Sniffout can surface breed-relevant information. This requires:
 1. A breed field in the user's dog profile (free-text is fine for Phase 2; a dropdown with ~50 common UK breeds is needed for Phase 3 filtering)
@@ -512,8 +513,8 @@ Before each feature can be briefed to the Developer, the owner must confirm thes
 - Or: exact year of birth (more precise; allows automatic age updates)
 - **Recommendation:** Year of birth stored, displayed as puppy/adult/senior. This ages automatically without the user needing to update it. Owner to confirm.
 
-**Decision 4 — Single dog or multiple dogs in Phase 2**
-- **Recommendation:** One dog only in Phase 2. Phase 3 introduces multiple dogs on the same account. Confirm single-dog constraint for Phase 2 implementation.
+**Decision 4 — Single dog or multiple dogs in Phase 2** *(Resolved — 2026-03-23)*
+- ~~**Recommendation:** One dog only in Phase 2.~~ **Resolved:** Multiple dogs are supported in Phase 2 via the `sniffout_dogs` array. A dog switcher UI is Phase 2b. Cross-device sync is Phase 3. See session handoff (23 March 2026) for the current source of truth.
 
 **Decision 5 (applies to Feature 2) — Where is the dog profile set up?**
 - Option A: In the Me tab settings sheet (gear icon) — discoverable for engaged users, not obtrusive for new users
@@ -609,7 +610,7 @@ The badge-system-rethink.md Designer brief is in flight. Pass the following PO d
 | 1 | Dog profile | Breed field: free text or dropdown? | Free text Phase 2, dropdown Phase 3 | Feature 1 dev brief |
 | 2 | Dog profile | Size categories | Small/Medium/Large | Feature 1 dev brief |
 | 3 | Dog profile | Age format | Year of birth → auto-calculated | Feature 1 dev brief |
-| 4 | Dog profile | Single or multiple dogs in Phase 2? | Single dog only | Feature 1 dev brief |
+| 4 | Dog profile | Single or multiple dogs in Phase 2? | ~~Single dog only~~ **Resolved:** Multiple dogs supported via `sniffout_dogs` array. Switcher UI is Phase 2b. | Feature 1 dev brief |
 | 5 | Dog profile | Where is profile set up? | First-visit prompt + settings sheet | Feature 1 dev brief |
 | 6 | Walk notes | Note prompt timing | Inline persistent (not sequential modal) | Feature 2 dev brief |
 | 7 | Walk notes | Character limit? | No hard limit | Feature 2 dev brief |

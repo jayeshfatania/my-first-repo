@@ -5,6 +5,8 @@
 
 ---
 
+> **Note (March 2026):** The heart button (`walk-detail-hero-heart`) has been removed from the walk detail overlay. Walk save actions were streamlined in a previous round. Only the bookmark button remains, labelled "Add to our walk list". All references to the heart button in this spec describe the original design and are no longer current.
+
 ## Overview
 
 The walk detail overlay is a full-screen panel that slides up when a user taps any walk card — trail card (Walks tab carousel), portrait card (Today tab), or walk card (Me tab favourites). It replaces the current `onWalkTap()` stub.
@@ -43,9 +45,7 @@ One persistent DOM element placed inside `#app`, after the bottom `<nav>`. Hidde
     <div class="walk-detail-hero" id="walk-detail-hero">
       <!-- img injected by JS, or brand-green background if no imageUrl -->
       <div class="walk-detail-hero-badge" id="walk-detail-hero-badge"></div>
-      <button class="walk-detail-hero-heart" id="walk-detail-hero-heart" aria-label="Add to favourites">
-        <!-- heartSVG() injected by JS -->
-      </button>
+      <!-- REMOVED: walk-detail-hero-heart button has been removed. Heart/favourite button no longer appears in the walk detail overlay. Only the bookmark button ("Add to our walk list") remains. -->
     </div>
 
     <!-- 2. Walk info: name, location, rating, stats -->
@@ -213,21 +213,7 @@ All new rules. Add to the existing `<style>` block, after the condition tags rul
   padding: 4px 10px;
   display: none; /* shown by JS when badge exists */
 }
-.walk-detail-hero-heart {
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  width: 36px;
-  height: 36px;
-  background: rgba(255,255,255,0.92);
-  border: none;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.15);
-}
+/* REMOVED: .walk-detail-hero-heart — heart button has been removed from the walk detail overlay. */
 
 /* ── Walk info block ── */
 .walk-detail-info {
@@ -534,15 +520,8 @@ function populateWalkDetail(walk) {
     }
   }
 
-  // Heart / favourite
-  var heart = document.getElementById('walk-detail-hero-heart');
-  if (heart) {
-    heart.innerHTML = heartSVG(isFavourited(walk.id));
-    heart.onclick = function(e) {
-      e.stopPropagation();
-      toggleFavourite(walk.id, heart);
-    };
-  }
+  // REMOVED: Heart / favourite button has been removed from the walk detail overlay.
+  // Only the bookmark button ("Add to our walk list") remains.
 
   // Name
   var nameEl = document.getElementById('walk-detail-name');
@@ -871,7 +850,6 @@ function onWalkTap(id) {
 ┌────────────────────────────────────────┐
 │                                        │
 │                                        │  220px, full bleed
-│                    [♡]                 │  heart: top-right, 36px circle
 │  [Sniffout Pick]                       │  badge: bottom-left pill
 └────────────────────────────────────────┘
 ```
@@ -879,7 +857,7 @@ function onWalkTap(id) {
 - **No image:** `background: var(--brand)` — the forest green fills the hero
 - **With image:** `<img loading="lazy" object-fit: cover>`
 - **Badge:** `rgba(0,0,0,0.55)` pill, bottom-left, 11px/500/white. Hidden if `walk.badge` is undefined.
-- **Heart:** 36×36px white circle with box-shadow. Top-right at 12px/14px from edge. Uses existing `heartSVG()` + `toggleFavourite()`. Updates immediately on tap.
+- ~~**Heart:** 36×36px white circle with box-shadow. Top-right at 12px/14px from edge.~~ **REMOVED:** The heart button has been removed from the walk detail overlay. Only the bookmark button ("Add to our walk list") remains.
 
 ---
 
@@ -1054,13 +1032,7 @@ User taps "Mark as walked"
 
 ### Tapping the heart
 
-```
-User taps heart in hero
-  └── toggleFavourite(id, heartBtn)   [existing function]
-        ├── Toggles sniffout_favs
-        ├── Updates heartSVG in this button
-        └── Updates all other hearts for same walk ID
-```
+> **REMOVED:** The heart button has been removed from the walk detail overlay. This interaction flow is no longer applicable. Walk save actions are handled by the bookmark button ("Add to our walk list") only.
 
 ---
 
@@ -1097,7 +1069,7 @@ User taps heart in hero
 | `.walk-detail-scroll` | Scrollable content container | `overflow-y: auto` |
 | `.walk-detail-hero` | Hero image container | 220px height |
 | `.walk-detail-hero-badge` | Badge pill in hero | Bottom-left, hidden if no badge |
-| `.walk-detail-hero-heart` | Favourite button in hero | Top-right, 36px circle |
+| ~~`.walk-detail-hero-heart`~~ | ~~Favourite button in hero~~ | **REMOVED** — heart button no longer in the walk detail overlay |
 | `.walk-detail-info` | Name/location/rating/stats block | White surface |
 | `.walk-detail-name` | Walk name `<h1>` | 20px / 700 |
 | `.walk-detail-location` | Location row | 13px, with pin icon |
@@ -1130,7 +1102,7 @@ User taps heart in hero
 | New component | Existing pattern reused |
 |---------------|------------------------|
 | Slide-up animation | `.filter-sheet` `translateY(100%) → translateY(0)` (same easing curve) |
-| Hero heart button | `.trail-heart` / `.portrait-heart` style (same dimensions, larger in hero: 36px vs 28px) |
+| ~~Hero heart button~~ | **REMOVED** — heart button has been removed from the walk detail overlay |
 | Hero badge pill | `.trail-card-badge` / `.portrait-badge` style (identical) |
 | `detail-stat` row | New — no existing pattern, but consistent with `.condition-cell` on Weather tab |
 | `detail-tag` pills | Extends `.trail-tag` visual language, sized slightly larger for detail context |

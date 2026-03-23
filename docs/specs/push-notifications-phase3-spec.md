@@ -594,7 +594,9 @@ When implemented: the Cloud Function must run on a short interval (every 15-30 m
 
 Cloud Functions requires the Firebase Blaze (pay-as-you-go) plan. The free Spark plan does not support Cloud Functions outbound network requests (which are needed to call Open-Meteo). The expected cost at Sniffout's scale is negligible (well within free tier limits), but the plan upgrade must be done before Cloud Functions can be deployed.
 
-This is separate from the Google Cloud billing action required in the session handoff (trial credit for Places API). Both should be resolved together.
+**Google Cloud billing - resolved 23 March 2026.** The owner upgraded to pay-as-you-go and set a £15 budget alert. The $200 free monthly tier covers current usage. No further action required for the existing Google Cloud account.
+
+The Firebase Blaze plan upgrade for Cloud Functions is a separate item. It must be addressed when Cloud Functions development begins (Step 9). It is not required for Steps 1-8 and does not block any client-side work.
 
 ### Phase 3 vs Phase 2
 
