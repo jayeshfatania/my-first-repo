@@ -188,4 +188,4 @@ Dark mode is toggled manually by the user via Settings. "Auto" option uses `pref
 - **Walk count references:** Use `WALKS_DB.length` dynamically — never hardcode a number
 - All weather verdict strings, hazard titles, and paw safety strings: see `docs/po/copy-review.md` and `docs/po/po-action-plan-round24.md`
 
-Do not use "free", "no sign-up", "no account", or "no login" anywhere in the app.
+Do not use "free", "no sign-up", "no account", or "no login" anywhere in the app. When account creation arrives (Phase 3), it must be framed as data protection - "Keep your walks safe across any device" or "your data, safe wherever you are" - not as a registration step or burden. The absence of an account is not a selling point; protecting the user's data is. Copy that frames accounts as optional or avoidable will conflict with Phase 3 messaging and must not be introduced.

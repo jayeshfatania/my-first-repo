@@ -210,6 +210,8 @@ No remaining technical hard blockers. All four outstanding blockers are legal an
 
 ### Upcoming work — priority order
 
+> **IMMEDIATE — Developer (no design required):** Remove fake ratings and review counts. The `rating` and `reviewCount` fields currently in `WALKS_DB` are placeholder values, not real user reviews. Displaying them is deceptive. All star displays and review count strings must be hidden until a walk has at least 3 real reviews submitted through the community ratings system. Interim state: show no stars, no count, no placeholder number. This must ship before beta. Added 23 March 2026.
+
 1. **Batch 02 + 03 content update** — ✅ Complete. All 40 walks added to `WALKS_DB`. Walk count is now 100.
 2. **Temperature tap feature** — in development by Developer. `temperature-tap-spec.md` issued. Full remaining day shown in sheet (not capped at 10pm).
 3. **T&C consent screen** — hard go-live blocker (L5). Cannot be built until ToS copy exists (L3). Solicitor-dependent. Add to pre-launch checklist.
@@ -246,8 +248,16 @@ No remaining technical hard blockers. All four outstanding blockers are legal an
 2. **Push notifications** — Firebase Cloud Functions, hazard-only types at launch (Types 1-5). Research complete. Formal spec at `docs/specs/push-notifications-phase3-spec.md`. Build can proceed once Firebase full migration is complete. GDPR sign-off and solicitor review are go-live prerequisites only - not build prerequisites.
 3. **Report an issue** — Firestore-backed submission form.
 4. **Missing Dog alerts** — community safety feature. Firestore-backed, map layer.
-5. **User-submitted walks** — editorial review before publish, same `WALKS_DB` schema, curated vs community badge distinction.
-6. **Community ratings** — Bayesian weighted, minimum 3 reviews before stars display.
+5. **User-submitted walks** — community content model with editorial review gate before publish. Context for when this reaches the design phase:
+   - Seed content model: all current walks are AI-generated but founder-verified and carry the curated label. Community submissions are a distinct category and must be visually differentiated from curated content.
+   - Community moderation: editorial review before any community walk is published. No automatic publish path at any point.
+   - Badge design: curated vs community badge distinction is confirmed but not yet designed. A Researcher round is required before Developer build begins - do not spec badge visuals without it.
+   - Engagement mechanism 1: "Rate this walk" prompt triggered after a user logs a walk - not on first open, not unprompted.
+   - Engagement mechanism 2: "No reviews yet - be the first" empty state on walk detail for walks with zero real reviews.
+   - Engagement mechanism 3: walk journal nudge - after logging a walk, offer a one-tap note or star rating inline.
+   - Engagement mechanism 4: "Submit a walk" entry point in the app - exact placement TBD, must feel earned, not prominent on first open.
+   - All community prompts are post-action (earned), never ambient. No cold calls to rate or submit.
+6. **Community ratings** — Bayesian weighted, minimum 3 reviews before stars display. **Immediate pre-beta fix required (not Phase 3):** current `rating` and `reviewCount` values in `WALKS_DB` are placeholder data, not real reviews. Displaying them is deceptive and must be fixed before beta - see Next Up for the immediate Developer task.
 7. **Push notifications - follow-up types** — morning walk alert (Type 6), rain incoming (Type 7). Post-launch validation before implementing.
 
 ---

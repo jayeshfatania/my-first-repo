@@ -8,6 +8,16 @@
 
 ---
 
+## Copy Rule Update — 23 March 2026
+
+**PO instruction:** "No account", "no sign-up", "no login", and "free" must not appear anywhere in the app as selling points or trust signals. These phrases are not permanent product promises and will be false or misleading once Phase 3 (authenticated accounts) ships.
+
+When account creation arrives, it must be framed as data protection: "Keep your walks safe across any device" or "your data, safe wherever you are". Account creation is a benefit to the user - their data is protected and portable - not a registration hurdle. Copy that frames the absence of an account as a positive feature conflicts with Phase 3 messaging and must not be carried forward.
+
+All instances in this document marked **[PENDING REVISION]** are affected. Treat them as drafts requiring a new copy pass before implementation.
+
+---
+
 ## Tone Benchmark
 
 Sniffout should sound like a friend who knows dogs, knows the outdoors, and actually cares. Not a weather service. Not a directory. A companion — one who notices that you probably want to know right now whether it's worth pulling on your wellies, not after reading three paragraphs of hedged caveats.
@@ -50,11 +60,11 @@ Quietly confident. British in register. Implies a standard has been applied — 
 **Home screen subheadline — Revised** ⏳
 Previous: `Great walks. Safe conditions. No fuss.` — returned by PO (still leads with safety).
 
-**Revised:** `Handpicked walks. Live conditions. No account.`
+**Revised:** ~~`Handpicked walks. Live conditions. No account.`~~ **[PENDING REVISION]** "No account." removed per copy rule update 23 March 2026. Third beat needs a replacement that does not frame account absence as a feature. Suggest: `Handpicked walks. Live conditions. Built for dogs.` or similar - Copywriter to propose.
 
-Three clean beats: the product (curation), the differentiator (live conditions — present but not leading), the trust signal (no account). Shorter. Each word earns its place.
+Three clean beats: the product (curation), the differentiator (live conditions — present but not leading), the trust signal (originally "no account" - now pending revision per copy rule update).
 
-**Alternative:** `50+ walks, chosen for you. Free. No sign-up.`
+**Alternative:** ~~`50+ walks, chosen for you. Free. No sign-up.`~~ **[PENDING REVISION]** Both "Free" and "No sign-up" removed per copy rule update 23 March 2026.
 
 ---
 
@@ -71,7 +81,7 @@ Three clean beats: the product (curation), the differentiator (live conditions �
 **Approved:**
 `Discover 50+ handpicked UK dog walks with live weather checks, paw safety alerts and nearby dog-friendly spots.`
 
-*"Free, no sign-up." removed per PO instruction — these are not permanent product promises and must not appear anywhere in the app.*
+*"Free, no sign-up." removed per PO instruction — these are not permanent product promises and must not appear anywhere in the app. Copy rule formalised 23 March 2026 - see rule update section above.*
 
 ---
 
@@ -101,9 +111,9 @@ Three clean beats: the product (curation), the differentiator (live conditions �
 
 **PO feedback:** `Live weather. Safe conditions. No sign-up.` returned — leads too heavily with weather.
 
-**Revised:** `Handpicked walks. Live conditions. No account.`
+**Revised:** ~~`Handpicked walks. Live conditions. No account.`~~ **[PENDING REVISION]** "No account." removed per copy rule update 23 March 2026. Third beat requires a replacement - Copywriter to propose. See rule update section above.
 
-Leads with curation (the product), includes weather as the differentiator (second beat), closes with the trust signal. Discovery-first.
+Leads with curation (the product), includes weather as the differentiator (second beat), closes with [trust signal - pending revision].
 
 ---
 
@@ -118,8 +128,8 @@ Leads with curation (the product), includes weather as the differentiator (secon
 
 ---
 
-### Social proof strip ✅
-**Approved:** `50+ handpicked UK walks · Free · No account needed`
+### Social proof strip ⏳
+~~**Approved:** `50+ handpicked UK walks · Free · No account needed`~~ **[PENDING REVISION]** "Free" and "No account needed" removed per copy rule update 23 March 2026. Copywriter to propose a replacement third beat. Note: the social proof strip in `sniffout-v2.html` was separately updated to `Know the route · Own the weather · Find the spots` (confirmed in CLAUDE.md). This document line may be stale - Copywriter to reconcile.
 
 ---
 
@@ -159,7 +169,7 @@ Warm. Companion-framed. Names the dual audience (owner and dog). Not weather-led
 **Current:** `Shared, discovered and rated by the community.`
 **Approved:** `Curated walks, live weather checks and dog-friendly spots — all in one place.`
 
-*(Onboarding overlay is out of scope for Phase 1. "All free, no sign-up needed." removed per PO instruction.)*
+*(Onboarding overlay is out of scope for Phase 1. "All free, no sign-up needed." removed per PO instruction. Copy rule formalised 23 March 2026 - see rule update section above.)*
 
 ---
 
@@ -315,7 +325,7 @@ Weather suitability banner on Walks tab: `Breezy today — showing sheltered woo
 |------|--------------|
 | Profile sub | `Your walks, saved locally` |
 | Sign-in banner title | `Your data stays on your phone` |
-| Sign-in banner body | `No account needed. Your favourites and reviews are saved locally. Sync across devices is coming.` |
+| Sign-in banner body | ~~`No account needed. Your favourites and reviews are saved locally. Sync across devices is coming.`~~ **[PENDING REVISION]** "No account needed." removed per copy rule update 23 March 2026. When Phase 3 ships, this banner should frame account linking as data protection. Interim suggestion: `Your walks and favourites are saved to this phone. Link your account to keep them safe across any device.` - Copywriter to confirm. |
 | Favourites empty | `Heart any walk to save it here.` |
 | Reviews empty | `Rate a walk you've tried — it'll show up here.` |
 | Recommendations empty | `Add a walk from the Walks tab and it'll appear here.` |
