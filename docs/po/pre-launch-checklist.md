@@ -1,6 +1,6 @@
 # Sniffout — Pre-Launch Checklist
 
-> **Last updated:** 2026-03-18
+> **Last updated:** 2026-03-23
 > **Status key:** ✅ Done · 🔄 In progress · ⬜ Not started · 🔴 Blocked
 
 ---
@@ -12,7 +12,7 @@
 | T1 | **Google Places API key moved to serverless proxy** | ✅ Done | Developer | Must have | Resolved 19 March 2026. Cloudflare Worker proxy deployed at `places-proxy.sniffout.app`. Referer header added to Worker so Google accepts requests. Key no longer in page source. Place photos also routing through proxy. |
 | T2 | Firebase configured with region `europe-west2` (London) | ⬜ Not started | Developer | Must have | Required for UK data residency. Depends on Firebase being provisioned (Phase 3). Region cannot be changed after project creation — set correctly from day one. |
 | T3 | All `localStorage` data migration paths tested | ⬜ Not started | Developer | Must have | Keys in scope: `sniffout_session`, `sniffout_active_tab`, `sniffout_favs`, `sniffout_username`, `sniffout_radius`, `sniffout_explored`, `walkReviews`, `recentSearches`. Test upgrade path from any prior v1 data left by early testers. |
-| T4 | PWA manifest complete and tested | 🔄 In progress | Developer | Must have | Check `manifest.json`: all icon sizes present (192px, 512px, maskable), `theme_color` matches `#1E4D3A`, `background_color` matches `#F7F5F0`, `start_url` correct, `display: standalone`. Test "Add to Home Screen" on both iOS and Android. |
+| T4 | PWA manifest complete and tested | 🔄 In progress | Developer | Must have | Check `manifest.json`: all icon sizes present (192px, 512px, maskable), `theme_color` matches `#3B5C2A`, `background_color` matches `#F7F5F0`, `start_url` correct, `display: standalone`. Test "Add to Home Screen" on both iOS and Android. |
 | T5 | Splash screen verified on iOS | ⬜ Not started | Developer | Must have | iOS Safari does not use the manifest splash — requires `apple-touch-startup-image` meta tags. Verify brand green background renders correctly at all iPhone viewport sizes. |
 | T6 | App fully tested on iOS Safari (latest) | ⬜ Not started | Developer / Designer | Must have | iOS Safari is the primary browser for a significant portion of UK mobile users. Test all five tabs, geolocation prompt, dark mode, PWA install flow. |
 | T7 | App fully tested on Android Chrome (latest) | ⬜ Not started | Developer / Designer | Must have | Test all five tabs, geolocation, PWA install banner, offline fallback via `sw.js`. |
@@ -24,6 +24,7 @@
 | T13 | Desktop "Coming soon" screen verified | ⬜ Not started | Developer | Should have | Viewport ≥768px or non-touch device shows holding screen. Test on common desktop browsers (Chrome, Firefox, Safari). |
 | T14 | `sniffout-v2.html` set as production file and `index.html` redirect updated | ✅ Done | Developer | Must have | Resolved 19 March 2026. `manifest.json` `start_url` fixed to `/sniffout-v2.html` — installed PWA no longer shows 404. `index.html` intentionally redirects to `coming-soon.html`; app accessible at `sniffout.app/sniffout-v2.html` direct link only until public launch. |
 | T15 | Open Graph / social meta tags added | ⬜ Not started | Developer | Should have | `og:title`, `og:description`, `og:image`, `twitter:card`. Ensures links shared on WhatsApp and social media render correctly — important for word-of-mouth launch. |
+| H10 | OS Maps API key moved out of page source | ⬜ Not started | Developer | Must have | OS Maps API key is currently hardcoded in `sniffout-v2.html`. Deferred to dedicated pre-launch security review alongside any other remaining key exposure. Do not implement without explicit owner direction. |
 
 ---
 
@@ -35,7 +36,7 @@
 | L2 | Privacy policy written, reviewed by solicitor, and live on app | 🔴 Blocked | Owner / Solicitor | Must have | Must cover: data collected (location, localStorage, any analytics), legal basis, retention, user rights, third-party processors, contact details. Depends on L1. Must be accessible from within the app (link in "Me" tab or footer). |
 | L3 | Terms of service written, reviewed by solicitor, and live on app | 🔴 Blocked | Owner / Solicitor | Must have | Must cover: disclaimer on walk accuracy, limitation of liability for walk conditions, acceptable use. Depends on L1. |
 | L4 | NDA reviewed by solicitor (`sniffout-nda.docx`) | 🔴 Blocked | Owner / Solicitor | Must have | NDA to be used with beta testers and any third parties given access to the codebase or data before launch. Solicitor review required before sharing with any party. |
-| L5 | Cookie policy — determine if applicable | ⬜ Not started | Owner / Solicitor | Must have | The app uses `localStorage` (not cookies) for state. Determine with solicitor whether `localStorage` triggers UK PECR cookie consent obligations. If analytics are added (see B4), a cookie banner may be required. |
+| L5 | T&C consent screen implemented and live | 🔴 Blocked | Developer | Must have | Hard go-live blocker. Users must actively accept Terms of Service before using the app for the first time. Depends on L3 (ToS copy from solicitor). Developer work required once ToS copy is ready. This is a go-live prerequisite only - development can proceed before L3 is resolved. |
 | L6 | Right to erasure (Article 17 GDPR) implemented | ⬜ Not started | Developer | Must have | Currently all data is in `localStorage` only — a "Clear my data" button in the "Me" tab would satisfy erasure for the pre-Firebase launch. Once Firebase is live (Phase 3), server-side deletion must be implemented. |
 | L7 | Data residency confirmed — Firebase `europe-west2` | ⬜ Not started | Developer / Owner | Must have | Depends on Firebase provisioning (Phase 3). Document the region in an internal data map to demonstrate compliance. |
 | L8 | Age verification — decision documented | ⬜ Not started | Owner / Solicitor | Must have | App does not currently restrict access by age. Confirm with solicitor whether any content or data processing triggers a Children's Code (AADC) obligation. If no, document the decision. If yes, implement appropriate gate. |
@@ -63,13 +64,13 @@
 | # | Item | Status | Owner | Priority | Notes / Dependencies |
 |---|------|--------|-------|----------|----------------------|
 | D1 | App tested on multiple screen sizes | ⬜ Not started | Designer / Developer | Must have | Test at minimum: iPhone SE (375px), iPhone 14 Pro (393px), iPhone 14 Pro Max (430px), Pixel 7 (412px). Check all five tabs. Use browser DevTools device emulation plus real devices where possible. |
-| D2 | Dark mode (`body.night`) tested thoroughly | ⬜ Not started | Designer / Developer | Must have | Dark mode is triggered automatically by weather `isDay` flag — not a user toggle. Test all five tabs, all card types, all modal/panel states, all empty and error states in dark mode. Check contrast ratios. |
+| D2 | Dark mode (`body.night`) tested thoroughly | ⬜ Not started | Designer / Developer | Must have | Dark mode is user-controlled via Settings only. The `renderWeather()` function must never set or remove the `body.night` class - dark mode must never be triggered automatically by the weather `is_day` value. This was a production bug fixed 22 March 2026. The app is correct - this checklist item is a reminder not to reintroduce the bug. Test all five tabs, all card types, all modal/panel states, all empty and error states in dark mode. Check contrast ratios. |
 | D3 | All empty states implemented and reviewed | ⬜ Not started | Developer / Designer | Must have | Minimum: no walks found (after filter), no nearby venues, no favourites, no recent searches, location permission denied. Empty states must be helpful, not blank screens. |
 | D4 | All error states handled gracefully | ⬜ Not started | Developer / Designer | Must have | Minimum: geolocation failure, Google Places API error, weather fetch failure, invalid postcode. No raw error messages or stack traces exposed to users. |
 | D5 | Accessibility basics checked | ⬜ Not started | Developer / Designer | Should have | Tap targets ≥44×44px (WCAG 2.5.5 AAA, Apple HIG minimum). Colour contrast ≥4.5:1 for normal text, ≥3:1 for large text. Check `aria-label` on icon-only buttons (bottom nav SVG icons). |
 | D6 | Onboarding flow tested end to end | ⬜ Not started | Designer / PO | Must have | First-time user journey: app open → location prompt → weather load → walk results. Test "allow" and "deny" location paths. Verify no dead ends. |
 | D7 | Bottom nav icons — filled/outlined states correct on all tabs | ⬜ Not started | Developer / Designer | Should have | Active tab uses filled SVG variant, inactive uses outlined. Verify state is correctly applied on every tab switch and on session restore. |
-| D8 | `sniffout-v2.html` visually matches approved `design-spec.md` | ⬜ Not started | Designer / PO | Must have | Walk through `design-spec.md` and `mockup.html` line by line. No glassmorphism, no blur, no translucent surfaces. Brand colour `#1E4D3A`, background `#F7F5F0`, Inter typography only. |
+| D8 | `sniffout-v2.html` visually matches approved `design-spec.md` | ⬜ Not started | Designer / PO | Must have | Walk through `design-spec.md` and `mockup.html` line by line. No glassmorphism, no blur, no translucent surfaces. Brand colour `#3B5C2A`, background `#F7F5F0`, Inter typography only. |
 
 ---
 
@@ -78,8 +79,8 @@
 | # | Item | Status | Owner | Priority | Notes / Dependencies |
 |---|------|--------|-------|----------|----------------------|
 | B1 | Domain `sniffout.app` secured and CNAME configured | ✅ Done | Owner | Must have | `CNAME` file present in repo, pointing GitHub Pages to `sniffout.app`. Verify SSL certificate is active and auto-renewing. |
-| B2 | Domain `sniffout.co.uk` secured | ⬜ Not started | Owner | Must have | Defensive registration to prevent brand squatting. Redirect `sniffout.co.uk` → `sniffout.app`. |
-| B3 | Branding finalised — logo and colour palette confirmed | 🔄 In progress | Owner / Designer | Must have | Brand colour `#1E4D3A` confirmed. Logo asset needed in SVG and PNG (for PWA icons, social media, future app store). Confirm whether a wordmark exists alongside the icon. |
+| B2 | Domain `sniffout.co.uk` redirect configured | 🔄 In progress | Owner | Must have | `sniffout.co.uk` is registered. Redirect to `sniffout.app` not yet configured - pre-launch task. |
+| B3 | Branding finalised — logo and colour palette confirmed | 🔄 In progress | Owner / Designer | Must have | Brand colour `#3B5C2A` (Meadow Green) confirmed. Logo asset needed in SVG and PNG (for PWA icons, social media, future app store). Confirm whether a wordmark exists alongside the icon. |
 | B4 | Analytics configured (privacy-respecting) | ⬜ Not started | Developer / Owner | Should have | Options: Plausible, Fathom, or self-hosted Umami — all cookieless and GDPR-friendly without consent banner. Avoid Google Analytics UA/GA4 unless consent flow is implemented. Confirm with solicitor (links to L1, L5). |
 | B5 | Social media accounts created and handles secured | ⬜ Not started | Owner | Should have | Minimum: Instagram (`@sniffout` or `@sniffoutapp`). Consider TikTok and X/Twitter for reach. Secure handles before launch to prevent squatting — even if accounts are not actively posted to at launch. |
 | B6 | Support contact method in place | ⬜ Not started | Owner | Must have | A support email (e.g. `hello@sniffout.app`) must be linked in the app ("Me" tab or footer) before launch. Required for GDPR subject access requests (links to L2). |
@@ -108,7 +109,7 @@
 |-------|----------------|
 | **Owner** | B2 (sniffout.co.uk), B6 (support email), L10 (engage solicitor), S1 (beta testers), S2 (NDA signed) |
 | **Solicitor** | L1 (GDPR sign-off), L2 (privacy policy), L3 (ToS), L4 (NDA review), L8 (age verification decision) |
-| **Developer** | T1 (API key proxy — critical blocker), T3 (localStorage migration), T4/T5 (PWA manifest + iOS splash), T6/T7 (iOS + Android testing), T8 (Lighthouse audit), T9 (console errors), T11 (service worker), T12 (security review), T14 (index.html redirect), L6 (right to erasure), D3/D4 (empty + error states) |
+| **Developer** | T3 (localStorage migration), T4/T5 (PWA manifest + iOS splash), T6/T7 (iOS + Android testing), T8 (Lighthouse audit), T9 (console errors), T11 (service worker), T12 (security review), H10 (OS Maps API key in source), L5 (T&C consent screen — blocked on L3), L6 (right to erasure), D3/D4 (empty + error states) |
 | **PO** | C1 (walk verification), C2 (description review), C3 (disclaimer copy), D6 (onboarding test), D8 (design spec sign-off) |
 | **Designer** | D1 (screen sizes), D2 (dark mode), D5 (accessibility), D7 (nav icons) |
 
@@ -116,8 +117,9 @@
 
 ## Hard Blockers — Do Not Launch Until Resolved
 
-1. **T1** — Google Places API key is hardcoded. Move to serverless proxy.
-2. **L1** — No GDPR sign-off from solicitor.
-3. **L2 / L3** — No privacy policy or terms of service.
-4. **L4** — NDA not reviewed. No beta access until cleared.
-5. **T14** — `index.html` redirect must point to v2 before v2 goes live.
+1. **L1** — No GDPR sign-off from solicitor.
+2. **L2 / L3** — No privacy policy or terms of service.
+3. **L4** — NDA not reviewed. No beta access until cleared.
+4. **L5** — T&C consent screen not implemented. Depends on L3 (ToS copy from solicitor). Developer work required once ToS is ready.
+
+Note: T1 (API key proxy) and T14 (manifest start_url) were resolved on 19 March 2026 and have been removed from this list.
