@@ -12,7 +12,7 @@
 
   <!-- PWA -->
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#3B5C2A">
+  <meta name="theme-color" content="#2C4A14">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Sniffout">
@@ -22,6 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/lucide@0.577.0"></script>
@@ -35,17 +36,19 @@
   <style>
     /* ─── CSS Tokens ─── */
     :root {
-      --brand:     #3B5C2A;
-      --brand-mid: #2E7D5E;
-      --bg:        #F7F5F0;
-      --surface:   #FFFFFF;
-      --border:    #E5E7EB;
-      --ink:       #111827;
-      --ink-2:     #6B7280;
-      --amber:     #D97706;
-      --red:       #DC2626;
-      --chip-off:  #D1D5DB;
-      --nav-h:     64px;
+      --brand:        #2C4A14;
+      --brand-mid:    #3D6520;
+      --brand-tint:   #EDF2E8;
+      --bg:           #F7F5F0;
+      --surface:      #FFFFFF;
+      --border:       #E5E7EB;
+      --ink:          #111827;
+      --ink-2:        #6B7280;
+      --amber:        #B07A28;
+      --red:          #DC2626;
+      --chip-off:     #D1D5DB;
+      --nav-h:        64px;
+      --font-display: 'Fraunces', serif;
     }
 
     /* ─── Reset + base ─── */
@@ -81,7 +84,7 @@
       display: none;
       -webkit-overflow-scrolling: touch;
     }
-    .tab-panel.active { display: block; }
+    .tab-panel.active { display: block; animation: fadeUp 0.2s ease forwards; }
 
     /* ─── Bottom nav ─── */
     nav {
@@ -203,7 +206,7 @@
       display: flex;
       flex-direction: column;
       transform: translateY(100%);
-      transition: transform 300ms cubic-bezier(0.32,0.72,0,1);
+      transition: transform 380ms cubic-bezier(0.34,1.56,0.64,1);
     }
     .filter-sheet.open { transform: translateY(0); }
 
@@ -470,11 +473,12 @@
 
     .hero-section { padding: 24px 16px 20px; }
     .hero-headline {
-      font-size: 32px;
+      font-family: var(--font-display);
+      font-size: 44px;
       font-weight: 700;
       color: var(--ink);
-      letter-spacing: -0.5px;
-      line-height: 1.2;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
       margin-bottom: 10px;
     }
     .hero-subline {
@@ -760,6 +764,8 @@
       transition: transform 150ms ease-out;
     }
     .weather-hero:active { transform: scale(0.98); }
+    .weather-hero--caution { background: var(--amber); }
+    .weather-hero--avoid   { background: #7A2B2B; }
     .weather-hero-top {
       display: flex;
       align-items: flex-start;
@@ -772,8 +778,11 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 15px;
-      font-weight: 600;
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
     }
     .weather-pills {
       display: flex;
@@ -845,7 +854,7 @@
     .portrait-photo {
       height: 130px;
       position: relative;
-      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #2E7D5E 100%);
+      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
       overflow: hidden;
     }
     .portrait-badge {
@@ -1081,7 +1090,7 @@
 
     /* Cards zone */
     .wx-cards { display: flex; flex-direction: column; gap: 12px; padding: 0 16px 32px; }
-    .wx-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+    .wx-card { background: var(--surface); border: 0.5px solid rgba(0,0,0,0.08); border-radius: 16px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); }
     .wx-card-header { display: flex; align-items: center; justify-content: space-between; }
     .wx-card-title { font: 600 15px/1 'Inter', sans-serif; color: var(--ink); }
     .wx-card-divider { height: 1px; background: var(--border); margin: 12px 0; }
@@ -1234,9 +1243,9 @@
       white-space: nowrap;
     }
     .chip.active {
-      background: var(--brand);
+      background: var(--brand-tint);
       border-color: var(--brand);
-      color: #fff;
+      color: var(--brand);
     }
     [data-nearby-cat] {
       min-height: 44px;
@@ -1273,15 +1282,18 @@
     .walk-card {
       margin: 0 16px 12px;
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: 0.5px solid rgba(0,0,0,0.08);
       border-radius: 16px;
       overflow: hidden;
       cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      transition: transform 150ms cubic-bezier(0.34,1.56,0.64,1);
     }
+    .walk-card:active { transform: scale(0.97); }
     .walk-photo {
       height: 180px;
       position: relative;
-      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #2E7D5E 100%);
+      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
     }
     .walk-photo img {
       width: 100%;
@@ -1596,6 +1608,16 @@
     .me-badge-chip.new-badge {
       animation: badgeIn 200ms ease-out;
     }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes heartPulse {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.35); }
+      70%  { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
     @keyframes badgeIn {
       from { transform: scale(0.8); opacity: 0; }
       to   { transform: scale(1);   opacity: 1; }
@@ -1888,7 +1910,7 @@
       transform: translateY(100%);
       -webkit-transform: translateY(100%);
       will-change: transform;
-      transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
+      transition: transform 380ms cubic-bezier(0.34,1.56,0.64,1);
     }
     .me-settings-sheet.is-open { transform: translateY(0); -webkit-transform: translateY(0); }
     .me-settings-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border); margin: 12px auto 8px; }
@@ -2074,7 +2096,10 @@
       padding: 14px 16px;
     }
     .me-stat-number {
-      font: 700 36px/1 'Inter', sans-serif;
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1;
       color: var(--ink);
       letter-spacing: -1px;
     }
@@ -2297,9 +2322,12 @@
       -webkit-tap-highlight-color: transparent;
     }
     .me-subpage-title {
-      font: 600 17px/1 'Inter', sans-serif;
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1;
       color: var(--ink);
-      letter-spacing: -0.2px;
+      letter-spacing: -0.01em;
       flex: 1;
       text-align: center;
       margin: 0;
@@ -2559,25 +2587,29 @@
       --border:   rgba(255,255,255,0.08);
       --ink:      #F4F2EE;
       --ink-2:    #8A8A8A;
-      --chip-off: #2A2A2A;
-      --brand:    #5C7A63;
+      --chip-off:   #2A2A2A;
+      --brand:      #6A9B4A;
+      --brand-tint: rgba(92,154,74,0.12);
     }
     body.night #nearby-map,
     body.night #walk-detail-map { filter: invert(1) hue-rotate(180deg); }
     body.night .search-input-row { background: var(--surface); }
     body.night .hour-seg.poor { background: var(--border); }
-    body.night .walk-preview-card     { background: rgba(92,122,99,0.07); border-color: rgba(92,122,99,0.18); }
-    body.night .weather-preview-card  { background: rgba(92,122,99,0.08); border-color: rgba(92,122,99,0.20); }
-    body.night .walk-preview-tag      { background: rgba(92,122,99,0.13); color: #5C7A63; }
-    body.night .weather-preview-title { color: #5C7A63; }
-    body.night .today-conditions-card { background: rgba(92,122,99,0.07); border-color: rgba(92,122,99,0.18); }
-    body.night .venue-icon            { background: rgba(92,122,99,0.12); }
-    body.night .walk-tag.full         { background: rgba(92,122,99,0.10); border-color: rgba(92,122,99,0.22); }
-    body.night .venue-open-gp.open    { background: rgba(92,122,99,0.12); }
-    body.night .chip.active           { background: rgba(92,122,99,0.10); border-color: rgba(92,122,99,0.22); color: var(--brand); }
-    body.night .hazard-card.brand-variant { background: rgba(92,122,99,0.07); }
-    body.night .weather-hero { background: #5C7A63; }
+    body.night .walk-preview-card     { background: rgba(106,155,74,0.07); border-color: rgba(106,155,74,0.18); }
+    body.night .weather-preview-card  { background: rgba(106,155,74,0.08); border-color: rgba(106,155,74,0.20); }
+    body.night .walk-preview-tag      { background: rgba(106,155,74,0.13); color: #6A9B4A; }
+    body.night .weather-preview-title { color: #6A9B4A; }
+    body.night .today-conditions-card { background: rgba(106,155,74,0.07); border-color: rgba(106,155,74,0.18); }
+    body.night .venue-icon            { background: rgba(106,155,74,0.12); }
+    body.night .walk-tag.full         { background: rgba(106,155,74,0.10); border-color: rgba(106,155,74,0.22); }
+    body.night .venue-open-gp.open    { background: rgba(106,155,74,0.12); }
+    body.night .chip.active           { background: rgba(106,155,74,0.10); border-color: rgba(106,155,74,0.22); color: var(--brand); }
+    body.night .hazard-card.brand-variant { background: rgba(106,155,74,0.07); }
+    body.night .weather-hero { background: #6A9B4A; }
     body.night .me-stat-card--primary .me-stat-number { color: var(--ink); }
+    body.night .walk-card,
+    body.night .venue-card-gp,
+    body.night .wx-card { box-shadow: none; border-color: rgba(255,255,255,0.08); }
 
     /* ═══════════════════════════════
        LOADING STATE
@@ -2628,13 +2660,16 @@
       flex-direction: column;
       gap: 0;
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: 0.5px solid rgba(0,0,0,0.08);
       border-radius: 16px;
       overflow: hidden;
       margin: 0 16px 10px;
       text-decoration: none;
       color: inherit;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      transition: transform 150ms cubic-bezier(0.34,1.56,0.64,1);
     }
+    .venue-card-gp:active { transform: scale(0.97); }
     .venue-fav-btn {
       position: absolute;
       top: 8px;
@@ -2672,7 +2707,7 @@
       display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
       font-size: 13px; color: var(--ink-2); margin-top: 2px;
     }
-    .venue-rating-gp { color: #D97706; font-weight: 500; }
+    .venue-rating-gp { color: #B07A28; font-weight: 500; }
     .venue-open-gp  { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 99px; }
     .venue-open-gp.open   { background: rgba(59,92,42,0.1); color: var(--brand); }
     .venue-open-gp.closed { background: rgba(220,38,38,0.08); color: var(--red); }
@@ -2817,7 +2852,7 @@
     }
     .trail-card-photo {
       height: 180px;
-      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #2E7D5E 100%);
+      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
       position: relative;
       overflow: hidden;
     }
@@ -2849,7 +2884,7 @@
     }
     .trail-card-body { padding: 10px 12px 14px; }
     .trail-card-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 4px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .trail-card-rating { font-size: 13px; color: #D97706; font-weight: 500; margin-bottom: 4px; }
+    .trail-card-rating { font-size: 13px; color: #B07A28; font-weight: 500; margin-bottom: 4px; }
     .trail-card-meta { font-size: 12px; color: var(--ink-2); margin-bottom: 2px; }
     .trail-card-dist-away { font-size: 12px; color: var(--ink-2); margin-bottom: 6px; }
     .trail-card-tags { display: flex; gap: 4px; flex-wrap: nowrap; overflow: hidden; }
@@ -3167,7 +3202,7 @@
       z-index: 300;
       background: var(--bg);
       transform: translateY(100%);
-      transition: transform 300ms cubic-bezier(0.32,0.72,0,1);
+      transition: transform 380ms cubic-bezier(0.34,1.56,0.64,1);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -3226,7 +3261,7 @@
     .walk-detail-hero {
       width: 100%;
       height: 220px;
-      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #2E7D5E 100%);
+      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
       position: relative;
       flex-shrink: 0;
     }
@@ -3332,10 +3367,11 @@
       border-bottom: 1px solid var(--border);
     }
     .walk-detail-name {
-      font-size: 20px;
-      font-weight: 700;
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 600;
       color: var(--ink);
-      letter-spacing: -0.3px;
+      letter-spacing: -0.01em;
       line-height: 1.25;
       margin-bottom: 4px;
     }
@@ -3349,7 +3385,7 @@
     }
     .walk-detail-rating {
       font-size: 14px;
-      color: #D97706;
+      color: #B07A28;
       font-weight: 500;
       margin-bottom: 14px;
     }
@@ -3615,7 +3651,7 @@
       <!-- Birthday banner (hidden until checkBirthdayBanner shows it) -->
       <div id="todayBirthdayBanner" class="today-birthday-banner" style="display:none">
         <div class="today-birthday-text">
-          <svg width="16" height="12" viewBox="0 0 48 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M24 2C30 2 43 8 43 18C43 28 35 36 24 36C13 36 5 28 5 18C5 8 18 2 24 2Z" fill="#FFFFFF"/><ellipse cx="15.5" cy="21" rx="5.5" ry="5.5" fill="#3B5C2A"/><ellipse cx="32.5" cy="21" rx="5.5" ry="5.5" fill="#3B5C2A"/><rect x="22" y="7" width="4" height="9" rx="2" fill="#3B5C2A"/></svg>
+          <svg width="16" height="12" viewBox="0 0 48 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M24 2C30 2 43 8 43 18C43 28 35 36 24 36C13 36 5 28 5 18C5 8 18 2 24 2Z" fill="#FFFFFF"/><ellipse cx="15.5" cy="21" rx="5.5" ry="5.5" fill="#2C4A14"/><ellipse cx="32.5" cy="21" rx="5.5" ry="5.5" fill="#2C4A14"/><rect x="22" y="7" width="4" height="9" rx="2" fill="#2C4A14"/></svg>
           <span id="todayBirthdayMsg"></span>
         </div>
         <button class="today-birthday-dismiss" aria-label="Dismiss" onclick="document.getElementById('todayBirthdayBanner').style.display='none'">&#x2715;</button>
@@ -5530,7 +5566,7 @@
     });
 
     content.innerHTML =
-      '<div class="weather-hero" onclick="switchTab(\'weather\')">' +
+      '<div class="weather-hero' + (verdict.type === 'caution' || verdict.type === 'caveat' ? ' weather-hero--caution' : verdict.type === 'avoid' ? ' weather-hero--avoid' : '') + '" onclick="switchTab(\'weather\')">' +
         '<div class="weather-hero-top">' +
           '<div>' +
             '<div class="weather-hero-temp">' + temp + '°C</div>' +
@@ -5538,7 +5574,7 @@
           '</div>' +
           heroIconHtml +
         '</div>' +
-        '<div class="weather-verdict">' + verdict.title + '</div>' +
+        '<div class="weather-verdict">' + verdict.title + (getDogName() ? ' for ' + getDogName() : '') + '</div>' +
         '<div class="weather-pills">' +
           '<span class="weather-pill">' + luIcon('droplets', 14) + ' ' + humidity + '%</span>' +
           '<span class="weather-pill">' + luIcon('wind', 14) + ' ' + wind + ' km/h</span>' +
@@ -7016,7 +7052,7 @@
         hint.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
         hero.appendChild(hint);
       } else {
-        hero.style.background = "url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #2E7D5E 100%)";
+        hero.style.background = "url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%)";
         hero.style.cursor = '';
         hero.onclick = null;
       }
@@ -8676,6 +8712,11 @@
       el.classList.toggle('fav-active', nowFav);
       el.setAttribute('aria-label', nowFav ? 'Remove from favourites' : 'Add to favourites');
       el.innerHTML = heartSVG(nowFav);
+      if (nowFav) {
+        el.style.animation = 'none';
+        el.offsetHeight; // reflow
+        el.style.animation = 'heartPulse 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+      }
     });
     updateMeStats();
     renderFavouritesList();
@@ -9676,7 +9717,7 @@
               '<path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' +
             '</svg>' +
           '</div>' +
-          '<p class="me-subpage-empty-head">Your walks will appear here</p>' +
+          '<p class="me-subpage-empty-head">Your walks start here.</p>' +
           '<p class="me-subpage-empty-body">After any walk, tap Log this walk on the walk card, or use + Log a walk to add your own routes.</p>' +
         '</div>';
       return;
@@ -9763,7 +9804,11 @@
     if (!el) return;
     var earned = getEarnedBadges();
     if (earned.length === 0) {
-      el.innerHTML = '';
+      el.innerHTML =
+        '<div class="me-subpage-empty">' +
+          '<p class="me-subpage-empty-head">Badges find you.</p>' +
+          '<p class="me-subpage-empty-body">Log walks and explore new routes - your first badge is closer than you think.</p>' +
+        '</div>';
       return;
     }
     var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -9838,8 +9883,8 @@
               '<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>' +
             '</svg>' +
           '</div>' +
-          '<p class="me-subpage-empty-head">No saved walks yet</p>' +
-          '<p class="me-subpage-empty-body">Heart a walk to mark it as Sniffed and approved, or bookmark one for your sniff list.</p>' +
+          '<p class="me-subpage-empty-head">Nothing saved yet.</p>' +
+          '<p class="me-subpage-empty-body">Tap the bookmark on any walk to add it to your list.</p>' +
         '</div>';
       return;
     }
@@ -11349,7 +11394,7 @@
 
     // User location pin
     L.circleMarker([lat, lon], {
-      radius: 8, color: '#3B5C2A', fillColor: '#3B5C2A', fillOpacity: 0.9, weight: 2
+      radius: 8, color: '#2C4A14', fillColor: '#2C4A14', fillOpacity: 0.9, weight: 2
     }).addTo(nearbyMap).bindPopup('You are here');
 
     updateMapMarkers();
