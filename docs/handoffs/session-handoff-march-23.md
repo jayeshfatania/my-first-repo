@@ -85,7 +85,7 @@ No branches, no PRs, no staging environment. Push directly to main. GitHub Pages
 | Service worker | `sw.js` — network-first, cache fallback, cache key `sniffout-v2` |
 | PWA manifest | `manifest.json` — `start_url` set to `/sniffout-v2.html`, `theme_color` `#3B5C2A` |
 | Brand colour | `#3B5C2A` (Meadow Green) — fully implemented throughout |
-| Firebase | Compat SDK v10.12.0 (CDN) — project `sniffout-fe976`, region `europe-west2`. Anonymous auth + Firestore dual-write + Storage. **API key corrected 22 March** (previous key belonged to wrong project). Foundation only — full migration is Phase 3. |
+| Firebase | Compat SDK v10.12.0 (CDN) — project `sniffout-fe976`, region `europe-west2`. Anonymous auth + Firestore dual-write + Storage. Foundation only — full migration is Phase 3. |
 | OS Maps | Ordnance Survey Data Hub, project "sniffout". Standard/OS Map toggle above map on Walks and Nearby tabs. ZXY endpoint: `https://api.os.uk/maps/raster/v1/zxy/{style}_3857/{z}/{x}/{y}.png`. API key: `JcMmulbTghzn8pkYAGdxd8MH6GTK2314`. Premium Data Plan active. **Leisure tiles still not activating** — support ticket not yet raised. Owner to raise ticket with OS Data Hub. Currently defaults to Standard (OSM). **Note: API key is currently in page source — deferred to pre-launch security review (H10).** |
 
 ### Local dev
@@ -105,9 +105,9 @@ Google Places API key is secured behind the Cloudflare Worker proxy at `places-p
 
 OS Maps API key is currently hardcoded in page source. This is a known pre-launch security item (H10 in `docs/ux-reviews/ux-review-march-22.md`) — deferred to a dedicated pre-launch security review.
 
-### Google Cloud billing — action required
+### Google Cloud billing — resolved 23 March 2026
 
-The owner received an email about trial credit dropping below $50. A billing account must be set up before the trial credit runs out to avoid interruption to the Google Places API (Nearby tab). The $200 free monthly tier covers current usage — there is no ongoing cost once billing is set up, but the billing account must exist before the trial credit expires.
+Owner upgraded to pay-as-you-go billing. A £15 budget alert has been set. No further action required. The $200 free monthly tier covers current usage.
 
 ### Firebase status (as of 23 March 2026)
 
@@ -559,25 +559,28 @@ Lucide pinned to version 0.577.0 in the CDN import. Do not change the version wi
 
 `me-stat-card--primary` number colour is `var(--ink)` in both light and dark mode. Documented in CLAUDE.md. Do not add a colour override without explicit owner instruction.
 
+### Settings radius filter — removed
+
+Both the Walks tab and the Nearby tab have inline radius pickers writing to the same `sniffout_radius` key. The Settings control was redundant and risked confusing users. Removed in Round 24, 23 March 2026. The `sniffout_radius` key itself is unchanged.
+
 ### Push notifications — owner decisions confirmed (Phase 3)
 
-Full research report at `docs/research/push-notifications-research.md`. Owner decisions confirmed:
+Full research report at `docs/research/push-notifications-research.md`. Formal spec at `docs/specs/push-notifications-phase3-spec.md`. Owner decisions confirmed:
 
 - **Notification types at launch:** Hazard-only — Types 1-5: extreme heat, paw heat warning, storm, dangerous wind, freeze/ice. Morning walk reminder (Type 6) and rain incoming (Type 7) deferred to post-launch follow-up.
 - **Infrastructure:** Firebase Cloud Functions. No third-party services (OneSignal etc.) — keeps all data within Firebase/europe-west2.
 - **Home location:** Banner prompt on Today tab after postcode search ("Save as home location?") plus editable in Me tab settings. Stored in `sniffout_home_location` localStorage and Firestore user document.
 - **Quiet hours:** 9pm-7am UK time (GMT/BST, DST-aware). No notifications outside this window regardless of trigger.
-- **Full implementation:** Phase 3, gated on Firebase full migration and GDPR sign-off (L1). 12-step implementation order documented in research report.
-- **Formal spec still needed** — PO to produce Phase 3 push notification spec before implementation begins.
+- **Full implementation:** Phase 3. Spec complete. Build can proceed once Firebase full migration is complete. GDPR sign-off (L1) and solicitor review of consent mechanism are go-live prerequisites only — not build prerequisites.
 
 ### Deferred UX review items (from ux-review-march-22.md)
 
-These four items were reviewed and deliberately deferred. Do not attempt to implement without explicit owner instruction:
+Of the four originally deferred items, three have now been resolved (23 March 2026). One remains deferred:
 
-- **B2: `beforeunload` handler** — the handler currently fires a leave-page dialog on all navigation. A surgical fix is needed that only fires when there is genuinely unsaved data. Owner has seen the dialog only a couple of times in normal use — not urgent. Test on device before changing; the handler was originally added to fix the Android back button closing the browser. Fix carefully.
-- **H10: OS Maps API key in page source** — deferred to dedicated pre-launch security review, alongside Google Places proxy review.
-- **M5: Duplicate row-building code in `renderMeWalkLog()`/`meExpandWalkLog()`** — deferred to a dedicated refactoring round.
-- **M7: Inline styles in `renderCondTagSheet()`** — deferred to a dedicated refactoring round.
+- **B2: `beforeunload` handler** — RESOLVED 23 March 2026. Surgical fix implemented. Handler now only fires when the dog profile subpage is open. Android back button protection is preserved. Leave-page dialog no longer fires on general navigation.
+- **H10: OS Maps API key in page source** — still deferred to dedicated pre-launch security review, alongside Google Places proxy review.
+- **M5: Duplicate row-building code** — RESOLVED 23 March 2026. `buildMeWalkRow()` helper extracted. Both `renderMeWalkLog()` and `meExpandWalkLog()` updated to call it. Visual output unchanged.
+- **M7: Inline styles in `renderCondTagSheet()`** — RESOLVED 23 March 2026. Inline styles moved to named CSS classes. Visual output unchanged.
 
 ### Pre-launch blockers — current status
 
@@ -645,19 +648,13 @@ Premium Data Plan is active but Leisure tiles are still not rendering. A support
 
 **Next action:** Owner to raise support ticket with OS Data Hub.
 
-### 2. Google Cloud billing — action required (owner action)
+### 2. Push notification Phase 3 spec — complete
 
-Owner received an email about trial credit dropping below $50. A billing account must be set up before the credit runs out to avoid interruption to the Google Places API (Nearby tab).
+Spec written and saved to `docs/specs/push-notifications-phase3-spec.md`. All owner decisions formalised. 12-step implementation order documented. Build/go-live distinction clarified: development can proceed once Firebase full migration is complete; GDPR sign-off and solicitor review are go-live prerequisites only.
 
-**Next action:** Owner to set up billing account in Google Cloud console. The $200 free monthly tier covers current usage — no ongoing cost, but the billing account must exist.
+**No further action until Phase 3 blockers are cleared.**
 
-### 3. Push notification spec (PO task)
-
-Research is complete and owner decisions are confirmed. A formal Phase 3 spec document should be produced before Firebase migration begins, so the Developer brief is ready when needed.
-
-**Next action:** PO to produce formal push notification spec based on confirmed decisions in `docs/research/push-notifications-research.md`.
-
-### 4. Photos for 7 showcase carousel walks (priority — owner action)
+### 3. Photos for 7 showcase carousel walks (priority — owner action)
 
 The State A showcase carousel features 7 specific walks. These are the most visible walks in the app for a first-time user.
 
@@ -665,23 +662,37 @@ Walks: `isabella-plantation`, `stanage-edge`, `balmaha-loch-lomond`, `rhossili-g
 
 **Next action:** Owner to source photos. Push image files to repo before referencing in `WALKS_DB`.
 
-### 5. UX review follow-up — deferred items outstanding
+### 4. UX review follow-up — one item remaining
 
-Four items from `docs/ux-reviews/ux-review-march-22.md` are deliberately deferred. See Section 6 "Deferred UX review items" for full details and rationale.
+Three of the four originally deferred UX items from `docs/ux-reviews/ux-review-march-22.md` were resolved on 23 March 2026 (B2, M5, M7 — see Section 6). One item remains:
 
-**Next action:** B2 (`beforeunload` handler) is the most impactful. Owner to decide when to tackle. Others can wait for dedicated refactoring rounds.
+**H10: OS Maps API key in page source** — deferred to dedicated pre-launch security review.
 
-### 6. Walk image sourcing — 97 remaining (ongoing — owner action)
+**Next action:** Owner to decide when to schedule the pre-launch security review round.
 
-97 walks still use `placeholder-walk.jpg`. 3 have real photos. Showcase carousel walks (item 4 above) are the priority.
+### 5. Walk image sourcing — 97 remaining (ongoing — owner action)
+
+97 walks still use `placeholder-walk.jpg`. 3 have real photos. Showcase carousel walks (item 3 above) are the priority.
 
 **Next action:** Owner to direct sourcing strategy.
 
-### 7. Solicitor engagement (owner action — outstanding blocker)
+### 6. Solicitor engagement (owner action — outstanding blocker)
 
 L1, L2/L3, L4, and L5 all blocked on solicitor engagement.
 
 **Next action:** Owner engages solicitor. Target: at least 4 weeks before any beta launch date.
+
+### 7. Developer Round 24 — completed 23 March 2026
+
+- `playground` and `playground_equipment` added to `primaryType` exclusion list in `fetchGreenSpacesForWalks`
+- Today tab hero card `isDay` fix — weather and verdict icons now use freshly evaluated `isDay` at render time
+- Settings radius filter removed — `sniffout_radius` key unchanged
+
+### 8. Developer round — completed 23 March 2026 (deferred UX items resolved)
+
+- **B2 `beforeunload` handler** — surgical fix. Handler now only fires when dog profile subpage is open. Android back button protection preserved.
+- **M5** — `buildMeWalkRow()` helper extracted. `renderMeWalkLog()` and `meExpandWalkLog()` both updated to call it. Output identical.
+- **M7** — `renderCondTagSheet()` inline styles moved to named CSS classes. Visual output unchanged.
 
 ---
 
@@ -690,25 +701,24 @@ L1, L2/L3, L4, and L5 all blocked on solicitor engagement.
 ### Immediate (in priority order)
 
 1. **OS Maps support ticket** — owner to raise with OS Data Hub. Leisure tiles still not activating.
-2. **Push notification Phase 3 spec** — PO to produce formal spec document based on confirmed decisions in `docs/research/push-notifications-research.md`.
+2. **Push notification Phase 3 spec** — complete. Saved to `docs/specs/push-notifications-phase3-spec.md`. No further action until Phase 3 blockers are cleared.
 3. **Walk photos** — 7 showcase carousel walks are the priority. 97 walks still use `placeholder-walk.jpg`.
-4. **UX review follow-up** — deferred items from `docs/ux-reviews/ux-review-march-22.md`. B2 (`beforeunload`) is most impactful.
-5. **Google Cloud billing** — owner to set up billing account before trial credit runs out. Avoids Places API interruption.
-6. **Solicitor engagement** — L1-L5 all blocked. Owner must engage solicitor before any beta launch date.
+4. **UX review follow-up** — three of four deferred items from `docs/ux-reviews/ux-review-march-22.md` resolved 23 March (B2, M5, M7). One item remains: H10 (OS Maps API key in page source — deferred to security review).
+5. **Solicitor engagement** — L1-L5 all blocked. Owner must engage solicitor before any beta launch date.
 
 ### Soon (Phase 2 remaining)
 
 - **Walk image sourcing** — 97 walks need photos. Owner to direct.
 - **Copy review session** — all UI copy reviewed against brand voice.
 - **Walk Wrapped summary** — twice yearly (July and December/January). Walk log foundation exists. Needs Designer spec.
-- **Brand guidelines document** — Meadow Green `#3B5C2A` confirmed but full guidelines not yet produced.
+- **Brand guidelines document** — Designer task. Read CLAUDE.md and relevant spec files, produce a consolidated brand reference document. Not urgent before beta launch - priority increases when external people are brought in.
 - **MoSCoW prioritisation** — owner to complete when ready to triage the backlog.
-- **Pre-launch checklist review** — PO to update `docs/po/pre-launch-checklist.md`. Several items resolved (T1, T14), new items emerged (OS Maps key, push notification consent, Google Cloud billing).
+- **Pre-launch checklist review** — PO to update `docs/po/pre-launch-checklist.md`. Several items resolved (T1, T14), new items emerged (OS Maps key, push notification consent).
 
 ### Phase 3 (priority order — confirmed)
 
 1. **Firebase full migration** — foundation is live. Phase 3 completes: authenticated user accounts, server-side walk log reads, full localStorage → Firestore migration. Region `europe-west2`. GDPR sign-off (L1) is hard prerequisite.
-2. **Push notifications** — Firebase Cloud Functions, hazard-only types at launch. Research complete. Formal spec to be produced. GDPR sign-off required before any real users.
+2. **Push notifications** — Firebase Cloud Functions, hazard-only types at launch. Research complete. Formal spec complete at `docs/specs/push-notifications-phase3-spec.md`. Build can proceed once Firebase full migration is complete. GDPR sign-off and solicitor review are go-live prerequisites only.
 3. **Report an issue** — Firestore-backed submission form.
 4. **Missing Dog alerts** — Firestore-backed, map layer.
 5. **User-submitted walks** — editorial review before publish, curated vs community badge.
@@ -803,7 +813,7 @@ All files in `~/Desktop/my-first-repo/`. Documentation files are organised into 
 | File | Purpose |
 |------|---------|
 | `docs/research/firebase-setup-plan.md` | Firebase architecture and setup plan for Phase 3. |
-| `docs/research/push-notifications-research.md` | **Push notification research.** Technical architecture, notification types, home location design, implementation order. Owner decisions confirmed. Formal spec still to be written. |
+| `docs/research/push-notifications-research.md` | **Push notification research.** Technical architecture, notification types, home location design, implementation order. Owner decisions confirmed. Formal spec complete at `docs/specs/push-notifications-phase3-spec.md`. |
 | `docs/research/dog-friendly-venues-research.md` | Research on dog-friendly venue data sources for Nearby tab. |
 | `docs/research/breed-hazard-research.md` | **Breed and dog-specific hazard research.** VetCompass data, seasonal hazards, threshold recommendations. Basis for breed-hazard-spec.md. |
 
@@ -959,12 +969,14 @@ Confirm push by checking `https://sniffout.app/sniffout-v2.html` — allow ~1 mi
 18. **Firebase API key corrected** — correct key is `sniffout-fe976` browser key. Anonymous auth and Firestore dual-write working.
 19. **OS Maps toggle is live** — Leisure tiles still pending. Owner to raise support ticket. API key in page source — deferred security review (H10).
 20. **Green spaces uses multi-query with dedup** — four queries: `parks`, `nature reserve`, `common land`, `country park`. No location name in textQuery. Do not revert to single query.
-21. **Push notification decisions confirmed** — hazard-only at launch (Types 1-5), Firebase Cloud Functions, home location via banner prompt + settings. Formal Phase 3 spec still to be written.
-22. **Four UX items deliberately deferred** — B2 (`beforeunload`), H10 (OS Maps key), M5 (duplicate code), M7 (inline styles). Do not implement without owner direction.
+21. **Push notification decisions confirmed and spec complete** — hazard-only at launch (Types 1-5), Firebase Cloud Functions, home location via banner prompt + settings. Formal Phase 3 spec at `docs/specs/push-notifications-phase3-spec.md`. GDPR sign-off and solicitor review are go-live prerequisites only, not build prerequisites.
+22. **UX deferred items — three resolved, one remaining** — B2 (`beforeunload`), M5 (duplicate code), and M7 (inline styles) all resolved 23 March 2026. H10 (OS Maps API key in page source) remains deferred to dedicated pre-launch security review.
 23. **Lucide pinned to v0.577.0** — do not change CDN version without explicit instruction.
 24. **Recently Viewed in Me tab** — `sniffout_recent_walks`, up to 10 walks, subpage overlay. Removed from Today tab pills.
 25. **Active dog profile key is `sniffout_dogs` (plural array)** — `sniffout_dog` (singular) is deprecated and migrated. Do not use `sniffout_dog` in any new code.
 26. **Breed/age hazard personalisation is live** — brachycephalic (27°C), double-coat (30°C), senior (30°C heat / -2°C cold), small dog cold advisory (5°C), puppy cold advisory (2°C). Five seasonal hazards active. All logic in `detectHazards()` and `getPawSafety()`. Spec at `docs/specs/breed-hazard-spec.md`.
 27. **Agent prompts must be code blocks** — for easy copy-paste. Never prose.
 28. **For code checks, use terminal grep** — not the uploaded file, which goes stale.
-29. **Google Cloud billing action required** — trial credit below $50. Set up billing account before credit runs out.
+29. **Google Cloud billing resolved 23 March 2026** — upgraded to pay-as-you-go, £15 budget alert set. No further action needed.
+30. **Push notifications Phase 3 spec is complete** — saved to `docs/specs/push-notifications-phase3-spec.md`. GDPR sign-off and solicitor review are go-live prerequisites only, not build prerequisites.
+31. **Brand guidelines document is a future Designer task** — not urgent before beta launch. Priority increases when external people are brought in.
