@@ -23,14 +23,18 @@ Closest competitor is PlayDogs (France/Switzerland, 170k downloads), but it reli
 ## Design Principles
 
 Mobile-first, uncluttered, modern and slick. **v2 uses a clean card-based design — glassmorphism has been removed.** Key decisions locked:
-- Brand colour: `#3B5C2A` (Meadow green)
+- Brand colour: `#2C4A14` (Woodland green)
 - Background: `#F7F5F0` (warm off-white)
 - Typography: Inter 400/500/600/700 only
 - Cards: `border-radius: 16px`, `1px solid var(--border)`, no blur or translucent surfaces
 - Dark mode: `body.night` class, toggled manually via Settings ("Auto" option). Not automatic based on weather.
-- Me tab primary stat card (`me-stat-card--primary`): number colour is `var(--ink)` in both light and dark mode, consistent with all other stat card numbers. Do not add a colour override without explicit owner instruction.
+- Me tab primary stat card (`me-stat-card--primary`): number colour is `var(--brand)` in light mode and `#6A9B4A` in dark mode. Secondary stat numbers remain `var(--ink)`.
 
 Nothing gimmicky. Paw emoji (🐾) reserved for paw safety block only.
+
+## Interaction design principles
+
+Tap feedback rule: every tappable element must have consistent tap feedback. Apply `transition: transform 0.15s ease` and `transform: scale(0.97)` on `:active` to all interactive elements. No exceptions. This applies to cards, tiles, rows, chips, pills, buttons, and any other tappable surface. Bottom sheets must use the spring cubic-bezier open animation: `cubic-bezier(0.34, 1.56, 0.64, 1)`. All new interactive elements added in future rounds must include tap feedback.
 
 ## Deferred — Do Not Implement Without Instruction
 
