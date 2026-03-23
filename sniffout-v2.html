@@ -8483,7 +8483,8 @@
         }
       }
       localStorage.setItem(DOGS_KEY, JSON.stringify(dogs));
-    } catch(e) {}
+    } catch(e) { return false; }
+    return true;
   }
 
   function getDogName() {
@@ -10194,6 +10195,9 @@
     // Hide confirm
     var confirmEl = document.getElementById('dogSettingsConfirm');
     if (confirmEl) confirmEl.style.display = 'none';
+    // Save button label — context-aware
+    var saveBtn = document.querySelector('.dog-settings-save-btn');
+    if (saveBtn) saveBtn.textContent = dog ? 'Update dog profile' : 'Save dog profile';
   }
 
   function handleDogBreedChange() {
@@ -10274,20 +10278,31 @@
     var bdMonth  = bdMonthEl && bdMonthEl.value ? parseInt(bdMonthEl.value) : null;
     var bdYear   = bdYearEl  && bdYearEl.value  ? parseInt(bdYearEl.value)  : null;
     var birthday = (bdDay || bdMonth || bdYear) ? { day: bdDay, month: bdMonth, year: bdYear } : null;
-    saveDogProfile({ name: name, breed: breed || null, size: size, tags: activeTags, birthday: birthday });
     var saveBtn = document.querySelector('.dog-settings-save-btn');
-    if (saveBtn) {
-      saveBtn.textContent  = 'Saved';
-      saveBtn.style.opacity = '0.75';
-      setTimeout(function() {
-        saveBtn.textContent   = 'Save dog profile';
-        saveBtn.style.opacity = '';
-        closeMeSettingsSheet();
+    var prevLabel = saveBtn ? saveBtn.textContent : 'Save dog profile';
+    var ok = saveDogProfile({ name: name, breed: breed || null, size: size, tags: activeTags, birthday: birthday });
+    if (ok !== false) {
+      if (saveBtn) {
+        saveBtn.innerHTML = luIcon('check', 16) + ' Saved';
+        saveBtn.style.background = 'var(--brand)';
+        saveBtn.style.color = '#fff';
+        if (window.lucide) lucide.createIcons();
+      }
+      var dogSaveCloseTimer = setTimeout(function() {
+        closeMeSubpage('dog');
         renderMeTab();
-      }, 900);
+      }, 1500);
     } else {
-      closeMeSettingsSheet();
-      renderMeTab();
+      if (saveBtn) {
+        saveBtn.textContent = 'Save failed - try again';
+        saveBtn.style.background = 'var(--red)';
+        saveBtn.style.color = '#fff';
+        setTimeout(function() {
+          saveBtn.textContent = prevLabel;
+          saveBtn.style.background = '';
+          saveBtn.style.color = '';
+        }, 2000);
+      }
     }
   }
 
@@ -10341,11 +10356,9 @@
   function renderWalkCard(walk) {
     var fav     = isFavourited(walk.id);
     var ol      = offLeadLabel(walk.offLead);
-    var photoStyle = walk.imageUrl
-      ? ''
-      : 'background:var(--brand);';
+    var photoStyle = '';
     var photoInner = walk.imageUrl
-      ? '<img src="' + walk.imageUrl + '" alt="' + walk.name + '" loading="lazy">'
+      ? '<img src="' + escHtml(walk.imageUrl) + '" alt="' + escHtml(walk.name) + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">'
       : '';
     var badgeText  = walk.badge || (walk.source === 'places' ? 'Nearby' : '');
     var badgeHTML  = badgeText ? '<div class="walk-badge">' + badgeText + '</div>' : '';
@@ -10388,8 +10401,10 @@
 
   function renderPortraitCard(walk) {
     var fav = isFavourited(walk.id);
-    var photoStyle = walk.imageUrl ? '' : 'background:var(--brand);';
-    var photoInner = walk.imageUrl ? '<img src="' + walk.imageUrl + '" alt="' + walk.name + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">' : '';
+    var photoStyle = '';
+    var photoInner = walk.imageUrl
+      ? '<img src="' + escHtml(walk.imageUrl) + '" alt="' + escHtml(walk.name) + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">'
+      : '';
     var badgeHTML  = walk.badge ? '<div class="portrait-badge">' + walk.badge + '</div>' : '';
 
     return (
@@ -10454,7 +10469,7 @@
     return (
       '<div class="trail-card" onclick="onWalkTap(\'' + walk.id + '\')">' +
         '<div class="trail-card-photo">' +
-          (walk.imageUrl ? '<img src="' + walk.imageUrl + '" alt="' + escHtml(walk.name) + '" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;">' : '') +
+          (walk.imageUrl ? '<img src="' + escHtml(walk.imageUrl) + '" alt="' + escHtml(walk.name) + '" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;">' : '') +
           badgeHTML + condDot +
           '<button class="trail-heart' + (isFavourited(walk.id) ? ' fav-active' : '') + '" data-heart="' + walk.id + '" ' +
             'aria-label="' + (isFavourited(walk.id) ? 'Remove from' : 'Add to') + ' favourites" ' +
@@ -10489,7 +10504,7 @@
         : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(gs.name);
     var thumbHtml = gs.photoUrl
       ? '<div class="gs-thumb"><img data-photo-meta="' + gs.photoUrl + '" alt="" loading="lazy"></div>'
-      : '<div class="gs-thumb"></div>';
+      : '<div class="gs-thumb" style="background-image:url(\'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg\');background-size:cover;background-position:center;"></div>';
     var gsId = escHtml(gs.id || gs.name);
     var isFav = isGreenspaceFavourited(gs.id || gs.name);
     var heartStyle = isFav ? 'fill:var(--red);stroke:var(--red);' : '';
@@ -11219,9 +11234,15 @@
     if (venue.isOpen === true)  openHtml = '<span class="venue-open-gp open">Open now</span>';
     if (venue.isOpen === false) openHtml = '<span class="venue-open-gp closed">Closed</span>';
 
+    var venuePlaceholders = {
+      pub:  'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-pub.png',
+      cafe: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-cafe.png',
+      vet:  'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-vet.png'
+    };
+    var venuePlaceholder = venuePlaceholders[venue.cat] || 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg';
     var photoHtml = venue.photoUrl
       ? '<div class="venue-card-photo-gp"><img data-photo-meta="' + venue.photoUrl + '" alt="" loading="lazy"></div>'
-      : '<div class="venue-card-photo-gp"></div>';
+      : '<div class="venue-card-photo-gp" style="background-image:url(\'' + venuePlaceholder + '\');background-size:cover;background-position:center;"></div>';
 
     var isFaved   = venue.placeId ? isPlaceFavourited(venue.placeId) : false;
     var heartHtml = venue.placeId
