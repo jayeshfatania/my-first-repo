@@ -411,6 +411,9 @@
     .cond-tag-option .cond-option-icon { color: var(--ink-2); flex-shrink: 0; }
     .cond-tag-option.selected .cond-option-icon { color: var(--brand); }
     .cond-tag-option .cond-option-check { margin-left: auto; color: var(--brand); flex-shrink: 0; }
+    .cond-sheet-header { padding: 16px 16px 4px; }
+    .cond-sheet-title { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .cond-sheet-subtitle { font-size: 13px; color: var(--ink-2); }
 
     /* ─── Active filter indicator on funnel button ─── */
     .filter-btn { position: relative; }
@@ -6944,8 +6947,15 @@
   }
 
   window.addEventListener('beforeunload', function(e) {
-    e.preventDefault();
-    e.returnValue = '';
+    // Only block navigation when the dog profile sheet is open (unsaved edits may be present).
+    // Without any guard this dialog fired on all navigation, which was wrong.
+    // The handler is kept so Android back-button cannot silently close the app when history
+    // empties and the dog sheet is open.
+    var dogSheet = document.getElementById('subpageDog');
+    if (dogSheet && dogSheet.classList.contains('is-open')) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
   });
 
   window.addEventListener('popstate', function() {
@@ -7434,9 +7444,9 @@
 
   function renderCondTagSheet() {
     var categories = ['Hazard', 'Surface', 'Positive', 'Footfall'];
-    var html = '<div style="padding:16px 16px 4px;">' +
-      '<div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px;">How were the conditions?</div>' +
-      '<div style="font-size:13px;color:var(--ink-2);">Tap all that apply</div>' +
+    var html = '<div class="cond-sheet-header">' +
+      '<div class="cond-sheet-title">How were the conditions?</div>' +
+      '<div class="cond-sheet-subtitle">Tap all that apply</div>' +
       '</div>';
 
     categories.forEach(function(cat) {
@@ -9477,6 +9487,27 @@
     });
   }
 
+  function buildMeWalkRow(entry, walkById) {
+    var walk    = walkById[entry.id];
+    var name    = walk ? walk.name : entry.id;
+    var dist    = walk ? formatDist(walk.distance) : '';
+    var loc     = walk ? walk.location : '';
+    var meta    = [dist, loc].filter(Boolean).join(' - ');
+    var ts      = entry.ts ? new Date(entry.ts) : null;
+    var dateStr = ts
+      ? ts.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][ts.getMonth()]
+      : '';
+    return (
+      '<div class="me-walk-row" onclick="onWalkTap(\'' + entry.id + '\')">' +
+        '<div class="me-walk-row-left">' +
+          '<span class="me-walk-name">' + escHtml(name) + '</span>' +
+          (meta ? '<span class="me-walk-meta">' + escHtml(meta) + '</span>' : '') +
+        '</div>' +
+        (dateStr ? '<span class="me-walk-date">' + dateStr + '</span>' : '') +
+      '</div>'
+    );
+  }
+
   function renderMeWalkLog(log) {
     var listEl   = document.getElementById('meWalkList');
     var seeAllEl = document.getElementById('meWalksSeeAll');
@@ -9491,24 +9522,7 @@
     var hasMore = reversed.length > SHOW;
 
     listEl.innerHTML = visible.map(function(entry) {
-      var walk = walkById[entry.id];
-      var name = walk ? walk.name : entry.id;
-      var dist = walk ? formatDist(walk.distance) : '';
-      var loc  = walk ? walk.location : '';
-      var meta = [dist, loc].filter(Boolean).join(' - ');
-      var ts   = entry.ts ? new Date(entry.ts) : null;
-      var dateStr = ts
-        ? ts.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][ts.getMonth()]
-        : '';
-      return (
-        '<div class="me-walk-row" onclick="onWalkTap(\'' + entry.id + '\')">' +
-          '<div class="me-walk-row-left">' +
-            '<span class="me-walk-name">' + escHtml(name) + '</span>' +
-            (meta ? '<span class="me-walk-meta">' + escHtml(meta) + '</span>' : '') +
-          '</div>' +
-          (dateStr ? '<span class="me-walk-date">' + dateStr + '</span>' : '') +
-        '</div>'
-      );
+      return buildMeWalkRow(entry, walkById);
     }).join('');
 
     if (seeAllEl) {
@@ -9532,24 +9546,7 @@
 
     var reversed = log.slice().reverse();
     listEl.innerHTML = reversed.map(function(entry) {
-      var walk = walkById[entry.id];
-      var name = walk ? walk.name : entry.id;
-      var dist = walk ? formatDist(walk.distance) : '';
-      var loc  = walk ? walk.location : '';
-      var meta = [dist, loc].filter(Boolean).join(' - ');
-      var ts   = entry.ts ? new Date(entry.ts) : null;
-      var dateStr = ts
-        ? ts.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][ts.getMonth()]
-        : '';
-      return (
-        '<div class="me-walk-row" onclick="onWalkTap(\'' + entry.id + '\')">' +
-          '<div class="me-walk-row-left">' +
-            '<span class="me-walk-name">' + escHtml(name) + '</span>' +
-            (meta ? '<span class="me-walk-meta">' + escHtml(meta) + '</span>' : '') +
-          '</div>' +
-          (dateStr ? '<span class="me-walk-date">' + dateStr + '</span>' : '') +
-        '</div>'
-      );
+      return buildMeWalkRow(entry, walkById);
     }).join('');
 
     if (seeAllEl) seeAllEl.style.display = 'none';
