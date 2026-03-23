@@ -371,8 +371,8 @@ Too oblique for a first-time user who doesn't yet understand what they've found.
 **4. Paw emoji frequency — restrict to paw safety section**
 🐾 is used far too liberally in the current app. In v2, reserve it for the paw safety section specifically. Not on: loading states, contribution banners, share buttons, submit forms, or onboarding cards. Approved copy strings in this document have been updated to reflect this.
 
-**5. Em dashes throughout**
-All dashes in copy strings should be em dashes (—), not hyphens (-) or en dashes (–). Developer to do a search-and-replace pass when implementing.
+**5. Em dashes throughout — rule reversed**
+No em dashes (—) or en dashes (–) anywhere in any copy, descriptions, or UI text. Hyphens only ( - ). This rule applies to all agents and all copy strings. The original recommendation to use em dashes has been overruled by the owner and reversed. An em dash sweep was completed in FIX 29.4. Do not reintroduce em dashes or en dashes in any future copy work.
 
 ---
 

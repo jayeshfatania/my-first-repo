@@ -102,7 +102,7 @@ As of 19 March 2026, a full day of development has been completed. The app has a
 - **FIX 31.4** — Nearby category chips increased to 44px.
 - **FIX 31.5** — Mark as walked button increased to 44px.
 - **FIX 31.6** — Empty name state in Me tab header fixed.
-- **FIX 31.7** — Dark mode card surfaces raised to `#243A2C`.
+- **FIX 31.7** — Dark mode card surfaces raised to `#243A2C` at this point. Subsequently superseded by Dark Slate (Scheme B) palette confirmation - confirmed surface value is `#1F1F1F`. See `docs/specs/dark-mode-schemes.md`.
 - **FIX 31.8** — Leaflet map inverted in dark mode.
 - **FIX 31.9** — Location link underline removed.
 
@@ -131,7 +131,7 @@ As of 19 March 2026, a full day of development has been completed. The app has a
 
 - **Tap to expand walk image** — walk detail overlay image now tappable to open full-screen viewer. Android back button closes the viewer.
 - **Walk images added** — Richmond Park, Wimbledon Common, and Isabella Plantation now have real photos.
-- **Isabella Plantation added to WALKS_DB** — full data, description, and photo. Badge: Hidden gem. Leads only throughout. 0.9 miles, 50 minutes. Walk count now **86**.
+- **Isabella Plantation added to WALKS_DB** — full data, description, and photo. Badge: Hidden gem. Leads only throughout. 0.9 miles, 50 minutes. Walk count at this point was **86** (Batch 02 and Batch 03 have since been added — total is now **100**).
 - **Richmond Park added to Sniffout Picks carousel** — now featured on Today tab.
 - **`renderTrailCard` updated** — walk images now display on trail cards where available.
 - **Portrait card placeholder fixed** — Today tab portrait cards show correct placeholder.
@@ -154,7 +154,7 @@ As of 19 March 2026, a full day of development has been completed. The app has a
 - **Stats card distance label fixed** — km was appearing twice. Number line now shows value only; label line shows "km walked" / "miles walked" cleanly.
 - **Isabella Plantation dedup fixed** — Picks carousel IDs are now collected and excluded from the Hidden Gems filter. Isabella no longer appears in both carousels.
 - **Badge labels fixed** — Sniffout Picks carousel forces `"Sniffout Pick"` badge; Hidden Gems carousel forces `"Hidden gem"` badge. Cards in each carousel always show the correct badge regardless of the walk's default field value.
-- **Dark mode Today tab colour clash partially addressed** — weather hero card overridden to `#1E3D2A` in dark mode. Full dark mode colour rethink is a separate upcoming Designer task.
+- **Dark mode Today tab colour clash partially addressed** — weather hero card overridden to `#1E3D2A` at this point. Dark mode colour rethink completed - Dark Slate (Scheme B) confirmed. Weather hero bg is `#1A3522` per confirmed palette. See `docs/specs/dark-mode-schemes.md`.
 - **Info button moved** — now positioned at the far right of the weather pills row, clearly separated from the filter pills.
 - **Me tab stats card padding normalised** — consistent internal spacing applied.
 - **Dark mode toggle renamed** — "Match device" renamed to "Auto".
@@ -197,12 +197,12 @@ No remaining technical hard blockers. All four outstanding blockers are legal an
 | Batch | Descriptions | Editor review | Validator sign-off | In WALKS_DB |
 |-------|-------------|--------------|-------------------|-------------|
 | Batch 01 | Complete | Complete | Complete | ✅ Live |
-| Batch 02 | Complete | Complete | Complete | ⬜ Awaiting Developer update |
-| Batch 03 | Complete | Complete | Complete | ⬜ Awaiting Developer update |
+| Batch 02 | Complete | Complete | Complete | ✅ Live |
+| Batch 03 | Complete | Complete | Complete | ✅ Live |
 
-**Note:** Isabella Plantation was added individually in Round 33. Walk count is now **86** including Isabella. Batch 02 and Batch 03 are still pending.
+**Note:** All three batches are complete and in the app. Isabella Plantation was added individually in Round 33. Walk count is now **100**. No content updates pending.
 
-**Next action:** Issue combined content update brief to Developer. 40 walks (Batch 02 + Batch 03) to add to `WALKS_DB`.
+**No further action required on content pipeline.**
 
 ---
 
@@ -210,14 +210,14 @@ No remaining technical hard blockers. All four outstanding blockers are legal an
 
 ### Upcoming work — priority order
 
-1. **Batch 02 + 03 content update** — 40 walks validated and ready. Issue combined Developer brief.
+1. **Batch 02 + 03 content update** — ✅ Complete. All 40 walks added to `WALKS_DB`. Walk count is now 100.
 2. **Temperature tap feature** — in development by Developer. `temperature-tap-spec.md` issued. Full remaining day shown in sheet (not capped at 10pm).
 3. **T&C consent screen** — hard go-live blocker (L5). Cannot be built until ToS copy exists (L3). Solicitor-dependent. Add to pre-launch checklist.
 4. **State A first-run screen redesign** — Designer pass needed. Current first-run state needs a full redesign.
 5. **Dark mode colour rethink** — Today tab mint/sage tones clash with the broader dark mode palette. Requires Designer spec before Developer implements.
 6. **Second UX/UI review pass** — after items 4 and 5 are built and implemented. Do not issue before then.
-7. **"25 handpicked walks" copy** — appears in three places across the app. Correct number is 86. Small Developer fix.
-8. **Walk image sourcing** — 83 walks still need real photos. Owner to source or direct.
+7. **Walk count copy** — any hardcoded walk count strings in the app should reflect 100. Use `WALKS_DB.length` dynamically rather than hardcoding any number.
+8. **Walk image sourcing** — 97 walks still need real photos. Owner to source or direct.
 9. **Nearby places placeholder image** — separate from walk card placeholder (`placeholder-walk.jpg`). Owner to create.
 10. **Bottom nav active tab contrast** — further improvement review needed after Round 33 fix. May require another iteration.
 11. **Me tab dashboard alignment polish** — minor refinements deferred pending State A redesign.
@@ -226,7 +226,7 @@ No remaining technical hard blockers. All four outstanding blockers are legal an
 14. **Logo rebuild** — owner creating in Illustrator. Required exports: `icon.svg` (master), `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180x180), `favicon.svg`. No Developer work until exports are ready.
 15. **`sniffout.co.uk` redirect** — defensive registration exists but not yet redirecting to `sniffout.app`. Owner action.
 16. **`hello@sniffout.app` support email** — required for GDPR subject access requests (checklist item B6). Owner action.
-17. **GDPR solicitor engagement** — L1/L2/L3/L4/L5 all blocked on this. Owner action. Target: engaged at least 4 weeks before any beta launch date.
+17. **GDPR solicitor engagement** — L1/L2/L3/L4/L5 are all go-live prerequisites blocked on solicitor engagement. Development of the app itself can continue. Owner must engage solicitor at least 4 weeks before any beta launch date.
 
 ### Phase 2b — post-launch (confirmed deferred)
 
@@ -242,11 +242,13 @@ No remaining technical hard blockers. All four outstanding blockers are legal an
 
 ### Phase 3 (priority order — confirmed)
 
-1. **Firebase backend** — personal data (walk journal, dog profile, notes, photos) cannot safely live in `localStorage` long-term. Highest Phase 3 priority.
-2. **Missing Dog alerts** — community safety feature.
-3. **User-submitted walks** — editorial review before publish, same `WALKS_DB` schema, curated vs community badge distinction.
-4. **Community ratings** — Bayesian weighted, minimum 3 reviews before stars display.
-5. **Push notifications** — post-backend only.
+1. **Firebase full migration** — personal data (walk journal, dog profile, notes, photos) cannot safely live in `localStorage` long-term. Highest Phase 3 priority. Foundation is live (anonymous auth, Firestore dual-write, Storage). Full migration gated on GDPR sign-off (L1 go-live prerequisite).
+2. **Push notifications** — Firebase Cloud Functions, hazard-only types at launch (Types 1-5). Research complete. Formal spec at `docs/specs/push-notifications-phase3-spec.md`. Build can proceed once Firebase full migration is complete. GDPR sign-off and solicitor review are go-live prerequisites only - not build prerequisites.
+3. **Report an issue** — Firestore-backed submission form.
+4. **Missing Dog alerts** — community safety feature. Firestore-backed, map layer.
+5. **User-submitted walks** — editorial review before publish, same `WALKS_DB` schema, curated vs community badge distinction.
+6. **Community ratings** — Bayesian weighted, minimum 3 reviews before stars display.
+7. **Push notifications - follow-up types** — morning walk alert (Type 6), rain incoming (Type 7). Post-launch validation before implementing.
 
 ---
 
@@ -277,7 +279,7 @@ These decisions are locked and should not be revisited without a clear reason.
 | Default dark mode | Light mode is the default for new users. Dark mode requires explicit selection in Settings. | 20 March 2026 |
 | Isabella Plantation | Confirmed as Hidden gem walk. Leads only throughout. 0.9 miles, 50 minutes. Full data, description, and photo in WALKS_DB. | 20 March 2026 |
 | Tap target standard | All interactive tap targets (filter buttons, heart buttons, category chips, action buttons) set to minimum 44px per WCAG and Apple HIG requirements. | 20 March 2026 |
-| Dark mode card surfaces | Raised to `#243A2C` in dark mode. Leaflet map inverted in dark mode. | 20 March 2026 |
+| Dark mode card surfaces | Dark Slate (Scheme B) confirmed. `--surface: #1F1F1F`, `--bg: #141414`, `--border: rgba(255,255,255,0.08)`, weather hero bg `#1A3522`. Leaflet map inverted in dark mode. `#243A2C` value from FIX 31.7 is superseded. Full token set in CLAUDE.md. | 20 March 2026 (Scheme B confirmed 22 March 2026) |
 | Temperature sheet — full day shown | Tappable temperature hero opens a sheet showing the full remaining day's temperatures. Not capped at 10pm — valid use case for summer heat planning. Implemented per `temperature-tap-spec.md`. | 20 March 2026 |
 | Nearby radius enforcement | `locationRestriction` caused empty results — reverted to `locationBias`. Radius is enforced by a post-fetch client-side distance filter instead. Do not reintroduce `locationRestriction`. | 20 March 2026 |
 | Location switching | Available on Today, Walks, and Nearby tab headers. Consistent tappable location line with inline search bar across all three tabs. | 20 March 2026 |
