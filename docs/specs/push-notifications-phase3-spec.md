@@ -3,7 +3,7 @@
 **Date:** 23 March 2026
 **Status:** Approved for Phase 3 implementation
 **Author:** Product Owner
-**Phase:** 3 (requires Firebase full migration and GDPR sign-off — see Section 9)
+**Phase:** 3 (build requires Firebase full migration -- go-live requires GDPR sign-off -- see Section 9)
 **Based on:** `docs/research/push-notifications-research.md`
 
 ---
@@ -24,14 +24,16 @@ The feature is hazard-only at launch. It extends the existing in-app hazard syst
 - **Deferred (post-launch):** Type 6 (morning walk reminder), Type 7 (rain incoming). See Section 8.
 - **Out of scope permanently:** Third-party notification services (OneSignal, Knock, Novu, etc.).
 
-### Hard prerequisites
+### Prerequisites
 
-This feature cannot be built or deployed until:
+**Build prerequisites -- development cannot start without these:**
 1. Firebase full migration is complete (authenticated user accounts, Firestore reads live)
+
+**Go-live prerequisites -- the feature cannot be released to real users without these:**
 2. GDPR sign-off (L1) from the owner's solicitor
 3. Solicitor review of the notification consent mechanism (Step 12 in implementation order)
 
-Do not start implementation before these prerequisites are met.
+Build and testing can proceed once Firebase full migration is complete. GDPR sign-off and solicitor review are not required to begin development -- they are required before any real user receives a notification.
 
 ---
 
@@ -515,16 +517,18 @@ This step must not be omitted. Stale tokens accumulate over time as users switch
 
 ### Step 12 -- Solicitor review of notification consent mechanism
 
-Before any real users receive notifications, the owner's solicitor must review:
+This step is a go-live gate, not a build gate. Development of Steps 1-11 can proceed before this review is complete. The review must be complete before any real user receives a notification.
+
+The owner's solicitor must review:
 
 - The notification permission prompt wording
 - The preference UI (individual type toggles, global off toggle)
 - The home location consent (does setting a home location constitute additional consent?)
 - The ability for users to withdraw consent (global off toggle and browser-level permission revocation)
 
-Push notification permission is a form of direct marketing consent under UK PECR. This step is a hard prerequisite for going live -- not an optional review.
+Push notification permission is a form of direct marketing consent under UK PECR. This review is a hard go-live blocker -- not an optional review, and not a development prerequisite.
 
-**Dependency:** Steps 1-11 complete. Solicitor engagement (L1 blocker already in progress).
+**Dependency:** Steps 1-11 complete (so the solicitor can review the actual built UI). Solicitor engagement (L1 blocker already in progress).
 
 ---
 
@@ -562,11 +566,16 @@ When implemented: the Cloud Function must run on a short interval (every 15-30 m
 
 ## Section 9 -- Dependencies and Blockers
 
-### Hard blockers -- cannot start implementation without these
+### Build prerequisites -- cannot start development without these
+
+| Prerequisite | Status | Owner |
+|--------------|--------|-------|
+| Firebase full migration (Phase 3) | Not started | Developer |
+
+### Go-live blockers -- cannot release to real users without these
 
 | Blocker | Status | Owner |
 |---------|--------|-------|
-| Firebase full migration (Phase 3) | Not started | Developer + GDPR sign-off |
 | GDPR sign-off (L1) | Blocked -- solicitor not yet engaged | Owner |
 | Solicitor review of notification consent (Step 12) | Blocked -- depends on L1 | Owner + solicitor |
 
@@ -589,7 +598,9 @@ This is separate from the Google Cloud billing action required in the session ha
 
 ### Phase 3 vs Phase 2
 
-The notification system must not be partially implemented in Phase 2. The full stack (client-side, Firestore schema, Cloud Functions) is a single coherent feature. Partial builds (e.g. building the preferences UI without the Cloud Function) create UI debt and user confusion (toggles that appear functional but do nothing). Begin only when all hard blockers are cleared.
+The notification system must not be partially implemented in Phase 2. The full stack (client-side, Firestore schema, Cloud Functions) is a single coherent feature. Partial builds (e.g. building the preferences UI without the Cloud Function) create UI debt and user confusion (toggles that appear functional but do nothing).
+
+Begin development once Firebase full migration is complete. Do not go live with real users until GDPR sign-off (L1) and solicitor review of the consent mechanism (Step 12) are both complete.
 
 ---
 
