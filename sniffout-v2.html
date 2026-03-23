@@ -1956,14 +1956,6 @@
     .me-size-control .segment-pill[data-active="1"] { transform: translateX(100%); }
     .me-size-control .segment-pill[data-active="2"] { transform: translateX(200%); }
 
-    /* -- Radius control (4-segment) ------------------------------------- */
-    .me-radius-control { grid-template-columns: 1fr 1fr 1fr 1fr; }
-    .me-radius-control .segment-pill { width: calc((100% - 6px) / 4); }
-    .me-radius-control .segment-pill[data-active="0"] { transform: translateX(0); }
-    .me-radius-control .segment-pill[data-active="1"] { transform: translateX(100%); }
-    .me-radius-control .segment-pill[data-active="2"] { transform: translateX(200%); }
-    .me-radius-control .segment-pill[data-active="3"] { transform: translateX(300%); }
-
     /* -- Units control (2-segment) -------------------------------------- */
     .me-units-control { grid-template-columns: 1fr 1fr; }
     .me-units-control .segment-pill { width: calc((100% - 6px) / 2); }
@@ -1999,9 +1991,6 @@
     .segment-pill[data-active="1"] { transform: translateX(calc(100% + 0px)); }
     .segment-pill[data-active="2"] { transform: translateX(calc(200% + 0px)); }
     .segment-pill[data-active="3"] { transform: translateX(calc(300% + 0px)); }
-    /* 4-option radius control override */
-    .me-radius-control { grid-template-columns: 1fr 1fr 1fr 1fr; }
-    .me-radius-control .segment-pill { width: calc((100% - 6px) / 4); }
     /* 2-option units control override */
     .me-units-control { grid-template-columns: 1fr 1fr; }
     .me-units-control .segment-pill { width: calc((100% - 6px) / 2); }
@@ -4228,17 +4217,6 @@
       </button>
     </div>
   </div>
-  <!-- Search radius -->
-  <div class="me-settings-section">
-    <div class="segment-label">Search radius</div>
-    <div class="segment-control me-radius-control" id="segment-control-radius" role="group" aria-label="Search radius">
-      <div class="segment-pill" id="segment-pill-radius" aria-hidden="true"></div>
-      <button class="segment-btn" data-radius="1" aria-pressed="false"><span>1 mi</span></button>
-      <button class="segment-btn" data-radius="3" aria-pressed="false"><span>3 mi</span></button>
-      <button class="segment-btn" data-radius="5" aria-pressed="false"><span>5 mi</span></button>
-      <button class="segment-btn" data-radius="10" aria-pressed="false"><span>10 mi</span></button>
-    </div>
-  </div>
   <!-- Units -->
   <div class="me-settings-section">
     <div class="segment-label">Distance units</div>
@@ -5521,7 +5499,18 @@
     var feels    = Math.round(cur.apparent_temperature);
     var wind     = Math.round(cur.wind_speed_10m);
     var humidity = Math.round(cur.relative_humidity_2m);
-    var emoji    = WMO_EMOJI[cur.weather_code] || '🌤️';
+    var currentH = new Date().getHours();
+    var isDay    = currentH >= 6 && currentH < 21;
+    var heroIconHtml = '';
+    if (WMO_YR[cur.weather_code]) {
+      var _yrEntry  = WMO_YR[cur.weather_code];
+      var _yrName   = isDay ? _yrEntry.day : _yrEntry.night;
+      heroIconHtml = '<img src="' + YR_BASE + _yrName + '.svg" alt="' +
+        (WMO_DESC[cur.weather_code] || 'Weather') + '" width="48" height="48" ' +
+        'style="display:block;flex-shrink:0;">';
+    } else {
+      heroIconHtml = luIcon('cloud', 48, 'color:white;flex-shrink:0;');
+    }
 
     var sunPillText = '';
     if (daily && daily.sunrise && daily.sunset && daily.sunrise[0] && daily.sunset[0]) {
@@ -5544,7 +5533,7 @@
             '<div class="weather-hero-temp">' + temp + '°C</div>' +
             '<div class="weather-hero-feels">Feels like ' + feels + '°C</div>' +
           '</div>' +
-          luIcon(WMO_ICON[cur.weather_code] || 'cloud', 48, 'color:white;flex-shrink:0;') +
+          heroIconHtml +
         '</div>' +
         '<div class="weather-verdict">' + verdict.title + '</div>' +
         '<div class="weather-pills">' +
@@ -10076,11 +10065,6 @@
     if (_dPill) _dPill.style.transition = 'none';
     applyDarkModePreference(getSavedDarkMode());
     if (_dPill) requestAnimationFrame(function() { requestAnimationFrame(function() { if (_dPill) _dPill.style.transition = ''; }); });
-    // Restore radius toggle to saved preference (suppressing pill animation)
-    var _rPill = document.getElementById('segment-pill-radius');
-    if (_rPill) _rPill.style.transition = 'none';
-    applyRadiusPreference(getSavedRadiusMi());
-    if (_rPill) requestAnimationFrame(function() { requestAnimationFrame(function() { if (_rPill) _rPill.style.transition = ''; }); });
     // Restore units toggle to saved preference (suppressing pill animation)
     var _uPill = document.getElementById('segment-pill-units');
     if (_uPill) _uPill.style.transition = 'none';
@@ -10706,9 +10690,10 @@
       var merged = [];
       arrays.forEach(function(arr) { merged = merged.concat(arr); });
 
-      // Filter out car parks
+      // Filter out car parks and playgrounds
       var EXCLUDE_PRIMARY_TYPES = [
-        'parking', 'parking_lot', 'parking_garage', 'parking_meter'
+        'parking', 'parking_lot', 'parking_garage', 'parking_meter',
+        'playground', 'playground_equipment'
       ];
       var EXCLUDE_NAME_KEYWORDS = [
         'car park', 'parking', 'park and ride', 'p&r', 'multistorey',
@@ -11601,42 +11586,9 @@
     });
   }
 
-  function applyRadiusPreference(mi) {
-    var btns = document.querySelectorAll('#segment-control-radius .segment-btn');
-    var pill = document.getElementById('segment-pill-radius');
-    var nearestMi = RADIUS_MI_OPTIONS.reduce(function(prev, curr) {
-      return Math.abs(curr - mi) < Math.abs(prev - mi) ? curr : prev;
-    });
-    var idx = RADIUS_MI_OPTIONS.indexOf(nearestMi);
-    if (idx < 0) idx = 2;
-    btns.forEach(function(btn, i) {
-      btn.classList.toggle('active', i === idx);
-      btn.setAttribute('aria-pressed', i === idx ? 'true' : 'false');
-    });
-    if (pill) pill.setAttribute('data-active', String(idx));
+  function applyRadiusPreference() {
+    // Settings radius control removed - kept as stub so Walks/Nearby handlers can call harmlessly
   }
-
-  function updateRadiusLabels() {
-    var unit = getSavedUnits() === 'mi' ? 'mi' : 'km';
-    document.querySelectorAll('#segment-control-radius .segment-btn').forEach(function(btn) {
-      var mi   = parseInt(btn.getAttribute('data-radius'));
-      var span = btn.querySelector('span');
-      if (span) span.textContent = mi + ' ' + unit;
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    updateRadiusLabels();
-    document.querySelectorAll('#segment-control-radius .segment-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var mi = parseInt(btn.getAttribute('data-radius'));
-        var km = Math.round(mi * 1.60934);
-        saveRadius(km);
-        applyRadiusPreference(mi);
-        setRadius(km);
-      });
-    });
-  });
 
   /* -- Units segmented control ------------------------------------------ */
 
@@ -11652,7 +11604,6 @@
       btn.setAttribute('aria-pressed', i === idx ? 'true' : 'false');
     });
     if (pill) pill.setAttribute('data-active', String(idx));
-    updateRadiusLabels();
   }
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -11743,16 +11694,12 @@
   }
 
   /* ─── Init — suppress pill animation on first render ─── */
-  var _initSegPill   = document.getElementById('segment-pill-dark');
-  var _initRadiusPill = document.getElementById('segment-pill-radius');
-  if (_initSegPill)    _initSegPill.style.transition    = 'none';
-  if (_initRadiusPill) _initRadiusPill.style.transition = 'none';
+  var _initSegPill = document.getElementById('segment-pill-dark');
+  if (_initSegPill) _initSegPill.style.transition = 'none';
   loadMePrefs();
-  applyRadiusPreference(getSavedRadiusMi());
   if (_initSegPill) requestAnimationFrame(function() {
     requestAnimationFrame(function() {
-      if (_initSegPill)    _initSegPill.style.transition    = '';
-      if (_initRadiusPill) _initRadiusPill.style.transition = '';
+      if (_initSegPill) _initSegPill.style.transition = '';
     });
   });
   /* ═══════════════════════════════
