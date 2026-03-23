@@ -22,6 +22,8 @@ The app has a coherent design system on paper but the implementation is undermin
 Lines 6249–6252 set `e.returnValue = ''` unconditionally. On mobile Chrome/Safari this pops a system "Leave page?" sheet whenever the user tries to navigate away — including when using the hardware back button to close a sheet. This is the most intrusive UX anti-pattern possible on a PWA intended to feel native.
 **Fix:** Remove the `beforeunload` handler entirely, or set `returnValue` only when there is genuinely unsaved in-progress data (e.g. a partially filled form).
 
+> **Resolved - 23 March 2026.** Surgical fix implemented. The handler now only fires when the dog profile subpage is open. Android back button protection is preserved. The leave-page dialog no longer fires on general navigation.
+
 **[B3] Hardcoded debug copy inside `renderWishlistBtn()`.**
 The function renders a hardcoded `<p>` element containing `"Add to our walk list"` (line ~6268). This text is visible in the walk detail actions row for every walk. It reads like a placeholder or debugging label that was never removed.
 **Fix:** Remove the `<p>` element. If instructional copy is needed, align with approved copy strings.
@@ -98,6 +100,8 @@ The filter chip row has `/* logic: Phase 2 */` commented inline (line 10094). Th
 Both functions independently build `.me-walk-row` elements with identical logic (lines 8795–8814 and 8836–8855). Any bug fix or design change must be made in both places.
 **Fix:** Extract the row-building logic into a shared `buildMeWalkRow(entry, walkById)` helper.
 
+> **Resolved - 23 March 2026.** `buildMeWalkRow()` helper extracted. Both `renderMeWalkLog()` and `meExpandWalkLog()` updated to call it. Visual output unchanged.
+
 **[M6] Dead CSS accumulates throughout the stylesheet.**
 Classes including `.hero-body`, `.cta-block`, `.dog-setup-*`, `.me-hero`, `.me-hero--empty`, `.preview-picks-header`, `.preview-picks-label`, `.preview-picks-prompt` have no corresponding HTML and are not generated dynamically. Each one makes the stylesheet harder to reason about.
 **Fix:** Delete unused rules. They will not be needed — the HTML they matched has been replaced.
@@ -105,6 +109,8 @@ Classes including `.hero-body`, `.cta-block`, `.dog-setup-*`, `.me-hero`, `.me-h
 **[M7] `renderCondTagSheet()` uses inline style strings instead of CSS classes.**
 The sheet header is built with `style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px;"` and `style="font-size:13px;color:var(--ink-2);"` (lines 6737–6740). These are not responsive to dark mode token overrides at a glance and are harder to maintain than named classes.
 **Fix:** Extract to `.cond-sheet-title` and `.cond-sheet-subtitle` classes in the stylesheet.
+
+> **Resolved - 23 March 2026.** Inline styles moved to named CSS classes. Visual output unchanged.
 
 ---
 

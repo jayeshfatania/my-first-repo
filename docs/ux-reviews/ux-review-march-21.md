@@ -242,6 +242,8 @@ The app benchmarks well against market leaders on interaction patterns and compo
 
 **H3. `walk-detail-hero-heart` is 36×36px.** The walk detail is the place where users make decisions. The favourite action in the hero image must be at minimum 44×44px.
 
+> **Resolved.** Heart button removed from the walk detail overlay entirely. Only the bookmark button remains, labelled "Add to our walk list". Walk save actions were simplified in a later round. (Confirmed in session handoff 23 March 2026.)
+
 **H4. Dark mode brand on surface fails WCAG AA.** `#5C7A63` on `#1F1F1F` is approximately 3.56:1 — below the 4.5:1 threshold for normal text. Any small brand-coloured text on surface backgrounds (venue distance, maps links, action text) fails in dark mode. This needs a stronger dark mode brand value or specific overrides for small text uses.
 
 **H5. `meDisplayName` span starts empty.** The HTML renders an orphaned avatar with no adjacent name. Add a default placeholder to the HTML (`class="me-name me-name-placeholder"`, text "Sniffout") that JS replaces on load.
@@ -284,15 +286,21 @@ The app benchmarks well against market leaders on interaction patterns and compo
 
 **L4. `lucide@latest` CDN should be pinned to a specific version** for production stability.
 
+> **Resolved.** Lucide pinned to v0.577.0 in the CDN import. (Confirmed in session handoff 23 March 2026.)
+
 **L5. "Contributions" stat label is ambiguous.** Rename to something self-explanatory ("condition reports" or "local reports") or add a brief contextual label.
 
 **L6. Saved Walks entry row uses a heart icon** (filled heart SVG) but Saved Walks includes both wishlist saves and favourites. The icon should reflect the content — a bookmark icon for wishlist, or a neutral label icon if both types are included.
 
 **L7. "Find the spots" in the social proof strip could be clearer.** "Find dog-friendly spots" adds one word and removes ambiguity while keeping the cadence.
 
+> **Resolved.** Social proof strip updated to "Know the route - Own the weather - Find dog-friendly spots". Do not revert. (Confirmed in session handoff 23 March 2026.)
+
 **L8. The `--amber` token value differs between code (`#D97706`) and CLAUDE.md (`#F59E0B`).** Reconcile. `#D97706` is the correct choice (darker, better contrast), so CLAUDE.md should be updated.
 
 **L9. No "recently viewed" shortcut for returning users.** A recently-viewed walk chip in the recent-pills row would close the most common returning user friction.
+
+> **Resolved.** Recently Viewed walks implemented. `sniffout_recent_walks` localStorage key stores up to 10 recently viewed curated walk IDs (most recent first). Surfaced as an entry row in the Me tab between Walk Journal and Badges, using the subpage overlay pattern. (Confirmed in session handoff 23 March 2026.)
 
 **L10. No distance-from-location on walk cards.** Walk duration and walk length are shown; distance to the walk start is not. For planning, this is a meaningful gap.
 
