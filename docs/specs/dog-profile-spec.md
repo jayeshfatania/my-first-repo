@@ -1,6 +1,8 @@
 # Dog Profile — Concept Spec
 **Phase:** 2 (localStorage, no backend)
-**Principle:** Everything becomes about the dog. Not "your walks" — "Biscuit's walks."
+**Principle:** Everything becomes about the dog. Not "your walks" - "Biscuit's walks."
+
+> **Note:** This spec was written before multiple dog support was implemented. The active localStorage key is `sniffout_dogs` (plural array of dog objects). `sniffout_dog` and `sniffout_dog_profile` are deprecated and must not be used in any new code. All references to `sniffout_dog` in this document reflect the original spec - treat them as `sniffout_dogs` throughout.
 
 ---
 
@@ -32,7 +34,7 @@ Not a form. One question, one field, one button. The prompt should feel like the
 
 ### Setup Card Layout
 
-Shown in place of the Me tab empty state when `sniffout_dog` is null:
+Shown in place of the Me tab empty state when `sniffout_dogs` is empty or null:
 
 ```
 ┌────────────────────────────────────────┐
@@ -186,27 +188,37 @@ Shown as a circular avatar in the Me tab header. In Phase 1, the avatar is an SV
 ## 3. localStorage Schema
 
 ```js
-// sniffout_dog (single JSON object, null until set)
-{
+// sniffout_dogs (array of dog objects - multiple dogs supported)
+// Each entry in the array represents one dog profile.
+// The first entry in the array is treated as the primary/active dog.
+[{
   name: "Biscuit",
   breed: "Border Terrier",        // optional, null if unset
   size: "medium",                  // "small" | "medium" | "large" | null
   tags: ["energetic", "loves water"],  // max 3 strings, [] if unset
   birthday: { month: 8, year: 2021 }, // optional, null if unset
   photoUrl: null                   // Phase 3
-}
+}]
 ```
 
 Helper functions:
 
 ```js
+function getDogs() {
+  return JSON.parse(localStorage.getItem('sniffout_dogs') || '[]');
+}
+
 function getDog() {
-  return JSON.parse(localStorage.getItem('sniffout_dog') || 'null');
+  // Returns the primary (first) dog, or null if none set
+  var dogs = getDogs();
+  return dogs.length > 0 ? dogs[0] : null;
 }
 
 function saveDogProfile(updates) {
-  var current = getDog() || {};
-  localStorage.setItem('sniffout_dog', JSON.stringify(Object.assign({}, current, updates)));
+  var dogs = getDogs();
+  var current = dogs.length > 0 ? dogs[0] : {};
+  dogs[0] = Object.assign({}, current, updates);
+  localStorage.setItem('sniffout_dogs', JSON.stringify(dogs));
 }
 
 function getDogName() {
@@ -216,7 +228,7 @@ function getDogName() {
 
 // Use throughout the app:
 // var dogName = getDogName();
-// var displayName = dogName || 'you';  // safe fallback — never shows null
+// var displayName = dogName || 'you';  // safe fallback - never shows null
 ```
 
 The `displayName` fallback ensures all personalised strings degrade gracefully if the dog profile is not set: "Where will you go first?" instead of "Where will you take null first?".
@@ -442,16 +454,18 @@ If no dog profile: render the standard header without avatar (as per `me-tab-ret
 
 ## 8. Multiple Dogs
 
-**v1: one dog.** No switcher, no multi-dog support. This is the right call for Phase 1.
+**Multiple dogs are supported in the current Phase 2 implementation.** The `sniffout_dogs` key stores an array of dog objects. The first entry in the array is treated as the active dog for copy personalisation.
 
-The reasoning: multi-dog support requires the walk log to associate each entry with a specific dog, the badge system to track per-dog, and the stats to split or aggregate. None of this infrastructure exists. Building it now would mean building twice.
+This section was written before multi-dog support was added. The original reasoning (that multi-dog required the walk log to associate entries with a specific dog, badge tracking per-dog, and stats to split or aggregate) remains relevant for the full multi-dog switcher experience described below, but the storage foundation is already in place.
 
-**What a v1 user with two dogs should do:**
-The app supports one dog profile. A user with two dogs enters the dog they walk most often, or the dog they primarily use Sniffout with. This is a pragmatic limitation, not a design failure. It mirrors how a user with multiple Spotify accounts simply uses one.
+**What is live:**
+- `sniffout_dogs` stores an array. Multiple dogs can be added to the array.
+- The primary dog (index 0) drives all personalised copy.
+- Walk log entries support a `dogId` field for per-dog association.
 
-**For Phase 2, the correct multi-dog implementation is:**
+**What remains for a full multi-dog switcher UI (Phase 2b):**
 
-A simple switcher in the Me tab header. Not a permanent side-by-side view (too complex for the minimal aesthetic) — a tap on the dog avatar reveals a small inline picker:
+A simple switcher in the Me tab header. Not a permanent side-by-side view (too complex for the minimal aesthetic) - a tap on the dog avatar reveals a small inline picker:
 
 ```
 ┌──────────────────────────────┐
@@ -461,9 +475,7 @@ A simple switcher in the Me tab header. Not a permanent side-by-side view (too c
 └──────────────────────────────┘
 ```
 
-The selected dog becomes "active" — all copy personalisation uses the active dog's name. Walk log entries are tagged with `dogId` so each dog's history is separable. Badges are shared (the walker earned them, not the dog).
-
-This is a 4-line note for Phase 2 planning. Do not implement in Phase 1.
+The selected dog becomes "active" - all copy personalisation uses the active dog's name. Walk log entries are tagged with `dogId` so each dog's history is separable. Badges are shared (the walker earned them, not the dog).
 
 ---
 
@@ -498,7 +510,7 @@ Birthday (optional)
 [Save]   [Remove dog profile]
 ```
 
-The "Remove dog profile" action is a destructive link at the bottom, in `--ink-2`, not a button. Tapping it shows a confirmation: "Remove Biscuit? This won't delete your walks." Confirmed → `localStorage.removeItem('sniffout_dog')`, tab reloads to standard Me tab.
+The "Remove dog profile" action is a destructive link at the bottom, in `--ink-2`, not a button. Tapping it shows a confirmation: "Remove Biscuit? This won't delete your walks." Confirmed → remove the dog entry from the `sniffout_dogs` array and save, tab reloads to standard Me tab.
 
 ---
 
@@ -563,8 +575,8 @@ function emptyCtaLabel(dogName) {
 
 The following are noted for implementation order planning, not designed here:
 
-- **Profile photo:** Avatar tap → device photo picker → base64 stored in `sniffout_dog.photoUrl`. Displayed as `object-fit: cover` in the 40px avatar circle. Placeholder SVG shown until set.
-- **Multi-dog switcher:** Tap avatar → inline picker (see Section 8). Requires walk log to gain `dogId` field.
-- **Birthday banner:** On the date matching `sniffout_dog.birthday`, the Today tab shows a one-line banner: "Happy birthday, Biscuit! 🎂" Dismissible, shown once per birthday year.
-- **Breed-based walk recommendations:** If `sniffout_dog.size === 'small'` or tags include `'elderly'`, surface easier/shorter walks first in the Walks tab. Requires filter logic addition.
-- **Account sync:** `sniffout_dog` migrates to a user account record when authentication is added. The field structure is already designed for this — no schema changes needed, just a sync call.
+- **Profile photo:** Avatar tap → device photo picker → base64 stored in the dog object's `photoUrl` field within `sniffout_dogs`. Displayed as `object-fit: cover` in the 40px avatar circle. Placeholder SVG shown until set.
+- **Multi-dog switcher:** Tap avatar → inline picker (see Section 8). Foundation is in place - `sniffout_dogs` is already an array. UI switcher work remains.
+- **Birthday banner:** On the date matching the active dog's `birthday` field in `sniffout_dogs`, the Today tab shows a one-line banner: "Happy birthday, Biscuit! 🎂" Dismissible, shown once per birthday year.
+- **Breed-based walk recommendations:** If the active dog's `size === 'small'` or `tags` includes `'elderly'` (read from `sniffout_dogs`), surface easier/shorter walks first in the Walks tab. Requires filter logic addition.
+- **Account sync:** `sniffout_dogs` migrates to a user account record when authentication is added. The field structure is already designed for this - no schema changes needed, just a sync call.

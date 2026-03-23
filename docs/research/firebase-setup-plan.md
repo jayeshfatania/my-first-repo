@@ -5,6 +5,8 @@
 > **Audience:** Section 1 is for the Owner. Section 2 is for the Developer.
 > **Scope:** No code changes. This document covers console setup and architecture decisions only.
 
+> **Note:** This document was written before multiple dog support was implemented. The active localStorage key is `sniffout_dogs` (plural array of dog objects). `sniffout_dog` and `sniffout_dog_profile` are deprecated and must not be used in any new code. References to `sniffout_dog` in the Firestore mapping table below reflect the original schema - treat them as `sniffout_dogs` throughout.
+
 ---
 
 # Section 1 — Console Setup (Owner)
@@ -131,7 +133,7 @@ This section maps the existing Sniffout localStorage data model onto Firebase, d
 | `walkReviews` | Object of walk reviews keyed by walk ID | `users/{uid}/reviews` (subcollection) |
 | `sniffout_walk_log` | Array of walk log entries | `users/{uid}/walkLog` (subcollection) |
 | `sniffout_username` | Display name string | `users/{uid}` (document field) |
-| `sniffout_dog` | Dog profile object | `users/{uid}` (document field) |
+| `sniffout_dogs` | Array of dog profile objects (multiple dogs supported) | `users/{uid}` (document field) |
 | `sniffout_saved_places` | Array of saved venue objects | `users/{uid}/savedPlaces` |
 | `sniffout_session` | Location + weather cache, 8h TTL | **Stays in localStorage only** — ephemeral, no sync needed |
 | `sniffout_active_tab` | Last active tab | **Stays in localStorage only** — UI state, no sync needed |
@@ -160,11 +162,13 @@ This section maps the existing Sniffout localStorage data model onto Firebase, d
   displayName:   string       ← from sniffout_username
   createdAt:     timestamp
   lastSeen:      timestamp
-  dog: {                      ← from sniffout_dog
-    name:        string
-    breed:       string
-    size:        string       ← 'small' | 'medium' | 'large'
-  }
+  dogs: [                     ← from sniffout_dogs (array - multiple dogs supported)
+    {
+      name:      string
+      breed:     string
+      size:      string       ← 'small' | 'medium' | 'large'
+    }
+  ]
 ```
 
 ### Walk log subcollection
