@@ -788,7 +788,7 @@
     .weather-hero-feels { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 2px; }
     .weather-verdict {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
       font-family: var(--font-display);
       font-size: 28px;
@@ -796,6 +796,7 @@
       letter-spacing: -0.01em;
       line-height: 1.2;
     }
+    .weather-verdict > svg { margin-top: 3px; flex-shrink: 0; }
     .weather-pills {
       display: flex;
       gap: 6px;
@@ -1102,8 +1103,7 @@
 
     /* Cards zone */
     .wx-cards { display: flex; flex-direction: column; gap: 12px; padding: 0 16px 32px; }
-    .wx-card { background: var(--surface); border: 0.5px solid rgba(0,0,0,0.08); border-radius: 16px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); cursor: pointer; transition: transform 0.15s ease; }
-    .wx-card:active { transform: scale(0.97); }
+    .wx-card { background: var(--surface); border: 0.5px solid rgba(0,0,0,0.08); border-radius: 16px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); }
     .wx-card-header { display: flex; align-items: center; justify-content: space-between; }
     .wx-card-title { font: 600 15px/1 'Inter', sans-serif; color: var(--ink); }
     .wx-card-divider { height: 1px; background: var(--border); margin: 12px 0; }
@@ -1150,6 +1150,8 @@
     .wx-pollen-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,0,0,0.12); }
     .wx-pollen-dot--filled { background: var(--brand); }
     .wx-pollen-level { font: 500 12px/1 'Inter', sans-serif; color: var(--ink); }
+    .wx-pollen-notes { margin-top: 12px; display: flex; flex-direction: column; gap: 4px; }
+    .wx-pollen-note { font: 400 13px/1.4 'Inter', sans-serif; color: var(--amber); margin: 0; }
 
     /* Metric detail sheet */
     .wx-sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; }
@@ -2130,10 +2132,10 @@
     .me-dog-card-info { flex: 1; min-width: 0; }
     .me-dog-card-name {
       font-family: var(--font-display);
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--ink);
-      letter-spacing: -0.01em;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--brand);
+      letter-spacing: -0.02em;
       display: block;
     }
     .me-dog-card-meta {
@@ -2143,6 +2145,32 @@
       margin-top: 4px;
     }
     body.night .me-dog-card { box-shadow: none; border-color: rgba(255,255,255,0.08); }
+    body.night .me-dog-card-name { color: #6A9B4A; }
+
+    /* FAB - Log a walk (Me tab only) */
+    .me-log-fab {
+      position: fixed;
+      bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 16px);
+      right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--brand);
+      color: #fff;
+      font: 600 14px/1 'Inter', sans-serif;
+      border: none;
+      border-radius: 28px;
+      padding: 14px 20px;
+      min-height: 52px;
+      box-shadow: 0 4px 12px rgba(44, 74, 20, 0.35);
+      cursor: pointer;
+      z-index: 90;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .me-log-fab:active { transform: scale(0.97); }
+    body.night .me-log-fab { box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+
     /* Stats dashboard */
     .me-stats-dashboard {
       padding: 0 16px 16px;
@@ -2191,7 +2219,7 @@
     }
     /* Entry rows */
     .me-entries {
-      padding: 0 16px 40px;
+      padding: 0 16px 88px;
       display: flex;
       flex-direction: column;
       gap: 1px;
@@ -2674,7 +2702,7 @@
       --brand-tint: rgba(92,154,74,0.12);
     }
     body.night #nearby-map,
-    body.night #walk-detail-map { filter: invert(1) hue-rotate(180deg); }
+    body.night #walk-detail-map { filter: invert(1) hue-rotate(200deg); background: var(--bg); }
     body.night .search-input-row { background: var(--surface); }
     body.night .hour-seg.poor { background: var(--border); }
     body.night .walk-preview-card     { background: rgba(106,155,74,0.07); border-color: rgba(106,155,74,0.18); }
@@ -3261,16 +3289,24 @@
     .modal-body p { font-size: 14px; color: var(--ink-2); line-height: 1.6; margin-bottom: 12px; }
     .modal-body p:last-child { margin-bottom: 0; }
     .weather-info-btn {
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.28);
-      border-radius: 99px;
-      padding: 3px 10px;
-      color: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.6);
+      border: none;
+      border-radius: 50%;
+      width: 22px; height: 22px;
+      padding: 0;
+      color: var(--brand);
       cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font: 500 12px/1 'Inter', sans-serif;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
       -webkit-tap-highlight-color: transparent;
-      margin-left: auto;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+    .weather-greeting {
+      font: 400 14px/1 'Inter', sans-serif;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 4px;
+      display: block;
     }
     .weather-hero { position: relative; }
     /* ─── Lucide icons ─── */
@@ -3836,8 +3872,13 @@
 
     <!-- ══════════ WEATHER TAB ══════════ -->
     <div id="tab-weather" class="tab-panel">
+      <div class="tab-title-bar">
+        <div>
+          <h2 class="tab-title">Weather</h2>
+        </div>
+      </div>
       <div id="weather-content">
-        <div class="empty-state" style="padding-top:80px;">Set your location on the Today tab to see live weather.</div>
+        <div class="empty-state" style="padding-top:40px;">Set your location on the Today tab to see live weather.</div>
       </div>
     </div><!-- /tab-weather -->
 
@@ -4105,6 +4146,13 @@
 
       <!-- Hidden file input for photo uploads (kept for compatibility) -->
       <input type="file" id="journalPhotoInput" accept="image/*" style="display:none">
+
+      <!-- Log a walk FAB (Me tab only) -->
+      <button class="me-log-fab" id="meLogFab" aria-label="Log a walk" style="display:none;" onclick="navigator.vibrate && navigator.vibrate(10); openLogWalkSheet();">
+        <!-- icon injected by syncIcons -->
+        <i data-lucide="plus" style="width:16px;height:16px;flex-shrink:0;"></i>
+        Log a walk
+      </button>
 
     </div><!-- /tab-me -->
 
@@ -4773,6 +4821,10 @@
     var anchorBtn = document.getElementById('picks-anchor-btn');
     if (anchorBtn) anchorBtn.classList.remove('visible');
     if (id !== 'walks' && picksObserver) { picksObserver.disconnect(); picksObserver = null; }
+
+    // Show/hide Me tab FAB
+    var fab = document.getElementById('meLogFab');
+    if (fab) fab.style.display = id === 'me' ? '' : 'none';
   }
 
   /* Toggle search expand on Today State A */
@@ -5122,6 +5174,18 @@
         '</div>' +
       '</div>';
 
+    var elevated = [];
+    if (treeLevel && (treeLevel.label === 'High' || treeLevel.label === 'Very High')) elevated.push('Tree');
+    if (grassLevel && (grassLevel.label === 'High' || grassLevel.label === 'Very High')) elevated.push('Grass');
+    if (weedLevel && (weedLevel.label === 'High' || weedLevel.label === 'Very High')) elevated.push('Weed');
+    if (elevated.length > 0) {
+      html += '<div class="wx-pollen-notes">';
+      elevated.forEach(function(type) {
+        html += '<p class="wx-pollen-note">' + type + ' pollen is high right now.</p>';
+      });
+      html += '</div>';
+    }
+
     body.innerHTML = html;
   }
 
@@ -5342,6 +5406,15 @@
         body: 'Gusts of ' + Math.round(gusts) + ' km/h today - enough to cause problems on exposed routes. Worth waiting for it to ease.'
       };
     }
+    if (gusts >= 45) {
+      return {
+        type: 'caution',
+        title: 'Gusty today - pick a sheltered route',
+        shortTitle: 'Gusty today, [name] - pick a sheltered route.',
+        icon: 'wind',
+        body: 'Gusts of ' + Math.round(gusts) + ' km/h. Choose sheltered routes - valley paths, urban streets, or low-lying ground. Avoid exposed ridges, open moorland, and woodland where branches may be unstable.'
+      };
+    }
     if (temp > 28) {
       return {
         type: 'caution',
@@ -5402,15 +5475,24 @@
         title: 'Brisk walk day',
         shortTitle: 'Wrap up, [name].',
         icon: 'snowflake',
-        body: 'Feels like ' + Math.round(feels) + '°C. Fine for a quick outing - just watch for ice on paths, and rinse paws when you\'re home if there\'s been gritting.'
+        body: 'Feels like ' + Math.round(feels) + '\u00b0C. Fine for a quick outing - just watch for ice on paths, and rinse paws when you\'re home if there\'s been gritting.'
+      };
+    }
+    if (temp >= 25) {
+      return {
+        type: 'caution',
+        title: 'Warm today - paws first',
+        shortTitle: 'Check the pavement first, [name].',
+        icon: 'thermometer-sun',
+        body: 'At ' + Math.round(temp) + '\u00b0C, pavement may be warm enough to hurt paws. Press your hand on the tarmac - if you can\'t hold it for 7 seconds, walk on grass or choose a shaded route.'
       };
     }
     return {
       type: 'approved',
-      title: 'Lovely walking weather',
-      shortTitle: 'Perfect walking weather for [name].',
+      title: 'Perfect conditions right now.',
+      shortTitle: 'Perfect conditions for [name].',
       icon: 'sun',
-      body: Math.round(temp) + '°C and ' + cond + '. About as good as it gets - get out there.'
+      body: Math.round(temp) + '\u00b0C and ' + cond + '. About as good as it gets - get out there.'
     };
   }
 
@@ -5507,9 +5589,9 @@
       hazards.push({ title: 'Thunderstorm warning - stay inside', body: 'Avoid open areas, water, and tall trees. Keep your dog indoors.' });
     }
     if (gusts >= 60) {
-      hazards.push({ title: 'Dangerous winds - don\'t go out', body: 'Risk of falling branches and debris on exposed routes.' });
+      hazards.push({ title: 'Dangerous winds - don\'t go out', body: 'Stick to sheltered urban routes or valley paths. Avoid woodland, open high ground, and coastal paths where falling branches and debris are a risk.' });
     } else if (gusts >= 45) {
-      hazards.push({ title: 'Very gusty - choose sheltered routes', body: 'Stick to woodland or valley routes where possible.' });
+      hazards.push({ title: 'Very gusty - choose sheltered routes', body: 'Choose sheltered routes - valley paths, urban streets, or low-lying ground. Avoid exposed ridges, open moorland, and woodland where branches may be unstable.' });
     }
 
     // Cold hazards
@@ -5598,19 +5680,30 @@
   function getRainSummary(hourly) {
     var h = new Date().getHours();
     var rainHours = 0, totalMm = 0, maxProb = 0;
+    var firstRainIdx = -1;
     var limit = Math.min(24, hourly.time.length);
     for (var i = h; i < limit; i++) {
       var precip = hourly.precipitation[i] || 0;
       var prob   = hourly.precipitation_probability[i] || 0;
-      if (precip > 0.1) rainHours++;
+      if (precip > 0.1) {
+        rainHours++;
+        if (firstRainIdx === -1) firstRainIdx = i;
+      }
       totalMm += precip;
       if (prob > maxProb) maxProb = prob;
     }
     totalMm = Math.round(totalMm * 10) / 10;
-    if (rainHours === 0 && maxProb < 20) return '<strong>Looks dry</strong> for the rest of today';
-    if (rainHours <= 1 && maxProb < 50) return '<strong>Mostly dry</strong> - light showers possible.';
-    if (rainHours <= 2) return '<strong>Brief showers</strong> - about ' + rainHours + ' hour.';
-    return '<strong>Wet afternoon</strong> - ' + rainHours + ' hours of rain, up to ' + totalMm + 'mm forecast.';
+    if (rainHours === 0 && maxProb < 20) return 'Looks dry for the rest of today.';
+    if (rainHours <= 1 && maxProb < 50) return 'Mostly dry - light showers possible.';
+    var durStr = rainHours === 1 ? '1 hour' : rainHours + ' hours';
+    if (firstRainIdx !== -1 && firstRainIdx > h) {
+      var fromTime = formatHour(firstRainIdx % 24);
+      return 'Showers expected from around ' + fromTime + ' for ' + durStr + '.';
+    }
+    if (firstRainIdx !== -1) {
+      return 'Showers expected later - best to head out now.';
+    }
+    return 'Wet forecast - ' + durStr + ' of rain, up to ' + totalMm + 'mm.';
   }
 
   /* ─── Best walk window (Section 9) ─── */
@@ -5675,24 +5768,47 @@
       hazardHTML += '<div class="hazard-card"><div class="hazard-title">' + hz.title + '</div><div class="hazard-body">' + hz.body + '</div></div>';
     });
 
+    // FIX 3: greeting (only when no dog name)
+    var greetingText = '';
+    if (!getDogName()) {
+      var greetHour = new Date().getHours();
+      if      (greetHour >= 5  && greetHour < 12) greetingText = 'Good morning.';
+      else if (greetHour >= 12 && greetHour < 18) greetingText = 'Good afternoon.';
+      else if (greetHour >= 18 && greetHour < 22) greetingText = 'Good evening.';
+    }
+
+    // FIX 2: paw icon after approved verdict
+    var pawInline = verdict.type === 'approved'
+      ? luIcon('paw-print', 18, 'color:white;margin-left:6px;flex-shrink:0;')
+      : '';
+
+    // FIX 4: inline info button after verdict text
+    var infoBtn = '<button class="weather-info-btn" onclick="event.stopPropagation();openWeatherModal()" aria-label="About weather features">' + luIcon('info', 18) + '</button>';
+
+    var verdictLabel = getDogName() ? verdict.shortTitle.replace('[name]', getDogName()) : verdict.title;
+
     content.innerHTML =
       '<div class="weather-hero' + (verdict.type === 'caution' || verdict.type === 'caveat' ? ' weather-hero--caution' : verdict.type === 'avoid' ? ' weather-hero--avoid' : '') + '" onclick="switchTab(\'weather\')">' +
         '<div class="weather-hero-top">' +
           '<div>' +
-            '<div class="weather-hero-temp">' + temp + '°C</div>' +
-            '<div class="weather-hero-feels">Feels like ' + feels + '°C</div>' +
+            '<div class="weather-hero-temp">' + temp + '\u00b0C</div>' +
+            '<div class="weather-hero-feels">Feels like ' + feels + '\u00b0C</div>' +
           '</div>' +
           heroIconHtml +
         '</div>' +
         '<div class="weather-verdict">' +
           luIcon(verdict.icon, 24) +
-          (getDogName() ? verdict.shortTitle.replace('[name]', getDogName()) : verdict.title) +
+          '<span>' +
+            (greetingText ? '<span class="weather-greeting">' + greetingText + '</span>' : '') +
+            verdictLabel +
+            pawInline +
+            infoBtn +
+          '</span>' +
         '</div>' +
         '<div class="weather-pills">' +
           '<span class="weather-pill">' + luIcon('droplets', 14) + ' ' + humidity + '%</span>' +
           '<span class="weather-pill">' + luIcon('wind', 14) + ' ' + wind + ' km/h</span>' +
           (sunPillText ? '<span class="weather-pill">' + sunPillText + '</span>' : '') +
-          '<button class="weather-pill weather-info-btn" onclick="event.stopPropagation();openWeatherModal()" aria-label="About weather features">' + luIcon('info', 14) + '</button>' +
         '</div>' +
       '</div>' +
       '<div class="today-conditions-card">' +
@@ -5960,7 +6076,7 @@
         // Walk window card
         '<div class="wx-card">' +
           '<div class="wx-card-header">' +
-            '<span class="wx-card-title">Walk window</span>' +
+            '<span class="wx-card-title">Best walk window</span>' +
             '<span class="wx-walk-window-time">' + walkWindowTime + '</span>' +
           '</div>' +
           '<div class="wx-card-divider"></div>' +
@@ -8666,6 +8782,7 @@
       list.splice(idx, 1);
     } else {
       list.unshift(walkId);
+      navigator.vibrate && navigator.vibrate(10);
     }
     try { localStorage.setItem(WISHLIST_KEY, JSON.stringify(list)); } catch(e) {}
   }
@@ -8709,6 +8826,7 @@
       if (gs) {
         favs.unshift({ id: gsId, name: gs.name, lat: gs.lat, lon: gs.lon, savedAt: Date.now() });
       }
+      navigator.vibrate && navigator.vibrate(10);
       if (btn) {
         btn.innerHTML = luIcon('heart', 16, 'fill:var(--red);stroke:var(--red);');
         btn.setAttribute('aria-label', 'Saved');
@@ -8741,6 +8859,7 @@
         mapsUrl: venue.mapsUrl,
         savedAt: Date.now()
       });
+      navigator.vibrate && navigator.vibrate(10);
     }
     savePlaceFavourites(favs);
     if (nearbyCategory === 'saved') {
