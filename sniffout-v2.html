@@ -110,6 +110,7 @@
       border: none;
       background: none;
       transition: opacity 120ms;
+      position: relative;
     }
     .nav-item:active { opacity: 0.7; transform: scale(0.95); }
     .nav-item .nav-icon {
@@ -119,13 +120,22 @@
       align-items: center;
       justify-content: center;
     }
-    .nav-item .nav-label { font-size: 11px; font-weight: 500; }
+    .nav-item .nav-label { font-size: 11px; font-weight: 500; letter-spacing: 0.02em; }
     .nav-item.active .nav-label { color: var(--brand); }
     .nav-item:not(.active) .nav-label { color: var(--ink-2); }
     .nav-item.active svg { color: var(--brand); }
     .nav-item:not(.active) svg { color: var(--ink-2); }
     .nav-item.active { opacity: 1; }
     .nav-item:not(.active) { opacity: 0.5; }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 24px; height: 2px;
+      background: var(--brand);
+      border-radius: 0 0 2px 2px;
+    }
     /* State A: dim non-Today tabs */
     nav.state-a .nav-item:not([data-tab="today"]) {
       opacity: 0.50;
@@ -1628,6 +1638,13 @@
       from { transform: scale(0.8); opacity: 0; }
       to   { transform: scale(1);   opacity: 1; }
     }
+    @keyframes badge-reveal {
+      0%   { transform: scale(0.6) rotate(-8deg); opacity: 0; }
+      60%  { transform: scale(1.15) rotate(2deg); opacity: 1; }
+      80%  { transform: scale(0.95) rotate(-1deg); }
+      100% { transform: scale(1) rotate(0); }
+    }
+    .badge-card--new { animation: badge-reveal 450ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
     .me-badge-detail {
       margin-top: 10px;
       padding: 12px 14px;
@@ -2078,6 +2095,54 @@
       width: 100%; height: 100%;
       object-fit: cover; border-radius: 50%;
     }
+    /* Dog profile card (Me tab top) */
+    .me-dog-card {
+      margin: 0 16px 16px;
+      background: var(--surface);
+      border: 0.5px solid rgba(0,0,0,0.08);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .me-dog-card:active { transform: scale(0.97); }
+    .me-dog-card-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--brand-tint);
+      border: 2px solid var(--brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--brand);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .me-dog-card-avatar img {
+      width: 100%; height: 100%;
+      object-fit: cover; border-radius: 50%;
+    }
+    .me-dog-card-info { flex: 1; min-width: 0; }
+    .me-dog-card-name {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      display: block;
+    }
+    .me-dog-card-meta {
+      font: 400 13px/1.4 'Inter', sans-serif;
+      color: var(--ink-2);
+      display: block;
+      margin-top: 4px;
+    }
+    body.night .me-dog-card { box-shadow: none; border-color: rgba(255,255,255,0.08); }
     /* Stats dashboard */
     .me-stats-dashboard {
       padding: 0 16px 16px;
@@ -2407,6 +2472,10 @@
       font: 400 12px/1 'Inter', sans-serif;
       color: var(--ink-2);
     }
+    .journal-row-with {
+      font: 400 12px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+    }
     .journal-row-chevron {
       color: var(--ink-2);
       opacity: 0.5;
@@ -2596,7 +2665,7 @@
     ═══════════════════════════════ */
     body.night {
       --bg:       #141414;
-      --surface:  #1F1F1F;
+      --surface:  #1E1E1C;
       --border:   rgba(255,255,255,0.08);
       --ink:      #F4F2EE;
       --ink-2:    #8A8A8A;
@@ -2618,7 +2687,7 @@
     body.night .venue-open-gp.open    { background: rgba(106,155,74,0.12); }
     body.night .chip.active           { background: rgba(106,155,74,0.10); border-color: rgba(106,155,74,0.22); color: var(--brand); }
     body.night .hazard-card.brand-variant { background: rgba(106,155,74,0.07); }
-    body.night .weather-hero { background: #3D6B22; }
+    body.night .weather-hero { background: #162B0A; }
     body.night .me-stat-card--primary .me-stat-number { color: #6A9B4A; }
     body.night .me-entry-label { color: #6A9B4A; }
     body.night .walk-card,
@@ -3860,16 +3929,24 @@
 
       <!-- Header -->
       <header class="me-header">
-        <div class="me-header-identity">
-          <div class="me-dog-avatar" id="meDogAvatar">
-            <i data-lucide="paw-print" style="width:24px;height:24px;"></i>
-          </div>
-          <span class="me-name" id="meDisplayName"></span>
+        <div class="me-header-identity" id="meHeaderIdentity">
+          <!-- dog picker appended here by JS when multiple dogs exist -->
         </div>
         <button class="me-gear-btn" id="meGearBtn" aria-label="Settings">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </button>
       </header>
+
+      <!-- Dog profile card -->
+      <div class="me-dog-card" id="meDogCard" onclick="openMeSubpage('dog')">
+        <div class="me-dog-card-avatar" id="meDogCardAvatar">
+          <!-- populated by renderMeTab() — img tag for Phase 3 photo swap -->
+        </div>
+        <div class="me-dog-card-info">
+          <span class="me-dog-card-name" id="meDogCardName">Add your dog</span>
+          <span class="me-dog-card-meta" id="meDogCardMeta">So we can make every walk personal.</span>
+        </div>
+      </div>
 
       <!-- Stats dashboard -->
       <div class="me-stats-dashboard" id="meStatsDashboard">
@@ -3878,9 +3955,9 @@
             <span class="me-stat-number" id="statMiles">-</span>
             <span class="me-stat-label" id="statMilesLabel">miles walked</span>
           </div>
-          <div class="me-stat-card">
+          <div class="me-stat-card me-stat-card--primary">
             <span class="me-stat-number" id="statWalks">-</span>
-            <span class="me-stat-label">walks logged</span>
+            <span class="me-stat-label" id="statWalksLabel">walks logged</span>
           </div>
         </div>
         <div class="me-stat-card me-stat-card--secondary">
@@ -3889,8 +3966,8 @@
         </div>
       </div>
 
-      <!-- Dog profile prompt (hidden once dog is set or dismissed) -->
-      <div class="me-dog-prompt" id="meDogPrompt" style="display:none">
+      <!-- Dog profile prompt (superseded by me-dog-card above) -->
+      <div class="me-dog-prompt" id="meDogPrompt" style="display:none" hidden>
         <div class="me-dog-prompt-icon">
           <i data-lucide="paw-print" style="width:24px;height:24px;" aria-hidden="true"></i>
         </div>
@@ -8744,6 +8821,7 @@
     saveFavourites(favs);
     // Re-render heart icons for this walk everywhere
     var nowFav = idx === -1;
+    if (nowFav) navigator.vibrate && navigator.vibrate(10);
     document.querySelectorAll('[data-heart="' + id + '"]').forEach(function(el) {
       el.classList.toggle('fav-active', nowFav);
       el.setAttribute('aria-label', nowFav ? 'Remove from favourites' : 'Add to favourites');
@@ -8889,6 +8967,7 @@
         if (def) showBadgeToast(def.name);
       });
       saveBadgeStorage(storage);
+      navigator.vibrate && navigator.vibrate([50, 30, 80]);
     }
   }
 
@@ -9012,6 +9091,11 @@
     if (labelEl) labelEl.textContent = getSavedUnits() === 'mi' ? 'miles walked' : 'km walked';
     var walksEl = document.getElementById('statWalks');
     if (walksEl) walksEl.textContent = log.length === 0 ? '-' : log.length;
+    var walksLabelEl = document.getElementById('statWalksLabel');
+    if (walksLabelEl) {
+      var dogNameForStat = getDogName();
+      walksLabelEl.textContent = dogNameForStat ? 'walks with ' + dogNameForStat : 'walks logged';
+    }
     var contribs = getContributionCount();
     var contribsEl = document.getElementById('statContribs');
     if (contribsEl) contribsEl.textContent = contribs === 0 ? '-' : contribs;
@@ -9231,28 +9315,23 @@
     var name = getSavedUsername();
     var dog  = getDog();
 
-    // Header: display name
-    var nameEl = document.getElementById('meDisplayName');
-    if (nameEl) {
-      var displayName = (dog && dog.name) ? dog.name : (name || '');
-      if (displayName) {
-        nameEl.textContent = displayName;
-        nameEl.className = 'me-name';
-      } else {
-        nameEl.textContent = 'Set up your profile';
-        nameEl.className = 'me-name me-name-placeholder';
-      }
-    }
-
-    // Header: dog avatar — show initial if dog name set, otherwise outline SVG
-    var avatarEl = document.getElementById('meDogAvatar');
-    if (avatarEl) {
+    // Dog profile card
+    var cardAvatarEl = document.getElementById('meDogCardAvatar');
+    var cardNameEl   = document.getElementById('meDogCardName');
+    var cardMetaEl   = document.getElementById('meDogCardMeta');
+    if (cardAvatarEl && cardNameEl && cardMetaEl) {
       if (dog && dog.name) {
-        avatarEl.innerHTML = '<span style="font:700 16px/1 \'Inter\',sans-serif;color:var(--brand);">' +
-          dog.name.charAt(0).toUpperCase() + '</span>';
+        // Future Phase 3: swap in dog.photoUrl as <img> here
+        cardAvatarEl.innerHTML = luIcon('dog', 28);
+        cardNameEl.textContent = dog.name;
+        var metaParts = [];
+        if (dog.breed) metaParts.push(dog.breed);
+        if (dog.age)   metaParts.push(dog.age + ' year' + (dog.age !== 1 ? 's' : '') + ' old');
+        cardMetaEl.textContent = metaParts.length ? metaParts.join(' \u00b7 ') : 'Edit profile';
       } else {
-        avatarEl.innerHTML = luIcon('paw-print', 24);
-        syncIcons();
+        cardAvatarEl.innerHTML = luIcon('dog', 28);
+        cardNameEl.textContent = 'Add your dog';
+        cardMetaEl.textContent = 'So we can make every walk personal.';
       }
     }
 
@@ -9341,12 +9420,9 @@
       }
     }
 
-    // Dog profile prompt
+    // Dog profile prompt (superseded by me-dog-card - always hidden)
     var promptEl = document.getElementById('meDogPrompt');
-    if (promptEl) {
-      var dismissed = localStorage.getItem('sniffout_dog_prompt_dismissed') === 'true';
-      promptEl.style.display = (!dog && !dismissed) ? 'flex' : 'none';
-    }
+    if (promptEl) promptEl.style.display = 'none';
 
     // Check for newly earned badges (badge logic)
     checkBadgeEarned();
@@ -9745,6 +9821,10 @@
     if (!el) return;
     var log = getWalkLog();
     if (log.length === 0) {
+      var emptyDogName = getDogName();
+      var emptyBody = emptyDogName
+        ? 'Where are you and ' + emptyDogName + ' walking next?'
+        : 'After any walk, tap Log this walk on the walk card, or use + Log a walk to add your own routes.';
       el.innerHTML =
         '<div class="me-subpage-empty">' +
           '<div class="me-subpage-empty-icon">' +
@@ -9754,7 +9834,7 @@
             '</svg>' +
           '</div>' +
           '<p class="me-subpage-empty-head">Your walks start here.</p>' +
-          '<p class="me-subpage-empty-body">After any walk, tap Log this walk on the walk card, or use + Log a walk to add your own routes.</p>' +
+          '<p class="me-subpage-empty-body">' + emptyBody + '</p>' +
         '</div>';
       return;
     }
@@ -9763,6 +9843,7 @@
     var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     // Sort all entries chronologically, newest first
     var sorted = log.slice().sort(function(a, b) { return (b.ts || 0) - (a.ts || 0); });
+    var journalDogName = getDogName();
     var html = '';
     sorted.forEach(function(entry) {
       var type   = entry.type || 'curated';
@@ -9780,6 +9861,7 @@
             '<div class="journal-row-summary">' +
               '<div class="journal-row-left">' +
                 '<span class="journal-row-name">' + escHtml(name) + '<span class="journal-row-custom-chip">Your route</span></span>' +
+                (journalDogName ? '<span class="journal-row-with">with ' + escHtml(journalDogName) + '</span>' : '') +
                 (metaParts.length ? '<span class="journal-row-meta">' + escHtml(metaParts.join(' \u00b7 ')) + '</span>' : '') +
               '</div>' +
               '<svg class="journal-row-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>' +
@@ -9802,6 +9884,7 @@
             '<div class="journal-row-summary">' +
               '<div class="journal-row-left">' +
                 '<span class="journal-row-name">' + escHtml(name) + '</span>' +
+                (journalDogName ? '<span class="journal-row-with">with ' + escHtml(journalDogName) + '</span>' : '') +
                 '<span class="journal-row-meta">' + (dist ? dist + (dateStr ? ' \u00b7 ' + dateStr : '') : dateStr) + '</span>' +
               '</div>' +
               '<svg class="journal-row-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>' +
@@ -9849,14 +9932,16 @@
     }
     var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var html = '';
+    var nowMs = Date.now();
     earned.forEach(function(b) {
       var badgeSvg = BADGE_ICONS[b.id] || '';
       var earnedAt = b.earnedAt ? new Date(b.earnedAt) : null;
       var dateStr = earnedAt
         ? 'Earned ' + earnedAt.getDate() + ' ' + MONTHS[earnedAt.getMonth()] + ' ' + earnedAt.getFullYear()
         : '';
+      var isNew = earnedAt && (nowMs - earnedAt.getTime()) < 30000;
       html +=
-        '<div class="badge-card" data-id="' + escHtml(b.id) + '" onclick="toggleSubpageBadgeCard(this)">' +
+        '<div class="badge-card' + (isNew ? ' badge-card--new' : '') + '" data-id="' + escHtml(b.id) + '" onclick="toggleSubpageBadgeCard(this)">' +
           '<div class="badge-card-summary">' +
             '<div class="badge-card-icon">' + badgeSvg + '</div>' +
             '<div class="badge-card-text">' +
