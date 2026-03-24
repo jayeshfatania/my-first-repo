@@ -479,7 +479,7 @@
       color: var(--brand);
       letter-spacing: -0.3px;
     }
-    .state-a-scroll { padding-bottom: 32px; }
+    .state-a-scroll { padding-bottom: 32px; overflow: hidden; }
 
     .hero-section { padding: 24px 16px 20px; }
     .hero-headline {
@@ -490,6 +490,7 @@
       letter-spacing: -0.02em;
       line-height: 1.15;
       margin-bottom: 10px;
+      text-align: center;
     }
     .hero-subline {
       font-size: 15px;
@@ -1220,6 +1221,7 @@
     body.night .wx-sheet-handle   { background: rgba(255,255,255,0.25); }
     body.night .wx-sheet-bar-track { background: rgba(255,255,255,0.1); }
     body.night .wx-pollen-dot     { background: rgba(255,255,255,0.15); }
+    body.night .wx-pollen-dot--filled { background: var(--brand); }
 
     /* Rain section */
     .rain-section {
@@ -4423,7 +4425,7 @@
           <span class="me-stat-label" id="statWalksLabel">walks logged</span>
         </div>
         <div class="me-stat-card me-stat-card--secondary">
-          <span class="me-stat-number me-stat-number--sm" id="statContribs">-</span>
+          <span class="me-stat-number" id="statContribs">-</span>
           <span class="me-stat-label">reports</span>
         </div>
       </div>
@@ -5252,6 +5254,9 @@
     var anchorBtn = document.getElementById('picks-anchor-btn');
     if (anchorBtn) anchorBtn.classList.remove('visible');
     if (id !== 'walks' && picksObserver) { picksObserver.disconnect(); picksObserver = null; }
+
+    // Dismiss walks map card when leaving Walks tab
+    if (id !== 'walks' && typeof dismissWalksMapCard === 'function') dismissWalksMapCard();
 
     // Show/hide Me tab FAB
     var fab = document.getElementById('meLogFab');
@@ -6161,9 +6166,11 @@
 
   function getBestWindow(hourly) {
     var h = new Date().getHours();
-    var bestIdx = h, bestScore = -1;
-    var limit = Math.min(h + 12, hourly.time.length);
-    for (var i = h; i < limit; i++) {
+    var start = Math.max(h, 6);
+    var bestIdx = start, bestScore = -1;
+    var limit = Math.min(h + 12, 21, hourly.time.length);
+    if (start >= limit) start = 6; // fallback: scan full day window
+    for (var i = start; i < Math.max(limit, start + 1); i++) {
       var prob = hourly.precipitation_probability[i] || 0;
       var t    = hourly.temperature_2m[i] || 10;
       var score = (100 - prob) + (t > 5 && t < 25 ? 20 : 0);
@@ -6173,7 +6180,7 @@
     var bestTemp = Math.round(hourly.temperature_2m[bestIdx] || 0);
     var timeStr  = formatHour(bestIdx % 24);
     if (bestProb < 30) {
-      return 'Best window today: ' + timeStr + ' · ' + bestTemp + '°C · ' + bestProb + '% chance of rain';
+      return 'Best window today: ' + timeStr + ' · ' + bestTemp + '\u00b0C · ' + bestProb + '% chance of rain';
     }
     return 'Best option today: ' + timeStr + ' - but still ' + bestProb + '% chance of rain. Take a coat.';
   }
@@ -6291,16 +6298,18 @@
 
   function getBestWindowTime(hourly) {
     var h = new Date().getHours();
-    var bestIdx = h, bestScore = -1;
-    var limit = Math.min(h + 12, hourly.time.length);
-    for (var i = h; i < limit; i++) {
+    var start = Math.max(h, 6);
+    var bestIdx = start, bestScore = -1;
+    var limit = Math.min(h + 12, 21, hourly.time.length);
+    if (start >= limit) start = 6;
+    for (var i = start; i < Math.max(limit, start + 1); i++) {
       var prob = hourly.precipitation_probability[i] || 0;
       var t    = hourly.temperature_2m[i] || 10;
       var score = (100 - prob) + (t > 5 && t < 25 ? 20 : 0);
       if (score > bestScore) { bestScore = score; bestIdx = i; }
     }
     var startH = bestIdx % 24;
-    var endH   = (startH + 3) % 24;
+    var endH   = Math.min(startH + 3, 21);
     return formatHour(startH) + ' - ' + formatHour(endH);
   }
 

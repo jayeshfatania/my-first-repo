@@ -252,7 +252,10 @@
       "Bash(git -C ~/Desktop/my-first-repo add docs/specs/push-notifications-phase3-spec.md && git -C ~/Desktop/my-first-repo commit -m \"$\\(cat <<'EOF'\nsniffout - add push notifications Phase 3 spec\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git -C ~/Desktop/my-first-repo push)",
       "Bash(git -C ~/Desktop/my-first-repo add docs/specs/push-notifications-phase3-spec.md && git -C ~/Desktop/my-first-repo commit -m \"$\\(cat <<'EOF'\nsniffout - clarify build vs go-live prerequisites in push notifications spec\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git -C ~/Desktop/my-first-repo push)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git -C ~/Desktop/my-first-repo diff --name-only)",
+      "Bash(source ~/.zshrc)",
+      "Bash(node --check /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html 2>&1 | head -20)"
     ]
   }
 }

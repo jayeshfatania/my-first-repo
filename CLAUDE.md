@@ -146,7 +146,7 @@ All inline. Light mode token set:
 
 | Token | Value | Notes |
 |-------|-------|-------|
-| `--brand` | `#3B5C2A` | Meadow green — brand colour |
+| `--brand` | `#2C4A14` | Woodland Green — brand colour |
 | `--bg` | `#F7F5F0` | Warm off-white page background |
 | `--surface` | `#FFFFFF` | Card surfaces |
 | `--border` | `rgba(0,0,0,0.08)` | Card borders |
