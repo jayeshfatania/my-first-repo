@@ -479,9 +479,10 @@
       color: var(--brand);
       letter-spacing: -0.3px;
     }
+    #state-a { height: 100%; overflow: hidden; }
     .state-a-scroll { padding-bottom: 32px; overflow: hidden; }
 
-    .hero-section { padding: 24px 16px 20px; }
+    .hero-section { padding: 24px 16px 20px; text-align: center; }
     .hero-headline {
       font-family: var(--font-display);
       font-size: 44px;
@@ -717,14 +718,8 @@
       opacity: 0.85;
     }
 
-    /* ── Today's Conditions Card (State B) ── */
-    .today-conditions-card {
-      margin: 4px 16px 16px;
-      background: rgba(59,92,42,0.05);
-      border: 1px solid rgba(59,92,42,0.12);
-      border-radius: 16px;
-      padding: 14px 16px;
-    }
+    /* ── Today's Conditions Card (State B) ── now unified inside weather-hero ── */
+    .today-conditions-card { display: none; }
     .today-conditions-body {
       font-size: 14px;
       color: var(--ink);
@@ -789,15 +784,15 @@
     .weather-hero-feels { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 2px; }
     .weather-verdict {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 8px;
       font-family: var(--font-display);
-      font-size: 28px;
-      font-weight: 700;
+      font-size: 22px;
+      font-weight: 600;
       letter-spacing: -0.01em;
       line-height: 1.2;
     }
-    .weather-verdict > svg { margin-top: 3px; flex-shrink: 0; }
+    .weather-verdict > svg { flex-shrink: 0; }
     .weather-pills {
       display: flex;
       gap: 6px;
@@ -831,19 +826,26 @@
     }
     .hazard-card {
       margin: 0 16px 8px;
-      background: rgba(220,38,38,0.07);
-      border: 1px solid rgba(220,38,38,0.25);
-      border-left: 4px solid var(--red);
-      border-radius: 12px;
-      padding: 12px 14px;
+      background: var(--amber);
+      border: none;
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .hazard-card--red { background: var(--red); }
+    .hazard-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
     }
     .hazard-title {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
-      color: var(--ink);
-      margin-bottom: 3px;
+      color: #fff;
     }
-    .hazard-body { font-size: 13px; color: var(--ink-2); line-height: 1.45; }
+    .hazard-body { font-size: 14px; color: rgba(255,255,255,0.88); line-height: 1.55; }
+    body.night .hazard-card { background: #8A5A18; }
+    body.night .hazard-card--red { background: #C73333; }
 
     /* Horizontal scroll walk cards (State B Today) */
     .hscroll-section { padding: 0 16px 4px; }
@@ -1314,12 +1316,28 @@
       height: 180px;
       position: relative;
       background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
+      overflow: hidden;
+      border-radius: 16px 16px 0 0;
     }
     .walk-photo img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+    }
+    .walk-name-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 8px 12px;
+      background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.65));
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 0 0 0 0;
+      line-height: 1.3;
+      pointer-events: none;
     }
     .walk-badge {
       position: absolute;
@@ -1346,36 +1364,23 @@
       cursor: pointer;
       z-index: 1;
     }
-    .walk-body { padding: 14px; }
-    .walk-name {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--ink);
-      margin-bottom: 4px;
-    }
-    .walk-rating {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--ink);
-      margin-bottom: 10px;
-    }
-    .walk-rating-star { color: var(--amber); }
+    .walk-body { padding: 10px 12px 12px; }
+    .walk-name { display: none; }
+    .walk-rating { display: none; }
     .walk-meta {
       display: flex;
-      gap: 12px;
-      font-size: 12px;
-      color: var(--ink-2);
-      margin-bottom: 10px;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: nowrap;
     }
     .walk-meta-item {
+      font: 500 13px/1 'Inter', sans-serif;
+      color: var(--ink);
       display: flex;
       align-items: center;
       gap: 4px;
     }
-    .walk-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .walk-tags { display: flex; gap: 6px; flex-wrap: nowrap; }
     .walk-tag {
       font-size: 11px;
       font-weight: 500;
@@ -1401,34 +1406,55 @@
     /* ═══════════════════════════════
        WALKS TAB — MAP VIEW
     ═══════════════════════════════ */
-    .walks-map-toggle {
+    /* Three-segment toggle (replaces list/map toggle) */
+    .walks-seg-ctrl {
       display: flex;
       align-items: center;
-      gap: 2px;
-      background: var(--bg);
-      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.06);
       border-radius: 10px;
       padding: 3px;
-      flex-shrink: 0;
+      height: 40px;
+      flex: 1;
     }
-    body.night .walks-map-toggle { background: var(--surface); }
-    .walks-map-toggle-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 28px;
+    body.night .walks-seg-ctrl { background: rgba(255,255,255,0.08); }
+    .walks-seg-btn {
+      flex: 1;
+      height: 34px;
       border: none;
-      border-radius: 7px;
+      border-radius: 8px;
       background: transparent;
       color: var(--ink-2);
+      font: 600 13px/1 'Inter', sans-serif;
       cursor: pointer;
       transition: transform 0.15s ease;
       -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
     }
-    .walks-map-toggle-btn:active { transform: scale(0.97); }
-    .walks-map-toggle-btn.active { background: var(--surface); color: var(--brand); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    body.night .walks-map-toggle-btn.active { background: rgba(255,255,255,0.12); color: var(--brand); }
+    .walks-seg-btn:active { transform: scale(0.97); }
+    .walks-seg-btn.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+    body.night .walks-seg-btn.active { background: #2A2A2A; color: var(--ink); }
+    /* Keep legacy toggle classes for backward compat */
+    .walks-map-toggle { display: none; }
+    .walks-map-toggle-btn { display: none; }
+    /* Green space pin */
+    .greenspace-pin {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #4A7A5A;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.28);
+      transition: width 150ms ease, height 150ms ease, margin 150ms ease;
+      cursor: pointer;
+    }
+    body.night .greenspace-pin { background: #5A9070; }
+    .greenspace-pin.selected {
+      width: 36px;
+      height: 36px;
+      border-width: 3px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      margin: -4px 0 0 -4px;
+    }
     #walks-map-container {
       display: none;
       position: relative;
@@ -1507,6 +1533,7 @@
       border-radius: 16px 16px 0 0;
       padding: 16px;
       z-index: 401;
+      display: none;
       transform: translateY(100%);
       transition: transform 200ms ease;
       pointer-events: none;
@@ -3330,10 +3357,27 @@
       cursor: pointer;
     }
     .trail-card-photo {
-      height: 180px;
+      height: 140px;
       background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
       position: relative;
       overflow: hidden;
+      border-radius: 16px 16px 0 0;
+    }
+    .trail-card-name-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 8px 10px;
+      background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.65));
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 0;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .trail-heart {
       position: absolute;
@@ -3361,12 +3405,13 @@
       border-radius: 99px;
       padding: 3px 8px;
     }
-    .trail-card-body { padding: 10px 12px 14px; }
-    .trail-card-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 4px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .trail-card-rating { font-size: 13px; color: #B07A28; font-weight: 500; margin-bottom: 4px; }
+    .trail-card-body { padding: 10px 12px 12px; }
+    .trail-card-name { display: none; }
+    .trail-card-rating { display: none; }
     .trail-card-meta { font-size: 12px; color: var(--ink-2); margin-bottom: 2px; }
-    .trail-card-dist-away { font-size: 12px; color: var(--ink-2); margin-bottom: 6px; }
-    .trail-card-tags { display: flex; gap: 4px; flex-wrap: nowrap; overflow: hidden; }
+    .trail-card-dist-away { display: none; }
+    .trail-card-tags { display: flex; gap: 4px; flex-wrap: nowrap; overflow: hidden; align-items: center; }
+    .trail-tag-meta { font: 500 13px/1 'Inter', sans-serif; color: var(--ink); flex-shrink: 0; }
     .trail-card-condition-dot { position: absolute; bottom: 8px; right: 38px; width: 8px; height: 8px; border-radius: 50%; background: var(--brand); border: 1.5px solid white; }
     .trail-card-desc {
       font-size: 12px;
@@ -3677,6 +3722,56 @@
       display: block;
     }
     .weather-hero { position: relative; }
+    /* Unified hero card internals */
+    .weather-hero-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.12);
+      margin: 12px -20px;
+    }
+    .weather-hero-body {
+      font: 400 14px/1.55 'Inter', sans-serif;
+      color: rgba(255,255,255,0.85);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+    .weather-hero-forecast-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 40px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease;
+    }
+    .weather-hero-forecast-row:active { transform: scale(0.97); }
+    .weather-hero-forecast-label {
+      font: 500 13px/1 'Inter', sans-serif;
+      color: rgba(255,255,255,0.8);
+    }
+    .weather-hero-forecast-chevron {
+      color: rgba(255,255,255,0.6);
+    }
+    .weather-hero-info-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: none;
+      color: rgba(255,255,255,0.65);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transform-origin: center;
+      transition: transform 0.15s ease;
+    }
+    .weather-hero-info-btn:active { transform: scale(0.97); }
     /* ─── Lucide icons ─── */
     [data-lucide] { display:inline-block; vertical-align:middle; flex-shrink:0; }
 
@@ -4293,14 +4388,11 @@
             <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div class="walks-map-toggle" role="group" aria-label="View mode">
-            <button class="walks-map-toggle-btn active" id="walks-list-view-btn" aria-label="List view" onclick="setWalksView('list')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            </button>
-            <button class="walks-map-toggle-btn" id="walks-map-view-btn" aria-label="Map view" onclick="setWalksView('map')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-            </button>
+        <div style="display:flex;align-items:center;gap:8px;flex:1;">
+          <div class="walks-seg-ctrl" id="walks-seg-ctrl" role="group" aria-label="View mode">
+            <button class="walks-seg-btn active" id="walks-seg-picks" onclick="setWalksView('picks')">Picks</button>
+            <button class="walks-seg-btn" id="walks-seg-all" onclick="setWalksView('all')">All</button>
+            <button class="walks-seg-btn" id="walks-seg-green" onclick="setWalksView('greenspaces')">Green spaces</button>
           </div>
           <button class="filter-btn" id="walks-radius-btn" aria-label="Filter by radius">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4-2V12L3 4z"/></svg>
@@ -4393,18 +4485,18 @@
     <!-- ══════════ ME TAB ══════════ -->
     <div id="tab-me" class="tab-panel">
 
-      <!-- Header -->
+      <!-- Header (identity only - gear moved into dog card) -->
       <header class="me-header">
         <div class="me-header-identity" id="meHeaderIdentity">
           <!-- dog picker appended here by JS when multiple dogs exist -->
         </div>
-        <button class="me-gear-btn" id="meGearBtn" aria-label="Settings">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        </button>
       </header>
 
       <!-- Dog profile card -->
-      <div class="me-dog-card" id="meDogCard" onclick="openMeSubpage('dog')">
+      <div class="me-dog-card" id="meDogCard" onclick="openMeSubpage('dog')" style="position:relative;">
+        <button class="me-gear-btn" id="meGearBtn" aria-label="Settings" style="position:absolute;top:12px;right:12px;width:36px;height:36px;" onclick="event.stopPropagation();openMeSettingsSheet()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
         <div class="me-dog-card-avatar" id="meDogCardAvatar">
           <!-- populated by renderMeTab() — img tag for Phase 3 photo swap -->
         </div>
@@ -6192,6 +6284,44 @@
 
   /* ─── Render: Today State B ─── */
 
+  /* ─── Hazard card builder ─── */
+  function hazardKeyToIcon(key) {
+    if (key === 'wind-avoid' || key === 'wind-caution') return 'wind';
+    if (key === 'heat-generic' || key === 'heat-dog' || key === 'heat-paw' || key === 'heat-caution') return 'thermometer';
+    if (key === 'storm') return 'cloud-lightning';
+    if (key === 'cold-generic' || key === 'cold-dog' || key === 'cold-freeze') return 'thermometer-snowflake';
+    if (key === 'seasonal') return 'alert-triangle';
+    return 'alert-triangle';
+  }
+  function hazardIsRed(key) {
+    return key === 'storm' || key === 'wind-avoid' || key === 'heat-generic' || key === 'heat-dog';
+  }
+  function hazardSeverity(key) {
+    // Higher = more severe, shown first
+    if (key === 'storm' || key === 'heat-generic' || key === 'heat-dog') return 3;
+    if (key === 'wind-avoid') return 2;
+    if (key === 'heat-paw' || key === 'wind-caution' || key === 'cold-generic' || key === 'cold-dog') return 1;
+    return 0;
+  }
+  function buildHazardCard(hz) {
+    var isRed = hazardIsRed(hz.key);
+    var icon = hazardKeyToIcon(hz.key);
+    return '<div class="hazard-card' + (isRed ? ' hazard-card--red' : '') + '">' +
+      '<div class="hazard-header">' +
+        luIcon(icon, 20, 'color:#fff;flex-shrink:0;') +
+        '<div class="hazard-title">' + hz.title + '</div>' +
+      '</div>' +
+      '<div class="hazard-body">' + hz.body + '</div>' +
+    '</div>';
+  }
+  function buildHazardHTML(hazards, suppressedKeys) {
+    var active = hazards.filter(function(hz) {
+      return !suppressedKeys || suppressedKeys.indexOf(hz.key) === -1;
+    });
+    active.sort(function(a, b) { return hazardSeverity(b.key) - hazardSeverity(a.key); });
+    return active.map(buildHazardCard).join('');
+  }
+
   function renderTodayStateB(cur, verdict, hazards, daily) {
     var content = document.getElementById('state-b-content');
     if (!content) return;
@@ -6226,11 +6356,7 @@
     var suppressedKeys = [verdict.key];
     if (verdict.key === 'heat-caution') suppressedKeys.push('heat-generic');
 
-    var hazardHTML = '';
-    hazards.forEach(function(hz) {
-      if (hz.key && suppressedKeys.indexOf(hz.key) !== -1) return;
-      hazardHTML += '<div class="hazard-card"><div class="hazard-title">' + hz.title + '</div><div class="hazard-body">' + hz.body + '</div></div>';
-    });
+    var hazardHTML = buildHazardHTML(hazards, suppressedKeys);
 
     // FIX 3: greeting (only when no dog name)
     var greetingText = '';
@@ -6246,13 +6372,12 @@
       ? luIcon('paw-print', 18, 'color:white;margin-left:6px;flex-shrink:0;')
       : '';
 
-    // FIX 4: inline info button after verdict text
-    var infoBtn = '<button class="weather-info-btn" onclick="event.stopPropagation();openWeatherModal()" aria-label="About weather features">' + luIcon('info', 18) + '</button>';
-
     var verdictLabel = getDogName() ? verdict.shortTitle.replace('[name]', getDogName()) : verdict.title;
+    var heroClass = (verdict.type === 'caution' || verdict.type === 'caveat' ? ' weather-hero--caution' : verdict.type === 'avoid' ? ' weather-hero--avoid' : '');
 
     content.innerHTML =
-      '<div class="weather-hero' + (verdict.type === 'caution' || verdict.type === 'caveat' ? ' weather-hero--caution' : verdict.type === 'avoid' ? ' weather-hero--avoid' : '') + '" onclick="switchTab(\'weather\')">' +
+      '<div class="weather-hero' + heroClass + '">' +
+        '<button class="weather-hero-info-btn" onclick="event.stopPropagation();switchTab(\'weather\')" aria-label="Full forecast">' + luIcon('info', 18) + '</button>' +
         '<div class="weather-hero-top">' +
           '<div>' +
             '<div class="weather-hero-temp">' + temp + '\u00b0C</div>' +
@@ -6261,23 +6386,25 @@
           heroIconHtml +
         '</div>' +
         '<div class="weather-verdict">' +
-          luIcon(verdict.icon, 24) +
+          luIcon(verdict.icon, 20) +
           '<span>' +
             (greetingText ? '<span class="weather-greeting">' + greetingText + '</span>' : '') +
             verdictLabel +
             pawInline +
-            infoBtn +
           '</span>' +
         '</div>' +
-        '<div class="weather-pills">' +
+        '<div class="weather-hero-divider"></div>' +
+        '<div class="weather-hero-body">' + verdict.body + '</div>' +
+        '<div class="weather-pills" style="margin-top:12px;">' +
           '<span class="weather-pill">' + luIcon('droplets', 14) + ' ' + humidity + '%</span>' +
           '<span class="weather-pill">' + luIcon('wind', 14) + ' ' + wind + ' km/h</span>' +
           (sunPillText ? '<span class="weather-pill">' + sunPillText + '</span>' : '') +
         '</div>' +
-      '</div>' +
-      '<div class="today-conditions-card">' +
-        '<div class="today-conditions-body">' + verdict.body + '</div>' +
-        '<span class="today-conditions-link" onclick="switchTab(\'weather\')">Full forecast →</span>' +
+        '<div class="weather-hero-divider"></div>' +
+        '<div class="weather-hero-forecast-row" onclick="switchTab(\'weather\')" role="button" aria-label="Full forecast">' +
+          '<span class="weather-hero-forecast-label">Full forecast</span>' +
+          '<span class="weather-hero-forecast-chevron">' + luIcon('chevron-right', 14) + '</span>' +
+        '</div>' +
       '</div>' +
       '<div id="today-walks-section"></div>' +
       hazardHTML +
@@ -6470,11 +6597,8 @@
         '</div>';
     }
 
-    // Hazard cards
-    var hazardHTML = '';
-    hazards.forEach(function(hz) {
-      hazardHTML += '<div class="hazard-card"><div class="hazard-title">' + hz.title + '</div><div class="hazard-body">' + hz.body + '</div></div>';
-    });
+    // Hazard cards (Weather tab - no suppression, show all hazards)
+    var hazardHTML = buildHazardHTML(hazards, []);
 
     // Date string
     var now = new Date();
@@ -11116,22 +11240,18 @@
   function renderWalkCard(walk) {
     var fav     = isFavourited(walk.id);
     var ol      = offLeadLabel(walk.offLead);
-    var photoStyle = '';
     var photoInner = walk.imageUrl
       ? '<img src="' + escHtml(walk.imageUrl) + '" alt="' + escHtml(walk.name) + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">'
       : '';
     var badgeText  = walk.badge || (walk.source === 'places' ? 'Nearby' : '');
     var badgeHTML  = badgeText ? '<div class="walk-badge">' + badgeText + '</div>' : '';
-    var ratingHTML = '';
-    var livestockHTML = walk.livestock
-      ? '<span class="walk-tag">Livestock</span>'
-      : '';
 
     return (
       '<div class="walk-card" onclick="onWalkTap(\'' + walk.id + '\')">' +
-        '<div class="walk-photo" style="' + photoStyle + '">' +
+        '<div class="walk-photo">' +
           photoInner +
           badgeHTML +
+          '<div class="walk-name-overlay">' + escHtml(walk.name) + '</div>' +
           '<button class="walk-heart' + (fav ? ' fav-active' : '') + '" ' +
             'data-heart="' + walk.id + '" ' +
             'aria-label="' + (fav ? 'Remove from' : 'Add to') + ' favourites" ' +
@@ -11140,16 +11260,10 @@
           '</button>' +
         '</div>' +
         '<div class="walk-body">' +
-          '<div class="walk-name">' + escHtml(walk.name) + '</div>' +
-          ratingHTML +
           '<div class="walk-meta">' +
             '<span class="walk-meta-item">' + formatDist(walk.distance) + '</span>' +
-            '<span class="walk-meta-item">' + walk.duration + ' min</span>' +
-            '<span class="walk-meta-item">' + difficultyLabel(walk.difficulty) + '</span>' +
-          '</div>' +
-          '<div class="walk-tags">' +
             '<span class="walk-tag ' + ol.cls + '">' + ol.text + '</span>' +
-            livestockHTML +
+            (walk.difficulty ? '<span class="walk-tag">' + difficultyLabel(walk.difficulty) + '</span>' : '') +
           '</div>' +
         '</div>' +
       '</div>'
@@ -11207,27 +11321,14 @@
   function renderTrailCard(walk) {
     var badgeHTML = walk.badge ? '<div class="trail-card-badge">' + walk.badge + '</div>' : '';
     var ol = offLeadLabel(walk.offLead);
-    var chips = ['<span class="trail-tag' + (ol.cls ? ' ' + ol.cls : '') + '">' + ol.text + '</span>'];
-    if (walk.enclosed) {
-      chips.push('<span class="trail-tag">Enclosed</span>');
-    } else if (walk.terrain && walk.terrain !== 'mixed') {
-      chips.push('<span class="trail-tag">' + walk.terrain.charAt(0).toUpperCase() + walk.terrain.slice(1) + '</span>');
-    }
+    var diffText = walk.difficulty ? walk.difficulty.charAt(0).toUpperCase() + walk.difficulty.slice(1) : '';
     var condDot = getDisplayTags(walk.id).length > 0 ? '<div class="trail-card-condition-dot"></div>' : '';
-    var metaText = formatDist(walk.distance) + ' · ' + walk.difficulty.charAt(0).toUpperCase() + walk.difficulty.slice(1);
-    var distAwayHtml = '';
-    if (walksUserLat !== null && walksUserLon !== null) {
-      var usesMi = getSavedUnits() === 'mi';
-      var distAway = usesMi
-        ? haversineMiles(walksUserLat, walksUserLon, walk.lat, walk.lon).toFixed(1) + ' mi away'
-        : haversineKm(walksUserLat, walksUserLon, walk.lat, walk.lon).toFixed(1) + ' km away';
-      distAwayHtml = '<div class="trail-card-dist-away">' + distAway + '</div>';
-    }
     return (
       '<div class="trail-card" onclick="onWalkTap(\'' + walk.id + '\')">' +
         '<div class="trail-card-photo">' +
           (walk.imageUrl ? '<img src="' + escHtml(walk.imageUrl) + '" alt="' + escHtml(walk.name) + '" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;">' : '') +
           badgeHTML + condDot +
+          '<div class="trail-card-name-overlay">' + escHtml(walk.name) + '</div>' +
           '<button class="trail-heart' + (isFavourited(walk.id) ? ' fav-active' : '') + '" data-heart="' + walk.id + '" ' +
             'aria-label="' + (isFavourited(walk.id) ? 'Remove from' : 'Add to') + ' favourites" ' +
             'onclick="event.stopPropagation();toggleFavourite(\'' + walk.id + '\')">' +
@@ -11235,10 +11336,11 @@
           '</button>' +
         '</div>' +
         '<div class="trail-card-body">' +
-          '<div class="trail-card-name">' + escHtml(walk.name) + '</div>' +
-          '<div class="trail-card-meta">' + metaText + '</div>' +
-          distAwayHtml +
-          '<div class="trail-card-tags">' + chips.join('') + '</div>' +
+          '<div class="trail-card-tags">' +
+            '<span class="trail-tag-meta">' + formatDist(walk.distance) + '</span>' +
+            (diffText ? '<span class="trail-tag">' + diffText + '</span>' : '') +
+            '<span class="trail-tag' + (ol.cls ? ' ' + ol.cls : '') + '">' + ol.text + '</span>' +
+          '</div>' +
         '</div>' +
       '</div>'
     );
@@ -11333,7 +11435,33 @@
 
     el.innerHTML = html;
     syncIcons();
-    initPicksAnchor();
+
+    // Apply current view mode (default: picks = map view)
+    // Ensure the display state matches walksMapCurrentView
+    var walksContent = document.getElementById('walks-content');
+    var walksMapCont = document.getElementById('walks-map-container');
+    var showListNow = (walksMapCurrentView === 'all');
+    if (walksContent) walksContent.style.display = showListNow ? '' : 'none';
+    if (walksMapCont) walksMapCont.classList.toggle('visible', !showListNow);
+    // Sync seg buttons
+    var segPicks2 = document.getElementById('walks-seg-picks');
+    var segAll2   = document.getElementById('walks-seg-all');
+    var segGreen2 = document.getElementById('walks-seg-green');
+    if (segPicks2) segPicks2.classList.toggle('active', walksMapCurrentView === 'picks');
+    if (segAll2)   segAll2.classList.toggle('active', walksMapCurrentView === 'all');
+    if (segGreen2) segGreen2.classList.toggle('active', walksMapCurrentView === 'greenspaces');
+    if (!showListNow) {
+      var tabPanelW = document.getElementById('tab-walks');
+      var titleBarW = tabPanelW ? tabPanelW.querySelector('.tab-title-bar') : null;
+      var radiusPickerW = document.getElementById('walks-radius-picker');
+      var usedHW = (titleBarW ? titleBarW.offsetHeight : 56) + (radiusPickerW && radiusPickerW.classList.contains('open') ? radiusPickerW.offsetHeight : 0);
+      var mapHW = (tabPanelW ? tabPanelW.offsetHeight : window.innerHeight - 64) - usedHW;
+      var mapElW = document.getElementById('walks-map');
+      if (mapElW) mapElW.style.height = Math.max(200, mapHW) + 'px';
+      initWalksMap();
+    } else {
+      initPicksAnchor();
+    }
 
     // Fetch and append green spaces below community trails
     fetchGreenSpacesForWalks(lat, lon, locationName, function(greenSpaces) {
@@ -11511,23 +11639,46 @@
   /* ─── Walks tab map view ─── */
   var walksMapInstance = null;
   var walksMapMarkers = [];
-  var walksMapCurrentView = 'list';
+  var walksMapCurrentView = 'picks'; // 'picks' | 'all' | 'greenspaces'
   var walksMapSelectedId = null;
+  var walksGreenSpaceMarkers = [];
 
   function setWalksView(mode) {
     walksMapCurrentView = mode;
-    var listBtn = document.getElementById('walks-list-view-btn');
-    var mapBtn  = document.getElementById('walks-map-view-btn');
     var content = document.getElementById('walks-content');
     var mapCont = document.getElementById('walks-map-container');
     var card    = document.getElementById('walksMapCard');
-    if (listBtn) listBtn.classList.toggle('active', mode === 'list');
-    if (mapBtn)  mapBtn.classList.toggle('active', mode === 'map');
-    if (content) content.style.display = mode === 'list' ? '' : 'none';
-    if (mapCont) mapCont.classList.toggle('visible', mode === 'map');
-    if (card && mode === 'list') dismissWalksMapCard();
 
-    if (mode === 'map') {
+    // Update segmented control active state
+    var segPicks = document.getElementById('walks-seg-picks');
+    var segAll   = document.getElementById('walks-seg-all');
+    var segGreen = document.getElementById('walks-seg-green');
+    if (segPicks) segPicks.classList.toggle('active', mode === 'picks');
+    if (segAll)   segAll.classList.toggle('active', mode === 'all');
+    if (segGreen) segGreen.classList.toggle('active', mode === 'greenspaces');
+
+    var isListMode = (mode === 'all' && !walksMapInstance);
+    // 'all' shows list view (no map), 'picks' and 'greenspaces' show map
+    var showList = (mode === 'all');
+    var showMap  = (mode === 'picks' || mode === 'greenspaces');
+
+    if (content) content.style.display = showList ? '' : 'none';
+    if (mapCont) mapCont.classList.toggle('visible', showMap);
+    if (card && showList) dismissWalksMapCard();
+
+    // Picks anchor: hide in map views, restore scroll-based control in list view
+    var anchorBtn = document.getElementById('picks-anchor-btn');
+    if (anchorBtn) {
+      if (showMap) {
+        anchorBtn.classList.remove('visible');
+        anchorBtn.style.pointerEvents = 'none';
+      } else {
+        anchorBtn.style.pointerEvents = '';
+        initPicksAnchor();
+      }
+    }
+
+    if (showMap) {
       // Compute map height: tab-panel minus filter area
       var tabPanel = document.getElementById('tab-walks');
       var titleBar = tabPanel ? tabPanel.querySelector('.tab-title-bar') : null;
@@ -11583,17 +11734,28 @@
     if (zoomMsg) zoomMsg.classList.remove('visible');
 
     var bounds = walksMapInstance.getBounds();
-    var visible = WALKS_DB.filter(function(w) {
-      return bounds.contains([w.lat, w.lon]);
-    });
+    var mode = walksMapCurrentView;
 
-    if (visible.length === 0) {
+    // Determine which walks to show based on mode
+    var walksToShow;
+    if (mode === 'picks') {
+      walksToShow = WALKS_DB.filter(function(w) {
+        return (w.badge === 'Sniffout Pick' || w.badge === 'Popular') && bounds.contains([w.lat, w.lon]);
+      });
+    } else if (mode === 'greenspaces') {
+      walksToShow = [];
+    } else {
+      // 'all' mode - but we're in list view so pins not shown via setWalksView; guard anyway
+      walksToShow = WALKS_DB.filter(function(w) { return bounds.contains([w.lat, w.lon]); });
+    }
+
+    if (walksToShow.length === 0 && mode !== 'greenspaces') {
       if (emptyMsg) emptyMsg.classList.add('visible');
       return;
     }
     if (emptyMsg) emptyMsg.classList.remove('visible');
 
-    visible.forEach(function(walk) {
+    walksToShow.forEach(function(walk) {
       var isSelected = walk.id === walksMapSelectedId;
       var size = isSelected ? 36 : 28;
       var anchor = size / 2;
@@ -11611,6 +11773,34 @@
       marker.addTo(walksMapInstance);
       walksMapMarkers.push({ id: walk.id, marker: marker });
     });
+
+    // Green space pins (greenspaces mode - use nearby places data if available)
+    if (mode === 'greenspaces') {
+      // Use WALKS_DB as stand-in for green spaces with the lighter pin color
+      // In practice these would come from the Places API; for now show all walks with green space pin
+      var gsWalks = WALKS_DB.filter(function(w) { return bounds.contains([w.lat, w.lon]); });
+      gsWalks.forEach(function(walk) {
+        var isSelected = walk.id === walksMapSelectedId;
+        var size = isSelected ? 36 : 28;
+        var anchor = size / 2;
+        var icon = L.divIcon({
+          className: '',
+          html: '<div class="greenspace-pin' + (isSelected ? ' selected' : '') + '"></div>',
+          iconSize: [size, size],
+          iconAnchor: [anchor, anchor]
+        });
+        var marker = L.marker([walk.lat, walk.lon], { icon: icon, zIndexOffset: isSelected ? 1000 : 0 });
+        marker.on('click', function(e) {
+          L.DomEvent.stopPropagation(e);
+          selectWalksMapPin(walk.id);
+        });
+        marker.addTo(walksMapInstance);
+        walksMapMarkers.push({ id: walk.id, marker: marker });
+      });
+      if (gsWalks.length === 0) {
+        if (emptyMsg) emptyMsg.classList.add('visible');
+      }
+    }
   }
 
   function selectWalksMapPin(walkId) {
@@ -11637,12 +11827,21 @@
         '<span class="walks-map-card-pill">' + olText + '</span>' +
       '</div>' +
       '<button class="walks-map-card-btn" onclick="openWalkDetail(\'' + walk.id + '\')">View walk</button>';
+    card.style.display = 'block';
+    // Trigger reflow before adding open class so transition fires
+    card.getBoundingClientRect();
     card.classList.add('open');
   }
 
   function dismissWalksMapCard() {
     var card = document.getElementById('walksMapCard');
-    if (card) card.classList.remove('open');
+    if (card) {
+      card.classList.remove('open');
+      card.addEventListener('transitionend', function handler() {
+        card.removeEventListener('transitionend', handler);
+        card.style.display = 'none';
+      }, { once: true });
+    }
     walksMapSelectedId = null;
     renderWalksMapPins();
   }
