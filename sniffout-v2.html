@@ -485,13 +485,14 @@
     .hero-section { padding: 24px 16px 20px; text-align: center; }
     .hero-headline {
       font-family: var(--font-display);
-      font-size: 32px;
+      font-size: clamp(32px, 8vw, 44px);
       font-weight: 700;
       color: var(--ink);
       letter-spacing: -0.02em;
       line-height: 1.15;
       margin-bottom: 10px;
       text-align: center;
+      white-space: nowrap;
     }
     .hero-subline {
       font-size: 15px;
@@ -5938,26 +5939,36 @@
   var picksObserver = null;
 
   function initPicksAnchor() {
+    var pill = document.getElementById('picks-anchor-btn');
+    if (!pill) return;
+
+    // Ensure pill starts hidden
+    pill.classList.remove('visible');
+
+    // Disconnect any existing observer before re-initializing
     if (picksObserver) { picksObserver.disconnect(); picksObserver = null; }
-    var carousel  = document.querySelector('#tab-walks .trail-carousel');
-    var anchorBtn = document.getElementById('picks-anchor-btn');
-    if (!carousel || !anchorBtn) return;
+
+    // Find the picks section label (first .walks-section-label inside tab-walks)
+    var picksHeaderEl = document.querySelector('#tab-walks .walks-section-label');
+
+    if (!picksHeaderEl) return;
+
     picksObserver = new IntersectionObserver(function(entries) {
-      var isVisible = entries[0].isIntersecting;
-      // Only show pill in list view
-      var inMap = (walksMapCurrentView === 'map');
-      if (inMap) {
-        anchorBtn.classList.remove('visible');
-      } else {
-        anchorBtn.classList.toggle('visible', !isVisible);
-      }
-    }, {
-      root:      document.getElementById('tab-walks'),
-      threshold: 0
-    });
-    picksObserver.observe(carousel);
-    anchorBtn.onclick = function() {
-      document.getElementById('tab-walks').scrollTo({ top: 0, behavior: 'smooth' });
+      entries.forEach(function(entry) {
+        if (walksMapCurrentView !== 'list') {
+          pill.classList.remove('visible');
+          return;
+        }
+        // Show pill when picks section header has scrolled OUT of view (above viewport)
+        pill.classList.toggle('visible', !entry.isIntersecting);
+      });
+    }, { threshold: 0, rootMargin: '0px' });
+
+    picksObserver.observe(picksHeaderEl);
+
+    pill.onclick = function() {
+      var tabPanel = document.getElementById('tab-walks');
+      if (tabPanel) tabPanel.scrollTo({ top: 0, behavior: 'smooth' });
     };
   }
 
@@ -6665,12 +6676,6 @@
       heroIconSrc = YR_BASE + iconName + '.svg';
     }
 
-    // Verdict badge
-    var verdictCls  = getVerdictClass(verdict.type);
-    var verdictIcon = getVerdictIcon(verdict.type);
-    // Strip emoji from verdict title for the badge
-    var verdictText = verdict.title.replace(/[^\x00-\x7F\s\-'.,!?:;]/g, '').trim();
-
     // Hour bar for walk window card
     var barHTML = buildHourBar(hourly);
     var rainSum = getRainSummary(hourly);
@@ -6694,10 +6699,6 @@
         '</div>' +
         '<div class="wx-hero-condition">' + (WMO_DESC[cur.weather_code] || '') + '</div>' +
         '<div class="wx-hero-sub">Feels like ' + feels + '&#176; &nbsp;&#183;&nbsp; H ' + todayHigh + '&#176; &nbsp; L ' + todayLow + '&#176;</div>' +
-        '<div class="wx-verdict ' + verdictCls + '">' +
-          verdictIcon +
-          '<span>' + verdictText + '</span>' +
-        '</div>' +
       '</section>' +
 
       // Cards zone
@@ -11815,7 +11816,7 @@
     var walksToShow;
     if (mapFilter === 'picks') {
       walksToShow = WALKS_DB.filter(function(w) {
-        return w.badge === 'Sniffout Pick' && bounds.contains([w.lat, w.lon]);
+        return bounds.contains([w.lat, w.lon]);
       });
     } else {
       // greenspaces mode - no WALKS_DB pins
@@ -13111,6 +13112,13 @@
     _origSwitchTab(id);
     if (id === 'today' || id === 'weather') {
       silentWeatherRefresh();
+    }
+    if (id === 'nearby' && nearbyUserLat && nearbyUserLon) {
+      setTimeout(function() {
+        if (typeof openNearbyMapFullscreen === 'function') {
+          openNearbyMapFullscreen();
+        }
+      }, 80);
     }
   };
   /* ═══════════════════════════════
