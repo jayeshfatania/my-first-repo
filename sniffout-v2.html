@@ -2001,7 +2001,7 @@
     .me-header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
     .dog-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(59,92,42,0.10); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .me-header-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-    .me-dog-name { font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .me-dog-name { font-family: var(--font-display); font-size: 42px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .me-dog-meta { font: 400 13px/1 'Inter', sans-serif; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     /* -- Size segment pill track (3-col) -------------------------------- */
     .me-size-control .segment-pill[data-active="0"] { transform: translateX(0); }
@@ -2209,17 +2209,16 @@
     }
     .me-stat-number {
       font-family: var(--font-display);
-      font-size: 36px;
+      font-size: 28px;
       font-weight: 700;
       line-height: 1;
-      color: var(--ink);
+      color: var(--brand);
       letter-spacing: -1px;
     }
-    .me-stat-card--primary .me-stat-number { color: var(--brand); }
     .me-stat-number--sm {
-      font: 700 32px/1 'Inter', sans-serif;
+      font: 700 24px/1 'Inter', sans-serif;
       letter-spacing: -1px;
-      color: var(--ink);
+      color: var(--brand);
     }
     .me-stat-label {
       font: 400 12px/1 'Inter', sans-serif;
@@ -2724,7 +2723,7 @@
     body.night .chip.active           { background: rgba(106,155,74,0.10); border-color: rgba(106,155,74,0.22); color: var(--brand); }
     body.night .hazard-card.brand-variant { background: rgba(106,155,74,0.07); }
     body.night .weather-hero { background: #162B0A; }
-    body.night .me-stat-card--primary .me-stat-number { color: #6A9B4A; }
+    body.night .me-stat-number { color: #6A9B4A; }
     body.night .me-entry-label { color: #6A9B4A; }
     body.night .walk-card,
     body.night .venue-card-gp,
