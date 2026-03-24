@@ -36,6 +36,8 @@ Nothing gimmicky. Paw emoji (🐾) reserved for paw safety block only.
 
 Tap feedback rule: every tappable element must have consistent tap feedback. Apply `transition: transform 0.15s ease` and `transform: scale(0.97)` on `:active` to all interactive elements. No exceptions. This applies to cards, tiles, rows, chips, pills, buttons, and any other tappable surface. Bottom sheets must use the spring cubic-bezier open animation: `cubic-bezier(0.34, 1.56, 0.64, 1)`. All new interactive elements added in future rounds must include tap feedback.
 
+Verdict strings rule: verdict title strings in getWalkVerdict() must never contain hardcoded emoji. Icons are rendered as separate Lucide elements alongside the verdict title. Personalised short verdict strings (shortTitle) are used when a dog profile exists. Standard title strings are used as fallback when no dog profile is set.
+
 ## Deferred — Do Not Implement Without Instruction
 
 Google Places API expansion (already integrated at current scope — do not add new venue categories or API calls), user accounts, native app, marker clustering plugin, community tab, walk submission, push notifications.

@@ -5250,69 +5250,89 @@
     if (isStormCode(code)) {
       return {
         type: 'avoid',
-        title: '⛈️ Not a walk day',
+        title: 'Not a walk day',
+        shortTitle: 'Stay in today, [name].',
+        icon: 'cloud-lightning',
         body: 'There\'s a thunderstorm. Stay in - your dog would rather be safe than soggy.'
       };
     }
     if (gusts >= 60) {
       return {
         type: 'avoid',
-        title: '💨 Too gusty to be out',
+        title: 'Too gusty to be out',
+        shortTitle: 'Too gusty today, [name].',
+        icon: 'wind',
         body: 'Gusts of ' + Math.round(gusts) + ' km/h today - enough to cause problems on exposed routes. Worth waiting for it to ease.'
       };
     }
     if (temp > 28) {
       return {
         type: 'caution',
-        title: '🌡️ Warm today - timing matters',
+        title: 'Warm today - timing matters',
+        shortTitle: 'Time it right today, [name].',
+        icon: 'thermometer-sun',
         body: 'At this temperature, pavement can get hot enough to burn paws. Walk in the morning or evening, bring water, and do the 7-second test before setting off.'
       };
     }
     if (isFogCode(code)) {
       return {
         type: 'caution',
-        title: '🌁 Foggy out there',
+        title: 'Foggy out there',
+        shortTitle: 'Stick close today, [name].',
+        icon: 'cloud-fog',
         body: 'Stick to familiar routes and keep your dog close. Low visibility means less reaction time for drivers on lanes and bridleways.'
       };
     }
     if (isRainCode(code) && temp < 8) {
       return {
         type: 'caution',
-        title: '🥶 Wet and cold - make it a quick one',
+        title: 'Wet and cold - make it a quick one',
+        shortTitle: 'Quick one today, [name].',
+        icon: 'snowflake',
         body: 'Rain plus cold is hard going. A short loop is fine, but wrap up and don\'t hang about.'
       };
     }
     if (isRainCode(code)) {
       return {
         type: 'caution',
-        title: '☔ It\'s raining - but walkable',
+        title: 'It\'s raining - but walkable',
+        shortTitle: 'It\'s raining, [name] - but walkable.',
+        icon: 'cloud-rain',
         body: 'Not ideal, but fine if you\'re dressed for it. Stick to shorter routes and dry off your dog when you\'re back.'
       };
     }
     if (hourly && rainArrivingSoon(hourly)) {
       return {
         type: 'caution',
-        title: '🌂 Dry for now - rain arriving',
+        title: 'Dry for now - rain arriving',
+        shortTitle: 'Go now, [name].',
+        icon: 'cloud-drizzle',
         body: 'Good window right now, but heavy rain is forecast within 3 hours. If you\'re going, go soon.'
       };
     }
     if (hourly && rainLikelyToday(hourly)) {
       return {
         type: 'caution',
-        title: '🌧️ Showers on the way',
+        title: 'Showers on the way',
+        shortTitle: 'Get a walk in, [name].',
+        icon: 'cloud-drizzle',
         body: 'Dry now, but worth a jacket. A shorter walk while the window\'s open.'
       };
     }
     if (feels < 2) {
       return {
         type: 'caveat',
-        title: '❄️ Brisk walk day',
+        title: 'Brisk walk day',
+        shortTitle: 'Wrap up, [name].',
+        icon: 'snowflake',
         body: 'Feels like ' + Math.round(feels) + '°C. Fine for a quick outing - just watch for ice on paths, and rinse paws when you\'re home if there\'s been gritting.'
       };
     }
     return {
       type: 'approved',
-      title: '🌤️ Lovely walking weather',
+      title: 'Lovely walking weather',
+      shortTitle: 'Get out there, [name].',
+      icon: 'sun',
       body: Math.round(temp) + '°C and ' + cond + '. About as good as it gets - get out there.'
     };
   }
@@ -5587,7 +5607,10 @@
           '</div>' +
           heroIconHtml +
         '</div>' +
-        '<div class="weather-verdict">' + verdict.title + (getDogName() ? ' for ' + getDogName() : '') + '</div>' +
+        '<div class="weather-verdict">' +
+          luIcon(verdict.icon, 24) +
+          (getDogName() ? verdict.shortTitle.replace('[name]', getDogName()) : verdict.title) +
+        '</div>' +
         '<div class="weather-pills">' +
           '<span class="weather-pill">' + luIcon('droplets', 14) + ' ' + humidity + '%</span>' +
           '<span class="weather-pill">' + luIcon('wind', 14) + ' ' + wind + ' km/h</span>' +
