@@ -1446,7 +1446,7 @@
     /* In-map segmented filter */
     .walks-inmap-filter {
       position: absolute;
-      top: 12px;
+      bottom: 16px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 500;
@@ -4433,7 +4433,7 @@
             <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
           <div class="walks-map-toggle" role="group" aria-label="View mode">
             <button class="walks-map-toggle-btn active" id="walks-list-view-btn" aria-label="List view" onclick="setWalksView('list')">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
@@ -5959,41 +5959,40 @@
   }
 
   /* ─── Picks anchor pill (IntersectionObserver) ─── */
-  var picksObserver = null;
+  var picksObserver = null; // kept for compatibility with switchTab cleanup
 
   function initPicksAnchor() {
     var pill = document.getElementById('picks-anchor-btn');
-    if (!pill) return;
+    var tabPanel = document.getElementById('tab-walks');
+    if (!pill || !tabPanel) return;
 
-    // Ensure pill starts hidden
     pill.classList.remove('visible');
 
-    // Disconnect any existing observer before re-initializing
-    if (picksObserver) { picksObserver.disconnect(); picksObserver = null; }
-
-    // Find the picks section label (first .walks-section-label inside tab-walks)
-    var picksHeaderEl = document.querySelector('#tab-walks .walks-section-label');
-
-    if (!picksHeaderEl) return;
-
-    var scrollRoot = document.getElementById('tab-walks');
-    picksObserver = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (walksMapCurrentView !== 'list') {
-          pill.classList.remove('visible');
-          return;
-        }
-        // Show pill when picks section header has scrolled OUT of view (scrolled past it going down)
-        pill.classList.toggle('visible', !entry.isIntersecting);
-      });
-    }, { root: scrollRoot, threshold: 0, rootMargin: '0px' });
-
-    picksObserver.observe(picksHeaderEl);
-
     pill.onclick = function() {
-      var tabPanel = document.getElementById('tab-walks');
-      if (tabPanel) tabPanel.scrollTo({ top: 0, behavior: 'smooth' });
+      tabPanel.scrollTo({ top: 0, behavior: 'smooth' });
     };
+
+    function updatePicksPill() {
+      if (walksMapCurrentView !== 'list') {
+        pill.classList.remove('visible');
+        return;
+      }
+      var picksHeaderEl = tabPanel.querySelector('.walks-section-label');
+      if (!picksHeaderEl) { pill.classList.remove('visible'); return; }
+      // Show pill when the picks section header has scrolled above the top of the tab container
+      var containerTop = tabPanel.getBoundingClientRect().top;
+      var headerBottom = picksHeaderEl.getBoundingClientRect().bottom;
+      pill.classList.toggle('visible', headerBottom < containerTop);
+    }
+
+    // Attach scroll listener once - guard against duplicates
+    if (!tabPanel._picksScrollBound) {
+      tabPanel._picksScrollBound = true;
+      tabPanel.addEventListener('scroll', updatePicksPill, { passive: true });
+    }
+
+    // Evaluate immediately (handles returning from map view)
+    updatePicksPill();
   }
 
   function isRainCode(c) { return [51,53,55,56,57,61,63,65,66,67,80,81,82].indexOf(c) !== -1; }
@@ -12295,10 +12294,26 @@
     var mapBtn  = document.getElementById('nearby-map-view-btn');
     if (listBtn) listBtn.classList.toggle('active', mode === 'list');
     if (mapBtn)  mapBtn.classList.toggle('active', mode === 'map');
+
+    nearbyView = mode;
+
+    var mapEl    = document.getElementById('nearby-map');
+    var venuesEl = document.getElementById('nearby-venues');
+    var styleRow = document.getElementById('nearby-map-style-row');
+    var filterRow = document.getElementById('nearby-filter-row');
+
     if (mode === 'map') {
-      if (typeof openNearbyMapFullscreen === 'function') openNearbyMapFullscreen();
+      if (mapEl) mapEl.classList.add('visible');
+      if (venuesEl) venuesEl.style.display = 'none';
+      if (styleRow) styleRow.style.display = '';
+      // category chips stay visible (filterRow is not hidden)
+      if (nearbyUserLat && nearbyUserLon) {
+        setTimeout(function() { initNearbyMap(nearbyUserLat, nearbyUserLon); }, 50);
+      }
     } else {
-      if (typeof closeNearbyMapFullscreen === 'function') closeNearbyMapFullscreen();
+      if (mapEl) mapEl.classList.remove('visible');
+      if (venuesEl) venuesEl.style.display = '';
+      if (styleRow) styleRow.style.display = 'none';
     }
   }
 
@@ -12322,10 +12337,6 @@
         '</div>' +
         '<div class="nearby-toggle-row" id="nearby-toggle-row">' +
           '<span class="nearby-count" id="nearby-count">Loading…</span>' +
-          '<div class="view-toggle">' +
-            '<button class="toggle-btn active" id="nearby-list-btn">List</button>' +
-            '<button class="toggle-btn" id="nearby-map-btn">Map</button>' +
-          '</div>' +
         '</div>' +
         '<div id="nearby-venues"><div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding places near you…</div></div></div>';
     }
@@ -12348,34 +12359,11 @@
             nearbyVenues = venues;
             renderVenueList();
             if (nearbyView === 'map') updateMapMarkers();
+            // Also refresh fullscreen map pins if it is open
+            if (nearbyFsMap && typeof renderNearbyFsMarkers === 'function') renderNearbyFsMarkers();
           });
         }
       });
-    });
-
-    // Bind list/map toggle
-    var listBtn = document.getElementById('nearby-list-btn');
-    var mapBtn  = document.getElementById('nearby-map-btn');
-    if (listBtn) listBtn.addEventListener('click', function() {
-      nearbyView = 'list';
-      listBtn.classList.add('active'); mapBtn.classList.remove('active');
-      var mapEl = document.getElementById('nearby-map');
-      if (mapEl) mapEl.classList.remove('visible');
-      var styleRow = document.getElementById('nearby-map-style-row');
-      if (styleRow) styleRow.style.display = 'none';
-      var venuesEl = document.getElementById('nearby-venues');
-      if (venuesEl) venuesEl.style.display = '';
-    });
-    if (mapBtn) mapBtn.addEventListener('click', function() {
-      nearbyView = 'map';
-      mapBtn.classList.add('active'); listBtn.classList.remove('active');
-      var mapEl = document.getElementById('nearby-map');
-      if (mapEl) mapEl.classList.add('visible');
-      var styleRow = document.getElementById('nearby-map-style-row');
-      if (styleRow) styleRow.style.display = '';
-      var venuesEl = document.getElementById('nearby-venues');
-      if (venuesEl) venuesEl.style.display = 'none';
-      setTimeout(function() { initNearbyMap(lat, lon); }, 50);
     });
 
     // Initial load
@@ -12624,13 +12612,7 @@
     var chipsEl = document.getElementById('nearbyFsChips');
     if (chipsEl) {
       nearbyFsCategory = nearbyCategory;
-      var categories = [
-        { id: 'pub', label: 'Pubs' },
-        { id: 'cafe', label: 'Cafes' },
-        { id: 'vet', label: 'Vets' },
-        { id: 'shop', label: 'Pet Shops' }
-      ];
-      chipsEl.innerHTML = categories.map(function(c) {
+      chipsEl.innerHTML = CATEGORIES.filter(function(c) { return c.id !== 'saved'; }).map(function(c) {
         return '<button class="fs-map-chip' + (c.id === nearbyFsCategory ? ' active' : '') + '" onclick="setNearbyFsCategory(\'' + c.id + '\')">' + c.label + '</button>';
       }).join('');
     }
