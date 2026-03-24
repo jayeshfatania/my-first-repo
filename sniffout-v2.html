@@ -1397,6 +1397,175 @@
     .walks-empty a { color: var(--brand); text-decoration: underline; cursor: pointer; }
 
     /* ═══════════════════════════════
+       WALKS TAB — MAP VIEW
+    ═══════════════════════════════ */
+    .walks-map-toggle {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+      flex-shrink: 0;
+    }
+    body.night .walks-map-toggle { background: var(--surface); }
+    .walks-map-toggle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 28px;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--ink-2);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .walks-map-toggle-btn:active { transform: scale(0.97); }
+    .walks-map-toggle-btn.active { background: var(--surface); color: var(--brand); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    body.night .walks-map-toggle-btn.active { background: rgba(255,255,255,0.12); color: var(--brand); }
+    #walks-map-container {
+      display: none;
+      position: relative;
+      background: var(--bg);
+    }
+    body.night #walks-map-container { background: #1A1A1A; }
+    #walks-map-container.visible { display: block; }
+    #walks-map {
+      width: 100%;
+      min-height: 300px;
+    }
+    body.night #walks-map .leaflet-tile-pane { filter: brightness(0.75) contrast(1.05); }
+    /* Walk pin styles */
+    .walk-pin {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #2C4A14;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.28);
+      transition: width 150ms ease, height 150ms ease, margin 150ms ease;
+      cursor: pointer;
+    }
+    body.night .walk-pin { background: #3D6B22; }
+    .walk-pin.selected {
+      width: 36px;
+      height: 36px;
+      border-width: 3px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      margin: -4px 0 0 -4px;
+    }
+    /* Zoom threshold overlay */
+    .walks-map-zoom-msg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255,255,255,0.9);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      pointer-events: none;
+      z-index: 500;
+      display: none;
+    }
+    body.night .walks-map-zoom-msg { background: rgba(31,31,31,0.92); }
+    .walks-map-zoom-msg.visible { display: block; }
+    .walks-map-zoom-msg-text { font: 500 15px/1.4 'Inter',sans-serif; color: var(--ink); margin-top: 8px; }
+    /* Map empty state */
+    .walks-map-empty {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255,255,255,0.92);
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 260px;
+      text-align: center;
+      pointer-events: none;
+      z-index: 500;
+      display: none;
+    }
+    body.night .walks-map-empty { background: rgba(31,31,31,0.92); }
+    .walks-map-empty.visible { display: block; }
+    .walks-map-empty-title { font: 600 15px/1 'Inter',sans-serif; color: var(--ink); margin-top: 10px; }
+    .walks-map-empty-body { font: 400 13px/1.4 'Inter',sans-serif; color: var(--ink-2); margin-top: 4px; }
+    /* Compact walk card on pin tap */
+    .walks-map-card {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: calc(64px + env(safe-area-inset-bottom));
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px 16px 0 0;
+      padding: 16px;
+      z-index: 401;
+      transform: translateY(100%);
+      transition: transform 200ms ease;
+      pointer-events: none;
+    }
+    .walks-map-card.open {
+      transform: translateY(0);
+      transition: transform 280ms cubic-bezier(0.34,1.56,0.64,1);
+      pointer-events: auto;
+    }
+    .walks-map-card-name {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+    .walks-map-card-loc {
+      font: 400 13px/1 'Inter',sans-serif;
+      color: var(--ink-2);
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .walks-map-card-tags {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .walks-map-card-pill {
+      font: 500 12px/1 'Inter',sans-serif;
+      color: var(--brand);
+      background: var(--brand-tint);
+      border-radius: 6px;
+      padding: 6px 8px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+    }
+    body.night .walks-map-card-pill { background: rgba(255,255,255,0.08); }
+    .walks-map-card-btn {
+      display: block;
+      width: 100%;
+      height: 44px;
+      margin-top: 12px;
+      background: var(--brand);
+      color: #fff;
+      font: 600 14px/1 'Inter',sans-serif;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .walks-map-card-btn:active { transform: scale(0.97); }
+    body.night .walks-map-card-btn { background: #3D6B22; }
+
+    /* ═══════════════════════════════
        NEARBY TAB
     ═══════════════════════════════ */
     .venue-name { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
@@ -1428,8 +1597,190 @@
       width: 100%;
       height: 300px;
       display: none;
+      position: relative;
     }
     #nearby-map.visible { display: block; }
+    /* Nearby map expand button */
+    .nearby-map-expand-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 32px;
+      height: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--ink);
+      z-index: 450;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nearby-map-expand-btn:active { transform: scale(0.97); }
+    body.night .nearby-map-expand-btn { box-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+    /* Full screen nearby map overlay */
+    #nearby-map-fullscreen {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+      opacity: 0;
+      transform: scale(0.98);
+      transition: opacity 200ms ease, transform 200ms ease;
+    }
+    #nearby-map-fullscreen.open {
+      display: flex;
+      opacity: 1;
+      transform: scale(1);
+    }
+    .nearby-map-fullscreen-chips {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      background: rgba(255,255,255,0.95);
+      z-index: 451;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nearby-map-fullscreen-chips::-webkit-scrollbar { display: none; }
+    body.night .nearby-map-fullscreen-chips { background: rgba(31,31,31,0.95); }
+    .fs-map-chip {
+      font: 500 13px/1 'Inter',sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 7px 14px;
+      white-space: nowrap;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .fs-map-chip:active { transform: scale(0.97); }
+    .fs-map-chip.active { background: #3D6B22; color: #fff; border-color: #3D6B22; }
+    body.night .fs-map-chip { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.08); color: var(--ink); }
+    body.night .fs-map-chip.active { background: #3D6B22; border-color: #3D6B22; color: #fff; }
+    #nearby-map-fullscreen-map {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+    }
+    body.night #nearby-map-fullscreen-map .leaflet-tile-pane { filter: brightness(0.75) contrast(1.05); }
+    .nearby-map-fs-close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 32px;
+      height: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--ink);
+      z-index: 452;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nearby-map-fs-close:active { transform: scale(0.97); }
+    body.night .nearby-map-fs-close { box-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+    /* Venue pin styles */
+    .venue-pin {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.28);
+      transition: width 150ms ease, height 150ms ease, margin 150ms ease;
+      cursor: pointer;
+    }
+    .venue-pin.cafe  { background: #B07A28; }
+    .venue-pin.vet   { background: #C04040; }
+    .venue-pin.green { background: #3D6520; }
+    body.night .venue-pin.cafe  { background: #C08B38; }
+    body.night .venue-pin.green { background: #4A7830; }
+    .venue-pin.selected {
+      width: 36px;
+      height: 36px;
+      border-width: 3px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      margin: -4px 0 0 -4px;
+    }
+    /* Venue compact card (full screen mode) */
+    .nearby-map-card {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 16px;
+      z-index: 453;
+      transform: translateY(100%);
+      transition: transform 200ms ease;
+      pointer-events: none;
+    }
+    .nearby-map-card.open {
+      transform: translateY(0);
+      transition: transform 280ms cubic-bezier(0.34,1.56,0.64,1);
+      pointer-events: auto;
+    }
+    .nearby-map-card-name {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .nearby-map-card-cat {
+      font: 500 12px/1 'Inter',sans-serif;
+      border-radius: 6px;
+      padding: 4px 8px;
+      display: inline-flex;
+      align-items: center;
+      margin-top: 4px;
+    }
+    .nearby-map-card-cat.cafe  { background: rgba(176,122,40,0.12); color: #B07A28; }
+    .nearby-map-card-cat.vet   { background: rgba(192,64,64,0.12); color: #C04040; }
+    .nearby-map-card-cat.green { background: var(--brand-tint); color: var(--brand); }
+    .nearby-map-card-dist {
+      font: 400 13px/1 'Inter',sans-serif;
+      color: var(--ink-2);
+      margin-top: 8px;
+    }
+    .nearby-map-card-btn {
+      display: block;
+      width: 100%;
+      height: 44px;
+      margin-top: 12px;
+      background: #fff;
+      color: var(--brand);
+      font: 600 14px/1 'Inter',sans-serif;
+      border: 1px solid var(--brand);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nearby-map-card-btn:active { transform: scale(0.97); }
+    body.night .nearby-map-card-btn { background: var(--surface); }
     .venue-card {
       display: flex;
       align-items: flex-start;
@@ -2099,22 +2450,22 @@
     }
     /* Dog profile card (Me tab top) */
     .me-dog-card {
-      margin: 0 16px 16px;
+      margin: 16px 16px 12px;
       background: var(--surface);
-      border: 0.5px solid rgba(0,0,0,0.08);
+      border: 1px solid var(--border);
       border-radius: 16px;
       padding: 20px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       cursor: pointer;
       transition: transform 0.15s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
     }
     .me-dog-card:active { transform: scale(0.97); }
     .me-dog-card-avatar {
-      width: 72px;
-      height: 72px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       background: var(--brand-tint);
       border: 2px solid var(--brand);
@@ -2129,14 +2480,19 @@
       width: 100%; height: 100%;
       object-fit: cover; border-radius: 50%;
     }
-    .me-dog-card-info { flex: 1; min-width: 0; }
+    .me-dog-card-info { width: 100%; text-align: center; }
     .me-dog-card-name {
       font-family: var(--font-display);
       font-size: 48px;
       font-weight: 700;
-      color: var(--brand);
+      color: var(--ink);
       letter-spacing: -0.02em;
+      line-height: 1.1;
       display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
     }
     .me-dog-card-meta {
       font: 400 13px/1.4 'Inter', sans-serif;
@@ -2144,68 +2500,70 @@
       display: block;
       margin-top: 4px;
     }
-    body.night .me-dog-card { box-shadow: none; border-color: rgba(255,255,255,0.08); }
-    body.night .me-dog-card-name { color: #6A9B4A; }
+    body.night .me-dog-card { border-color: rgba(255,255,255,0.08); }
+    body.night .me-dog-card-name { color: var(--ink); }
 
     /* FAB - Log a walk (Me tab only) */
     .me-log-fab {
       position: fixed;
-      bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 12px);
+      bottom: 88px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--brand);
+      background: #2C4A14;
       color: #fff;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 10px;
-      line-height: 1.2;
-      text-align: center;
-      white-space: normal;
-      word-break: break-word;
       border: none;
       border-radius: 50%;
       width: 56px;
       height: 56px;
       padding: 0;
-      box-shadow: 0 4px 12px rgba(44, 74, 20, 0.35);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.22), 0 2px 4px rgba(0,0,0,0.14);
       cursor: pointer;
       z-index: 90;
-      transition: transform 0.15s ease;
+      transition: opacity 180ms ease, transform 180ms ease;
       -webkit-tap-highlight-color: transparent;
     }
     .me-log-fab:active { transform: translateX(-50%) scale(0.97); }
-    body.night .me-log-fab { box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+    .me-log-fab.fab-hidden { opacity: 0; pointer-events: none; transform: translateX(-50%) scale(0.88); }
+    body.night .me-log-fab { background: #3D6B22; box-shadow: 0 4px 12px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); }
 
     /* Stats dashboard */
     .me-stats-dashboard {
-      padding: 0 16px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .me-stats-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .me-stat-card {
+      margin: 0 16px 16px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 16px;
+      display: flex;
+      flex-direction: row;
+    }
+    .me-stats-row {
+      display: contents;
+    }
+    .me-stat-card {
+      flex: 1;
+      padding: 16px 12px;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
       gap: 5px;
+      position: relative;
+    }
+    .me-stat-card + .me-stat-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 12px;
+      width: 1px;
+      background: var(--border);
     }
     .me-stat-card--secondary {
-      flex-direction: row;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
-      padding: 14px 16px;
+      gap: 5px;
+      padding: 16px 12px;
     }
     .me-stat-number {
       font-family: var(--font-display);
@@ -2222,11 +2580,11 @@
     }
     .me-stat-label {
       font: 400 12px/1 'Inter', sans-serif;
-      color: var(--ink);
+      color: var(--ink-2);
     }
     /* Entry rows */
     .me-entries {
-      padding: 0 16px 88px;
+      padding: 0 16px 96px;
       display: flex;
       flex-direction: column;
       gap: 1px;
@@ -2235,7 +2593,8 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 14px 0;
+      min-height: 52px;
+      padding: 10px 0;
       border: none;
       background: none;
       width: 100%;
@@ -3386,16 +3745,46 @@
     .walk-detail-scroll::-webkit-scrollbar { display: none; }
     .walk-detail-hero {
       width: 100%;
-      height: 220px;
-      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
+      height: 260px;
+      background: linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
       position: relative;
       flex-shrink: 0;
+      overflow: hidden;
     }
     .walk-detail-hero img {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      height: 100%;
+      height: 340px;
       object-fit: cover;
       display: block;
+      will-change: transform;
+    }
+    .walk-detail-hero-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0) 48%, rgba(0,0,0,0.35) 72%, rgba(0,0,0,0.62) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .walk-detail-hero-title {
+      position: absolute;
+      bottom: 14px;
+      left: 16px;
+      right: 16px;
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.55);
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      z-index: 2;
     }
     .walk-detail-hero-badge {
       position: absolute;
@@ -3408,11 +3797,13 @@
       border-radius: 99px;
       padding: 4px 10px;
       display: none;
+      z-index: 3;
     }
     .walk-detail-hero-heart-wrap {
       position: absolute;
       top: 12px;
       right: 14px;
+      z-index: 3;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -3752,7 +4143,7 @@
     body.night .walk-detail-share-btn  { color: var(--ink); }
     body.night .walk-detail-back:active,
     body.night .walk-detail-share-btn:active { background: var(--bg); }
-    body.night .walk-detail-hero       { background: var(--surface); }
+    body.night .walk-detail-hero       { background: #1A1A1A; }
     body.night .walk-detail-info,
     body.night .walk-detail-tags-section,
     body.night .walk-detail-desc,
@@ -3900,9 +4291,19 @@
             <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
           </div>
         </div>
-        <button class="filter-btn" id="walks-radius-btn" aria-label="Filter by radius">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4-2V12L3 4z"/></svg>
-        </button>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="walks-map-toggle" role="group" aria-label="View mode">
+            <button class="walks-map-toggle-btn active" id="walks-list-view-btn" aria-label="List view" onclick="setWalksView('list')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </button>
+            <button class="walks-map-toggle-btn" id="walks-map-view-btn" aria-label="Map view" onclick="setWalksView('map')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+            </button>
+          </div>
+          <button class="filter-btn" id="walks-radius-btn" aria-label="Filter by radius">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4-2V12L3 4z"/></svg>
+          </button>
+        </div>
       </div>
       <div id="walks-location-search" style="display:none; padding:0 16px 12px;">
         <div class="search-input-row">
@@ -3922,6 +4323,21 @@
       <div id="walks-content">
         <div class="empty-state">Set your location on the Today tab to see nearby walks.</div>
       </div>
+      <!-- Walks map view -->
+      <div id="walks-map-container">
+        <div id="walks-map"></div>
+        <div class="walks-map-zoom-msg" id="walks-map-zoom-msg" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="var(--ink-2)" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          <div class="walks-map-zoom-msg-text">Zoom in to see walks</div>
+        </div>
+        <div class="walks-map-empty" id="walks-map-empty" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="var(--ink-2)" aria-hidden="true"><line x1="1" y1="1" x2="23" y2="23"/><path d="M20.9 20.9A10 10 0 0 1 4 12.1M12 2a10 10 0 0 1 8.9 14.8"/></svg>
+          <div class="walks-map-empty-title">No walks match your filters</div>
+          <div class="walks-map-empty-body">Try adjusting your filters above.</div>
+        </div>
+      </div>
+      <!-- Compact walk card (map pin tap) -->
+      <div class="walks-map-card" id="walksMapCard" aria-live="polite"></div>
       <!-- Anchor button — outside walks-content so it survives re-renders -->
       <button class="picks-anchor-btn" id="picks-anchor-btn" aria-label="Back to Sniffout Picks">
         <i data-lucide="arrow-up" style="width:14px;height:14px;flex-shrink:0"></i>
@@ -3998,19 +4414,17 @@
 
       <!-- Stats dashboard -->
       <div class="me-stats-dashboard" id="meStatsDashboard">
-        <div class="me-stats-row">
-          <div class="me-stat-card">
-            <span class="me-stat-number" id="statMiles">-</span>
-            <span class="me-stat-label" id="statMilesLabel">miles walked</span>
-          </div>
-          <div class="me-stat-card me-stat-card--primary">
-            <span class="me-stat-number" id="statWalks">-</span>
-            <span class="me-stat-label" id="statWalksLabel">walks logged</span>
-          </div>
+        <div class="me-stat-card">
+          <span class="me-stat-number" id="statMiles">-</span>
+          <span class="me-stat-label" id="statMilesLabel">miles walked</span>
+        </div>
+        <div class="me-stat-card">
+          <span class="me-stat-number" id="statWalks">-</span>
+          <span class="me-stat-label" id="statWalksLabel">walks logged</span>
         </div>
         <div class="me-stat-card me-stat-card--secondary">
           <span class="me-stat-number me-stat-number--sm" id="statContribs">-</span>
-          <span class="me-stat-label">condition reports</span>
+          <span class="me-stat-label">reports</span>
         </div>
       </div>
 
@@ -4156,9 +4570,19 @@
 
     </div><!-- /tab-me -->
 
+  <!-- Nearby map full-screen overlay -->
+  <div id="nearby-map-fullscreen" role="dialog" aria-modal="true" aria-label="Full screen map">
+    <div id="nearby-map-fullscreen-map"></div>
+    <div class="nearby-map-fullscreen-chips" id="nearbyFsChips"></div>
+    <button class="nearby-map-fs-close" id="nearbyFsClose" aria-label="Exit full screen" onclick="closeNearbyMapFullscreen()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="21" y2="3"/><line x1="3" y1="21" x2="14" y2="10"/></svg>
+    </button>
+    <div class="nearby-map-card" id="nearbyMapCard"></div>
+  </div>
+
   <!-- Log a walk FAB (Me tab only - outside all tab-panels so position:fixed works) -->
   <button class="me-log-fab" id="meLogFab" aria-label="Log daily walk" style="display:none;" onclick="navigator.vibrate && navigator.vibrate(10); openLogWalkSheet();">
-    Log daily walk
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
   </button>
 
   </div><!-- /screen-area -->
@@ -4479,10 +4903,12 @@
   </div>
   <div class="walk-detail-scroll" id="walk-detail-scroll">
     <div class="walk-detail-hero" id="walk-detail-hero">
+      <div class="walk-detail-hero-gradient" aria-hidden="true"></div>
+      <div class="walk-detail-hero-title" id="walk-detail-hero-title"></div>
       <div class="walk-detail-hero-badge" id="walk-detail-hero-badge"></div>
     </div>
     <div class="walk-detail-info">
-      <h1 class="walk-detail-name" id="walk-detail-name"></h1>
+      <h1 class="walk-detail-name" id="walk-detail-name" style="display:none"></h1>
       <div class="walk-detail-location" id="walk-detail-location"></div>
       <div class="walk-detail-rating" id="walk-detail-rating"></div>
       <div class="walk-detail-stats">
@@ -4829,7 +5255,21 @@
 
     // Show/hide Me tab FAB
     var fab = document.getElementById('meLogFab');
-    if (fab) fab.style.display = id === 'me' ? '' : 'none';
+    if (fab) {
+      fab.style.display = id === 'me' ? '' : 'none';
+      if (id === 'me') {
+        var mePanel = document.getElementById('tab-me');
+        if (mePanel && !mePanel._fabScrollBound) {
+          mePanel._fabScrollBound = true;
+          var fabScrollTimer;
+          mePanel.addEventListener('scroll', function() {
+            fab.classList.add('fab-hidden');
+            clearTimeout(fabScrollTimer);
+            fabScrollTimer = setTimeout(function() { fab.classList.remove('fab-hidden'); }, 250);
+          }, { passive: true });
+        }
+      }
+    }
   }
 
   /* Toggle search expand on Today State A */
@@ -6975,7 +7415,13 @@
     setTimeout(function() {
       if (walkDetailMap) { walkDetailMap.remove(); walkDetailMap = null; }
       var scroll = document.getElementById('walk-detail-scroll');
-      if (scroll) scroll.scrollTop = 0;
+      if (scroll) {
+        if (scroll._parallaxFn) {
+          scroll.removeEventListener('scroll', scroll._parallaxFn);
+          scroll._parallaxFn = null;
+        }
+        scroll.scrollTop = 0;
+      }
       currentDetailWalkId = null;
     }, 310);
   }
@@ -7240,9 +7686,15 @@
     }
   });
 
-  window.addEventListener('popstate', function() {
+  window.addEventListener('popstate', function(e) {
     // Push synchronously first — before anything else — so the stack is never empty
     history.pushState(null, '', location.href);
+    // Check if nearby fullscreen is open first
+    var nearbyFs = document.getElementById('nearby-map-fullscreen');
+    if (nearbyFs && nearbyFs.classList.contains('open')) {
+      closeNearbyMapFullscreen();
+      return;
+    }
     closeTopSheet();
   });
 
@@ -7276,6 +7728,10 @@
     var headerName = document.getElementById('walk-detail-header-name');
     if (headerName) headerName.textContent = walk.name;
 
+    // Hero title overlay
+    var heroTitle = document.getElementById('walk-detail-hero-title');
+    if (heroTitle) heroTitle.textContent = walk.name;
+
     var hero = document.getElementById('walk-detail-hero');
     if (hero) {
       var oldImg = hero.querySelector('img');
@@ -7287,21 +7743,33 @@
         img.src = walk.imageUrl;
         img.alt = walk.name;
         img.loading = 'lazy';
-        hero.insertBefore(img, hero.firstChild);
+        // Insert before gradient so image is behind overlay elements
+        var gradient = hero.querySelector('.walk-detail-hero-gradient');
+        hero.insertBefore(img, gradient || hero.firstChild);
         hero.style.background = '';
         hero.style.cursor = 'pointer';
         hero.onclick = function() { openImageViewer(walk.imageUrl); };
-        // Expand hint icon
-        var hint = document.createElement('div');
-        hint.className = 'walk-detail-hero-expand';
-        hint.setAttribute('aria-hidden', 'true');
-        hint.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
-        hero.appendChild(hint);
       } else {
-        hero.style.background = "url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%)";
+        hero.style.background = "linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%)";
         hero.style.cursor = '';
         hero.onclick = null;
       }
+    }
+
+    // Wire up parallax on detail scroll
+    var detailScroll = document.getElementById('walk-detail-scroll');
+    if (detailScroll) {
+      detailScroll.scrollTop = 0;
+      // Remove previous listener if any
+      if (detailScroll._parallaxFn) {
+        detailScroll.removeEventListener('scroll', detailScroll._parallaxFn);
+      }
+      detailScroll._parallaxFn = function() {
+        var img = hero ? hero.querySelector('img') : null;
+        if (!img) return;
+        img.style.transform = 'translateY(' + (detailScroll.scrollTop * -0.5) + 'px)';
+      };
+      detailScroll.addEventListener('scroll', detailScroll._parallaxFn, { passive: true });
     }
 
     var badge = document.getElementById('walk-detail-hero-badge');
@@ -10645,10 +11113,7 @@
       : '';
     var badgeText  = walk.badge || (walk.source === 'places' ? 'Nearby' : '');
     var badgeHTML  = badgeText ? '<div class="walk-badge">' + badgeText + '</div>' : '';
-    var ratingHTML = walk.reviewCount > 0
-      ? '<div class="walk-rating"><span class="walk-rating-star">★</span>' +
-          walk.rating.toFixed(1) + ' <span>(' + walk.reviewCount + ')</span></div>'
-      : '';
+    var ratingHTML = '';
     var livestockHTML = walk.livestock
       ? '<span class="walk-tag">Livestock</span>'
       : '';
@@ -11032,6 +11497,145 @@
       try { sessionStorage.setItem(WALKS_GS_CACHE_KEY, JSON.stringify({ key: cacheKey, results: deduped })); } catch(e) {}
       cb(deduped);
     });
+  }
+
+  /* ─── Walks tab map view ─── */
+  var walksMapInstance = null;
+  var walksMapMarkers = [];
+  var walksMapCurrentView = 'list';
+  var walksMapSelectedId = null;
+
+  function setWalksView(mode) {
+    walksMapCurrentView = mode;
+    var listBtn = document.getElementById('walks-list-view-btn');
+    var mapBtn  = document.getElementById('walks-map-view-btn');
+    var content = document.getElementById('walks-content');
+    var mapCont = document.getElementById('walks-map-container');
+    var card    = document.getElementById('walksMapCard');
+    if (listBtn) listBtn.classList.toggle('active', mode === 'list');
+    if (mapBtn)  mapBtn.classList.toggle('active', mode === 'map');
+    if (content) content.style.display = mode === 'list' ? '' : 'none';
+    if (mapCont) mapCont.classList.toggle('visible', mode === 'map');
+    if (card && mode === 'list') dismissWalksMapCard();
+
+    if (mode === 'map') {
+      // Compute map height: tab-panel minus filter area
+      var tabPanel = document.getElementById('tab-walks');
+      var titleBar = tabPanel ? tabPanel.querySelector('.tab-title-bar') : null;
+      var radiusPicker = document.getElementById('walks-radius-picker');
+      var usedH = (titleBar ? titleBar.offsetHeight : 56) + (radiusPicker && radiusPicker.classList.contains('open') ? radiusPicker.offsetHeight : 0);
+      var mapH = (tabPanel ? tabPanel.offsetHeight : window.innerHeight - 64) - usedH;
+      var mapEl = document.getElementById('walks-map');
+      if (mapEl) mapEl.style.height = Math.max(200, mapH) + 'px';
+      initWalksMap();
+    }
+  }
+
+  function initWalksMap() {
+    var mapEl = document.getElementById('walks-map');
+    if (!mapEl) return;
+    var lat = walksUserLat, lon = walksUserLon;
+    if (!lat || !lon) {
+      try {
+        var sess = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}');
+        lat = sess.lat; lon = sess.lon;
+      } catch(e) {}
+    }
+    if (!lat || !lon) { lat = 54.0; lon = -2.0; }
+
+    if (!walksMapInstance) {
+      var style = (typeof getSavedMapStyle === 'function') ? getSavedMapStyle() : 'osm';
+      var tileUrl = (typeof OS_TILES !== 'undefined' && OS_TILES[style]) ? OS_TILES[style] : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      walksMapInstance = L.map('walks-map', { zoomControl: true, attributionControl: false });
+      L.tileLayer(tileUrl, { maxZoom: 18 }).addTo(walksMapInstance);
+      walksMapInstance.on('zoomend moveend', renderWalksMapPins);
+      walksMapInstance.on('click', function() { dismissWalksMapCard(); });
+    }
+    walksMapInstance.setView([lat, lon], 12);
+    walksMapInstance.invalidateSize();
+    renderWalksMapPins();
+  }
+
+  function renderWalksMapPins() {
+    if (!walksMapInstance) return;
+    var zoom = walksMapInstance.getZoom();
+    var zoomMsg = document.getElementById('walks-map-zoom-msg');
+    var emptyMsg = document.getElementById('walks-map-empty');
+
+    // Clear existing markers
+    walksMapMarkers.forEach(function(m) { m.marker.remove(); });
+    walksMapMarkers = [];
+
+    if (zoom < 9) {
+      if (zoomMsg) zoomMsg.classList.add('visible');
+      if (emptyMsg) emptyMsg.classList.remove('visible');
+      return;
+    }
+    if (zoomMsg) zoomMsg.classList.remove('visible');
+
+    var bounds = walksMapInstance.getBounds();
+    var visible = WALKS_DB.filter(function(w) {
+      return bounds.contains([w.lat, w.lon]);
+    });
+
+    if (visible.length === 0) {
+      if (emptyMsg) emptyMsg.classList.add('visible');
+      return;
+    }
+    if (emptyMsg) emptyMsg.classList.remove('visible');
+
+    visible.forEach(function(walk) {
+      var isSelected = walk.id === walksMapSelectedId;
+      var size = isSelected ? 36 : 28;
+      var anchor = size / 2;
+      var icon = L.divIcon({
+        className: '',
+        html: '<div class="walk-pin' + (isSelected ? ' selected' : '') + '"></div>',
+        iconSize: [size, size],
+        iconAnchor: [anchor, anchor]
+      });
+      var marker = L.marker([walk.lat, walk.lon], { icon: icon, zIndexOffset: isSelected ? 1000 : 0 });
+      marker.on('click', function(e) {
+        L.DomEvent.stopPropagation(e);
+        selectWalksMapPin(walk.id);
+      });
+      marker.addTo(walksMapInstance);
+      walksMapMarkers.push({ id: walk.id, marker: marker });
+    });
+  }
+
+  function selectWalksMapPin(walkId) {
+    walksMapSelectedId = walkId;
+    renderWalksMapPins();
+    var walk = WALKS_DB.find(function(w) { return w.id === walkId; });
+    if (!walk) return;
+    showWalksMapCard(walk);
+  }
+
+  function showWalksMapCard(walk) {
+    var card = document.getElementById('walksMapCard');
+    if (!card) return;
+    var difficulty = walk.difficulty
+      ? (walk.difficulty.charAt(0).toUpperCase() + walk.difficulty.slice(1))
+      : '';
+    var olText = walk.offLead === 'full' ? 'Full off-lead' : walk.offLead === 'partial' ? 'Partial' : 'On-lead';
+    card.innerHTML =
+      '<div class="walks-map-card-name">' + escHtml(walk.name) + '</div>' +
+      '<div class="walks-map-card-loc">' + escHtml(walk.location) + '</div>' +
+      '<div class="walks-map-card-tags">' +
+        '<span class="walks-map-card-pill">' + formatDist(walk.distance) + '</span>' +
+        (difficulty ? '<span class="walks-map-card-pill">' + difficulty + '</span>' : '') +
+        '<span class="walks-map-card-pill">' + olText + '</span>' +
+      '</div>' +
+      '<button class="walks-map-card-btn" onclick="openWalkDetail(\'' + walk.id + '\')">View walk</button>';
+    card.classList.add('open');
+  }
+
+  function dismissWalksMapCard() {
+    var card = document.getElementById('walksMapCard');
+    if (card) card.classList.remove('open');
+    walksMapSelectedId = null;
+    renderWalksMapPins();
   }
 
   /* ─── Render portrait cards on Today State B ─── */
@@ -11672,6 +12276,169 @@
         .bindPopup('<strong>' + label + '</strong><br>' + CATEGORY_LABEL[v.cat])
         .addTo(nearbyMap);
     });
+
+    // Inject expand button if not present
+    var mapEl = document.getElementById('nearby-map');
+    if (mapEl && !mapEl.querySelector('.nearby-map-expand-btn')) {
+      var btn = document.createElement('button');
+      btn.className = 'nearby-map-expand-btn';
+      btn.setAttribute('aria-label', 'Full screen map');
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
+      btn.onclick = function() { openNearbyMapFullscreen(); };
+      mapEl.appendChild(btn);
+    }
+  }
+
+  /* ─── Full screen nearby map ─── */
+  var nearbyFsMap = null;
+  var nearbyFsMarkers = [];
+  var nearbyFsSelectedId = null;
+  var nearbyFsCategory = null;
+
+  function openNearbyMapFullscreen() {
+    var overlay = document.getElementById('nearby-map-fullscreen');
+    if (!overlay) return;
+    var nav = document.getElementById('bottom-nav');
+    if (nav) nav.style.transform = 'translateY(64px)';
+
+    overlay.style.display = 'flex';
+    // Force reflow before adding .open for transition
+    overlay.offsetHeight;
+    overlay.classList.add('open');
+
+    history.pushState({ nearbyFs: true }, '', location.href);
+
+    // Build category chips
+    var chipsEl = document.getElementById('nearbyFsChips');
+    if (chipsEl) {
+      nearbyFsCategory = nearbyCategory;
+      var categories = [
+        { id: 'pub', label: 'Pubs' },
+        { id: 'cafe', label: 'Cafes' },
+        { id: 'vet', label: 'Vets' },
+        { id: 'shop', label: 'Pet Shops' }
+      ];
+      chipsEl.innerHTML = categories.map(function(c) {
+        return '<button class="fs-map-chip' + (c.id === nearbyFsCategory ? ' active' : '') + '" onclick="setNearbyFsCategory(\'' + c.id + '\')">' + c.label + '</button>';
+      }).join('');
+    }
+
+    initNearbyFsMap();
+  }
+
+  function closeNearbyMapFullscreen() {
+    var overlay = document.getElementById('nearby-map-fullscreen');
+    var nav = document.getElementById('bottom-nav');
+    if (overlay) {
+      overlay.classList.remove('open');
+      setTimeout(function() { overlay.style.display = 'none'; }, 200);
+    }
+    if (nav) nav.style.transform = '';
+    dismissNearbyMapCard();
+  }
+
+  function initNearbyFsMap() {
+    var mapEl = document.getElementById('nearby-map-fullscreen-map');
+    if (!mapEl) return;
+    var lat = nearbyUserLat, lon = nearbyUserLon;
+    if (!lat || !lon) { lat = 54.0; lon = -2.0; }
+
+    if (!nearbyFsMap) {
+      var style = getSavedMapStyle();
+      var tileUrl = OS_TILES[style] || OS_TILES.osm;
+      nearbyFsMap = L.map('nearby-map-fullscreen-map', { zoomControl: true, attributionControl: false });
+      L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(nearbyFsMap);
+      nearbyFsMap.on('click', function() { dismissNearbyMapCard(); });
+    }
+    nearbyFsMap.setView([lat, lon], 14);
+    setTimeout(function() { nearbyFsMap.invalidateSize(); }, 220);
+
+    // User pin
+    L.circleMarker([lat, lon], {
+      radius: 8, color: '#2C4A14', fillColor: '#2C4A14', fillOpacity: 0.9, weight: 2
+    }).addTo(nearbyFsMap);
+
+    renderNearbyFsMarkers();
+  }
+
+  function getCategoryPinClass(cat) {
+    if (cat === 'cafe' || cat === 'pub') return 'cafe';
+    if (cat === 'vet') return 'vet';
+    return 'green';
+  }
+
+  function renderNearbyFsMarkers() {
+    if (!nearbyFsMap) return;
+    nearbyFsMarkers.forEach(function(m) { m.marker.remove(); });
+    nearbyFsMarkers = [];
+
+    var venues = nearbyVenues.filter(function(v) {
+      return v.lat && v.lon && (nearbyFsCategory ? v.cat === nearbyFsCategory : true);
+    });
+
+    venues.forEach(function(venue) {
+      var isSelected = venue.id === nearbyFsSelectedId;
+      var pinClass = getCategoryPinClass(venue.cat);
+      var size = isSelected ? 36 : 28;
+      var anchor = size / 2;
+      var icon = L.divIcon({
+        className: '',
+        html: '<div class="venue-pin ' + pinClass + (isSelected ? ' selected' : '') + '"></div>',
+        iconSize: [size, size],
+        iconAnchor: [anchor, anchor]
+      });
+      var marker = L.marker([venue.lat, venue.lon], { icon: icon, zIndexOffset: isSelected ? 1000 : 0 });
+      marker.on('click', function(e) {
+        L.DomEvent.stopPropagation(e);
+        nearbyFsSelectedId = venue.id;
+        renderNearbyFsMarkers();
+        showNearbyMapCard(venue);
+      });
+      marker.addTo(nearbyFsMap);
+      nearbyFsMarkers.push({ id: venue.id, marker: marker });
+    });
+  }
+
+  function showNearbyMapCard(venue) {
+    var card = document.getElementById('nearbyMapCard');
+    if (!card) return;
+    var pinClass = getCategoryPinClass(venue.cat);
+    var catLabel = CATEGORY_LABEL[venue.cat] || 'Place';
+    var distText = venue.dist != null ? formatDist(venue.dist) : '';
+    var openHtml = '';
+    if (venue.isOpen === true) {
+      openHtml = ' &middot; <span style="color:#2D7A3A;font-weight:500">Open now</span>';
+    } else if (venue.isOpen === false) {
+      openHtml = ' &middot; <span style="color:var(--red);font-weight:500">Closed</span>';
+    }
+    var mapsUrl = venue.mapsUrl
+      ? venue.mapsUrl
+      : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(venue.name);
+    card.innerHTML =
+      '<div class="nearby-map-card-name">' + escHtml(venue.name) + '</div>' +
+      '<span class="nearby-map-card-cat ' + pinClass + '">' + escHtml(catLabel) + '</span>' +
+      '<div class="nearby-map-card-dist">' + escHtml(distText) + openHtml + '</div>' +
+      '<a href="' + escHtml(mapsUrl) + '" target="_blank" rel="noopener" class="nearby-map-card-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">Get directions</a>';
+    card.classList.add('open');
+  }
+
+  function dismissNearbyMapCard() {
+    var card = document.getElementById('nearbyMapCard');
+    if (card) card.classList.remove('open');
+    nearbyFsSelectedId = null;
+    renderNearbyFsMarkers();
+  }
+
+  function setNearbyFsCategory(cat) {
+    nearbyFsCategory = cat;
+    var chipsEl = document.getElementById('nearbyFsChips');
+    if (chipsEl) {
+      chipsEl.querySelectorAll('.fs-map-chip').forEach(function(btn) {
+        var btnCat = btn.getAttribute('onclick').match(/'(\w+)'/)[1];
+        btn.classList.toggle('active', btnCat === cat);
+      });
+    }
+    renderNearbyFsMarkers();
   }
 
   /* ─── Invalidate map size when switching to Nearby tab ─── */
