@@ -2150,25 +2150,27 @@
     /* FAB - Log a walk (Me tab only) */
     .me-log-fab {
       position: fixed;
-      bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 16px);
-      right: 16px;
+      bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 12px);
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
       background: var(--brand);
       color: #fff;
-      font: 600 14px/1 'Inter', sans-serif;
+      font: 600 13px/1 'Inter', sans-serif;
       border: none;
       border-radius: 28px;
-      padding: 14px 20px;
+      padding: 14px 24px;
       min-height: 52px;
+      white-space: nowrap;
       box-shadow: 0 4px 12px rgba(44, 74, 20, 0.35);
       cursor: pointer;
       z-index: 90;
       transition: transform 0.15s ease;
       -webkit-tap-highlight-color: transparent;
     }
-    .me-log-fab:active { transform: scale(0.97); }
+    .me-log-fab:active { transform: translateX(-50%) scale(0.97); }
     body.night .me-log-fab { box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
 
     /* Stats dashboard */
@@ -2215,7 +2217,7 @@
     }
     .me-stat-label {
       font: 400 12px/1 'Inter', sans-serif;
-      color: var(--ink-2);
+      color: var(--ink);
     }
     /* Entry rows */
     .me-entries {
@@ -4148,10 +4150,8 @@
       <input type="file" id="journalPhotoInput" accept="image/*" style="display:none">
 
       <!-- Log a walk FAB (Me tab only) -->
-      <button class="me-log-fab" id="meLogFab" aria-label="Log a walk" style="display:none;" onclick="navigator.vibrate && navigator.vibrate(10); openLogWalkSheet();">
-        <!-- icon injected by syncIcons -->
-        <i data-lucide="plus" style="width:16px;height:16px;flex-shrink:0;"></i>
-        Log a walk
+      <button class="me-log-fab" id="meLogFab" aria-label="Log daily walk" style="display:none;" onclick="navigator.vibrate && navigator.vibrate(10); openLogWalkSheet();">
+        Log daily walk
       </button>
 
     </div><!-- /tab-me -->
@@ -5390,7 +5390,7 @@
 
     if (isStormCode(code)) {
       return {
-        type: 'avoid',
+        type: 'avoid', key: 'storm',
         title: 'Not a walk day',
         shortTitle: 'Stay in today, [name].',
         icon: 'cloud-lightning',
@@ -5399,7 +5399,7 @@
     }
     if (gusts >= 60) {
       return {
-        type: 'avoid',
+        type: 'avoid', key: 'wind-avoid',
         title: 'Too gusty to be out',
         shortTitle: 'Too gusty today, [name].',
         icon: 'wind',
@@ -5408,7 +5408,7 @@
     }
     if (gusts >= 45) {
       return {
-        type: 'caution',
+        type: 'caution', key: 'wind-caution',
         title: 'Gusty today - pick a sheltered route',
         shortTitle: 'Gusty today, [name] - pick a sheltered route.',
         icon: 'wind',
@@ -5417,7 +5417,7 @@
     }
     if (temp > 28) {
       return {
-        type: 'caution',
+        type: 'caution', key: 'heat-caution',
         title: 'Warm today - timing matters',
         shortTitle: 'Time it right today, [name].',
         icon: 'thermometer-sun',
@@ -5426,7 +5426,7 @@
     }
     if (isFogCode(code)) {
       return {
-        type: 'caution',
+        type: 'caution', key: 'fog',
         title: 'Foggy out there',
         shortTitle: 'Stick close today, [name].',
         icon: 'cloud-fog',
@@ -5435,7 +5435,7 @@
     }
     if (isRainCode(code) && temp < 8) {
       return {
-        type: 'caution',
+        type: 'caution', key: 'rain-cold',
         title: 'Wet and cold - make it a quick one',
         shortTitle: 'Make it a quick one, [name].',
         icon: 'snowflake',
@@ -5444,7 +5444,7 @@
     }
     if (isRainCode(code)) {
       return {
-        type: 'caution',
+        type: 'caution', key: 'rain',
         title: 'It\'s raining - but walkable',
         shortTitle: 'It\'s raining, [name] - but walkable.',
         icon: 'cloud-rain',
@@ -5453,7 +5453,7 @@
     }
     if (hourly && rainArrivingSoon(hourly)) {
       return {
-        type: 'caution',
+        type: 'caution', key: 'rain-soon',
         title: 'Dry for now - rain arriving',
         shortTitle: 'Expect rain soon, [name].',
         icon: 'cloud-drizzle',
@@ -5462,7 +5462,7 @@
     }
     if (hourly && rainLikelyToday(hourly)) {
       return {
-        type: 'caution',
+        type: 'caution', key: 'rain-likely',
         title: 'Showers on the way',
         shortTitle: 'Showers on the way, [name].',
         icon: 'cloud-drizzle',
@@ -5471,7 +5471,7 @@
     }
     if (feels < 2) {
       return {
-        type: 'caveat',
+        type: 'caveat', key: 'cold-caveat',
         title: 'Brisk walk day',
         shortTitle: 'Wrap up, [name].',
         icon: 'snowflake',
@@ -5480,7 +5480,7 @@
     }
     if (temp >= 25) {
       return {
-        type: 'caution',
+        type: 'caution', key: 'heat-paw',
         title: 'Warm today - paws first',
         shortTitle: 'Check the pavement first, [name].',
         icon: 'thermometer-sun',
@@ -5488,7 +5488,7 @@
       };
     }
     return {
-      type: 'approved',
+      type: 'approved', key: 'approved',
       title: 'Perfect conditions right now.',
       shortTitle: 'Perfect conditions for [name].',
       icon: 'sun',
@@ -5563,81 +5563,87 @@
     // Heat hazards
     if (temp > heatThreshold) {
       var heatTitle, heatBody, heatDisc = '';
+      var heatKey = 'heat-generic';
       if (isBrachy) {
         heatTitle = 'Too hot for a flat-faced breed';
         heatBody  = dogName + ' is a flat-faced breed, which means they can find warm weather much harder going. Try an early morning or late evening walk instead of heading out now.';
         heatDisc  = DISC;
+        heatKey   = 'heat-dog';
       } else if (isDoubleCoat) {
         heatTitle = 'Too warm for a double-coated breed';
         heatBody  = dogName + '\'s double coat keeps them warm in winter, but it works both ways. Keep walks cool and short today, and make sure there is plenty of water available.';
         heatDisc  = DISC;
+        heatKey   = 'heat-dog';
       } else if (isSenior) {
         heatTitle = 'Too warm for an older dog';
         heatBody  = 'Older dogs feel the heat more than younger ones and may not always show it. Keep today\'s walk short and in the shade where you can.';
         heatDisc  = DISC;
+        heatKey   = 'heat-dog';
       } else {
         heatTitle = 'Too hot to walk safely';
         heatBody  = 'Pavement temperatures at this level are dangerous for paws. Avoid midday walks entirely.';
       }
-      hazards.push({ title: heatTitle, body: heatBody + heatDisc });
+      hazards.push({ key: heatKey, title: heatTitle, body: heatBody + heatDisc });
     } else if (temp >= 25) {
-      hazards.push({ title: 'Hot enough to hurt paws', body: 'Press your hand on the pavement - if you can\'t hold it for 7 seconds, it\'s too hot for your dog.' });
+      hazards.push({ key: 'heat-paw', title: 'Hot enough to hurt paws', body: 'Press your hand on the pavement - if you can\'t hold it for 7 seconds, it\'s too hot for your dog.' });
     }
 
     // Storm and wind
     if (isStormCode(code)) {
-      hazards.push({ title: 'Thunderstorm warning - stay inside', body: 'Avoid open areas, water, and tall trees. Keep your dog indoors.' });
+      hazards.push({ key: 'storm', title: 'Thunderstorm warning - stay inside', body: 'Avoid open areas, water, and tall trees. Keep your dog indoors.' });
     }
     if (gusts >= 60) {
-      hazards.push({ title: 'Dangerous winds - don\'t go out', body: 'Stick to sheltered urban routes or valley paths. Avoid woodland, open high ground, and coastal paths where falling branches and debris are a risk.' });
+      hazards.push({ key: 'wind-avoid', title: 'Dangerous winds - don\'t go out', body: 'Stick to sheltered urban routes or valley paths. Avoid woodland, open high ground, and coastal paths where falling branches and debris are a risk.' });
     } else if (gusts >= 45) {
-      hazards.push({ title: 'Very gusty - choose sheltered routes', body: 'Choose sheltered routes - valley paths, urban streets, or low-lying ground. Avoid exposed ridges, open moorland, and woodland where branches may be unstable.' });
+      hazards.push({ key: 'wind-caution', title: 'Very gusty - choose sheltered routes', body: 'Choose sheltered routes - valley paths, urban streets, or low-lying ground. Avoid exposed ridges, open moorland, and woodland where branches may be unstable.' });
     }
 
     // Cold hazards
     if (feels < coldThreshold) {
       var coldTitle, coldBody, coldDisc = '';
+      var coldKey = 'cold-generic';
       if (isSenior && coldThreshold > -5) {
         coldTitle = 'Very cold - take it easy today';
         coldBody  = 'Cold weather is harder on older dogs. A shorter walk today might be the right call, and watch for any stiffness once you get back inside.';
         coldDisc  = DISC;
+        coldKey   = 'cold-dog';
       } else {
         coldTitle = 'Very cold - brief outings only';
         coldBody  = 'Keep walks short and dry your dog thoroughly when you return.';
       }
-      hazards.push({ title: coldTitle, body: coldBody + coldDisc });
+      hazards.push({ key: coldKey, title: coldTitle, body: coldBody + coldDisc });
     } else if (temp <= 0) {
-      hazards.push({ title: 'Freezing - watch for grit and ice', body: 'Rinse paws after walking on gritted paths to prevent irritation.' });
+      hazards.push({ key: 'cold-freeze', title: 'Freezing - watch for grit and ice', body: 'Rinse paws after walking on gritted paths to prevent irritation.' });
     }
 
     // Small dog cold advisory
     if (dogSize === 'small' && feels < 5) {
-      hazards.push({ title: 'Chilly for a small dog', body: 'Small dogs feel the cold more. If ' + dogName + ' does not have much of a coat, today might be a good day to layer up.' + DISC });
+      hazards.push({ key: 'cold-dog', title: 'Chilly for a small dog', body: 'Small dogs feel the cold more. If ' + dogName + ' does not have much of a coat, today might be a good day to layer up.' + DISC });
     }
 
     // Puppy cold advisory
     if (isPuppy && temp <= 2) {
-      hazards.push({ title: 'Cold for a young dog', body: 'Young dogs are still getting used to cold weather. Keep today\'s walk short and check ' + dogName + ' is not shivering.' + DISC });
+      hazards.push({ key: 'cold-dog', title: 'Cold for a young dog', body: 'Young dogs are still getting used to cold weather. Keep today\'s walk short and check ' + dogName + ' is not shivering.' + DISC });
     }
 
     // Double-coat cold reassurance
     if (isDoubleCoat && feels < 0) {
-      hazards.push({ title: dogName + '\'s coat handles the cold well', body: 'Double-coated breeds are well insulated in cold weather. Just watch for ice on paws.' + DISC });
+      hazards.push({ key: 'cold-dog', title: dogName + '\'s coat handles the cold well', body: 'Double-coated breeds are well insulated in cold weather. Just watch for ice on paws.' + DISC });
     }
 
     // Seasonal hazards
     var seasonal = getSeasonalHazards(temp);
     seasonal.forEach(function(key) {
       if (key === 'algae') {
-        hazards.push({ title: 'Algae alert', body: 'Hot weather brings the risk of toxic algae in still water. If water looks blue-green or murky, keep ' + dogName + ' out. If they get in and seem unwell, call your vet straight away.' });
+        hazards.push({ key: 'seasonal', title: 'Algae alert', body: 'Hot weather brings the risk of toxic algae in still water. If water looks blue-green or murky, keep ' + dogName + ' out. If they get in and seem unwell, call your vet straight away.' });
       } else if (key === 'adder') {
-        hazards.push({ title: 'Adder season', body: 'Adders are active in spring. Stick to clear paths and give long grass, heathland, and sunny banks some space.' });
+        hazards.push({ key: 'seasonal', title: 'Adder season', body: 'Adders are active in spring. Stick to clear paths and give long grass, heathland, and sunny banks some space.' });
       } else if (key === 'grassseeds') {
-        hazards.push({ title: 'Grass seed season', body: 'After walks in long grass, check ' + dogName + '\'s paws, ears, and coat for seeds. Small but they can cause real problems if they burrow in.' });
+        hazards.push({ key: 'seasonal', title: 'Grass seed season', body: 'After walks in long grass, check ' + dogName + '\'s paws, ears, and coat for seeds. Small but they can cause real problems if they burrow in.' });
       } else if (key === 'harvestmites') {
-        hazards.push({ title: 'Harvest mite season', body: 'Tiny orange larvae in long grass can make dogs very itchy, especially around the paws and belly. A quick paw rinse after walks helps.' });
+        hazards.push({ key: 'seasonal', title: 'Harvest mite season', body: 'Tiny orange larvae in long grass can make dogs very itchy, especially around the paws and belly. A quick paw rinse after walks helps.' });
       } else if (key === 'rocksalt' && temp < 3) {
-        hazards.push({ title: 'Rock salt on paths', body: 'Paths may have grit and rock salt today. Rinse ' + dogName + '\'s paws when you get home and check they are not licking them.' });
+        hazards.push({ key: 'seasonal', title: 'Rock salt on paths', body: 'Paths may have grit and rock salt today. Rinse ' + dogName + '\'s paws when you get home and check they are not licking them.' });
       }
     });
 
@@ -5763,8 +5769,14 @@
       sunPillText = luIcon(isMorning ? 'sunrise' : 'sunset', 14) + ' ' + (isMorning ? 'Sunrise ' : 'Sunset ') + timePart;
     }
 
+    // FIX 3: suppress hazard cards whose key matches the verdict key (duplicate info)
+    // Also suppress 'heat-generic' when verdict is heat-caution (temp > 28 drives the verdict)
+    var suppressedKeys = [verdict.key];
+    if (verdict.key === 'heat-caution') suppressedKeys.push('heat-generic');
+
     var hazardHTML = '';
     hazards.forEach(function(hz) {
+      if (hz.key && suppressedKeys.indexOf(hz.key) !== -1) return;
       hazardHTML += '<div class="hazard-card"><div class="hazard-title">' + hz.title + '</div><div class="hazard-body">' + hz.body + '</div></div>';
     });
 
