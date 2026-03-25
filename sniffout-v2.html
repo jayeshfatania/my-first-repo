@@ -155,7 +155,7 @@
 
     /* ─── Tab title bar ─── */
     .tab-title-bar { height: 60px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 20; border-bottom: 1px solid var(--border); }
-    .tab-title { font-size: 18px; font-weight: 700; color: var(--ink); font-family: var(--font-ui); }
+    .tab-title { font-size: 18px !important; font-weight: 700 !important; color: var(--ink); font-family: var(--font-ui); line-height: 1.2; margin: 0; }
     .filter-btn { background: none; border: none; width: 40px; height: 40px; cursor: pointer; color: var(--ink); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 8px; transition: transform 0.15s ease; -webkit-tap-highlight-color: transparent; }
     .filter-btn:active { color: var(--brand); transform: scale(0.97); }
     .picks-anchor-btn {
@@ -1691,6 +1691,7 @@
       padding: 0 16px;
       background: rgba(255,255,255,0.95);
       border-top: 1px solid var(--border);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.07);
       overflow-x: auto;
       scrollbar-width: none;
       z-index: 100;
@@ -1700,6 +1701,7 @@
     body.night #nearby-map-cat-bar {
       background: rgba(31,31,31,0.95);
       border-top-color: rgba(255,255,255,0.08);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
     }
     .nearby-cat-bar-chip {
       font: 600 13px/1 'Inter', sans-serif;
