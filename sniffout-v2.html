@@ -3927,7 +3927,7 @@
     .walk-detail-scroll::-webkit-scrollbar { display: none; }
     .walk-detail-hero {
       width: 100%;
-      height: 260px;
+      height: 320px;
       background: linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
       position: relative;
       flex-shrink: 0;
@@ -3938,7 +3938,7 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 340px;
+      height: 400px;
       object-fit: cover;
       display: block;
       will-change: transform;
@@ -4061,18 +4061,9 @@
       -webkit-tap-highlight-color: transparent;
     }
     .walk-detail-info {
-      padding: 16px 16px 14px;
+      padding: 0;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-    }
-    .walk-detail-name {
-      font-family: var(--font-display);
-      font-size: 24px;
-      font-weight: 600;
-      color: var(--ink);
-      letter-spacing: -0.01em;
-      line-height: 1.25;
-      margin-bottom: 4px;
     }
     .walk-detail-location {
       font-size: 13px;
@@ -4080,50 +4071,28 @@
       display: flex;
       align-items: center;
       gap: 3px;
-      margin-bottom: 6px;
+      padding: 10px 16px 0;
     }
-    .walk-detail-rating {
+    .walk-detail-stats-row {
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+      align-items: center;
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-wrap: wrap;
+    }
+    .detail-stat-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .detail-stat-item .detail-stat-value {
+      font-family: var(--font-ui);
       font-size: 14px;
-      color: #B07A28;
-      font-weight: 500;
-      margin-bottom: 14px;
-    }
-    .walk-detail-rating .rating-count {
-      color: var(--ink-2);
-      font-weight: 400;
-    }
-    .walk-detail-stats {
-      display: flex;
-      align-items: center;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      background: var(--bg);
-    }
-    .detail-stat {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 10px 4px;
-      gap: 3px;
-    }
-    .detail-stat-value {
-      font-size: 15px;
       font-weight: 600;
       color: var(--ink);
-      white-space: nowrap;
-    }
-    .detail-stat-label {
-      font-size: 11px;
-      font-weight: 400;
-      color: var(--ink-2);
-    }
-    .detail-stat-divider {
-      width: 1px;
-      height: 28px;
-      background: var(--border);
-      flex-shrink: 0;
     }
     .walk-detail-tags-section {
       padding: 14px 16px 10px;
@@ -4332,7 +4301,7 @@
     body.night .walk-detail-conditions,
     body.night .walk-detail-actions,
     body.night .walk-detail-map-section { background: var(--surface); border-color: var(--border); }
-    body.night .walk-detail-stats       { background: var(--bg); }
+    body.night .walk-detail-stats-row   { background: var(--surface); border-color: var(--border); }
     body.night .detail-tag--positive    { color: var(--brand); background: rgba(92,122,99,0.10); border-color: rgba(92,122,99,0.20); }
     body.night .detail-tag--warning     { color: var(--amber); background: rgba(217,119,6,0.08); border-color: rgba(217,119,6,0.18); }
     body.night .detail-tag--neutral     { color: var(--ink-2); background: var(--bg); border-color: var(--border); }
@@ -5104,23 +5073,19 @@
       <div class="walk-detail-hero-badge" id="walk-detail-hero-badge"></div>
     </div>
     <div class="walk-detail-info">
-      <h1 class="walk-detail-name" id="walk-detail-name" style="display:none"></h1>
       <div class="walk-detail-location" id="walk-detail-location"></div>
-      <div class="walk-detail-rating" id="walk-detail-rating"></div>
-      <div class="walk-detail-stats">
-        <div class="detail-stat">
-          <div class="detail-stat-value" id="walk-detail-dist"></div>
-          <div class="detail-stat-label">Distance</div>
+      <div class="walk-detail-stats-row">
+        <div class="detail-stat-item" id="walk-detail-dist-item">
+          <span class="detail-stat-value" id="walk-detail-dist"></span>
         </div>
-        <div class="detail-stat-divider"></div>
-        <div class="detail-stat">
-          <div class="detail-stat-value" id="walk-detail-dur"></div>
-          <div class="detail-stat-label">Duration</div>
+        <div class="detail-stat-item" id="walk-detail-dur-item">
+          <span class="detail-stat-value" id="walk-detail-dur"></span>
         </div>
-        <div class="detail-stat-divider"></div>
-        <div class="detail-stat">
-          <div class="detail-stat-value" id="walk-detail-diff"></div>
-          <div class="detail-stat-label">Difficulty</div>
+        <div class="detail-stat-item">
+          <span class="detail-stat-value" id="walk-detail-diff"></span>
+        </div>
+        <div class="detail-stat-item" id="walk-detail-offlead-item">
+          <span class="detail-stat-value" id="walk-detail-offlead"></span>
         </div>
       </div>
     </div>
@@ -7969,6 +7934,9 @@
 
     var hero = document.getElementById('walk-detail-hero');
     if (hero) {
+      // Task 4: responsive hero height
+      var isCompact = window.innerHeight < 620;
+      hero.style.height = isCompact ? '240px' : '320px';
       var oldImg = hero.querySelector('img');
       if (oldImg) oldImg.remove();
       var oldHint = hero.querySelector('.walk-detail-hero-expand');
@@ -7978,6 +7946,7 @@
         img.src = walk.imageUrl;
         img.alt = walk.name;
         img.loading = 'lazy';
+        img.style.height = isCompact ? '320px' : '400px';
         // Insert before gradient so image is behind overlay elements
         var gradient = hero.querySelector('.walk-detail-hero-gradient');
         hero.insertBefore(img, gradient || hero.firstChild);
@@ -8026,33 +7995,75 @@
         toggleFavourite(walk.id);
       };
     }
-    var nameEl = document.getElementById('walk-detail-name');
-    if (nameEl) nameEl.textContent = walk.name;
-
     var locEl = document.getElementById('walk-detail-location');
     if (locEl) locEl.innerHTML = luIcon('map-pin', 13, 'color:var(--ink-2);flex-shrink:0;') + escHtml(walk.location);
 
-    var ratingEl = document.getElementById('walk-detail-rating');
-    if (ratingEl) {
-      ratingEl.innerHTML = walk.reviewCount > 0
-        ? '&#9733; ' + walk.rating.toFixed(1) + ' <span class="rating-count">(' + walk.reviewCount + ' reviews)</span>'
-        : '';
+    // Task 3: stats row - Distance
+    var distItem = document.getElementById('walk-detail-dist-item');
+    var distEl   = document.getElementById('walk-detail-dist');
+    if (distItem && distEl) {
+      distItem.innerHTML = '';
+      var distIcon = document.createElement('span');
+      distIcon.innerHTML = luIcon('route', 16, 'color:var(--ink-2);flex-shrink:0;');
+      distEl = document.createElement('span');
+      distEl.className = 'detail-stat-value';
+      distEl.id = 'walk-detail-dist';
+      distEl.textContent = formatDist(walk.distance);
+      distItem.appendChild(distIcon);
+      distItem.appendChild(distEl);
     }
 
-    var distEl = document.getElementById('walk-detail-dist');
-    if (distEl) distEl.textContent = formatDist(walk.distance);
-
-    var durEl = document.getElementById('walk-detail-dur');
-    if (durEl) {
+    // Task 3: stats row - Duration
+    var durItem = document.getElementById('walk-detail-dur-item');
+    if (durItem) {
+      durItem.innerHTML = '';
+      var durIcon = document.createElement('span');
+      durIcon.innerHTML = luIcon('clock', 16, 'color:var(--ink-2);flex-shrink:0;');
+      var durEl = document.createElement('span');
+      durEl.className = 'detail-stat-value';
+      durEl.id = 'walk-detail-dur';
       var hrs  = Math.floor(walk.duration / 60);
       var mins = walk.duration % 60;
       durEl.textContent = hrs > 0
         ? hrs + 'h ' + (mins > 0 ? mins + 'm' : '')
         : walk.duration + ' min';
+      durItem.appendChild(durIcon);
+      durItem.appendChild(durEl);
     }
 
+    // Task 3: stats row - Difficulty (no icon, coloured text)
     var diffEl = document.getElementById('walk-detail-diff');
-    if (diffEl) diffEl.textContent = difficultyLabel(walk.difficulty);
+    if (diffEl) {
+      diffEl.textContent = difficultyLabel(walk.difficulty);
+      diffEl.style.color = walk.difficulty === 'easy' ? '#2D7A3A'
+        : walk.difficulty === 'hard' ? '#EF4444'
+        : 'var(--amber)';
+    }
+
+    // Task 3: stats row - Off-lead
+    var olItem = document.getElementById('walk-detail-offlead-item');
+    if (olItem) {
+      olItem.innerHTML = '';
+      var olIconEl = document.createElement('span');
+      olIconEl.innerHTML = luIcon('circle-check', 16, '');
+      var olColor = walk.offLead === 'full' ? 'var(--brand)'
+        : walk.offLead === 'partial' ? 'var(--amber)'
+        : 'var(--ink-2)';
+      var olText  = walk.offLead === 'full' ? 'Full off-lead'
+        : walk.offLead === 'partial' ? 'Partial'
+        : 'On-lead';
+      olIconEl.querySelector('svg,i') && (olIconEl.querySelector('svg,i').style.color = olColor);
+      olIconEl.style.color = olColor;
+      var olVal = document.createElement('span');
+      olVal.className = 'detail-stat-value';
+      olVal.id = 'walk-detail-offlead';
+      olVal.textContent = olText;
+      olVal.style.color = olColor;
+      olItem.appendChild(olIconEl);
+      olItem.appendChild(olVal);
+    }
+
+    syncIcons();
 
     renderDetailTags(walk);
 
