@@ -3918,6 +3918,8 @@
       text-overflow: ellipsis;
       text-align: center;
       padding: 0 4px;
+      opacity: 0;
+      transition: opacity 200ms ease;
     }
     .walk-detail-scroll {
       flex: 1;
@@ -7612,6 +7614,8 @@
       overlay.style.transform = '';
       overlay.style.transition = '';
     }
+    var headerName = document.getElementById('walk-detail-header-name');
+    if (headerName) headerName.style.opacity = '0';
     setTimeout(function() {
       if (walkDetailMap) { walkDetailMap.remove(); walkDetailMap = null; }
       var scroll = document.getElementById('walk-detail-scroll');
@@ -7926,7 +7930,10 @@
 
   function populateWalkDetail(walk) {
     var headerName = document.getElementById('walk-detail-header-name');
-    if (headerName) headerName.textContent = walk.name;
+    if (headerName) {
+      headerName.textContent = walk.name;
+      headerName.style.opacity = '0';
+    }
 
     // Hero title overlay
     var heroTitle = document.getElementById('walk-detail-hero-title');
@@ -7970,8 +7977,15 @@
       }
       detailScroll._parallaxFn = function() {
         var img = hero ? hero.querySelector('img') : null;
-        if (!img) return;
-        img.style.transform = 'translateY(' + (detailScroll.scrollTop * -0.5) + 'px)';
+        if (img) {
+          img.style.transform = 'translateY(' + (detailScroll.scrollTop * -0.5) + 'px)';
+        }
+        // Fade header name in once hero is scrolled out of view
+        var hdrName = document.getElementById('walk-detail-header-name');
+        if (hdrName) {
+          var heroBottom = hero ? hero.offsetHeight : 260;
+          hdrName.style.opacity = detailScroll.scrollTop > heroBottom - 60 ? '1' : '0';
+        }
       };
       detailScroll.addEventListener('scroll', detailScroll._parallaxFn, { passive: true });
     }
