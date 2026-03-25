@@ -1,8 +1,8 @@
 # Sniffout — Session Handoff Note
-**Date:** 25 March 2026 (end of day)
+**Date:** 25 March 2026
 **Prepared by:** Product Owner agent
 **Purpose:** Complete context handoff for the next Claude chat session. A new session reading this document should be able to pick up immediately with zero loss of context.
-**Replaces:** session-handoff-march-25-midday.md (moved to `docs/handoffs/archive/`)
+**Replaces:** session-handoff-march-24b.md (moved to `docs/handoffs/archive/`)
 
 ---
 
@@ -44,7 +44,7 @@ Phase 2: localStorage only (no backend). Firebase foundation is live (anonymous 
 | `https://sniffout.app/sniffout-v2.html` | Accessible — direct link only | v2 app. Not the default yet — accessible by direct URL only until public launch. |
 | `https://sniffout.co.uk` | Registered but not yet redirecting | Should point to `sniffout.app` — not yet set up (pre-launch checklist item B2). |
 | `https://jayeshfatania.github.io/my-first-repo/` | Live (base URL) | Same as above. |
-| `https://places-proxy.sniffout.app` | Live — fully working | Cloudflare Worker proxy for Google Places API. Key secured server-side. Referer check active and confirmed working — returns 403 for unauthorised origins (verified via curl). |
+| `https://places-proxy.sniffout.app` | Live — fully working | Cloudflare Worker proxy for Google Places API. Key secured server-side. Referer check active. |
 
 **Note on T14:** `manifest.json` `start_url` is now correctly set to `/sniffout-v2.html`. Installed PWA no longer shows a 404. The `index.html` → `coming-soon.html` redirect is intentional — the app is not publicly accessible at the root URL until launch.
 
@@ -55,7 +55,6 @@ Phase 2: localStorage only (no backend). Firebase foundation is live (anonymous 
 - **Deployment:** GitHub Pages, auto-deploys on push to `main`. Deploys in approximately 1 minute.
 - **Production file (v1):** `dog-walk-dashboard.html` — DO NOT TOUCH. Protected per CLAUDE.md.
 - **Active development file:** `sniffout-v2.html` — all changes go here.
-- **Current stable HEAD:** commit `952a65f` — stable state after revert of designer-brief-march-25-spec.md implementation and Round 7 fixes brief.
 
 ### Git workflow
 
@@ -80,7 +79,7 @@ No branches, no PRs, no staging environment. Push directly to main. GitHub Pages
 | Dog-friendly venues | Google Places API (New) — requests routed via Cloudflare Worker proxy at `places-proxy.sniffout.app`. In-app cache: 30 min for venues, 60 min for green spaces. |
 | Reverse geocoding | Nominatim/OSM (no auth) |
 | UK postcode lookup | postcodes.io (no auth) |
-| Map rendering | Leaflet 1.9.4 (CDN). **`zoomControl: false` is set on all `L.map()` initialisations** — zoom +/- buttons removed. Pinch to zoom only. |
+| Map rendering | Leaflet 1.9.4 (CDN) |
 | Icons | Lucide icons (inline SVG, custom function `luIcon()`) pinned to v0.577.0 + Yr.no weather SVG icons |
 | Weather icon sets | Today tab uses white Lucide icons; Weather tab uses Yr.no meteocon SVGs (96px, margin-top 14px) |
 | Typography | Inter (Google Fonts CDN) for all UI copy, labels, buttons, data displays. Fraunces (Google Fonts CDN, variable font) loaded as `var(--font-display)` for display/hero elements only — see Section 6 for full application list. |
@@ -88,7 +87,7 @@ No branches, no PRs, no staging environment. Push directly to main. GitHub Pages
 | PWA manifest | `manifest.json` — `start_url` set to `/sniffout-v2.html`, `theme_color` `#2C4A14` |
 | Brand colour | `#2C4A14` (Woodland Green) — fully implemented throughout. CLAUDE.md corrected 24 March 2026. |
 | Firebase | Compat SDK v10.12.0 (CDN) — project `sniffout-fe976`, region `europe-west2`. Anonymous auth + Firestore dual-write + Storage. Foundation only — full migration is Phase 3. |
-| OS Maps | Ordnance Survey Data Hub, project "sniffout". Standard/OS Map toggle above map on Walks and Nearby tabs. ZXY endpoint: `https://api.os.uk/maps/raster/v1/zxy/{style}_3857/{z}/{x}/{y}.png`. API key: `JcMmulbTghzn8pkYAGdxd8MH6GTK2314`. Premium Data Plan active. Leisure tiles not yet active — support ticket raised with OS Data Hub, awaiting response. Currently defaults to Standard (OSM). **Note: API key is currently in page source — deferred to pre-launch security review (H10).** |
+| OS Maps | Ordnance Survey Data Hub, project "sniffout". Standard/OS Map toggle above map on Walks and Nearby tabs. ZXY endpoint: `https://api.os.uk/maps/raster/v1/zxy/{style}_3857/{z}/{x}/{y}.png`. API key: `JcMmulbTghzn8pkYAGdxd8MH6GTK2314`. Premium Data Plan active. **Leisure tiles still not activating** — support ticket not yet raised. Owner to raise ticket with OS Data Hub. Currently defaults to Standard (OSM). **Note: API key is currently in page source — deferred to pre-launch security review (H10).** |
 
 ### Local dev
 
@@ -115,7 +114,7 @@ Resolution:
 - Walk Planner Places API disabled
 - New API key created on sniffout project (restricted to sniffout.app and Places API only)
 - Cloudflare Worker updated with new key
-- Cloudflare Worker referer check added and confirmed working: returns 403 for all origins other than sniffout.app and localhost (verified via curl)
+- Cloudflare Worker referer check added: only accepts requests from sniffout.app and localhost. Returns 403 for all other origins.
 - In-app Places API caching implemented (30 min expiry, ~111m location precision)
 - nearbyHasFetched flag prevents re-fetch on tab switch
 - 500ms debounce on category chip taps
@@ -123,10 +122,6 @@ Resolution:
 - placesApiCallCount session counter added (console.warn fires above 20 calls)
 
 Total charge to date: £85.17 (covered by promotional credits, net charge minimal). Going forward: all Places API charges go to sniffout project with $200 monthly free credit.
-
-### Zoom controls — removed from all map instances
-
-Leaflet zoom +/- buttons have been removed from all three map instances (`walksMapInstance`, `nearbyMap`, `nearbyFsMap`). Committed as "sniffout-v2 - remove zoom controls from all map instances". `zoomControl: false` is set on all `L.map()` initialisations. Users pinch to zoom. **Do not re-add zoom controls to any map instance.**
 
 ### Firebase status (as of 23 March 2026)
 
@@ -240,7 +235,7 @@ These apply in every session without exception:
 - **`locationRestriction` must not be used** on the Nearby tab. It is incompatible with the `searchText` endpoint and causes empty results. Radius is enforced client-side. Do not reintroduce it.
 - **`renderWeather()` must never manipulate `body.night`.** Dark mode is user-controlled via Settings. The `is_day` API value must not be used to set or remove the `body.night` class. This was a production bug — fixed 22 March. Do not reintroduce.
 - **All inline script blocks are now merged into one.** This resolved all hoisting errors (`getSavedUnits`, `renderRecentlyViewedMe`, `formatDist` scope issues). If new JS is added, it must go inside the single script block, not as a new `<script>` tag.
-- **Developer briefs must be small and surgical** — maximum 3-4 closely related tasks per brief. Test on device after each round before proceeding. The designer-brief-march-25-spec.md implementation failure was caused by too many interconnected changes in one round.
+- **Batch fixes where possible** — each Developer round should be substantial. Exception: critical bugs (broken functionality) can be a quick solo fix.
 - **Fake ratings must not be shown.** Walk cards must not display star ratings or review counts until a minimum of 3 real reviews exist per walk.
 - **No hardcoded emoji in verdict title strings.** Icons rendered as separate Lucide elements. Personalised shortTitle strings used when dog profile exists. Standard title fallback when no dog profile.
 
@@ -280,7 +275,6 @@ DEVELOPER BRIEFS - always include:
   git push
 - Ask Developer to confirm what was changed with a summary when done
 - No time estimates in briefs - agents work in minutes not hours
-- Maximum 3-4 closely related tasks per brief - no large multi-task briefs
 
 AGENT PROMPTS:
 - Always format agent prompts as code blocks for easy copy-paste
@@ -330,7 +324,6 @@ TECHNICAL RULES:
 - No hardcoded API keys in HTML - Google Places routes through Cloudflare Worker at places-proxy.sniffout.app
 - Places API cache: 30 min for venues, 60 min for green spaces - do not remove or bypass
 - nearbyHasFetched flag must be respected - prevents re-fetch on tab switch
-- No zoom controls on any map - zoomControl: false on all L.map() initialisations - do not add L.control.zoom()
 - renderWeather() must never set or remove body.night - dark mode is user-controlled only
 - All JS must go inside the single merged script block - no new separate script tags
 - Breed/age hazard logic lives in detectHazards() and getPawSafety() only - do not scatter
@@ -339,7 +332,6 @@ TECHNICAL RULES:
 - Walk card image heights: carousel 140px, list 180px. Walk name overlaid on image only - not repeated below
 - Away distance is NOT shown on walk cards - detail overlay only
 - Walk window hours are constrained to 6am-9pm minimum/maximum
-- Venue cards use original icon-based design (40px icon) - do not re-implement the 72px thumbnail design
 
 SCREENSHOTS:
 - Avoid screenshots unless visual inspection is genuinely necessary
@@ -358,9 +350,9 @@ AGENT ROLE BOUNDARIES:
 - Each agent is a separate Claude Code session
 
 BATCHING AND TESTING:
-- Developer briefs must be small and surgical - maximum 3-4 closely related tasks per brief
-- Large multi-task briefs cause interconnected failures that are hard to debug and revert
-- Always test on device after each Developer round before proceeding to the next
+- Owner prefers substantial rounds over many small fixes - group related fixes together
+- Exception: critical bugs can be solo fixes
+- Always test on device before confirming a round is complete
 - Owner tests on Android Chrome
 - iOS untested - iOS specific issues may be undetected
 
@@ -392,7 +384,7 @@ CLOUDFLARE WORKER:
 - Proxy at places-proxy.sniffout.app
 - Worker code edited in Cloudflare dashboard
 - Do not revert to direct Google URL ever
-- Referer check active and confirmed working: returns 403 for all origins other than sniffout.app and localhost (verified via curl 25 March 2026)
+- Referer check active: only sniffout.app and localhost accepted - returns 403 for all other origins
 - API key is on sniffout project (sniffout-fe976) only - Walk Planner key is disabled
 
 APP URLS:
@@ -425,7 +417,7 @@ All agents run as Claude Code sessions in tmux panes, operating on the repositor
 
 ## SECTION 5 — WHAT WAS BUILT: COMPLETE ROUND HISTORY
 
-*(Rounds 11-33 and all 20-21 March sessions are documented in the archived `docs/handoffs/archive/session-handoff-march-20.md`. 22 March session documented in archived `docs/handoffs/archive/session-handoff-march-22.md`. 23 March session documented in archived `docs/handoffs/archive/session-handoff-march-23.md`. Early 24 March session documented in archived `docs/handoffs/archive/session-handoff-march-24-morning.md`. Full 24 March session documented in archived `docs/handoffs/archive/session-handoff-march-24b.md`. Midday 25 March session documented in archived `docs/handoffs/archive/session-handoff-march-25-midday.md`. Summary below covers only the most recent context needed for continuity.)*
+*(Rounds 11-33 and all 20-21 March sessions are documented in the archived `docs/handoffs/archive/session-handoff-march-20.md`. 22 March session documented in archived `docs/handoffs/archive/session-handoff-march-22.md`. 23 March session documented in archived `docs/handoffs/archive/session-handoff-march-23.md`. Early 24 March session documented in archived `docs/handoffs/archive/session-handoff-march-24-morning.md`. Full 24 March session documented in archived `docs/handoffs/archive/session-handoff-march-24b.md`. Summary below covers only the most recent context needed for continuity.)*
 
 ### Key milestones prior to 25 March (summary)
 
@@ -441,11 +433,11 @@ All agents run as Claude Code sessions in tmux panes, operating on the repositor
 **Infrastructure:**
 
 - Google Cloud billing issue identified and resolved (see Section 2 for full details)
-- Cloudflare Worker referer protection added and confirmed working: returns 403 for unauthorised origins (verified via curl)
+- Cloudflare Worker referer protection added: rejects requests not from sniffout.app or localhost
 - Places API caching implemented: 30 min for venues, 60 min for green spaces
 - API key migrated from Walk Planner project to sniffout project (sniffout-fe976)
 
-**Developer fixes (morning session):**
+**Developer fixes (completed across multiple rounds):**
 
 - Nearby tab map now replicates Walks tab exactly: same list/map icon toggle, full screen map on map tap, category chips move to bottom in map view
 - Walk name duplicate removed from browse cards (name on image only, not repeated below)
@@ -454,23 +446,12 @@ All agents run as Claude Code sessions in tmux panes, operating on the repositor
 - Nearby category chips working in map view (fetch and render pins on chip tap)
 - Walks tab header controls aligned to right edge
 
-**Zoom controls removed:**
+**Designer spec — designer-brief-march-25-spec.md (ready for Developer implementation):**
 
-- Leaflet zoom +/- buttons removed from all map instances (`walksMapInstance`, `nearbyMap`, `nearbyFsMap`)
-- Committed as: "sniffout-v2 - remove zoom controls from all map instances"
-- `zoomControl: false` set on all `L.map()` initialisations
-- Pinch to zoom only. Do not re-add zoom controls.
-
-**Reverts (afternoon session):**
-
-- designer-brief-march-25-spec.md implementation was reverted. The round introduced multiple interconnected bugs: wrong chips appearing on wrong tabs, blank map tiles, Nearby map pins reverting to default Leaflet teardrops, venue card degradation.
-- Round 7 fixes brief was also reverted as it introduced further issues.
-- Current HEAD is commit `952a65f` — stable state after revert.
-- Lesson: large multi-task briefs introduce too many interconnected changes. Future Developer briefs must be maximum 3-4 related tasks, with device testing after each round.
-
-**Designer spec produced (not yet implemented):**
-
-- `docs/specs/designer-brief-march-25-spec.md` — covers header spec, chip design, venue card redesign, map pin spec, walk detail overlay. Spec is valid and decisions stand. To be re-implemented surgically in small focused rounds.
+- Consistency audit: bottom filter container spec unified across both tabs, header bottom border, list icon gets brand-tint in map mode
+- Visual quality: full chip spec (34px pill, brand green active), venue card redesign (72px thumbnail, structured content, styled Google Maps button), header 60px spec
+- Map pins: 44px DivIcon tap target, white halo on selected pins, zoom threshold lowered to 8, improved zoom overlay, pet shops pin colour, saved venues pin with star, multi-category legend
+- Walk detail overlay: duplicate title removal spec, stats row as first content element, hero container increased to 320px (from 260px), image element 400px
 
 **Brand guidelines:**
 
@@ -522,7 +503,7 @@ Plus icon, 56px diameter, `bottom: 88px`, brand green, multi-layer shadow, fade-
 
 ### Nearby tab map — replicates Walks tab
 
-The Nearby tab map uses the same implementation pattern as the Walks tab map: same list/map icon toggle in the header, tapping the map icon shows the full screen map, category chips at bottom in map view. Implemented 25 March 2026. The expand button pattern has been replaced.
+The Nearby tab map uses the same implementation pattern as the Walks tab map: same list/map icon toggle in the header, tapping the map icon shows the full screen map, category chips at bottom in map view, same zoom controls. Implemented 25 March 2026. The expand button pattern has been replaced.
 
 ### Map filter pill position
 
@@ -720,7 +701,7 @@ Firebase project `sniffout-fe976` (region `europe-west2`) is integrated. Anonymo
 
 ### OS Maps toggle
 
-Standard/OS Map pill is live above the map on Walks and Nearby tabs. API key is currently in page source — pre-launch security item (H10), deferred to dedicated security review. Leisure tiles pending activation — support ticket raised with OS Data Hub, awaiting response.
+Standard/OS Map pill is live above the map on Walks and Nearby tabs. API key is currently in page source — pre-launch security item (H10), deferred to dedicated security review. Leisure tiles pending activation — owner to raise support ticket with OS Data Hub.
 
 ### Recently Viewed walks
 
@@ -750,9 +731,9 @@ All Places API charges must go to the sniffout project (sniffout-fe976), not Wal
 
 In-app cache with 30-minute expiry is now in place (60 minutes for green spaces). Do not remove or bypass the cache without explicit instruction. The nearbyHasFetched flag must be respected in all future Nearby tab development. 500ms debounce is active on category chip taps.
 
-### Cloudflare Worker referer check — confirmed working
+### Cloudflare Worker referer check
 
-The Worker rejects requests not from sniffout.app or localhost, returning 403. Confirmed working via curl on 25 March 2026. Any new development that requires Places API calls must go through the existing proxy. Do not add direct Google Places API calls to the app.
+The Worker now rejects requests not from sniffout.app or localhost. Any new development that requires Places API calls must go through the existing proxy. Do not add direct Google Places API calls to the app.
 
 ### Venue cards keep "View on Google Maps"
 
@@ -765,26 +746,6 @@ DivIcon extended to 44px x 44px for WCAG compliance. Visual circle remains 28px 
 ### Scroll-to-top pill — parked
 
 Currently broken. IntersectionObserver approach restored but not working correctly. Multiple fix attempts have not resolved it. Parked for a future session with a fresh approach. Not a functional blocker.
-
-### Large Developer briefs are banned
-
-Each Developer round must be focused and surgical. Maximum 3-4 closely related tasks per brief. Test on device after each round before proceeding. The designer-brief-march-25-spec.md implementation failure was caused by too many interconnected changes in one round — bugs introduced included wrong chips on wrong tabs, blank map tiles, broken Nearby map pins, and venue card degradation. This lesson is permanent.
-
-### Zoom controls permanently removed
-
-Do not add `L.control.zoom()` to any map instance. `zoomControl: false` is set on all `L.map()` initialisations (`walksMapInstance`, `nearbyMap`, `nearbyFsMap`) and must stay that way. Pinch to zoom is the correct mobile interaction. Committed 25 March 2026.
-
-### Venue cards — original icon-based design restored
-
-The redesigned venue card (72px thumbnail, structured layout) was part of designer-brief-march-25-spec.md and was reverted along with the rest of that round. The original venue card design is restored: 40px icon, venue name, type, distance, direction button. Do not re-implement the thumbnail design without a fresh Designer spec and explicit owner approval.
-
-### Map tiles — OSM rate limiting is not a code bug
-
-OSM tiles may appear blank after heavy testing sessions due to rate limiting. This is not a code bug. Tiles self-resolve within a few hours. Do not attempt to fix blank tiles with code changes. Long-term fix is OS Maps Leisure tiles (support ticket raised with OS Data Hub, awaiting response).
-
-### Designer brief march-25-spec.md — valid spec, implement surgically
-
-The spec was produced and partially implemented but the implementation was reverted due to bugs from too many changes in one round. The spec itself is valid and the design decisions in it stand. It must be re-implemented in small focused rounds — one area at a time, tested after each. Do not implement the full spec in a single brief.
 
 ### Push notifications — owner decisions confirmed (Phase 3)
 
@@ -862,53 +823,41 @@ Five personas defined in `docs/content/copywriter-personas.md`. Rules carry forw
 
 As of end of day 25 March 2026:
 
-### 1. PRIORITY — Designer brief for map view visual improvements
+### 1. Developer round in progress — designer-brief-march-25-spec.md
 
-Taking inspiration from Google Maps and What3Words. Key items:
-- Category chips with Lucide icons (coffee for cafes, heart-pulse for vets, trees for green spaces, shopping-bag for pet shops, bookmark for saved)
-- Floating controls on map with no background container — individual shadows only, floating directly on map tiles
+Designer spec is complete and ready for Developer implementation. Covers: header spec (60px height), chip design (34px pill, brand green active), venue card redesign (72px thumbnail, structured content, styled Google Maps button), map pins (44px DivIcon, white halo on selected), walk detail overlay (320px hero container, 400px image, stats row first).
 
-To be briefed as first task of next session.
+### 2. Scroll-to-top pill — parked
 
-### 2. App review — owner to do a full review of current app state
+Multiple fix attempts have not resolved it. Needs a fresh approach in a future session. Not a functional blocker.
 
-Owner to do a full review of the app after the revert and list all remaining bugs before any new development begins.
+### 3. State A composition — Designer spec pending
 
-### 3. Scroll-to-top pill — parked
+State A full composition review (headline size, balance, spacing) to be issued once the current Developer round is complete.
 
-Still broken. Multiple fix attempts have not resolved it. Needs a fresh approach in a future session. Not a functional blocker.
+### 4. Phase 3 Firebase migration — spec complete, ready to brief Developer
 
-### 4. State A composition — Designer spec pending
+Spec at `docs/specs/firebase-phase3-migration-spec.md`. Gated on GDPR sign-off (L1).
 
-State A full composition review (headline size, balance, spacing) to be issued once the app is in a stable state.
-
-### 5. Phase 3 Firebase migration — spec complete, ready to brief Developer
-
-Spec at `docs/specs/firebase-phase3-migration-spec.md`. Gated on GDPR sign-off (L1). Brief once app is in stable state after current rounds.
-
-### 6. User-submitted walks — Researcher round not yet started
+### 5. User-submitted walks — Researcher round not yet started
 
 Full feature scope including moderation, mandatory photo requirement, submission form, community trust signals, legal considerations.
 
-### 7. Monetisation decisions M1-M5 — deferred
+### 6. Monetisation decisions M1-M5 — deferred
 
 Owner reviewed at `docs/research/competitive-analysis-march-23.md`. All five deferred to closer to launch.
 
-### 8. OS Maps Leisure tiles — support ticket raised, awaiting response
+### 7. OS Maps Leisure tiles — support ticket not yet raised (owner action)
 
-Support ticket raised with OS Data Hub. Awaiting response. Premium Data Plan active but Leisure tiles not yet rendering. OSM is the current default.
+Premium Data Plan is active but Leisure tiles are still not rendering. Owner to raise support ticket with OS Data Hub.
 
-### 9. Walk photos — 7 showcase carousel walks (owner action)
+### 8. Walk photos — 7 showcase carousel walks (owner action)
 
 Walks: `isabella-plantation`, `stanage-edge`, `balmaha-loch-lomond`, `rhossili-gower`, `seven-sisters`, `formby-beach-pinewoods`, `alnmouth-northumberland`. Owner to source and push to repo.
 
-### 10. Solicitor engagement — L1-L5 blocked (owner action)
+### 9. Solicitor engagement — L1-L5 blocked (owner action)
 
 Owner engages solicitor. Target: at least 4 weeks before any beta launch date.
-
-### 11. Code review and refactoring round — scheduled before Phase 3
-
-A single focused Developer round to: remove dead code accumulated from multiple rounds and reverts, consolidate duplicate functions, fix naming inconsistencies, and add inline documentation to major functions. Not urgent but important before Phase 3 Firebase migration to keep the codebase clean and reduce migration risk.
 
 ### PENDING DEVELOPER CONFIRMATION (carry forward)
 
@@ -920,19 +869,23 @@ A single focused Developer round to: remove dead code accumulated from multiple 
 
 ### Immediate (in priority order)
 
-1. **Owner does full app review** — list all remaining bugs and issues before any new development begins. Start from this stable state (commit `952a65f`).
+1. **Test current Developer round** — designer-brief-march-25-spec.md implementation. Review on device before pushing.
 
-2. **Designer brief — icon chips and floating map controls** — taking inspiration from Google Maps and What3Words. Category chips with Lucide icons, floating controls with individual shadows directly on map tiles. Issue once owner review is complete.
+2. **State A Designer review** — headline size, balance, spacing. Issue once current Developer round is complete.
 
-3. **Implement designer spec march-25 surgically** — re-implement `docs/specs/designer-brief-march-25-spec.md` one small area at a time. Test on device after each. Do not combine multiple spec areas in a single brief.
+3. **Phase 3 Firebase migration Developer brief** — spec complete at `docs/specs/firebase-phase3-migration-spec.md`. Ready to brief.
 
-4. **State A Designer review** — headline size, balance, spacing. Issue once current rounds are stable.
+4. **Researcher round — user-submitted walks** — full feature scope including moderation tool (Google Cloud Vision API, Natural Language API), plagiarism detection, owner approval queue, mandatory photo requirement, submission form best practice, community trust signals, legal considerations (Online Safety Act 2023).
 
-5. **Phase 3 Firebase migration Developer brief** — spec complete at `docs/specs/firebase-phase3-migration-spec.md`. Brief once app is in a clean, stable state.
+5. **Scroll-to-top pill** — fresh approach when ready. Not a functional blocker.
 
-6. **User-submitted walks Researcher round** — full feature scope including moderation tool (Google Cloud Vision API, Natural Language API), plagiarism detection, owner approval queue, mandatory photo requirement, submission form best practice, community trust signals, legal considerations (Online Safety Act 2023).
+6. **Monetisation decisions M1-M5** — deferred. PO to resurface when owner is ready.
 
-7. **Scroll-to-top pill** — fresh approach when ready. Not a functional blocker.
+7. **OS Maps support ticket** — owner to raise with OS Data Hub. Leisure tiles still not activating.
+
+8. **Walk photos** — 7 showcase carousel walks still need real photos. Owner to source.
+
+9. **Solicitor engagement** — L1-L5 all blocked. Not a dev blocker.
 
 ### Soon (Phase 2 remaining)
 
@@ -1007,7 +960,7 @@ All files in `~/Desktop/my-first-repo/`. Documentation files are organised into 
 | File | Purpose |
 |------|---------|
 | `docs/specs/brand-guidelines-march-24.md` | **Brand guidelines.** Consolidated brand, design, and copy reference. Ready for new collaborators. |
-| `docs/specs/designer-brief-march-25-spec.md` | **Designer spec (25 March).** Header spec, chip design, venue card redesign, map pin spec, walk detail overlay. Valid spec — implement surgically in small focused rounds. Implementation was reverted 25 March due to size of round. |
+| `docs/specs/designer-brief-march-25-spec.md` | **Designer spec (25 March).** Header spec, chip design, venue card redesign, map pin spec, walk detail overlay. Ready for Developer implementation. |
 | `docs/specs/designer-brief-march-24-spec.md` | **Designer spec A (24 March).** FAB, Me tab layout, Walks tab map, Nearby full screen map, parallax hero on walk detail. Implemented. |
 | `docs/specs/designer-brief-march-24b-spec.md` | **Designer spec B (24 March).** Today hero card, Weather tab hazard cards, Settings cog, walk card proportions. Implemented. |
 | `docs/specs/design-elevation-spec-march-23.md` | Design elevation spec. Fraunces typeface, #2C4A14 brand colour, hero card colour treatment, micro-interactions, palette expansion. Implemented. |
@@ -1069,7 +1022,6 @@ All files in `~/Desktop/my-first-repo/`. Documentation files are organised into 
 | `docs/handoffs/archive/session-handoff-march-23.md` | Archived. Covers 23 March 2026. |
 | `docs/handoffs/archive/session-handoff-march-24-morning.md` | Archived. Covers early 24 March 2026 (morning session). |
 | `docs/handoffs/archive/session-handoff-march-24b.md` | Archived. Covers full 24 March 2026 session. |
-| `docs/handoffs/archive/session-handoff-march-25-midday.md` | Archived. Covers 25 March 2026 midday state (before afternoon reverts). |
 | `docs/handoffs/session-handoff-march-25.md` | **This document. Current active handoff.** |
 
 ---
@@ -1097,9 +1049,9 @@ These are not negotiable — carry them forward into every future session.
 - The owner has a dog named **Luna**. Luna is a Bear Coat Shar Pei. Luna has the double-coat toggle set to Yes. Luna is the inspiration for the dog profile feature. When discussing dog profile features, this is personal.
 
 **Batching:**
-- Developer briefs must be small and surgical — maximum 3-4 related tasks per brief. Test after each round.
+- Owner prefers **batched Developer rounds** over many small fixes. Each round should be substantial.
 - Exception: critical bugs (broken functionality) can be a quick solo fix.
-- Always test on device before pushing a round and before proceeding to the next.
+- Always test on device before pushing a major round.
 
 **Quality over speed:**
 - There is no pressure to ship. Thoroughness takes priority over velocity at every stage.
@@ -1190,7 +1142,7 @@ Confirm push by checking `https://sniffout.app/sniffout-v2.html` — allow ~1 mi
 ## QUICK REFERENCE — CRITICAL THINGS TO NOT FORGET
 
 1. **Never touch `dog-walk-dashboard.html`** — live production v1, protected per CLAUDE.md
-2. **Cloudflare Worker proxy is fully working** — `places-proxy.sniffout.app`. Referer check confirmed working via curl — returns 403 for all origins except sniffout.app and localhost. Do not revert to direct Google URL.
+2. **Cloudflare Worker proxy is fully working** — `places-proxy.sniffout.app`. Referer check active — only sniffout.app and localhost accepted. Do not revert to direct Google URL.
 3. **Pubs/restaurants permanently removed** — quality issues. Brief at `docs/briefs/developer-brief-restaurants.md`. Do not re-add without a dedicated design round.
 4. **All batches complete — walk count is 100** — use `WALKS_DB.length` dynamically, never hardcode a number.
 5. **Brand colour is `#2C4A14` (Woodland Green)** — replaces `#3B5C2A` (Meadow Green). CLAUDE.md corrected 24 March. No old colour references should remain anywhere.
@@ -1209,7 +1161,7 @@ Confirm push by checking `https://sniffout.app/sniffout-v2.html` — allow ~1 mi
 18. **`renderWeather()` must never touch `body.night`** — dark mode is user-controlled. This was a production bug, fixed 22 March. Do not reintroduce.
 19. **All inline JS is in one merged script block** — no new `<script>` tags. Hoisting errors permanently resolved.
 20. **Firebase API key corrected** — correct key is `sniffout-fe976` browser key. Anonymous auth and Firestore dual-write working.
-21. **OS Maps toggle is live — support ticket raised** — Leisure tiles not yet active. Support ticket raised with OS Data Hub, awaiting response. API key in page source — deferred security review (H10).
+21. **OS Maps toggle is live** — Leisure tiles still pending. Owner to raise support ticket. API key in page source — deferred security review (H10).
 22. **Green spaces uses multi-query with dedup** — four queries: `parks`, `nature reserve`, `common land`, `country park`. No location name in textQuery. Do not revert to single query.
 23. **Push notification decisions confirmed and spec complete** — hazard-only at launch (Types 1-5), Firebase Cloud Functions, home location via banner prompt + settings. Formal Phase 3 spec at `docs/specs/push-notifications-phase3-spec.md`. GDPR sign-off and solicitor review are go-live prerequisites only, not build prerequisites.
 24. **UX deferred items — three resolved, one remaining** — B2, M5, and M7 resolved 23 March 2026. H10 (OS Maps API key in page source) remains deferred to dedicated pre-launch security review.
@@ -1234,21 +1186,15 @@ Confirm push by checking `https://sniffout.app/sniffout-v2.html` — allow ~1 mi
 43. **FAB on Me tab — implemented** — plus icon, 56px, `bottom: 88px`, brand green, multi-layer shadow, fade on scroll. Spec at `docs/specs/designer-brief-march-24-spec.md`.
 44. **Walk card image heights: carousel 140px, list 180px** — walk name overlaid on image only (Fraunces 700 26px white). Name does not repeat below image.
 45. **Away distance removed from walk cards** — appears in walk detail overlay only. Do not reintroduce to cards.
-46. **Nearby tab map matches Walks tab** — same list/map header toggle, full screen map, category chips at bottom in map view. Implemented 25 March 2026.
+46. **Nearby tab map matches Walks tab** — same list/map header toggle, full screen map, category chips at bottom in map view, zoom controls. Implemented 25 March 2026.
 47. **Walk window shows "Tomorrow" label for next-day times** — implemented 25 March 2026. Hours constrained to 6am-9pm.
 48. **Brand guidelines document complete** — `docs/specs/brand-guidelines-march-24.md`. Ready for use by new collaborators.
 49. **Haptic feedback: `navigator.vibrate(10)` on saves, `navigator.vibrate([50,30,80])` on badge earn** — apply to all new save/earn interactions.
 50. **Me tab dog name is `.me-dog-card-name` at 48px Fraunces 700** — always the largest text on the Me tab.
 51. **All three Me tab stat numbers use `var(--brand)` / `#6A9B4A` dark** — consistent colour, not var(--ink).
-52. **Places API always goes through Cloudflare proxy** — `places-proxy.sniffout.app`. Referer check confirmed working — returns 403 for unauthorised origins.
+52. **Places API always goes through Cloudflare proxy** — `places-proxy.sniffout.app`. Referer check rejects requests not from sniffout.app or localhost.
 53. **API key: sniffout project only** — Walk Planner Places API key is disabled. Do not create new keys on Walk Planner.
 54. **Places API caching: 30 min for venues, 60 min for green spaces** — nearbyHasFetched flag prevents re-fetch on tab switch. 500ms debounce on category chip taps.
 55. **Venue cards keep "View on Google Maps"** — styled as outlined button, not a text link. Owner confirmed, do not remove.
 56. **Scroll-to-top pill is parked** — needs fresh approach in a future session. Not a functional blocker.
-57. **No zoom controls on any map** — `zoomControl: false` on all `L.map()` initialisations. Pinch to zoom only. Do not add `L.control.zoom()`. Committed 25 March 2026.
-58. **Developer briefs must be small and surgical** — maximum 3-4 closely related tasks per brief. Test on device after each round before proceeding. Large briefs cause interconnected failures.
-59. **Venue cards: original icon-based design restored** — 40px icon, venue name, type, distance, direction button. The 72px thumbnail redesign was reverted. Do not re-implement without a fresh Designer spec and owner approval.
-60. **Map tiles blank: OSM rate limiting, not a code bug** — self-resolves within a few hours after heavy testing sessions. Do not attempt to fix with code changes.
-61. **designer-brief-march-25-spec.md: valid spec, implement surgically** — implementation was reverted due to round size. Decisions in spec stand. Re-implement one area at a time in future rounds.
-62. **Current stable HEAD is commit `952a65f`** — stable state after revert of designer-brief-march-25-spec.md implementation and Round 7 fixes brief.
-63. **Code refactor scheduled before Phase 3** — single focused Developer round to remove dead code, consolidate duplicate functions, fix naming inconsistencies, document major functions. Not urgent but important before Phase 3 migration.
+57. **designer-brief-march-25-spec.md is the active Designer spec** — ready for Developer implementation. Covers header, chips, venue cards, map pins, walk detail overlay.
