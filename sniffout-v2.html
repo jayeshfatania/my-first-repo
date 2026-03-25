@@ -1492,7 +1492,7 @@
       width: 36px;
       height: 36px;
       border-width: 3px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.92), 0 2px 10px rgba(0,0,0,0.38);
       margin: -4px 0 0 -4px;
     }
     #walks-map-container {
@@ -1507,6 +1507,8 @@
       min-height: 300px;
     }
     body.night #walks-map .leaflet-tile-pane { filter: brightness(0.75) contrast(1.05); }
+    /* Pin centering wrapper - 44px tap target, visual pin centered inside */
+    .pin-wrap { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
     /* Walk pin styles */
     .walk-pin {
       width: 28px;
@@ -1523,7 +1525,7 @@
       width: 36px;
       height: 36px;
       border-width: 3px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.92), 0 2px 10px rgba(0,0,0,0.38);
       margin: -4px 0 0 -4px;
     }
     /* Zoom threshold overlay */
@@ -1845,7 +1847,7 @@
       width: 36px;
       height: 36px;
       border-width: 3px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.92), 0 2px 10px rgba(0,0,0,0.38);
       margin: -4px 0 0 -4px;
     }
     /* Venue compact card (full screen mode) */
@@ -4497,8 +4499,11 @@
           <button class="walks-inmap-btn" id="walksInmapGreen" onclick="setWalksMapFilter('greenspaces')"><i data-lucide="trees" style="width:15px;height:15px;"></i>Green spaces</button>
         </div>
         <div class="walks-map-zoom-msg" id="walks-map-zoom-msg" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="var(--ink-2)" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-          <div class="walks-map-zoom-msg-text">Zoom in to see walks</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;">
+            <i data-lucide="map-pin" style="width:24px;height:24px;color:var(--ink-2);"></i>
+            <div style="font:600 15px/1 'Inter',sans-serif;color:var(--ink);">Zoom in to see walks nearby</div>
+            <div style="font:400 13px/1.3 'Inter',sans-serif;color:var(--ink-2);margin-top:4px;">Pinch to zoom into any area.</div>
+          </div>
         </div>
         <div class="walks-map-empty" id="walks-map-empty" aria-hidden="true">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="var(--ink-2)" aria-hidden="true"><line x1="1" y1="1" x2="23" y2="23"/><path d="M20.9 20.9A10 10 0 0 1 4 12.1M12 2a10 10 0 0 1 8.9 14.8"/></svg>
@@ -11921,7 +11926,7 @@
     walksMapMarkers.forEach(function(m) { m.marker.remove(); });
     walksMapMarkers = [];
 
-    if (zoom < 9) {
+    if (zoom < 8) {
       if (zoomMsg) zoomMsg.classList.add('visible');
       if (emptyMsg) emptyMsg.classList.remove('visible');
       return;
@@ -11950,13 +11955,11 @@
 
     walksToShow.forEach(function(walk) {
       var isSelected = walk.id === walksMapSelectedId;
-      var size = isSelected ? 36 : 28;
-      var anchor = size / 2;
       var icon = L.divIcon({
         className: '',
-        html: '<div class="walk-pin' + (isSelected ? ' selected' : '') + '"></div>',
-        iconSize: [size, size],
-        iconAnchor: [anchor, anchor]
+        html: '<div class="pin-wrap"><div class="walk-pin' + (isSelected ? ' selected' : '') + '"></div></div>',
+        iconSize: [44, 44],
+        iconAnchor: [22, 22]
       });
       var marker = L.marker([walk.lat, walk.lon], { icon: icon, zIndexOffset: isSelected ? 1000 : 0 });
       marker.on('click', function(e) {
@@ -11974,9 +11977,9 @@
       gsInBounds.forEach(function(gs) {
         var icon = L.divIcon({
           className: '',
-          html: '<div class="greenspace-pin"></div>',
-          iconSize: [28, 28],
-          iconAnchor: [14, 14]
+          html: '<div class="pin-wrap"><div class="greenspace-pin"></div></div>',
+          iconSize: [44, 44],
+          iconAnchor: [22, 22]
         });
         var marker = L.marker([gs.lat, gs.lon], { icon: icon });
         marker.bindPopup('<strong>' + escHtml(gs.name || '') + '</strong>');
@@ -12853,13 +12856,11 @@
     venues.forEach(function(venue) {
       var isSelected = venue.id === nearbyFsSelectedId;
       var pinClass = getCategoryPinClass(venue.cat);
-      var size = isSelected ? 36 : 28;
-      var anchor = size / 2;
       var icon = L.divIcon({
         className: '',
-        html: '<div class="venue-pin ' + pinClass + (isSelected ? ' selected' : '') + '"></div>',
-        iconSize: [size, size],
-        iconAnchor: [anchor, anchor]
+        html: '<div class="pin-wrap"><div class="venue-pin ' + pinClass + (isSelected ? ' selected' : '') + '"></div></div>',
+        iconSize: [44, 44],
+        iconAnchor: [22, 22]
       });
       var marker = L.marker([venue.lat, venue.lon], { icon: icon, zIndexOffset: isSelected ? 1000 : 0 });
       marker.on('click', function(e) {
