@@ -154,10 +154,10 @@
     .section-link { font-size: 14px; font-weight: 500; color: var(--brand); }
 
     /* ─── Tab title bar ─── */
-    .tab-title-bar { padding: 12px 16px 8px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 20; }
-    .tab-title { font-size: 22px; font-weight: 700; color: var(--ink); }
-    .filter-btn { background: none; border: none; padding: 10px 10px; min-width: 44px; min-height: 44px; cursor: pointer; color: var(--ink-2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .filter-btn:active { color: var(--brand); }
+    .tab-title-bar { height: 60px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 20; border-bottom: 1px solid var(--border); }
+    .tab-title { font-size: 18px; font-weight: 700; color: var(--ink); }
+    .filter-btn { background: none; border: none; width: 40px; height: 40px; cursor: pointer; color: var(--ink); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 8px; transition: transform 0.15s ease; }
+    .filter-btn:active { color: var(--brand); transform: scale(0.97); }
     .picks-anchor-btn {
       position: fixed;
       top: 16px;
@@ -1268,12 +1268,42 @@
       border-color: var(--brand);
       color: var(--brand);
     }
+    /* Nearby category chips in list view filter row */
+    .nearby-filters {
+      display: flex;
+      gap: 8px;
+      padding: 12px 0 12px 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      mask-image: linear-gradient(to right, black calc(100% - 24px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, black calc(100% - 24px), transparent 100%);
+    }
+    .nearby-filters::-webkit-scrollbar { display: none; }
     [data-nearby-cat] {
-      min-height: 44px;
-      padding: 11px 16px;
-      transition: transform 0.15s ease;
+      height: 34px;
+      padding: 0 14px;
+      font-size: 13px;
+      font-weight: 600;
+      min-height: unset;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink-2);
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      white-space: nowrap;
+      transition: background 150ms, border-color 150ms, color 150ms, transform 0.15s ease;
+    }
+    [data-nearby-cat].active {
+      background: var(--brand);
+      color: #ffffff;
+      border: none;
     }
     [data-nearby-cat]:active { transform: scale(0.97); }
+    body.night [data-nearby-cat] { background: rgba(255,255,255,0.07); }
+    body.night [data-nearby-cat].active { background: #3D6B22; }
 
     /* Segmented toggle (List / Map) */
     .view-toggle {
@@ -1423,14 +1453,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 32px;
-      height: 28px;
+      width: 40px;
+      height: 40px;
       border: none;
       border-radius: 7px;
       background: transparent;
       color: var(--ink-2);
       cursor: pointer;
-      transition: transform 0.15s ease;
+      transition: background 150ms ease, color 150ms ease, transform 0.15s ease;
       -webkit-tap-highlight-color: transparent;
     }
     .walks-map-toggle-btn:active { transform: scale(0.97); }
@@ -1443,28 +1473,46 @@
       background: rgba(255,255,255,0.12);
       color: var(--brand);
     }
-    /* In-map segmented filter */
+    /* List button hint in map mode: shows it is the return-to-list action */
+    .walks-map-toggle-btn.list-hint {
+      background: var(--brand-tint);
+      color: var(--brand);
+    }
+    body.night .walks-map-toggle-btn.list-hint {
+      background: rgba(92,154,74,0.15);
+      color: var(--brand);
+    }
+    /* In-map segmented filter - full-width bar at bottom of map */
     .walks-inmap-filter {
       position: absolute;
-      bottom: 16px;
-      left: 50%;
-      transform: translateX(-50%);
+      bottom: 0;
+      left: 0;
+      right: 0;
       z-index: 500;
       display: none;
       align-items: center;
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.18);
-      padding: 2px;
-      width: 200px;
+      justify-content: center;
+      background: rgba(255,255,255,0.96);
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.07);
+      padding: 10px 16px 12px;
     }
+    /* Inner segmented pill */
+    .walks-inmap-pill {
+      display: flex;
+      align-items: center;
+      background: rgba(0,0,0,0.06);
+      border-radius: 10px;
+      padding: 2px;
+      width: 100%;
+    }
+    body.night .walks-inmap-pill { background: rgba(255,255,255,0.08); }
     .walks-inmap-btn {
       flex: 1;
-      height: 28px;
+      height: 34px;
       background: transparent;
       border: none;
-      border-radius: 16px;
+      border-radius: 8px;
       font: 600 13px/1 'Inter', sans-serif;
       color: var(--ink-2);
       cursor: pointer;
@@ -1472,15 +1520,17 @@
       -webkit-tap-highlight-color: transparent;
     }
     .walks-inmap-btn.active {
-      background: var(--brand);
-      color: #ffffff;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
     .walks-inmap-btn:active { transform: scale(0.97); }
     body.night .walks-inmap-filter {
-      background: rgba(31, 31, 31, 0.95);
+      background: rgba(31,31,31,0.96);
       border-color: rgba(255,255,255,0.08);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
     }
-    body.night .walks-inmap-btn.active { background: #3D6B22; }
+    body.night .walks-inmap-btn.active { background: var(--surface); color: var(--ink); }
     /* Green space pin */
     .greenspace-pin {
       width: 28px;
@@ -1489,16 +1539,16 @@
       background: #4A7A5A;
       border: 2px solid #fff;
       box-shadow: 0 1px 4px rgba(0,0,0,0.28);
-      transition: width 150ms ease, height 150ms ease, margin 150ms ease;
+      transition: width 150ms ease, height 150ms ease, box-shadow 150ms ease;
       cursor: pointer;
+      flex-shrink: 0;
     }
     body.night .greenspace-pin { background: #5A9070; }
     .greenspace-pin.selected {
       width: 36px;
       height: 36px;
       border-width: 3px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
-      margin: -4px 0 0 -4px;
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.92), 0 2px 10px rgba(0,0,0,0.38);
     }
     #walks-map-container {
       display: none;
@@ -1512,6 +1562,14 @@
       min-height: 300px;
     }
     body.night #walks-map .leaflet-tile-pane { filter: brightness(0.75) contrast(1.05); }
+    /* 44px transparent tap target wrapper for all map pins */
+    .pin-wrap {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     /* Walk pin styles */
     .walk-pin {
       width: 28px;
@@ -1520,16 +1578,16 @@
       background: #2C4A14;
       border: 2px solid #fff;
       box-shadow: 0 1px 4px rgba(0,0,0,0.28);
-      transition: width 150ms ease, height 150ms ease, margin 150ms ease;
+      transition: width 150ms ease, height 150ms ease, box-shadow 150ms ease;
       cursor: pointer;
+      flex-shrink: 0;
     }
     body.night .walk-pin { background: #3D6B22; }
     .walk-pin.selected {
       width: 36px;
       height: 36px;
       border-width: 3px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
-      margin: -4px 0 0 -4px;
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.92), 0 2px 10px rgba(0,0,0,0.38);
     }
     /* Zoom threshold overlay */
     .walks-map-zoom-msg {
@@ -1537,9 +1595,10 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.92);
       border-radius: 12px;
-      padding: 16px;
+      padding: 20px;
+      max-width: 260px;
       text-align: center;
       pointer-events: none;
       z-index: 500;
@@ -1547,7 +1606,8 @@
     }
     body.night .walks-map-zoom-msg { background: rgba(31,31,31,0.92); }
     .walks-map-zoom-msg.visible { display: block; }
-    .walks-map-zoom-msg-text { font: 500 15px/1.4 'Inter',sans-serif; color: var(--ink); margin-top: 8px; }
+    .walks-map-zoom-msg-headline { font: 600 15px/1.3 'Inter',sans-serif; color: var(--ink); margin-top: 10px; }
+    .walks-map-zoom-msg-body { font: 400 13px/1.4 'Inter',sans-serif; color: var(--ink-2); margin-top: 4px; }
     /* Map empty state */
     .walks-map-empty {
       position: absolute;
@@ -1682,21 +1742,24 @@
       bottom: var(--nav-h);
       left: 0;
       right: 0;
-      height: 52px;
       align-items: center;
       gap: 8px;
-      padding: 0 16px;
-      background: rgba(255,255,255,0.95);
+      padding: 10px 0 12px 16px;
+      background: rgba(255,255,255,0.96);
       border-top: 1px solid var(--border);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.07);
       overflow-x: auto;
       scrollbar-width: none;
       z-index: 100;
+      mask-image: linear-gradient(to right, black calc(100% - 24px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, black calc(100% - 24px), transparent 100%);
     }
     #nearby-map-cat-bar::-webkit-scrollbar { display: none; }
     #nearby-map-cat-bar.visible { display: flex; }
     body.night #nearby-map-cat-bar {
-      background: rgba(31,31,31,0.95);
+      background: rgba(31,31,31,0.96);
       border-top-color: rgba(255,255,255,0.08);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
     }
     .nearby-cat-bar-chip {
       font: 600 13px/1 'Inter', sans-serif;
@@ -1704,16 +1767,20 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 7px 14px;
+      height: 34px;
+      padding: 0 14px;
       white-space: nowrap;
       cursor: pointer;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
       transition: transform 0.15s ease;
       -webkit-tap-highlight-color: transparent;
     }
     .nearby-cat-bar-chip:active { transform: scale(0.97); }
-    .nearby-cat-bar-chip.active { background: var(--brand); color: #fff; border-color: var(--brand); }
-    body.night .nearby-cat-bar-chip.active { background: #3D6B22; border-color: #3D6B22; }
+    .nearby-cat-bar-chip.active { background: var(--brand); color: #fff; border-color: var(--brand); border: none; }
+    body.night .nearby-cat-bar-chip { background: rgba(255,255,255,0.07); }
+    body.night .nearby-cat-bar-chip.active { background: #3D6B22; }
     /* Nearby map expand button */
     .nearby-map-expand-btn {
       position: absolute;
@@ -1820,20 +1887,21 @@
       border-radius: 50%;
       border: 2px solid #fff;
       box-shadow: 0 1px 4px rgba(0,0,0,0.28);
-      transition: width 150ms ease, height 150ms ease, margin 150ms ease;
+      transition: width 150ms ease, height 150ms ease, box-shadow 150ms ease;
       cursor: pointer;
+      flex-shrink: 0;
     }
     .venue-pin.cafe  { background: #B07A28; }
     .venue-pin.vet   { background: #C04040; }
     .venue-pin.green { background: #3D6520; }
+    .venue-pin.shop  { background: #6B5EA8; }
     body.night .venue-pin.cafe  { background: #C08B38; }
     body.night .venue-pin.green { background: #4A7830; }
     .venue-pin.selected {
       width: 36px;
       height: 36px;
       border-width: 3px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
-      margin: -4px 0 0 -4px;
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.92), 0 2px 10px rgba(0,0,0,0.38);
     }
     /* Venue compact card (full screen mode) */
     .nearby-map-card {
@@ -3245,30 +3313,105 @@
     }
 
     /* ── Nearby venue cards (Google Places) ── */
+    /* Venue card - horizontal thumbnail layout */
     .venue-card-gp {
       position: relative;
       display: flex;
-      flex-direction: column;
-      gap: 0;
+      flex-direction: row;
+      align-items: flex-start;
       background: var(--surface);
-      border: 0.5px solid rgba(0,0,0,0.08);
+      border: 1px solid var(--border);
       border-radius: 16px;
-      overflow: hidden;
+      padding: 12px;
       margin: 0 16px 10px;
       text-decoration: none;
       color: inherit;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
       transition: transform 150ms cubic-bezier(0.34,1.56,0.64,1);
+      -webkit-tap-highlight-color: transparent;
     }
     .venue-card-gp:active { transform: scale(0.97); }
+    body.night .venue-card-gp { border-color: rgba(255,255,255,0.08); }
+    /* Thumbnail */
+    .venue-card-photo-gp {
+      width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: var(--brand-tint);
+    }
+    .venue-card-photo-gp img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    /* Content area */
+    .venue-card-body-gp {
+      margin-left: 12px;
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .venue-card-name-gp {
+      font: 600 15px/1.3 'Inter', sans-serif;
+      color: var(--ink);
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    /* Category pill */
+    .venue-cat-pill {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 6px;
+      font: 500 11px/1 'Inter', sans-serif;
+      margin-top: 4px;
+      align-self: flex-start;
+    }
+    .venue-cat-pill.pub, .venue-cat-pill.cafe { background: rgba(176,122,40,0.12); color: #B07A28; }
+    .venue-cat-pill.vet  { background: rgba(192,64,64,0.10); color: #C04040; }
+    .venue-cat-pill.shop { background: rgba(107,94,168,0.12); color: #6B5EA8; }
+    .venue-cat-pill.green { background: var(--brand-tint); color: var(--brand); }
+    body.night .venue-cat-pill { background: rgba(255,255,255,0.08); }
+    /* Distance / status row */
+    .venue-card-dist-row {
+      font: 400 13px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+      margin-top: 6px;
+    }
+    /* Maps button */
+    .venue-maps-btn {
+      margin-top: 8px;
+      height: 32px;
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font: 500 13px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .venue-maps-btn:active { transform: scale(0.97); }
+    /* Fav button (heart) - absolute positioned in card */
     .venue-fav-btn {
       position: absolute;
       top: 8px;
       right: 8px;
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.88);
+      background: rgba(255,255,255,0.9);
       border: none;
       display: flex;
       align-items: center;
@@ -3278,32 +3421,16 @@
       z-index: 1;
       flex-shrink: 0;
     }
-    .venue-card-gp:active { opacity: 0.8; }
-    .venue-card-photo-gp {
-      width: 100%;
-      height: 140px;
-      background: var(--brand);
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-    .venue-card-photo-gp img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .venue-card-body-gp { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px; }
-    .venue-card-name-gp { font-size: 15px; font-weight: 600; color: var(--ink); }
-    .venue-card-meta-gp {
-      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-      font-size: 13px; color: var(--ink-2); margin-top: 2px;
-    }
-    .venue-rating-gp { color: #B07A28; font-weight: 500; }
-    .venue-open-gp  { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 99px; }
-    .venue-open-gp.open   { background: rgba(59,92,42,0.1); color: var(--brand); }
-    .venue-open-gp.closed { background: rgba(220,38,38,0.08); color: var(--red); }
-    .venue-address-gp { font-size: 12px; color: var(--ink-2); }
-    .venue-maps-link-gp { font-size: 13px; color: var(--brand); font-weight: 500; margin-top: 4px; }
+    body.night .venue-fav-btn { background: rgba(31,31,31,0.9); }
+    /* Rating */
+    .venue-rating-gp { color: #B07A28; font-weight: 500; font-size: 13px; }
+    /* Unused legacy classes - kept for safety */
+    .venue-card-meta-gp { display: none; }
+    .venue-open-gp  { font-size: 13px; font-weight: 500; }
+    .venue-open-gp.open   { color: #2D7A3A; }
+    .venue-open-gp.closed { color: var(--red); }
+    .venue-address-gp { display: none; }
+    .venue-maps-link-gp { display: none; }
     .venue-cat-tip {
       margin: 0 16px 12px;
       background: rgba(59,92,42,0.05);
@@ -3927,7 +4054,7 @@
     .walk-detail-scroll::-webkit-scrollbar { display: none; }
     .walk-detail-hero {
       width: 100%;
-      height: 260px;
+      height: 320px;
       background: linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
       position: relative;
       flex-shrink: 0;
@@ -3938,7 +4065,7 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 340px;
+      height: 400px;
       object-fit: cover;
       display: block;
       will-change: transform;
@@ -4060,71 +4187,44 @@
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
     }
+    /* Walk detail stats row (first element below hero) */
     .walk-detail-info {
-      padding: 16px 16px 14px;
       background: var(--surface);
+      border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
     }
-    .walk-detail-name {
-      font-family: var(--font-display);
-      font-size: 24px;
-      font-weight: 600;
-      color: var(--ink);
-      letter-spacing: -0.01em;
-      line-height: 1.25;
-      margin-bottom: 4px;
-    }
-    .walk-detail-location {
-      font-size: 13px;
-      color: var(--ink-2);
+    .walk-detail-name { display: none; } /* name is already in hero overlay */
+    .walk-detail-location { display: none; } /* removed from stats row */
+    .walk-detail-rating  { display: none; } /* removed from stats row */
+    /* Individual stat items */
+    .wd-stat-item {
       display: flex;
       align-items: center;
-      gap: 3px;
-      margin-bottom: 6px;
-    }
-    .walk-detail-rating {
-      font-size: 14px;
-      color: #B07A28;
-      font-weight: 500;
-      margin-bottom: 14px;
-    }
-    .walk-detail-rating .rating-count {
-      color: var(--ink-2);
-      font-weight: 400;
-    }
-    .walk-detail-stats {
-      display: flex;
-      align-items: center;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      background: var(--bg);
-    }
-    .detail-stat {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 10px 4px;
-      gap: 3px;
-    }
-    .detail-stat-value {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--ink);
-      white-space: nowrap;
-    }
-    .detail-stat-label {
-      font-size: 11px;
-      font-weight: 400;
-      color: var(--ink-2);
-    }
-    .detail-stat-divider {
-      width: 1px;
-      height: 28px;
-      background: var(--border);
+      gap: 4px;
       flex-shrink: 0;
     }
+    .wd-stat-value {
+      font: 600 14px/1 'Inter', sans-serif;
+      color: var(--ink);
+    }
+    .wd-stat-diff {
+      font: 600 14px/1 'Inter', sans-serif;
+    }
+    .wd-stat-offlead {
+      font: 500 13px/1 'Inter', sans-serif;
+    }
+    /* Legacy stats box - hidden, replaced by .walk-detail-info row */
+    .walk-detail-stats { display: none; }
+    .detail-stat { display: none; }
+    .detail-stat-value { display: none; }
+    .detail-stat-label { display: none; }
+    .detail-stat-divider { display: none; }
     .walk-detail-tags-section {
       padding: 14px 16px 10px;
       background: var(--surface);
@@ -4160,12 +4260,11 @@
       border-color: var(--border);
     }
     .walk-detail-desc {
-      padding: 16px;
+      padding: 12px 16px 16px;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-      font-size: 14px;
-      color: var(--ink-2);
-      line-height: 1.65;
+      font: 400 15px/1.55 'Inter', sans-serif;
+      color: var(--ink);
     }
     .walk-detail-conditions {
       padding: 16px 16px 4px;
@@ -4473,17 +4572,17 @@
             <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+        <div style="display:flex;align-items:center;gap:4px;margin-left:auto;">
           <div class="walks-map-toggle" role="group" aria-label="View mode">
             <button class="walks-map-toggle-btn active" id="walks-list-view-btn" aria-label="List view" onclick="setWalksView('list')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
             </button>
             <button class="walks-map-toggle-btn" id="walks-map-view-btn" aria-label="Map view" onclick="setWalksView('map')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
             </button>
           </div>
-          <button class="filter-btn" id="walks-radius-btn" aria-label="Filter by radius">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4-2V12L3 4z"/></svg>
+          <button class="filter-btn" id="walks-radius-btn" aria-label="Filter walks">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" y1="4" x2="14" y2="4"/><line x1="10" y1="4" x2="3" y2="4"/><line x1="21" y1="12" x2="12" y2="12"/><line x1="8" y1="12" x2="3" y2="12"/><line x1="21" y1="20" x2="16" y2="20"/><line x1="12" y1="20" x2="3" y2="20"/><line x1="14" y1="2" x2="14" y2="6"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="16" y1="18" x2="16" y2="22"/></svg>
           </button>
         </div>
       </div>
@@ -4508,13 +4607,16 @@
       <!-- Walks map view -->
       <div id="walks-map-container">
         <div id="walks-map"></div>
-        <div class="walks-inmap-filter" id="walksInmapFilter" role="group" aria-label="Filter walks">
-          <button class="walks-inmap-btn active" id="walksInmapPicks" onclick="setWalksMapFilter('picks')">Picks</button>
-          <button class="walks-inmap-btn" id="walksInmapGreen" onclick="setWalksMapFilter('greenspaces')">Green spaces</button>
+        <div class="walks-inmap-filter" id="walksInmapFilter">
+          <div class="walks-inmap-pill" role="group" aria-label="Filter walks">
+            <button class="walks-inmap-btn active" id="walksInmapPicks" onclick="setWalksMapFilter('picks')">Picks</button>
+            <button class="walks-inmap-btn" id="walksInmapGreen" onclick="setWalksMapFilter('greenspaces')">Green spaces</button>
+          </div>
         </div>
         <div class="walks-map-zoom-msg" id="walks-map-zoom-msg" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="var(--ink-2)" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-          <div class="walks-map-zoom-msg-text">Zoom in to see walks</div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="var(--ink-2)" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div class="walks-map-zoom-msg-headline">Zoom in to see walks nearby</div>
+          <div class="walks-map-zoom-msg-body">Pinch to zoom into any area.</div>
         </div>
         <div class="walks-map-empty" id="walks-map-empty" aria-hidden="true">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="var(--ink-2)" aria-hidden="true"><line x1="1" y1="1" x2="23" y2="23"/><path d="M20.9 20.9A10 10 0 0 1 4 12.1M12 2a10 10 0 0 1 8.9 14.8"/></svg>
@@ -4542,17 +4644,17 @@
             <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:4px;">
           <div class="walks-map-toggle" role="group" aria-label="Nearby view mode">
             <button class="walks-map-toggle-btn active" id="nearby-list-view-btn" aria-label="List view" onclick="setNearbyView('list')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
             </button>
             <button class="walks-map-toggle-btn" id="nearby-map-view-btn" aria-label="Map view" onclick="setNearbyView('map')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
             </button>
           </div>
-          <button class="filter-btn" id="nearby-radius-btn" aria-label="Filter by radius">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4-2V12L3 4z"/></svg>
+          <button class="filter-btn" id="nearby-radius-btn" aria-label="Filter nearby">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" y1="4" x2="14" y2="4"/><line x1="10" y1="4" x2="3" y2="4"/><line x1="21" y1="12" x2="12" y2="12"/><line x1="8" y1="12" x2="3" y2="12"/><line x1="21" y1="20" x2="16" y2="20"/><line x1="12" y1="20" x2="3" y2="20"/><line x1="14" y1="2" x2="14" y2="6"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="16" y1="18" x2="16" y2="22"/></svg>
           </button>
         </div>
       </div>
@@ -5103,25 +5205,21 @@
       <div class="walk-detail-hero-title" id="walk-detail-hero-title"></div>
       <div class="walk-detail-hero-badge" id="walk-detail-hero-badge"></div>
     </div>
-    <div class="walk-detail-info">
-      <h1 class="walk-detail-name" id="walk-detail-name" style="display:none"></h1>
-      <div class="walk-detail-location" id="walk-detail-location"></div>
-      <div class="walk-detail-rating" id="walk-detail-rating"></div>
-      <div class="walk-detail-stats">
-        <div class="detail-stat">
-          <div class="detail-stat-value" id="walk-detail-dist"></div>
-          <div class="detail-stat-label">Distance</div>
-        </div>
-        <div class="detail-stat-divider"></div>
-        <div class="detail-stat">
-          <div class="detail-stat-value" id="walk-detail-dur"></div>
-          <div class="detail-stat-label">Duration</div>
-        </div>
-        <div class="detail-stat-divider"></div>
-        <div class="detail-stat">
-          <div class="detail-stat-value" id="walk-detail-diff"></div>
-          <div class="detail-stat-label">Difficulty</div>
-        </div>
+    <div class="walk-detail-info" id="walk-detail-stats-row">
+      <div class="wd-stat-item">
+        <i data-lucide="route" style="width:16px;height:16px;color:var(--ink-2);flex-shrink:0;" aria-hidden="true"></i>
+        <span class="wd-stat-value" id="walk-detail-dist"></span>
+      </div>
+      <div class="wd-stat-item">
+        <i data-lucide="clock" style="width:16px;height:16px;color:var(--ink-2);flex-shrink:0;" aria-hidden="true"></i>
+        <span class="wd-stat-value" id="walk-detail-dur"></span>
+      </div>
+      <div class="wd-stat-item">
+        <span class="wd-stat-diff" id="walk-detail-diff"></span>
+      </div>
+      <div class="wd-stat-item" id="walk-detail-offlead-item">
+        <i data-lucide="circle-check" id="walk-detail-offlead-icon" style="width:16px;height:16px;flex-shrink:0;" aria-hidden="true"></i>
+        <span class="wd-stat-offlead" id="walk-detail-offlead-label"></span>
       </div>
     </div>
     <div class="walk-detail-tags-section" id="walk-detail-tags-section"></div>
@@ -7969,6 +8067,8 @@
 
     var hero = document.getElementById('walk-detail-hero');
     if (hero) {
+      var isCompact = window.innerHeight < 620;
+      hero.style.height = isCompact ? '240px' : '320px';
       var oldImg = hero.querySelector('img');
       if (oldImg) oldImg.remove();
       var oldHint = hero.querySelector('.walk-detail-hero-expand');
@@ -7978,6 +8078,7 @@
         img.src = walk.imageUrl;
         img.alt = walk.name;
         img.loading = 'lazy';
+        img.style.height = isCompact ? '320px' : '400px';
         // Insert before gradient so image is behind overlay elements
         var gradient = hero.querySelector('.walk-detail-hero-gradient');
         hero.insertBefore(img, gradient || hero.firstChild);
@@ -8026,9 +8127,6 @@
         toggleFavourite(walk.id);
       };
     }
-    var nameEl = document.getElementById('walk-detail-name');
-    if (nameEl) nameEl.textContent = walk.name;
-
     var locEl = document.getElementById('walk-detail-location');
     if (locEl) locEl.innerHTML = luIcon('map-pin', 13, 'color:var(--ink-2);flex-shrink:0;') + escHtml(walk.location);
 
@@ -8052,7 +8150,25 @@
     }
 
     var diffEl = document.getElementById('walk-detail-diff');
-    if (diffEl) diffEl.textContent = difficultyLabel(walk.difficulty);
+    if (diffEl) {
+      var diffColor = walk.difficulty === 'easy' ? '#2D7A3A' : walk.difficulty === 'hard' ? 'var(--red)' : 'var(--amber)';
+      diffEl.textContent = difficultyLabel(walk.difficulty);
+      diffEl.style.color = diffColor;
+    }
+
+    var offleadIcon  = document.getElementById('walk-detail-offlead-icon');
+    var offleadLabel = document.getElementById('walk-detail-offlead-label');
+    var offleadItem  = document.getElementById('walk-detail-offlead-item');
+    if (offleadIcon && offleadLabel && offleadItem) {
+      var olColor = walk.offLead === 'full' ? 'var(--brand)' : walk.offLead === 'partial' ? 'var(--amber)' : 'var(--ink-2)';
+      var olText  = walk.offLead === 'full' ? 'Full off-lead' : walk.offLead === 'partial' ? 'Partial' : 'On-lead';
+      offleadIcon.style.color  = olColor;
+      offleadLabel.style.color = olColor;
+      offleadLabel.textContent = olText;
+      offleadItem.style.display = '';
+    }
+
+    syncIcons();
 
     renderDetailTags(walk);
 
@@ -11775,12 +11891,35 @@
     var mapBtn  = document.getElementById('walks-map-view-btn');
     if (listBtn) listBtn.classList.toggle('active', mode === 'list');
     if (mapBtn)  mapBtn.classList.toggle('active', mode === 'map');
+    // In map mode: list button gets brand-tint hint as return-to-list affordance
+    if (listBtn) listBtn.classList.toggle('list-hint', mode === 'map');
 
     var showList = (mode === 'list');
     var showMap  = (mode === 'map');
 
-    if (content) content.style.display = showList ? '' : 'none';
-    if (mapCont) mapCont.classList.toggle('visible', showMap);
+    // Task 6: 150ms opacity fade on outgoing content before map appears
+    if (showMap && content && content.style.display !== 'none') {
+      content.style.transition = 'opacity 150ms ease';
+      content.style.opacity = '0';
+      setTimeout(function() {
+        content.style.display = 'none';
+        content.style.opacity = '';
+        content.style.transition = '';
+        mapCont.classList.add('visible');
+      }, 150);
+    } else if (showList && mapCont && mapCont.classList.contains('visible')) {
+      mapCont.style.transition = 'opacity 150ms ease';
+      mapCont.style.opacity = '0';
+      setTimeout(function() {
+        mapCont.classList.remove('visible');
+        mapCont.style.opacity = '';
+        mapCont.style.transition = '';
+        content.style.display = '';
+      }, 150);
+    } else {
+      if (content) content.style.display = showList ? '' : 'none';
+      if (mapCont) mapCont.classList.toggle('visible', showMap);
+    }
     if (card && showList) dismissWalksMapCard();
 
     // In-map filter: show only in map view
@@ -11853,7 +11992,7 @@
     walksMapMarkers.forEach(function(m) { m.marker.remove(); });
     walksMapMarkers = [];
 
-    if (zoom < 9) {
+    if (zoom < 8) {
       if (zoomMsg) zoomMsg.classList.add('visible');
       if (emptyMsg) emptyMsg.classList.remove('visible');
       return;
@@ -11882,13 +12021,11 @@
 
     walksToShow.forEach(function(walk) {
       var isSelected = walk.id === walksMapSelectedId;
-      var size = isSelected ? 36 : 28;
-      var anchor = size / 2;
       var icon = L.divIcon({
         className: '',
-        html: '<div class="walk-pin' + (isSelected ? ' selected' : '') + '"></div>',
-        iconSize: [size, size],
-        iconAnchor: [anchor, anchor]
+        html: '<div class="pin-wrap"><div class="walk-pin' + (isSelected ? ' selected' : '') + '"></div></div>',
+        iconSize: [44, 44],
+        iconAnchor: [22, 22]
       });
       var marker = L.marker([walk.lat, walk.lon], { icon: icon, zIndexOffset: isSelected ? 1000 : 0 });
       marker.on('click', function(e) {
@@ -11906,9 +12043,9 @@
       gsInBounds.forEach(function(gs) {
         var icon = L.divIcon({
           className: '',
-          html: '<div class="greenspace-pin"></div>',
-          iconSize: [28, 28],
-          iconAnchor: [14, 14]
+          html: '<div class="pin-wrap"><div class="greenspace-pin"></div></div>',
+          iconSize: [44, 44],
+          iconAnchor: [22, 22]
         });
         var marker = L.marker([gs.lat, gs.lon], { icon: icon });
         marker.bindPopup('<strong>' + escHtml(gs.name || '') + '</strong>');
@@ -12327,6 +12464,8 @@
     var mapBtn  = document.getElementById('nearby-map-view-btn');
     if (listBtn) listBtn.classList.toggle('active', mode === 'list');
     if (mapBtn)  mapBtn.classList.toggle('active', mode === 'map');
+    // In map mode: list button gets brand-tint hint as return-to-list affordance
+    if (listBtn) listBtn.classList.toggle('list-hint', mode === 'map');
 
     nearbyView = mode;
 
@@ -12338,19 +12477,35 @@
     var toggleRow = document.getElementById('nearby-toggle-row');
 
     if (mode === 'map') {
-      // Compute full height between tab header and bottom nav
-      var tabPanel = document.getElementById('tab-nearby');
-      var titleBar = tabPanel ? tabPanel.querySelector('.tab-title-bar') : null;
-      var usedH = titleBar ? titleBar.offsetHeight : 56;
-      var mapH = (tabPanel ? tabPanel.offsetHeight : window.innerHeight - 64) - usedH;
-      if (mapEl) {
-        mapEl.style.height = Math.max(200, mapH) + 'px';
-        mapEl.classList.add('visible');
+      // Task 6: 150ms opacity fade on outgoing venue list
+      var doFade = venuesEl && venuesEl.style.display !== 'none';
+      function showNearbyMap() {
+        // Compute full height between tab header and bottom nav
+        var tabPanel = document.getElementById('tab-nearby');
+        var titleBar = tabPanel ? tabPanel.querySelector('.tab-title-bar') : null;
+        var usedH = titleBar ? titleBar.offsetHeight : 56;
+        var mapH = (tabPanel ? tabPanel.offsetHeight : window.innerHeight - 64) - usedH;
+        if (mapEl) {
+          mapEl.style.height = Math.max(200, mapH) + 'px';
+          mapEl.classList.add('visible');
+        }
+        if (styleRow) styleRow.style.display = 'none';
+        if (toggleRow) toggleRow.style.display = 'none';
+        if (filterRow) filterRow.style.display = 'none';
       }
-      if (venuesEl) venuesEl.style.display = 'none';
-      if (styleRow) styleRow.style.display = 'none';
-      if (toggleRow) toggleRow.style.display = 'none';
-      if (filterRow) filterRow.style.display = 'none';
+      if (doFade) {
+        venuesEl.style.transition = 'opacity 150ms ease';
+        venuesEl.style.opacity = '0';
+        setTimeout(function() {
+          venuesEl.style.display = 'none';
+          venuesEl.style.opacity = '';
+          venuesEl.style.transition = '';
+          showNearbyMap();
+        }, 150);
+      } else {
+        if (venuesEl) venuesEl.style.display = 'none';
+        showNearbyMap();
+      }
       // Render bottom category bar
       if (catBar) {
         catBar.innerHTML = CATEGORIES.map(function(c) {
@@ -12482,13 +12637,17 @@
       ? (venue.dist < 1 ? Math.round(venue.dist * 1000) + 'm' : venue.dist.toFixed(1) + ' km') + ' away'
       : '';
 
-    var ratingHtml = venue.rating
-      ? '<span class="venue-rating-gp">★ ' + venue.rating.toFixed(1) + ' (' + venue.ratingCount + ')</span>'
-      : '';
+    var openStr = '';
+    if (venue.isOpen === true)  openStr = 'Open now';
+    if (venue.isOpen === false) openStr = 'Closed';
+    var distRowHtml = [distStr, openStr].filter(Boolean).join(' · ');
 
-    var openHtml = '';
-    if (venue.isOpen === true)  openHtml = '<span class="venue-open-gp open">Open now</span>';
-    if (venue.isOpen === false) openHtml = '<span class="venue-open-gp closed">Closed</span>';
+    var catPillClass = (venue.cat === 'pub' || venue.cat === 'cafe') ? 'cafe'
+      : venue.cat === 'vet' ? 'vet'
+      : venue.cat === 'shop' ? 'shop'
+      : 'green';
+    var catLabel = venue.cat === 'pub' ? 'Pub' : venue.cat === 'cafe' ? 'Café'
+      : venue.cat === 'vet' ? 'Vet' : venue.cat === 'shop' ? 'Pet shop' : 'Green space';
 
     var venuePlaceholders = {
       pub:  'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-pub.png',
@@ -12515,13 +12674,9 @@
         photoHtml +
         '<div class="venue-card-body-gp">' +
           '<div class="venue-card-name-gp">' + escHtml(venue.name) + '</div>' +
-          '<div class="venue-card-meta-gp">' +
-            (distStr ? '<span>' + distStr + '</span>' : '') +
-            ratingHtml +
-            openHtml +
-          '</div>' +
-          (venue.address ? '<div class="venue-address-gp">' + escHtml(venue.address) + '</div>' : '') +
-          '<div class="venue-maps-link-gp">View on Google Maps -></div>' +
+          '<span class="venue-cat-pill ' + catPillClass + '">' + catLabel + '</span>' +
+          (distRowHtml ? '<div class="venue-card-dist-row">' + escHtml(distRowHtml) + '</div>' : '') +
+          '<button class="venue-maps-btn" onclick="event.preventDefault();event.stopPropagation();window.open(\'' + (venue.mapsUrl || '#').replace(/'/g, "\\'") + '\',\'_blank\',\'noopener\')">View on Google Maps</button>' +
         '</div>' +
       '</a>'
     );
@@ -12734,6 +12889,7 @@
   function getCategoryPinClass(cat) {
     if (cat === 'cafe' || cat === 'pub') return 'cafe';
     if (cat === 'vet') return 'vet';
+    if (cat === 'shop') return 'shop';
     return 'green';
   }
 
@@ -12749,13 +12905,11 @@
     venues.forEach(function(venue) {
       var isSelected = venue.id === nearbyFsSelectedId;
       var pinClass = getCategoryPinClass(venue.cat);
-      var size = isSelected ? 36 : 28;
-      var anchor = size / 2;
       var icon = L.divIcon({
         className: '',
-        html: '<div class="venue-pin ' + pinClass + (isSelected ? ' selected' : '') + '"></div>',
-        iconSize: [size, size],
-        iconAnchor: [anchor, anchor]
+        html: '<div class="pin-wrap"><div class="venue-pin ' + pinClass + (isSelected ? ' selected' : '') + '"></div></div>',
+        iconSize: [44, 44],
+        iconAnchor: [22, 22]
       });
       var marker = L.marker([venue.lat, venue.lon], { icon: icon, zIndexOffset: isSelected ? 1000 : 0 });
       marker.on('click', function(e) {
