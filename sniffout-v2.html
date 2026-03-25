@@ -11675,19 +11675,16 @@
 
   /* ─── Fetch green spaces for Walks tab supplement ─── */
 
-  var WALKS_GS_CACHE_KEY = 'sniffout_walks_gs';
-  try { sessionStorage.removeItem('sniffout_walks_gs'); } catch(e) {}
-
   function fetchGreenSpacesForWalks(lat, lon, locationName, cb) {
     var radius   = getSavedRadius() * 1000;
-    var cacheKey = 'gs|' + Math.round(lat * 100) / 100 + '|' + Math.round(lon * 100) / 100 + '|' + radius;
-    try {
-      var cached = JSON.parse(sessionStorage.getItem(WALKS_GS_CACHE_KEY));
-      if (cached && cached.key === cacheKey) { cb(cached.results); return; }
-    } catch(e) {}
+    var cacheKey = 'gs|' + lat.toFixed(3) + '|' + lon.toFixed(3) + '|' + radius;
+    var cached   = placesCache[cacheKey];
+    if (cached && (Date.now() - cached.ts) < 60 * 60 * 1000) { cb(cached.data); return; }
 
     var queries = ['parks', 'nature reserve', 'common land', 'country park'];
     var locationBias = { circle: { center: { latitude: lat, longitude: lon }, radius: radius } };
+    placesApiCallCount += queries.length;
+    if (placesApiCallCount > 20) { console.warn('[Sniffout] Places API call count exceeded 20 (' + placesApiCallCount + ')'); }
 
     function runQuery(q) {
       return fetch(PLACES_PROXY + '/v1/places:searchText', {
@@ -11759,7 +11756,7 @@
         return haversineKm(lat, lon, gs.lat, gs.lon) <= savedRadiusKm;
       });
 
-      try { sessionStorage.setItem(WALKS_GS_CACHE_KEY, JSON.stringify({ key: cacheKey, results: deduped })); } catch(e) {}
+      placesCache[cacheKey] = { ts: Date.now(), data: deduped };
       cb(deduped);
     });
   }
@@ -12208,7 +12205,10 @@
   var nearbyLocationName = '';
   var nearbyCategory     = 'pub';
   var nearbyView         = 'list';
-  var NEARBY_GOOGLE_CACHE = {};
+  var placesCache         = {}; // { key: { ts, data } } — 30-min expiry for venues, 60-min for green spaces
+  var nearbyHasFetched    = false; // prevent re-fetch on tab switch unless location changes
+  var isFetching          = false; // debounce chip taps
+  var placesApiCallCount  = 0;     // TASK 5: warn if excessive
 
   /* ─── Google Places proxy endpoint ─── */
   var PLACES_PROXY = 'https://places-proxy.sniffout.app';
@@ -12250,8 +12250,11 @@
   function fetchNearbyPlaces(cat, lat, lon, locationName, cb) {
     var radiusKm = getSavedRadius();
     var radius   = radiusKm * 1000; // km → metres
-    var cacheKey = cat + '|' + Math.round(lat * 100) / 100 + '|' + Math.round(lon * 100) / 100 + '|' + radius;
-    if (NEARBY_GOOGLE_CACHE[cacheKey]) { cb(NEARBY_GOOGLE_CACHE[cacheKey]); return; }
+    var cacheKey = cat + '|' + lat.toFixed(3) + '|' + lon.toFixed(3) + '|' + radius;
+    var cached   = placesCache[cacheKey];
+    if (cached && (Date.now() - cached.ts) < 30 * 60 * 1000) { cb(cached.data); return; }
+    placesApiCallCount++;
+    if (placesApiCallCount > 20) { console.warn('[Sniffout] Places API call count exceeded 20 (' + placesApiCallCount + ')'); }
 
     var cfg  = CAT_GOOGLE_CONFIG[cat] || CAT_GOOGLE_CONFIG.pub;
     var body = {
@@ -12316,7 +12319,7 @@
       // Safety-net: drop anything the API returned outside the strict radius
       places = places.filter(function(p) { return p.dist === null || p.dist <= radiusKm; });
       places.sort(function(a, b) { return (a.dist || 999) - (b.dist || 999); });
-      NEARBY_GOOGLE_CACHE[cacheKey] = places;
+      placesCache[cacheKey] = { ts: Date.now(), data: places };
       cb(places);
     })
     .catch(function() { cb([]); });
@@ -12383,6 +12386,7 @@
   }
 
   function setNearbyCategory(cat) {
+    if (isFetching) return; // debounce — 500ms minimum between API calls
     nearbyCategory = cat;
     // Update tab-level chips
     document.querySelectorAll('[data-nearby-cat]').forEach(function(b) {
@@ -12397,6 +12401,8 @@
     if (cat === 'saved') {
       if (typeof renderSavedVenueList === 'function') renderSavedVenueList();
     } else {
+      isFetching = true;
+      setTimeout(function() { isFetching = false; }, 500);
       if (venuesEl) venuesEl.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding ' + ((CATEGORIES.find(function(c){return c.id===cat;})||{}).label||'places').toLowerCase() + ' near you...</div></div>';
       if (countEl) countEl.textContent = 'Loading...';
       fetchNearbyPlaces(cat, nearbyUserLat, nearbyUserLon, nearbyLocationName, function(venues) {
@@ -12439,14 +12445,17 @@
       });
     });
 
-    // Initial load
+    // Initial load — skip fetch if already fetched for this location (tab switch)
     if (nearbyCategory === 'saved') {
       renderSavedVenueList();
-    } else {
+    } else if (!nearbyHasFetched) {
+      nearbyHasFetched = true;
       fetchNearbyPlaces(nearbyCategory, lat, lon, nearbyLocationName, function(venues) {
         nearbyVenues = venues;
         renderVenueList();
       });
+    } else {
+      renderVenueList();
     }
   }
 
@@ -13549,8 +13558,7 @@
   function setRadius(km) {
     try { localStorage.setItem('sniffout_radius', km); } catch(e) {}
     // Clear caches so re-render fetches fresh data at new radius
-    NEARBY_GOOGLE_CACHE = {};
-    try { sessionStorage.removeItem('sniffout_walks_gs'); } catch(e) {}
+    placesCache = {}; nearbyHasFetched = false;
     syncRadiusChips();
     // Close all pickers
     document.querySelectorAll('.radius-picker').forEach(function(p) {
@@ -13701,8 +13709,7 @@
     var activeRadius = activeRadiusBtn ? parseInt(activeRadiusBtn.dataset.walksRadius, 10) : getSavedRadius();
     saveRadius(activeRadius);
     applyRadiusPreference(getSavedRadiusMi());
-    NEARBY_GOOGLE_CACHE = {};
-    try { sessionStorage.removeItem('sniffout_walks_gs'); } catch(e) {}
+    placesCache = {}; nearbyHasFetched = false;
 
     var surfaceBtn    = sheet.querySelector('[data-walks-surface].active');
     var envBtn        = sheet.querySelector('[data-walks-env].active');
@@ -13766,8 +13773,7 @@
     var previousRadius = getSavedRadius();
     saveRadius(activeRadius);
     applyRadiusPreference(getSavedRadiusMi());
-    NEARBY_GOOGLE_CACHE = {};
-    try { sessionStorage.removeItem('sniffout_walks_gs'); } catch(e) {}
+    placesCache = {}; nearbyHasFetched = false;
 
     // Set pending sort — applied inside renderVenueList() when it runs (sync or after async fetch)
     nearbyPendingSort = activeSort;
@@ -13778,7 +13784,6 @@
 
     if (activeRadius !== previousRadius) {
       // Radius changed — clear cache and re-fetch
-      NEARBY_GOOGLE_CACHE = {};
       renderNearbyTab(nearbyUserLat, nearbyUserLon, nearbyLocationName);
     } else {
       // Radius unchanged — re-render current venues with the pending sort applied
