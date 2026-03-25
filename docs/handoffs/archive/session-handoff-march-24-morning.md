@@ -1,8 +1,8 @@
 # Sniffout — Session Handoff Note
-**Date:** 24 March 2026
+**Date:** 23-24 March 2026
 **Prepared by:** Product Owner agent
 **Purpose:** Complete context handoff for the next Claude chat session. A new session reading this document should be able to pick up immediately with zero loss of context.
-**Replaces:** session-handoff-march-24-morning.md (moved to `docs/handoffs/archive/`)
+**Replaces:** session-handoff-march-23.md (moved to `docs/handoffs/archive/`)
 
 ---
 
@@ -26,7 +26,7 @@ This is a critical strategic distinction. Discovery tools are used occasionally 
 - No UK competitor combines: walk discovery + live weather + dog-specific hazard context in a single no-login product.
 - Closest UK structural analogue: **Walk Highlands** (Scotland-focused, desktop-era, no app). Sniffout is a mobile-first PWA improvement on that model.
 - **AllTrails** and **Komoot** are not direct competitors in the dog owner segment — they have never addressed the dog-specific angle meaningfully.
-- Full competitive analysis at `docs/research/competitive-analysis-march-23.md`. Five monetisation decisions (M1-M5) reviewed by owner — all five deferred to closer to launch.
+- Full competitive analysis complete at `docs/research/competitive-analysis-march-23.md`. Five monetisation decisions (M1-M5) open for owner review.
 
 ### Current phase
 
@@ -85,7 +85,7 @@ No branches, no PRs, no staging environment. Push directly to main. GitHub Pages
 | Typography | Inter (Google Fonts CDN) for all UI copy, labels, buttons, data displays. Fraunces (Google Fonts CDN, variable font) loaded as `var(--font-display)` for display/hero elements only — see Section 6 for full application list. |
 | Service worker | `sw.js` — network-first, cache fallback, cache key `sniffout-v2` |
 | PWA manifest | `manifest.json` — `start_url` set to `/sniffout-v2.html`, `theme_color` `#2C4A14` |
-| Brand colour | `#2C4A14` (Woodland Green) — fully implemented throughout. CLAUDE.md corrected 24 March 2026. |
+| Brand colour | `#2C4A14` (Woodland Green) — fully implemented throughout |
 | Firebase | Compat SDK v10.12.0 (CDN) — project `sniffout-fe976`, region `europe-west2`. Anonymous auth + Firestore dual-write + Storage. Foundation only — full migration is Phase 3. |
 | OS Maps | Ordnance Survey Data Hub, project "sniffout". Standard/OS Map toggle above map on Walks and Nearby tabs. ZXY endpoint: `https://api.os.uk/maps/raster/v1/zxy/{style}_3857/{z}/{x}/{y}.png`. API key: `JcMmulbTghzn8pkYAGdxd8MH6GTK2314`. Premium Data Plan active. **Leisure tiles still not activating** — support ticket not yet raised. Owner to raise ticket with OS Data Hub. Currently defaults to Standard (OSM). **Note: API key is currently in page source — deferred to pre-launch security review (H10).** |
 
@@ -163,18 +163,6 @@ Dark mode — Scheme B (Dark Slate), applied via `body.night` class. Token overr
 | Brand backgrounds (dark) | `#3D6B22` | Used for brand-coloured card backgrounds in dark mode — distinct from `--brand` which is for text/icons only |
 
 Dark mode is toggled manually by the user via Settings. "Auto" option uses `prefers-color-scheme`. Default for new users is light mode. Spec in `docs/specs/dark-mode-schemes.md`.
-
-### Walk card dimensions (locked)
-
-| Property | Carousel card | List card |
-|----------|--------------|-----------|
-| Image height | 140px | 180px |
-| Total card height | 186px | 226px |
-| Walk name position | Overlaid on image — Fraunces 700 26px white, bottom 14px left 16px | Same |
-| Walk name below image | Not shown — name appears on image only | Not shown |
-| Away distance | Not shown on card | Not shown on card |
-
-"Away" distance appears in the walk detail overlay only, not on any card. Do not reintroduce it to cards.
 
 ---
 
@@ -302,7 +290,7 @@ COMMUNICATION STYLE:
 TECHNICAL RULES:
 - sniffout-v2.html is the only file to edit
 - dog-walk-dashboard.html is live production - never touch it
-- Brand colour is Woodland Green #2C4A14 (not #3B5C2A which is retired)
+- Brand colour is Woodland Green #2C4A14 (not #3B5C2A which is now retired)
 - Display typeface is Fraunces (var(--font-display)) for hero/display elements - Inter for all UI copy
 - Today tab uses white Lucide icons for weather
 - Weather tab uses Yr.no SVG icons for weather
@@ -314,9 +302,6 @@ TECHNICAL RULES:
 - Breed/age hazard logic lives in detectHazards() and getPawSafety() only - do not scatter
 - No fake ratings - walk cards must not show stars or review counts until 3 real reviews exist
 - No hardcoded emoji in verdict title strings - Lucide icons only
-- Walk card image heights: carousel 140px, list 180px. Walk name overlaid on image only - not repeated below
-- Away distance is NOT shown on walk cards - detail overlay only
-- Walk window hours are constrained to 6am-9pm minimum/maximum
 
 SCREENSHOTS:
 - Avoid screenshots unless visual inspection is genuinely necessary
@@ -344,7 +329,7 @@ BATCHING AND TESTING:
 ROUND NUMBERING:
 - Last saved brief file was developer-brief-round15.md
 - Rounds 16 onwards briefed directly in chat
-- Currently at approximately Round 45+
+- Currently at approximately Round 40+
 - Not all rounds have saved brief files - this is normal
 
 CONTENT PIPELINE:
@@ -401,56 +386,83 @@ All agents run as Claude Code sessions in tmux panes, operating on the repositor
 
 ## SECTION 5 — WHAT WAS BUILT: COMPLETE ROUND HISTORY
 
-*(Rounds 11-33 and all 20-21 March sessions are documented in the archived `docs/handoffs/archive/session-handoff-march-20.md`. 22 March session documented in archived `docs/handoffs/archive/session-handoff-march-22.md`. 23 March session documented in archived `docs/handoffs/archive/session-handoff-march-23.md`. Early 24 March session documented in archived `docs/handoffs/archive/session-handoff-march-24-morning.md`. Summary below covers only the most recent context needed for continuity.)*
+*(Rounds 11-33 and all 20-21 March sessions are documented in the archived `docs/handoffs/archive/session-handoff-march-20.md`. 22 March session documented in archived `docs/handoffs/archive/session-handoff-march-22.md`. 23 March session documented in archived `docs/handoffs/archive/session-handoff-march-23.md`. Summary below covers only the most recent context needed for continuity.)*
 
-### Key milestones prior to 24 March (summary)
+### Key milestones prior to 23 March (summary)
 
 - **Rounds 11-33** — full app build: walk discovery, weather, Nearby tab, dog profile, walk journal, free-form logging, badges, dark mode, units toggle, brand colour, Firebase foundation, State A redesign, hourly forecast, OS Maps toggle
 - **20 March** — Firebase foundation live, dark mode Scheme B, PWA install prompt, silent auto-refresh, logo icons complete
 - **21 March** — UX review march-21 conducted, Round 1 fixes, OS Maps integrated, Recently Viewed in Me tab, distance on walk cards, repo restructure into `docs/` subfolders
 - **22 March** — Green spaces multi-query overhaul, JS script block merge (14 → 1), Firebase API key corrected, `renderWeather()` dark mode bug fixed, `btoa` crash fixed, units consistency fixes, UX review Rounds A and B, push notification research and owner decisions confirmed, breed and dog-specific hazard personalisation research and spec produced
 - **23 March** — Breed/age hazard personalisation implemented, venue-specific placeholders added, dog profile UX fixes, competitive analysis completed, Firebase Phase 3 migration spec completed, phase 3 account linking copy and design spec completed, push notification Phase 3 spec completed, deferred UX items B2/M5/M7 resolved
-- **Early 24 March** — Design elevation round (Fraunces, #2C4A14, hero card colour treatment, verdict overhaul, Me tab polish, haptics, wind safety fix, weather tab updates, interaction design principles), brand colour corrected in CLAUDE.md
 
-### Completed — 24 March 2026 (full day)
+### Completed — 23-24 March 2026
 
-**Designer brief A — march-24-spec.md (implemented by Developer):**
+**Design elevation round:**
 
-- **FAB redesign:** plus icon, 56px diameter, `bottom: 88px`, brand green, multi-layer shadow, fade on scroll. Spec at `docs/specs/designer-brief-march-24-spec.md`.
-- **Me tab layout:** dog profile card on `--surface` with border, stat tiles in single shared card with internal dividers, Fraunces 700 28px stat numbers, 96px bottom padding.
-- **Walks tab map:** custom circular DivIcon pins, compact 180px bottom card on pin tap with spring animation, zoom threshold at level 9, dark mode tile filter.
-- **Nearby tab full screen map:** expand button in map, full screen overlay, category chips bar, `history.pushState` for Android back button.
-- **Parallax hero on walk detail overlay:** 260px container, 340px image, 0.5 ratio, gradient overlay, walk name over image in Fraunces 700 26px.
-- **Fake ratings removed** from all walk cards.
+- Fraunces variable font added as display typeface (`var(--font-display)`). Applied to State A headline, Today tab verdict string, walk detail overlay walk name, Me tab primary stat numbers, Me tab section headers, Me tab dog name.
+- Brand colour updated from `#3B5C2A` (Meadow Green) to `#2C4A14` (Woodland Green). Deeper, warmer, more authoritative. Differentiated from Too Good To Go (#2B4C3F). Fully implemented throughout.
+- New CSS tokens added: `--brand-mid: #3D6520`, `--brand-tint: #EDF2E8` (dark: `rgba(92,154,74,0.12)`).
+- Amber warning colour updated from `#D97706` to `#B07A28`.
+- Dark mode brand token updated: `--brand: #6A9B4A` for text/icons; `#3D6B22` for brand-coloured backgrounds.
+- Today tab hero card: brand green (#2C4A14) as background for approved verdict, amber (#B07A28) for caution, red for avoid/danger. White text throughout.
+- Design elevation spec at `docs/specs/design-elevation-spec-march-23.md`.
 
-**Designer brief B — march-24b-spec.md (implemented by Developer):**
+**Verdict system overhaul:**
 
-- **Today tab hero card unified:** single card with internal dividers, hazard detail text inline, "Full forecast" tap row at bottom navigates to Weather tab, info button removed entirely.
-- **Weather tab:** full-width banner removed permanently. Hazard cards with coloured backgrounds (amber/red), Lucide icons, severity ordering, `buildHazardHTML()` shared helper.
-- **Settings cog:** moved inside dog profile card as absolute-positioned icon button (top-right corner). No longer a standalone FAB or tab header button.
-- **Walk card proportions:** carousel 140px image / 186px total card, list 180px image / 226px total card, away distance removed.
-- Walk name overlaid on image (Fraunces 700 26px white, `bottom: 14px left: 16px`) — does not repeat in content area below image.
+- Emoji removed from all verdict title strings in `getWalkVerdict()`. Lucide icons rendered as separate elements alongside the verdict title.
+- Personalised shortTitle strings added — used when a dog profile exists. Standard title strings used as fallback.
+- Confirmed approved verdict strings:
+  - With dog name: "Perfect conditions for [name]."
+  - Without dog name: "Perfect conditions right now."
+  - Full set of all 10 verdict states with shortTitle variants documented in `getWalkVerdict()`.
+- Verdict/hazard contradiction fixed: if any active hazard contradicts an approved verdict, the verdict downgrades to caution minimum.
+- Gust threshold aligned between `getWalkVerdict()` and `detectHazards()`.
 
-**Bug fixes completed (multiple rounds):**
+**Wind/gust safety fix:**
 
-- Walk window constrained to 6am-9pm (minimum/maximum enforced).
-- Pollen indicator dark mode colours fixed.
-- Walk card persistent in map view fixed — card hidden by default (`display: none`), shown only on pin tap.
-- Reports stat number corrected to Fraunces 700 28px (was Inter).
-- State A social proof strip centred.
-- State A scroll fixed.
-- Keyboard dismiss on sheet swipe-down fixed — `blur()` on `activeElement` added to all 4 close functions.
-- Nearby map dark mode tile filter fixed (`brightness(0.75) contrast(1.05)`).
-- Weather tab duplicate banner removed — `wx-verdict` div inside `wx-hero` was generating a second amber pill.
-- Walks tab header controls aligned to right edge.
-- Nearby duplicate List/Map text toggle removed.
-- Nearby category chips working in map view.
+- Woodland routes removed from all wind and gust condition recommendations. Woodland explicitly flagged as dangerous in high wind due to falling branch risk.
+- Correct wind recommendations now: valley paths, urban streets, low-lying ground.
 
-**Documentation completed 24 March:**
+**Me tab polish:**
 
-- `docs/specs/brand-guidelines-march-24.md` — consolidated brand, design, and copy reference document. Ready for use by new collaborators.
-- `docs/specs/designer-brief-march-24-spec.md` — Designer spec A (FAB, Me tab, Walks map, Nearby full screen map, parallax).
-- `docs/specs/designer-brief-march-24b-spec.md` — Designer spec B (Today hero card, Weather tab, Settings cog, walk card proportions).
+- Dog name class is `.me-dog-card-name` (active class — `.me-dog-name` also set for compatibility). Both at 48px Fraunces 700. Dog name is always the largest text on the Me tab.
+- All three Me tab stat numbers (km walked, walks logged, condition reports) use `var(--brand)` in light mode and `#6A9B4A` in dark mode. Consistent colour throughout.
+- FAB (floating action button) added: circular brand green button, fixed position centred above bottom nav, opens walk logging sheet. Designer review pending for visual refinement.
+
+**Haptic feedback:**
+
+- `navigator.vibrate(10)` added to all heart/bookmark saves throughout the app.
+- `navigator.vibrate([50,30,80])` on badge earn.
+- Graceful no-op on iOS (vibrate not supported).
+
+**Weather tab:**
+
+- Title added to Weather tab.
+- Walk window label updated.
+- Rain timing accuracy improved.
+- Pollen contextual notes added.
+
+**Interaction design principles added to CLAUDE.md:**
+
+- Tap feedback rule: every tappable element must have `transition: transform 0.15s ease` and `transform: scale(0.97)` on `:active`. No exceptions.
+- Bottom sheets use spring cubic-bezier open animation: `cubic-bezier(0.34, 1.56, 0.64, 1)`.
+- Verdict strings rule: no hardcoded emoji in verdict title strings.
+
+**Bug fixes:**
+
+- Tap feedback applied consistently across all interactive elements.
+- Map dark mode fixed.
+- Info button fixed inline.
+- Multiple minor consistency fixes.
+
+**Research and documentation completed this session:**
+
+- `docs/research/competitive-analysis-march-23.md` — full competitive analysis. Five monetisation decisions (M1-M5) open for owner review.
+- `docs/specs/design-elevation-spec-march-23.md` — complete design elevation spec. Fraunces, #2C4A14, hero card colour treatment, micro-interactions, palette expansion.
+- `docs/specs/firebase-phase3-migration-spec.md` — complete Firebase Phase 3 migration spec. Ready to brief Developer once session starts fresh.
+- `docs/specs/phase3-account-linking-design-spec.md` — complete Phase 3 account linking design spec.
+- `docs/content/phase3-account-linking-copy.md` — Phase 3 account linking copy. Editor reviewed and approved, pending two minor Copywriter revisions already applied.
 
 ---
 
@@ -458,9 +470,9 @@ All agents run as Claude Code sessions in tmux panes, operating on the repositor
 
 These decisions are locked and should not be revisited without a clear reason.
 
-### Brand colour — #2C4A14 (Woodland Green)
+### Brand colour — updated to #2C4A14 (Woodland Green)
 
-`#2C4A14` (Woodland Green) replaces `#3B5C2A` (Meadow Green). Deeper, warmer, more authoritative. Differentiated from Too Good To Go (#2B4C3F). Fully implemented throughout the app, CLAUDE.md, and manifest.json. CLAUDE.md corrected 24 March 2026. No references to `#3B5C2A` or `#1E4D3A` should remain anywhere.
+`#2C4A14` (Woodland Green) replaces `#3B5C2A` (Meadow Green). Deeper, warmer, more authoritative. Differentiated from Too Good To Go (#2B4C3F). Fully implemented throughout the app, CLAUDE.md, and manifest.json. No references to `#3B5C2A` or `#1E4D3A` should remain anywhere.
 
 ### Display typeface — Fraunces
 
@@ -472,45 +484,9 @@ Fraunces has been added as the display typeface alongside Inter. Loaded via Goog
 
 Do not apply Fraunces to UI elements. Do not apply Inter to display/hero elements.
 
-### Walk card content — locked
+### Today tab hero card colour treatment
 
-Walk cards show the image, with the walk name overlaid on the image only (Fraunces 700 26px white, `bottom: 14px`, `left: 16px`). The name does not repeat as a heading below the image. Content below the image shows walk length, difficulty pill, and off-lead pill only. Away distance is not shown on any card — it lives in the walk detail overlay only. Do not reintroduce a duplicate name heading or away distance to cards.
-
-### Walk card image heights — locked
-
-Carousel cards: 140px image, 186px total. List cards: 180px image, 226px total. Do not change these dimensions without a Designer brief.
-
-### Today tab hero card — unified single card
-
-Today tab hero card is a single unified card with internal dividers. Hazard detail text is inline within the card. A "Full forecast" tap row at the bottom navigates to the Weather tab. The info button has been removed entirely. This is a locked design decision.
-
-### Weather tab — hazard cards only, no banner
-
-The full-width banner on the Weather tab has been permanently removed. Hazard display uses individual full-width cards with coloured backgrounds (amber for caution, red for danger), Lucide icons, and severity ordering (most severe first, 8px gaps). `buildHazardHTML()` is the shared helper used by both Today tab and Weather tab. Do not reintroduce the banner.
-
-### Settings cog — inside dog profile card
-
-The settings cog icon lives inside the dog profile card on the Me tab, positioned absolute top-right. It is not a standalone FAB. It is not in the tab header. Do not move it.
-
-### FAB (floating action button) on Me tab — implemented
-
-Plus icon, 56px diameter, `bottom: 88px`, brand green, multi-layer shadow, fade-on-scroll behaviour. Opens the walk logging sheet. Spec at `docs/specs/designer-brief-march-24-spec.md`. Implementation complete. Further refinement is deferred to the next Designer brief (State A full composition review session).
-
-### Nearby tab map must replicate Walks tab map
-
-The Nearby tab map must use the same implementation pattern as the Walks tab map: same list/map icon toggle in the header, tapping the map icon shows the full screen map, same in-map filter pill at bottom-centre, same zoom controls at bottom-right. The expand-button pattern used in the 24 March brief is not the correct pattern — use the Walks tab toggle approach. This is a carry-over task for the next Developer session.
-
-### Map filter pill position
-
-The "Picks / Green spaces" filter pill on the Walks tab map sits at bottom-centre of the map, floating above the bottom nav. Not at the top. Do not move it to the top of the map.
-
-### Monetisation decisions M1-M5 — deferred
-
-Owner has reviewed the competitive analysis. All five monetisation decisions (M1-M5) are deferred to closer to launch. They are not build blockers. PO to resurface when the owner is ready.
-
-### Walk window hours — constrained to 6am-9pm
-
-The best walk window display is constrained to a minimum of 6am and a maximum of 9pm. Late-night edge case (e.g. suggesting 6am-9am at 23:30 without labelling it as tomorrow) is a known carry-over bug — see Section 8.
+Today tab hero card uses brand colour (#2C4A14) as background for the approved verdict state, amber (#B07A28) for caution, red for avoid/danger. White text throughout. This is a locked design decision.
 
 ### Verdict strings — emoji removed, Lucide icons only
 
@@ -547,9 +523,13 @@ Documented in CLAUDE.md. No exceptions.
 
 `navigator.vibrate(10)` on all heart/bookmark saves throughout the app. `navigator.vibrate([50,30,80])` on badge earn. Graceful no-op on iOS (not supported). Apply to any new save/earn interactions added in future rounds.
 
+### FAB (floating action button) on Me tab
+
+Circular brand green button, fixed position centred above bottom nav, opens walk logging sheet. Currently implemented. **Designer review pending** — FAB icon treatment, fading/visual effect, size and position are all flagged for the next Designer brief. Do not modify the FAB implementation until Designer brief is complete.
+
 ### Me tab stat colours — all three use brand colour
 
-All three Me tab stat numbers (km walked, walks logged, condition reports) use `var(--brand)` in light mode and `#6A9B4A` in dark mode. Consistent colour throughout. Documented in CLAUDE.md.
+All three Me tab stat numbers (km walked, walks logged, condition reports) use `var(--brand)` in light mode and `#6A9B4A` in dark mode. Consistent colour throughout. Previous decision (var(--ink) for secondary stats) is superseded. Documented in CLAUDE.md.
 
 ### Me tab dog name — .me-dog-card-name at 48px Fraunces 700
 
@@ -557,11 +537,11 @@ All three Me tab stat numbers (km walked, walks logged, condition reports) use `
 
 ### Fake ratings — removed and prohibited
 
-Walk cards must not show star ratings or review counts until a minimum of 3 real reviews exist per walk. No fake social proof anywhere in the app. Removed 24 March 2026.
+Walk cards must not show star ratings or review counts until a minimum of 3 real reviews exist per walk. No fake social proof anywhere in the app. Developer fix required — this is a small standalone fix, no spec needed. Listed in Section 9 priority order.
 
 ### No-account framing — updated
 
-"No account required" is not a selling point and must not be used. Account creation is framed as data protection. Correct framing: "your data, safe across any device" or "Keep your walks safe across any device." Updated in CLAUDE.md and copy-review.md.
+"No account required" is not a selling point and must not be used. Account creation is framed as data protection. Correct framing: "your data, safe across any device" or "Keep your walks safe across any device." Updated in CLAUDE.md and copy-review.md. Any copy that frames the absence of an account as a positive must be reworked.
 
 ### User-submitted walks — long-term content model confirmed
 
@@ -603,9 +583,9 @@ The owner has a dog named **Luna**, a Bear Coat Shar Pei. Luna has the double-co
 
 FIX 23.2 is a permanent revert. Brief at `docs/briefs/developer-brief-restaurants.md`. Do not re-implement without a dedicated design round.
 
-### Settings and dog profile — settings cog inside dog profile card
+### Settings and dog profile separation
 
-The settings cog icon lives inside the dog profile card on the Me tab (absolute-positioned, top-right). Tapping it opens Settings. The dog profile subpage is separate and opened from the dog card content. These are two distinct things and must not be merged.
+Gear icon opens settings only. "Your Dog" entry row opens dog profile subpage. These are two distinct things and must not be merged.
 
 ### Logo rebuild — complete
 
@@ -674,7 +654,7 @@ Today, Walks, and Nearby tabs all have a tappable location line with inline sear
 
 ### Hourly forecast bar and Walk Window — both live on Weather tab
 
-Walk Window is Card 1 (hours constrained to 6am-9pm min/max), Hour by hour is Card 2. Tappable temperature spec (`docs/specs/temperature-tap-spec.md`) is superseded — do not re-implement.
+Walk Window is Card 1 (6am-midnight scope), Hour by hour is Card 2. Tappable temperature spec (`docs/specs/temperature-tap-spec.md`) is superseded — do not re-implement.
 
 Designer spec: `docs/specs/hourly-forecast-spec.md`. Layout recommendation: `docs/specs/hourly-forecast-layout-rec.md`.
 
@@ -790,56 +770,57 @@ Five personas defined in `docs/content/copywriter-personas.md`. Rules carry forw
 
 ---
 
-## SECTION 8 — WHAT IS IN PROGRESS / CARRY-OVER TO NEXT SESSION
+## SECTION 8 — WHAT IS IN PROGRESS RIGHT NOW
 
 As of end of day 24 March 2026:
 
-### 1. PRIORITY — Nearby tab map replication (Developer)
+### 1. Designer brief (start of next session) — priority
 
-The Nearby tab map must replicate the Walks tab map implementation exactly:
-- Same list/map icon toggle in the header (not an expand button)
-- Tapping the map icon opens the full screen map
-- Same in-map filter pill at bottom-centre (not top)
-- Same zoom controls at bottom-right
+Multiple items flagged for Designer review:
 
-The expand button pattern used in the 24 March brief is not correct — brief Developer to replace it with the Walks tab toggle approach. This is the first Developer task of the next session.
+- **FAB redesign:** icon treatment, fading/visual effect, size and position review
+- **Me tab overall layout review:** full balance check with 48px dog name, 28px stats, FAB in place
+- **Map view on Walks tab:** full design spec needed before any Developer work
+- **Full screen Nearby map:** design spec needed, reference AllTrails pattern
+- **Parallax hero image on walk detail overlay:** design spec needed
 
-### 2. Walk name duplicate on browse cards (Developer)
+This brief should be the first thing issued next session.
 
-The walk name still appears both overlaid on the image AND as a heading in the content area below the image. The content area heading must be removed. Small fix — bundle with the Nearby map brief.
+### 2. Developer fix — fake ratings
 
-### 3. Scroll-to-top pill inverted (Developer)
+Walk cards must not show star ratings or review counts until a minimum of 3 real reviews exist. Small fix, no spec required. Brief directly in chat.
 
-The IntersectionObserver fires on the wrong event direction. The scroll-to-top pill currently shows on scroll up, but should show on scroll down past the Picks section. Bundle with Nearby map brief.
-
-### 4. Walk window late-night edge case (Developer)
-
-At 23:30 the walk window suggests times like "6am-9am" without indicating this is tomorrow. The walk window must either label tomorrow's window clearly as "tomorrow" or handle this edge case differently. Bundle with Nearby map brief.
-
-### 5. State A headline sizing — Designer review pending
-
-Headline is currently `clamp(36px, 9vw, 48px)` as an interim fix. Designer must review the full State A composition and recommend the correct size. Do not apply further Developer patches until Designer has reviewed.
-
-### 6. Designer brief pending items
-
-- State A full composition review: headline size, balance, spacing
-- Any further Me tab refinements post-FAB
-
-### 7. Monetisation decisions M1-M5 — deferred
-
-Owner has reviewed the competitive analysis at `docs/research/competitive-analysis-march-23.md`. All five decisions deferred to closer to launch. PO to resurface when owner is ready.
-
-### 8. OS Maps Leisure tiles — support ticket not yet raised (owner action)
+### 3. OS Maps Leisure tiles — support ticket not yet raised (owner action)
 
 Premium Data Plan is active but Leisure tiles are still not rendering. A support ticket with OS Data Hub has not yet been raised.
 
-### 9. Walk photos — 7 showcase carousel walks (owner action)
+**Next action:** Owner to raise support ticket with OS Data Hub.
 
-Walks: `isabella-plantation`, `stanage-edge`, `balmaha-loch-lomond`, `rhossili-gower`, `seven-sisters`, `formby-beach-pinewoods`, `alnmouth-northumberland`. Owner to source and push to repo.
+### 4. Photos for 7 showcase carousel walks (priority — owner action)
 
-### 10. Solicitor engagement — L1-L5 blocked (owner action)
+The State A showcase carousel features 7 specific walks. These are the most visible walks in the app for a first-time user.
 
-Owner engages solicitor. Target: at least 4 weeks before any beta launch date.
+Walks: `isabella-plantation`, `stanage-edge`, `balmaha-loch-lomond`, `rhossili-gower`, `seven-sisters`, `formby-beach-pinewoods`, `alnmouth-northumberland`
+
+**Next action:** Owner to source photos. Push image files to repo before referencing in `WALKS_DB`.
+
+### 5. Walk image sourcing — 97 remaining (ongoing — owner action)
+
+97 walks still use `placeholder-walk.jpg`. 3 have real photos. Showcase carousel walks (item 4 above) are the priority.
+
+**Next action:** Owner to direct sourcing strategy.
+
+### 6. Solicitor engagement (owner action — outstanding blocker)
+
+L1, L2/L3, L4, and L5 all blocked on solicitor engagement.
+
+**Next action:** Owner engages solicitor. Target: at least 4 weeks before any beta launch date.
+
+### 7. Competitive analysis owner review — pending
+
+Full competitive analysis at `docs/research/competitive-analysis-march-23.md`. Five monetisation decisions (M1-M5) are open and require owner review.
+
+**Next action:** Owner to review competitive analysis and make decisions on M1-M5.
 
 ### PENDING DEVELOPER CONFIRMATION (carry forward)
 
@@ -851,29 +832,28 @@ Owner engages solicitor. Target: at least 4 weeks before any beta launch date.
 
 ### Immediate (in priority order)
 
-1. **Nearby tab map replication** — Developer, first brief of next session. Replicate Walks tab map exactly: same header toggle, same full screen behaviour, same bottom-centre filter pill, same zoom controls. Do not use the expand button pattern.
+1. **Designer brief** — start of next session. Covers: FAB redesign, Me tab layout review, map view on Walks tab, full screen Nearby map, parallax hero on walk detail overlay. Issue before any other agent work.
 
-2. **Walk name duplicate + scroll pill + walk window late night** — bundle all three with the Nearby map Developer brief for efficiency.
+2. **Developer fix — fake ratings** — walk cards must not show star ratings or review counts until minimum 3 real reviews exist. Small fix, no spec required. Brief directly in chat.
 
-3. **State A Designer review** — Designer brief covering State A full composition: headline size, balance, spacing. Issue once Nearby/fixes are under way.
+3. **Researcher round — user-submitted walks** — full feature scope including moderation tool (Google Cloud Vision API, Natural Language API), plagiarism detection, owner approval queue, mandatory photo requirement, submission form best practice, community trust signals, legal considerations (Online Safety Act 2023).
 
-4. **Phase 3 Firebase migration Developer brief** — spec complete at `docs/specs/firebase-phase3-migration-spec.md`. Ready to brief.
+4. **Researcher round — competitive analysis follow-up** — report saved at `docs/research/competitive-analysis-march-23.md`. Five monetisation decisions (M1-M5) still open for owner review.
 
-5. **Researcher round — user-submitted walks** — full feature scope including moderation tool (Google Cloud Vision API, Natural Language API), plagiarism detection, owner approval queue, mandatory photo requirement, submission form best practice, community trust signals, legal considerations (Online Safety Act 2023).
+5. **Phase 3 Firebase migration Developer brief** — spec complete at `docs/specs/firebase-phase3-migration-spec.md`. Ready to brief once session starts fresh.
 
-6. **Competitive analysis monetisation decisions** — M1-M5 deferred to closer to launch. PO to resurface when owner is ready.
+6. **OS Maps support ticket** — owner to raise with OS Data Hub. Leisure tiles still not activating.
 
-7. **OS Maps support ticket** — owner to raise with OS Data Hub. Leisure tiles still not activating.
+7. **Walk photos** — 7 showcase carousel walks still need real photos. Owner to source.
 
-8. **Walk photos** — 7 showcase carousel walks still need real photos. Owner to source.
-
-9. **Solicitor engagement** — L1-L5 all blocked. Not a dev blocker.
+8. **Solicitor engagement** — L1-L5 all blocked. Not a dev blocker.
 
 ### Soon (Phase 2 remaining)
 
 - **Walk image sourcing** — 97 walks need photos. Owner to direct.
 - **Copy review session** — all UI copy reviewed against brand voice.
 - **Walk Wrapped summary** — twice yearly (July and December/January). Walk log foundation exists. Needs Designer spec.
+- **Brand guidelines document** — Designer task. Read CLAUDE.md and relevant spec files, produce a consolidated brand reference document. Not urgent before beta launch - priority increases when external people are brought in.
 - **MoSCoW prioritisation** — owner to complete when ready to triage the backlog.
 - **Pre-launch checklist review** — PO to update `docs/po/pre-launch-checklist.md`. Several items resolved (T1, T14), new items emerged (OS Maps key, push notification consent).
 
@@ -941,26 +921,24 @@ All files in `~/Desktop/my-first-repo/`. Documentation files are organised into 
 
 | File | Purpose |
 |------|---------|
-| `docs/specs/brand-guidelines-march-24.md` | **Brand guidelines.** Consolidated brand, design, and copy reference. Ready for new collaborators. |
-| `docs/specs/designer-brief-march-24-spec.md` | **Designer spec A (24 March).** FAB, Me tab layout, Walks tab map, Nearby full screen map, parallax hero on walk detail. Implemented. |
-| `docs/specs/designer-brief-march-24b-spec.md` | **Designer spec B (24 March).** Today hero card, Weather tab hazard cards, Settings cog, walk card proportions. Implemented. |
-| `docs/specs/design-elevation-spec-march-23.md` | Design elevation spec. Fraunces typeface, #2C4A14 brand colour, hero card colour treatment, micro-interactions, palette expansion. Implemented. |
+| `docs/specs/design-elevation-spec-march-23.md` | **Design elevation spec.** Fraunces typeface, #2C4A14 brand colour, hero card colour treatment, micro-interactions, empty states, card refinement, brand palette expansion. Implemented 23-24 March 2026. |
 | `docs/specs/me-tab-rethink-v2-spec.md` | Me tab redesign spec (implemented Round 15+). |
 | `docs/specs/me-tab-subpages-spec.md` | Me tab subpage architecture (implemented Round 28). |
 | `docs/specs/dog-profile-spec.md` | Dog profile spec (implemented Round 19). Base spec — breed hazard toggles extend this. |
-| `docs/specs/breed-hazard-spec.md` | Breed and dog-specific hazard personalisation spec. Implemented 23 March 2026. |
+| `docs/specs/breed-hazard-spec.md` | **Breed and dog-specific hazard personalisation spec.** Implemented 23 March 2026. Owner decisions D1-D6, threshold tables, seasonal triggers, copy direction, implementation notes. |
 | `docs/specs/badge-system-rethink.md` | 10 badge definitions, triggers, earned moment copy. |
 | `docs/specs/weather-tab-redesign-spec.md` | Weather tab redesign spec. |
 | `docs/specs/weather-icon-consistency-spec.md` | Icon sizes: Today 72px/6px, Weather 96px/14px. |
 | `docs/specs/disclaimer-design-spec.md` | Walk disclaimer design (implemented Round 13). |
 | `docs/specs/hourly-forecast-spec.md` | Hourly forecast bar spec. Implemented — "Hour by hour" is Card 2 on Weather tab. |
 | `docs/specs/hourly-forecast-layout-rec.md` | Designer layout recommendation for hourly forecast bar. |
+| `docs/specs/temperature-tap-spec.md` | Tappable temperature spec. Feature implemented and reverted — superseded. |
 | `docs/specs/state-a-redesign-spec.md` | Designer spec for State A first-run screen redesign. Implemented 20 March 2026. |
 | `docs/specs/dog-diary-feature-scope.md` | Strategic scoping for dog diary feature. Deferred to Phase 2b post-launch. |
 | `docs/specs/dark-mode-schemes.md` | Dark mode colour scheme options. Scheme B (Dark Slate) confirmed and implemented. |
 | `docs/specs/install-prompt-spec.md` | PWA install prompt card spec. Implemented 20 March 2026. |
-| `docs/specs/firebase-phase3-migration-spec.md` | Firebase Phase 3 migration spec. Complete. Ready to brief Developer. |
-| `docs/specs/phase3-account-linking-design-spec.md` | Phase 3 account linking design spec. Complete. |
+| `docs/specs/firebase-phase3-migration-spec.md` | **Firebase Phase 3 migration spec.** Complete. Ready to brief Developer once session starts fresh. |
+| `docs/specs/phase3-account-linking-design-spec.md` | **Phase 3 account linking design spec.** Complete. |
 | `docs/research/brand-colour-proposal.md` | 8 colour options. Option G was Meadow Green `#3B5C2A` — superseded by Woodland Green `#2C4A14`. |
 | `docs/briefs/developer-brief-restaurants.md` | Brief for dog-friendly restaurants/pubs. Permanently deferred. |
 
@@ -974,25 +952,25 @@ All files in `~/Desktop/my-first-repo/`. Documentation files are organised into 
 | `docs/content/descriptions-batch-02.md`, `docs/content/descriptions-batch-03.md` | Copywriter descriptions (batches 02-03). |
 | `docs/content/editor-review-batch-01.md` through `docs/content/editor-review-batch-03.md` | Editor-reviewed descriptions. |
 | `docs/content/validation-report-batch-01.md`, `docs/content/validation-report-batch-02.md`, `docs/content/validator-report-batch-03.md` | Validator sign-off for all batches. |
-| `docs/content/phase3-account-linking-copy.md` | Phase 3 account linking copy. Editor reviewed and approved. |
+| `docs/content/phase3-account-linking-copy.md` | **Phase 3 account linking copy.** Editor reviewed and approved, two minor Copywriter revisions already applied. |
 
 ### Research
 
 | File | Purpose |
 |------|---------|
-| `docs/research/competitive-analysis-march-23.md` | Full competitive analysis. Five monetisation decisions (M1-M5) deferred to closer to launch. |
+| `docs/research/competitive-analysis-march-23.md` | **Full competitive analysis.** Five monetisation decisions (M1-M5) open for owner review. |
 | `docs/research/firebase-setup-plan.md` | Firebase architecture and setup plan for Phase 3. |
 | `docs/research/firebase-phase3-migration-research.md` | Firebase Phase 3 migration research. Basis for firebase-phase3-migration-spec.md. |
-| `docs/research/push-notifications-research.md` | Push notification research. Owner decisions confirmed. Formal spec complete at `docs/specs/push-notifications-phase3-spec.md`. |
+| `docs/research/push-notifications-research.md` | **Push notification research.** Technical architecture, notification types, home location design, implementation order. Owner decisions confirmed. Formal spec complete at `docs/specs/push-notifications-phase3-spec.md`. |
 | `docs/research/dog-friendly-venues-research.md` | Research on dog-friendly venue data sources for Nearby tab. |
-| `docs/research/breed-hazard-research.md` | Breed and dog-specific hazard research. VetCompass data, seasonal hazards, threshold recommendations. |
+| `docs/research/breed-hazard-research.md` | **Breed and dog-specific hazard research.** VetCompass data, seasonal hazards, threshold recommendations. Basis for breed-hazard-spec.md. |
 
 ### UX reviews
 
 | File | Purpose |
 |------|---------|
 | `docs/ux-reviews/ux-review-march-21.md` | UX review 21 March 2026. Round 1 fixes implemented. |
-| `docs/ux-reviews/ux-review-march-22.md` | UX review 22 March 2026. Rounds A and B fixes implemented. B2, M5, M7 resolved 23 March. H10 remains. |
+| `docs/ux-reviews/ux-review-march-22.md` | UX review 22 March 2026. Rounds A and B fixes implemented. Four items deliberately deferred — three resolved 23 March 2026 (B2, M5, M7). H10 remains. |
 
 ### Session handoff notes
 
@@ -1001,7 +979,6 @@ All files in `~/Desktop/my-first-repo/`. Documentation files are organised into 
 | `docs/handoffs/archive/session-handoff-march-20.md` | Archived. Covers 20-21 March 2026. Full round history Rounds 11-33 in this file. |
 | `docs/handoffs/archive/session-handoff-march-22.md` | Archived. Covers 22 March 2026. |
 | `docs/handoffs/archive/session-handoff-march-23.md` | Archived. Covers 23 March 2026. |
-| `docs/handoffs/archive/session-handoff-march-24-morning.md` | Archived. Covers early 24 March 2026 (morning session). |
 | `docs/handoffs/session-handoff-march-24.md` | **This document. Current active handoff.** |
 
 ---
@@ -1125,7 +1102,7 @@ Confirm push by checking `https://sniffout.app/sniffout-v2.html` — allow ~1 mi
 2. **Cloudflare Worker proxy is fully working** — `places-proxy.sniffout.app`. Do not revert to direct Google URL under any circumstances.
 3. **Pubs/restaurants permanently removed** — quality issues. Brief at `docs/briefs/developer-brief-restaurants.md`. Do not re-add without a dedicated design round.
 4. **All batches complete — walk count is 100** — use `WALKS_DB.length` dynamically, never hardcode a number.
-5. **Brand colour is `#2C4A14` (Woodland Green)** — replaces `#3B5C2A` (Meadow Green). CLAUDE.md corrected 24 March. No old colour references should remain anywhere.
+5. **Brand colour is `#2C4A14` (Woodland Green)** — replaces `#3B5C2A` (Meadow Green). No old colour references should remain anywhere.
 6. **Display typeface is Fraunces (`var(--font-display)`)** — applied to hero and display elements only. Inter for all UI copy.
 7. **Dark mode brand backgrounds use `#3D6B22`** — `#6A9B4A` is for text/icons only in dark mode. Do not use `#6A9B4A` as a background colour.
 8. **Hourly forecast bar is LIVE** — "Hour by hour" is Card 2 on Weather tab. Walk Window is Card 1. Tappable temperature spec is superseded.
@@ -1155,20 +1132,14 @@ Confirm push by checking `https://sniffout.app/sniffout-v2.html` — allow ~1 mi
 32. **Firebase Phase 3 migration spec is complete** — saved to `docs/specs/firebase-phase3-migration-spec.md`. Ready to brief Developer.
 33. **Phase 3 account linking copy complete** — `docs/content/phase3-account-linking-copy.md`. Editor reviewed and approved.
 34. **Phase 3 account linking design spec complete** — `docs/specs/phase3-account-linking-design-spec.md`.
-35. **Competitive analysis complete — M1-M5 deferred** — `docs/research/competitive-analysis-march-23.md`. Owner reviewed all five monetisation decisions and deferred to closer to launch.
-36. **Fake ratings removed** — walk cards no longer show stars or review counts. No fake social proof anywhere in the app.
+35. **Competitive analysis complete** — `docs/research/competitive-analysis-march-23.md`. Five monetisation decisions (M1-M5) open for owner review.
+36. **Fake ratings must not be shown** — walk cards must not display stars or review counts until 3 real reviews exist. Developer fix needed — small, no spec required.
 37. **No-account framing updated** — "no account required" is not a selling point. Frame as: "your data, safe across any device."
 38. **No hardcoded emoji in verdict title strings** — Lucide icons only. Personalised shortTitle when dog profile exists.
 39. **Woodland routes must never be recommended in high wind or gust conditions** — valley paths, urban streets, low-lying ground only.
-40. **Today tab hero card — unified single card** — internal dividers, hazard detail inline, "Full forecast" tap row at bottom. Info button removed. No banner.
-41. **Weather tab — hazard cards only, no banner** — banner permanently removed. `buildHazardHTML()` shared helper. Most severe first.
-42. **Settings cog is inside the dog profile card** — absolute-positioned top-right. Not a FAB. Not in the tab header. Do not move it.
-43. **FAB on Me tab — implemented** — plus icon, 56px, `bottom: 88px`, brand green, multi-layer shadow, fade on scroll. Spec at `docs/specs/designer-brief-march-24-spec.md`.
-44. **Walk card image heights: carousel 140px, list 180px** — walk name overlaid on image only (Fraunces 700 26px white). Name does not repeat below image.
-45. **Away distance removed from walk cards** — appears in walk detail overlay only. Do not reintroduce to cards.
-46. **Nearby tab map must match Walks tab exactly** — same header toggle, same full screen behaviour, same bottom-centre filter pill. Carry-over Developer task.
-47. **Walk window hours constrained to 6am-9pm** — late-night edge case (labelling tomorrow's window) is a carry-over bug fix.
-48. **Brand guidelines document complete** — `docs/specs/brand-guidelines-march-24.md`. Ready for use by new collaborators.
-49. **Haptic feedback: `navigator.vibrate(10)` on saves, `navigator.vibrate([50,30,80])` on badge earn** — apply to all new save/earn interactions.
-50. **Me tab dog name is `.me-dog-card-name` at 48px Fraunces 700** — always the largest text on the Me tab.
-51. **All three Me tab stat numbers use `var(--brand)` / `#6A9B4A` dark** — consistent colour, not var(--ink).
+40. **Today tab hero card uses brand colour backgrounds** — brand green for approved, amber for caution, red for avoid/danger. White text throughout.
+41. **Me tab dog name is `.me-dog-card-name` at 48px Fraunces 700** — always the largest text on the Me tab.
+42. **All three Me tab stat numbers use `var(--brand)` / `#6A9B4A` dark** — consistent colour, not var(--ink).
+43. **FAB on Me tab is implemented but Designer review pending** — do not modify until Designer brief is done.
+44. **Haptic feedback: `navigator.vibrate(10)` on saves, `navigator.vibrate([50,30,80])` on badge earn** — apply to all new save/earn interactions.
+45. **Brand guidelines document is a future Designer task** — not urgent before beta launch. Priority increases when external people are brought in.
