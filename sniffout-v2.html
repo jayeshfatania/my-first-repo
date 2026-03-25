@@ -154,10 +154,10 @@
     .section-link { font-size: 14px; font-weight: 500; color: var(--brand); }
 
     /* ─── Tab title bar ─── */
-    .tab-title-bar { padding: 12px 16px 8px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 20; }
-    .tab-title { font-size: 22px; font-weight: 700; color: var(--ink); }
-    .filter-btn { background: none; border: none; padding: 10px 10px; min-width: 44px; min-height: 44px; cursor: pointer; color: var(--ink-2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .filter-btn:active { color: var(--brand); }
+    .tab-title-bar { height: 60px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 20; border-bottom: 1px solid var(--border); }
+    .tab-title { font-size: 18px; font-weight: 700; color: var(--ink); font-family: var(--font-ui); }
+    .filter-btn { background: none; border: none; width: 40px; height: 40px; cursor: pointer; color: var(--ink); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 8px; transition: transform 0.15s ease; -webkit-tap-highlight-color: transparent; }
+    .filter-btn:active { color: var(--brand); transform: scale(0.97); }
     .picks-anchor-btn {
       position: fixed;
       top: 16px;
@@ -1411,24 +1411,19 @@
     .walks-map-toggle {
       display: flex;
       align-items: center;
-      gap: 2px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 3px;
+      gap: 0;
       flex-shrink: 0;
     }
-    body.night .walks-map-toggle { background: var(--surface); }
     .walks-map-toggle-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 32px;
-      height: 28px;
+      width: 40px;
+      height: 40px;
       border: none;
-      border-radius: 7px;
+      border-radius: 8px;
       background: transparent;
-      color: var(--ink-2);
+      color: var(--ink);
       cursor: pointer;
       transition: transform 0.15s ease;
       -webkit-tap-highlight-color: transparent;
@@ -1654,12 +1649,20 @@
     .nearby-filters {
       display: flex;
       gap: 8px;
-      padding: 0 16px 12px;
+      padding: 10px 16px 12px;
       overflow-x: auto;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
+      background: rgba(255,255,255,0.96);
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.07);
     }
     .nearby-filters::-webkit-scrollbar { display: none; }
+    body.night .nearby-filters {
+      background: rgba(31,31,31,0.96);
+      border-top-color: rgba(255,255,255,0.08);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+    }
     .nearby-toggle-row {
       display: flex;
       align-items: center;
@@ -4444,13 +4447,13 @@
             <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+        <div style="display:flex;align-items:center;gap:4px;margin-left:auto;">
           <div class="walks-map-toggle" role="group" aria-label="View mode">
             <button class="walks-map-toggle-btn active" id="walks-list-view-btn" aria-label="List view" onclick="setWalksView('list')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
             </button>
             <button class="walks-map-toggle-btn" id="walks-map-view-btn" aria-label="Map view" onclick="setWalksView('map')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
             </button>
           </div>
           <button class="filter-btn" id="walks-radius-btn" aria-label="Filter by radius">
@@ -4513,13 +4516,13 @@
             <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:4px;">
           <div class="walks-map-toggle" role="group" aria-label="Nearby view mode">
             <button class="walks-map-toggle-btn active" id="nearby-list-view-btn" aria-label="List view" onclick="setNearbyView('list')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
             </button>
             <button class="walks-map-toggle-btn" id="nearby-map-view-btn" aria-label="Map view" onclick="setNearbyView('map')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
             </button>
           </div>
           <button class="filter-btn" id="nearby-radius-btn" aria-label="Filter by radius">
@@ -11804,9 +11807,30 @@
     var showList = (mode === 'list');
     var showMap  = (mode === 'map');
 
-    if (content) content.style.display = showList ? '' : 'none';
-    if (mapCont) mapCont.classList.toggle('visible', showMap);
     if (card && showList) dismissWalksMapCard();
+    if (showMap && content && content.style.display !== 'none') {
+      content.style.transition = 'opacity 150ms ease';
+      content.style.opacity = '0';
+      setTimeout(function() {
+        content.style.display = 'none';
+        content.style.opacity = '';
+        content.style.transition = '';
+        mapCont.classList.add('visible');
+        if (walksMapInstance) walksMapInstance.invalidateSize();
+      }, 150);
+    } else if (showList && mapCont && mapCont.classList.contains('visible')) {
+      mapCont.style.transition = 'opacity 150ms ease';
+      mapCont.style.opacity = '0';
+      setTimeout(function() {
+        mapCont.classList.remove('visible');
+        mapCont.style.opacity = '';
+        mapCont.style.transition = '';
+        if (content) content.style.display = '';
+      }, 150);
+    } else {
+      if (content) content.style.display = showList ? '' : 'none';
+      if (mapCont) mapCont.classList.toggle('visible', showMap);
+    }
 
     // In-map filter: show only in map view
     var inmapFilter = document.getElementById('walksInmapFilter');
@@ -12361,8 +12385,7 @@
     var filterRow = document.getElementById('nearby-filter-row');
     var toggleRow = document.getElementById('nearby-toggle-row');
 
-    if (mode === 'map') {
-      // Compute full height between tab header and bottom nav
+    function _showNearbyMap() {
       var tabPanel = document.getElementById('tab-nearby');
       var titleBar = tabPanel ? tabPanel.querySelector('.tab-title-bar') : null;
       var usedH = titleBar ? titleBar.offsetHeight : 56;
@@ -12371,11 +12394,9 @@
         mapEl.style.height = Math.max(200, mapH) + 'px';
         mapEl.classList.add('visible');
       }
-      if (venuesEl) venuesEl.style.display = 'none';
       if (styleRow) styleRow.style.display = 'none';
       if (toggleRow) toggleRow.style.display = 'none';
       if (filterRow) filterRow.style.display = 'none';
-      // Render bottom category bar
       if (catBar) {
         catBar.innerHTML = CATEGORIES.map(function(c) {
           return '<button class="nearby-cat-bar-chip' + (c.id === nearbyCategory ? ' active' : '') + '" onclick="setNearbyCategory(\'' + c.id + '\')">' + c.label + '</button>';
@@ -12385,13 +12406,43 @@
       if (nearbyUserLat && nearbyUserLon) {
         setTimeout(function() { initNearbyMap(nearbyUserLat, nearbyUserLon); }, 50);
       }
+    }
+    if (mode === 'map') {
+      if (venuesEl && venuesEl.style.display !== 'none') {
+        venuesEl.style.transition = 'opacity 150ms ease';
+        venuesEl.style.opacity = '0';
+        setTimeout(function() {
+          venuesEl.style.display = 'none';
+          venuesEl.style.opacity = '';
+          venuesEl.style.transition = '';
+          _showNearbyMap();
+        }, 150);
+      } else {
+        if (venuesEl) venuesEl.style.display = 'none';
+        _showNearbyMap();
+      }
     } else {
-      if (mapEl) mapEl.classList.remove('visible');
-      if (venuesEl) venuesEl.style.display = '';
-      if (styleRow) styleRow.style.display = 'none';
-      if (toggleRow) toggleRow.style.display = '';
-      if (filterRow) filterRow.style.display = '';
-      if (catBar) catBar.classList.remove('visible');
+      if (mapEl && mapEl.classList.contains('visible')) {
+        mapEl.style.transition = 'opacity 150ms ease';
+        mapEl.style.opacity = '0';
+        setTimeout(function() {
+          mapEl.classList.remove('visible');
+          mapEl.style.opacity = '';
+          mapEl.style.transition = '';
+          if (venuesEl) venuesEl.style.display = '';
+          if (styleRow) styleRow.style.display = 'none';
+          if (toggleRow) toggleRow.style.display = '';
+          if (filterRow) filterRow.style.display = '';
+          if (catBar) catBar.classList.remove('visible');
+        }, 150);
+      } else {
+        if (mapEl) mapEl.classList.remove('visible');
+        if (venuesEl) venuesEl.style.display = '';
+        if (styleRow) styleRow.style.display = 'none';
+        if (toggleRow) toggleRow.style.display = '';
+        if (filterRow) filterRow.style.display = '';
+        if (catBar) catBar.classList.remove('visible');
+      }
     }
   }
 
