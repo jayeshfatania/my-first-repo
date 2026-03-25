@@ -13881,14 +13881,14 @@
   var storage = null;
   var fsUid   = null; // set after anonymous sign-in
 
-  /* ─── Init ─── */
-  try {
-    firebase.initializeApp(firebaseConfig);
-    db      = firebase.firestore();
-    auth    = firebase.auth();
-    storage = firebase.storage();
+  /* ─── Init (skipped entirely when flag is false - no network calls, no auth) ─── */
+  if (FIREBASE_WRITE_ENABLED) {
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db      = firebase.firestore();
+      auth    = firebase.auth();
+      storage = firebase.storage();
 
-    if (FIREBASE_WRITE_ENABLED) {
       // Enable offline persistence (Firestore-level local cache)
       db.enablePersistence({ synchronizeTabs: true }).catch(function(err) {
         console.warn('Firestore persistence unavailable:', err.code);
@@ -13900,9 +13900,9 @@
       }).catch(function(err) {
         console.warn('Firebase anonymous auth failed:', err);
       });
+    } catch(e) {
+      console.warn('Firebase init failed:', e);
     }
-  } catch(e) {
-    console.warn('Firebase init failed:', e);
   }
 
   /*
