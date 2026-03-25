@@ -1674,6 +1674,46 @@
       position: relative;
     }
     #nearby-map.visible { display: block; }
+    body.night #nearby-map .leaflet-tile-pane { filter: brightness(0.75) contrast(1.05); }
+    /* Bottom category bar - shown in Nearby map view */
+    #nearby-map-cat-bar {
+      display: none;
+      position: fixed;
+      bottom: var(--nav-h);
+      left: 0;
+      right: 0;
+      height: 52px;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      background: rgba(255,255,255,0.95);
+      border-top: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+      z-index: 100;
+    }
+    #nearby-map-cat-bar::-webkit-scrollbar { display: none; }
+    #nearby-map-cat-bar.visible { display: flex; }
+    body.night #nearby-map-cat-bar {
+      background: rgba(31,31,31,0.95);
+      border-top-color: rgba(255,255,255,0.08);
+    }
+    .nearby-cat-bar-chip {
+      font: 600 13px/1 'Inter', sans-serif;
+      color: var(--ink-2);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 7px 14px;
+      white-space: nowrap;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nearby-cat-bar-chip:active { transform: scale(0.97); }
+    .nearby-cat-bar-chip.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+    body.night .nearby-cat-bar-chip.active { background: #3D6B22; border-color: #3D6B22; }
     /* Nearby map expand button */
     .nearby-map-expand-btn {
       position: absolute;
@@ -5979,10 +6019,9 @@
       }
       var picksHeaderEl = tabPanel.querySelector('.walks-section-label');
       if (!picksHeaderEl) { pill.classList.remove('visible'); return; }
-      // Show pill when the picks section header has scrolled above the top of the tab container
-      var containerTop = tabPanel.getBoundingClientRect().top;
-      var headerBottom = picksHeaderEl.getBoundingClientRect().bottom;
-      pill.classList.toggle('visible', headerBottom < containerTop);
+      // Show pill when the user has scrolled PAST the top of the Picks section header.
+      // isIntersecting === false (out of view above) -> show; isIntersecting === true -> hide.
+      pill.classList.toggle('visible', tabPanel.scrollTop > picksHeaderEl.offsetTop);
     }
 
     // Attach scroll listener once - guard against duplicates
@@ -6506,16 +6545,19 @@
     var start = Math.max(h, 6);
     var bestIdx = start, bestScore = -1;
     var limit = Math.min(h + 12, 21, hourly.time.length);
-    if (start >= limit) start = 6;
+    var isTomorrow = false;
+    if (start >= limit) { start = 6; isTomorrow = true; }
     for (var i = start; i < Math.max(limit, start + 1); i++) {
       var prob = hourly.precipitation_probability[i] || 0;
       var t    = hourly.temperature_2m[i] || 10;
       var score = (100 - prob) + (t > 5 && t < 25 ? 20 : 0);
       if (score > bestScore) { bestScore = score; bestIdx = i; }
     }
+    // Also flag as tomorrow if the best slot is earlier than current hour
+    if (bestIdx < h) isTomorrow = true;
     var startH = bestIdx % 24;
     var endH   = Math.min(startH + 3, 21);
-    return formatHour(startH) + ' - ' + formatHour(endH);
+    return { time: formatHour(startH) + ' - ' + formatHour(endH), isTomorrow: isTomorrow };
   }
 
   function getVerdictClass(type) {
@@ -6689,7 +6731,9 @@
     var todayLow  = daily && daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[0]) : temp;
 
     // Walk window time
-    var walkWindowTime = getBestWindowTime(hourly);
+    var walkWindowResult = getBestWindowTime(hourly);
+    var walkWindowTime = walkWindowResult.time;
+    var walkWindowTomorrow = walkWindowResult.isTomorrow;
 
     // Yr.no icon HTML for hero (72px)
     var heroIconSrc = '';
@@ -6734,7 +6778,7 @@
         // Walk window card
         '<div class="wx-card">' +
           '<div class="wx-card-header">' +
-            '<span class="wx-card-title">Best walk window</span>' +
+            '<span class="wx-card-title">' + (walkWindowTomorrow ? 'Best walk window - Tomorrow' : 'Best walk window') + '</span>' +
             '<span class="wx-walk-window-time">' + walkWindowTime + '</span>' +
           '</div>' +
           '<div class="wx-card-divider"></div>' +
@@ -12300,13 +12344,31 @@
     var mapEl    = document.getElementById('nearby-map');
     var venuesEl = document.getElementById('nearby-venues');
     var styleRow = document.getElementById('nearby-map-style-row');
+    var catBar   = document.getElementById('nearby-map-cat-bar');
     var filterRow = document.getElementById('nearby-filter-row');
+    var toggleRow = document.getElementById('nearby-toggle-row');
 
     if (mode === 'map') {
-      if (mapEl) mapEl.classList.add('visible');
+      // Compute full height between tab header and bottom nav
+      var tabPanel = document.getElementById('tab-nearby');
+      var titleBar = tabPanel ? tabPanel.querySelector('.tab-title-bar') : null;
+      var usedH = titleBar ? titleBar.offsetHeight : 56;
+      var mapH = (tabPanel ? tabPanel.offsetHeight : window.innerHeight - 64) - usedH;
+      if (mapEl) {
+        mapEl.style.height = Math.max(200, mapH) + 'px';
+        mapEl.classList.add('visible');
+      }
       if (venuesEl) venuesEl.style.display = 'none';
-      if (styleRow) styleRow.style.display = '';
-      // category chips stay visible (filterRow is not hidden)
+      if (styleRow) styleRow.style.display = 'none';
+      if (toggleRow) toggleRow.style.display = 'none';
+      if (filterRow) filterRow.style.display = 'none';
+      // Render bottom category bar
+      if (catBar) {
+        catBar.innerHTML = CATEGORIES.map(function(c) {
+          return '<button class="nearby-cat-bar-chip' + (c.id === nearbyCategory ? ' active' : '') + '" onclick="setNearbyCategory(\'' + c.id + '\')">' + c.label + '</button>';
+        }).join('');
+        catBar.classList.add('visible');
+      }
       if (nearbyUserLat && nearbyUserLon) {
         setTimeout(function() { initNearbyMap(nearbyUserLat, nearbyUserLon); }, 50);
       }
@@ -12314,6 +12376,35 @@
       if (mapEl) mapEl.classList.remove('visible');
       if (venuesEl) venuesEl.style.display = '';
       if (styleRow) styleRow.style.display = 'none';
+      if (toggleRow) toggleRow.style.display = '';
+      if (filterRow) filterRow.style.display = '';
+      if (catBar) catBar.classList.remove('visible');
+    }
+  }
+
+  function setNearbyCategory(cat) {
+    nearbyCategory = cat;
+    // Update tab-level chips
+    document.querySelectorAll('[data-nearby-cat]').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-nearby-cat') === cat);
+    });
+    // Update bottom bar chips
+    document.querySelectorAll('.nearby-cat-bar-chip').forEach(function(b) {
+      b.classList.toggle('active', b.textContent === (CATEGORIES.find(function(c) { return c.id === cat; }) || {}).label);
+    });
+    var venuesEl = document.getElementById('nearby-venues');
+    var countEl  = document.getElementById('nearby-count');
+    if (cat === 'saved') {
+      if (typeof renderSavedVenueList === 'function') renderSavedVenueList();
+    } else {
+      if (venuesEl) venuesEl.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding ' + ((CATEGORIES.find(function(c){return c.id===cat;})||{}).label||'places').toLowerCase() + ' near you...</div></div>';
+      if (countEl) countEl.textContent = 'Loading...';
+      fetchNearbyPlaces(cat, nearbyUserLat, nearbyUserLon, nearbyLocationName, function(venues) {
+        nearbyVenues = venues;
+        renderVenueList();
+        if (nearbyView === 'map') updateMapMarkers();
+        if (nearbyFsMap && typeof renderNearbyFsMarkers === 'function') renderNearbyFsMarkers();
+      });
     }
   }
 
@@ -12341,28 +12432,10 @@
         '<div id="nearby-venues"><div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding places near you…</div></div></div>';
     }
 
-    // Bind category chips — each tap fetches that category from Google Places
+    // Bind category chips - delegate to setNearbyCategory so bottom bar stays in sync
     document.querySelectorAll('[data-nearby-cat]').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        var cat = this.getAttribute('data-nearby-cat');
-        nearbyCategory = cat;
-        document.querySelectorAll('[data-nearby-cat]').forEach(function(b) { b.classList.remove('active'); });
-        this.classList.add('active');
-        var venuesEl   = document.getElementById('nearby-venues');
-        var countEl    = document.getElementById('nearby-count');
-        if (cat === 'saved') {
-          renderSavedVenueList();
-        } else {
-          if (venuesEl) venuesEl.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding ' + CATEGORIES.find(function(c){return c.id===cat;}).label.toLowerCase() + ' near you…</div></div>';
-          if (countEl) countEl.textContent = 'Loading…';
-          fetchNearbyPlaces(cat, nearbyUserLat, nearbyUserLon, nearbyLocationName, function(venues) {
-            nearbyVenues = venues;
-            renderVenueList();
-            if (nearbyView === 'map') updateMapMarkers();
-            // Also refresh fullscreen map pins if it is open
-            if (nearbyFsMap && typeof renderNearbyFsMarkers === 'function') renderNearbyFsMarkers();
-          });
-        }
+        setNearbyCategory(this.getAttribute('data-nearby-cat'));
       });
     });
 
@@ -12530,11 +12603,18 @@
     var style = getSavedMapStyle();
 
     if (!nearbyMap) {
-      nearbyMap = L.map('nearby-map', { zoomControl: true }).setView([lat, lon], 14);
+      nearbyMap = L.map('nearby-map', { zoomControl: false, attributionControl: false }).setView([lat, lon], 14);
       nearbyTileLayer = L.tileLayer(OS_TILES[style] || OS_TILES.osm, {
         attribution: OS_ATTRIBUTION[style] || OS_ATTRIBUTION.osm,
         maxZoom: 19
       }).addTo(nearbyMap);
+      L.control.zoom({ position: 'bottomright' }).addTo(nearbyMap);
+      if (document.body.classList.contains('night')) {
+        setTimeout(function() {
+          var tp = document.querySelector('#nearby-map .leaflet-tile-pane');
+          if (tp) tp.style.filter = 'brightness(0.75) contrast(1.05)';
+        }, 100);
+      }
       applyMapStyleControl('nearby-map-style-control', style);
       /* Wire up toggle buttons once on first map creation */
       var nearbyStyleControl = document.getElementById('nearby-map-style-control');
@@ -14016,6 +14096,9 @@
     'Sniffout - handpicked UK dog walks with live weather, hazard alerts and dog-friendly spots.');
 })();
 </script>
+
+<!-- Nearby map bottom category bar (shown in map view) -->
+<div id="nearby-map-cat-bar" aria-label="Category filter"></div>
 
 </body>
 </html>
