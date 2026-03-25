@@ -6002,36 +6002,22 @@
   var picksObserver = null; // kept for compatibility with switchTab cleanup
 
   function initPicksAnchor() {
-    var pill = document.getElementById('picks-anchor-btn');
-    var tabPanel = document.getElementById('tab-walks');
-    if (!pill || !tabPanel) return;
-
-    pill.classList.remove('visible');
-
-    pill.onclick = function() {
-      tabPanel.scrollTo({ top: 0, behavior: 'smooth' });
+    if (picksObserver) { picksObserver.disconnect(); picksObserver = null; }
+    var carousel  = document.querySelector('#tab-walks .trail-carousel');
+    var anchorBtn = document.getElementById('picks-anchor-btn');
+    if (!carousel || !anchorBtn) return;
+    picksObserver = new IntersectionObserver(function(entries) {
+      var isVisible = entries[0].isIntersecting;
+      if (walksMapCurrentView !== 'list') { anchorBtn.classList.remove('visible'); return; }
+      anchorBtn.classList.toggle('visible', !isVisible);
+    }, {
+      root:      document.getElementById('tab-walks'),
+      threshold: 0
+    });
+    picksObserver.observe(carousel);
+    anchorBtn.onclick = function() {
+      document.getElementById('tab-walks').scrollTo({ top: 0, behavior: 'smooth' });
     };
-
-    function updatePicksPill() {
-      if (walksMapCurrentView !== 'list') {
-        pill.classList.remove('visible');
-        return;
-      }
-      var picksHeaderEl = tabPanel.querySelector('.walks-section-label');
-      if (!picksHeaderEl) { pill.classList.remove('visible'); return; }
-      // Show pill when the user has scrolled PAST the top of the Picks section header.
-      // isIntersecting === false (out of view above) -> show; isIntersecting === true -> hide.
-      pill.classList.toggle('visible', tabPanel.scrollTop > (picksHeaderEl.offsetTop + picksHeaderEl.offsetHeight));
-    }
-
-    // Attach scroll listener once - guard against duplicates
-    if (!tabPanel._picksScrollBound) {
-      tabPanel._picksScrollBound = true;
-      tabPanel.addEventListener('scroll', updatePicksPill, { passive: true });
-    }
-
-    // Evaluate immediately (handles returning from map view)
-    updatePicksPill();
   }
 
   function isRainCode(c) { return [51,53,55,56,57,61,63,65,66,67,80,81,82].indexOf(c) !== -1; }
