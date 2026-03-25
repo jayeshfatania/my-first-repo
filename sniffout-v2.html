@@ -13861,6 +13861,9 @@
      FIREBASE — Initialisation, Auth, Firestore helpers
   ═══════════════════════════════ */
 
+  /* ─── Feature flag: disable all Firestore writes and anonymous auth until Phase 3 ─── */
+  var FIREBASE_WRITE_ENABLED = false;
+
   /* ─── Firebase config ─── */
   var firebaseConfig = {
     apiKey:            'AIzaSyBw3gCJmzmkghDBXqvaH0v8w-AjegVBCCw',
@@ -13885,17 +13888,19 @@
     auth    = firebase.auth();
     storage = firebase.storage();
 
-    // Enable offline persistence (Firestore-level local cache)
-    db.enablePersistence({ synchronizeTabs: true }).catch(function(err) {
-      console.warn('Firestore persistence unavailable:', err.code);
-    });
+    if (FIREBASE_WRITE_ENABLED) {
+      // Enable offline persistence (Firestore-level local cache)
+      db.enablePersistence({ synchronizeTabs: true }).catch(function(err) {
+        console.warn('Firestore persistence unavailable:', err.code);
+      });
 
-    // Anonymous auth — silent, graceful degradation on failure
-    auth.signInAnonymously().then(function(result) {
-      fsUid = result.user.uid;
-    }).catch(function(err) {
-      console.warn('Firebase anonymous auth failed:', err);
-    });
+      // Anonymous auth — silent, graceful degradation on failure
+      auth.signInAnonymously().then(function(result) {
+        fsUid = result.user.uid;
+      }).catch(function(err) {
+        console.warn('Firebase anonymous auth failed:', err);
+      });
+    }
   } catch(e) {
     console.warn('Firebase init failed:', e);
   }
@@ -13948,6 +13953,7 @@
 
   /* ─── Firestore helper: write walk log entry ─── */
   function fsWriteWalkLogEntry(entry) {
+    if (!FIREBASE_WRITE_ENABLED) return;
     if (!db || !fsUid || !entry) return;
     try {
       var walk  = entry.id ? WALKS_DB.filter(function(w) { return w.id === entry.id; })[0] : null;
@@ -13976,6 +13982,7 @@
 
   /* ─── Firestore helper: update walk note ─── */
   function fsUpdateWalkNote(ts, note) {
+    if (!FIREBASE_WRITE_ENABLED) return;
     if (!db || !fsUid) return;
     try {
       db.collection('users').doc(fsUid).collection('walkLog').doc(String(ts)).update({
@@ -13991,6 +13998,7 @@
 
   /* ─── Firestore helper: saved walk (favourite) ─── */
   function fsWriteSavedWalk(walkId, isSaving) {
+    if (!FIREBASE_WRITE_ENABLED) return;
     if (!db || !fsUid || !walkId) return;
     try {
       var ref = db.collection('users').doc(fsUid).collection('savedWalks').doc(walkId);
@@ -14008,6 +14016,7 @@
 
   /* ─── Firestore helper: user profile ─── */
   function fsWriteUserProfile(displayName, dog) {
+    if (!FIREBASE_WRITE_ENABLED) return;
     if (!db || !fsUid) return;
     try {
       var data = { lastSeen: firebase.firestore.FieldValue.serverTimestamp() };
