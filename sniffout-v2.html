@@ -1251,28 +1251,26 @@
     .filter-row::-webkit-scrollbar { display: none; }
     .chip {
       flex-shrink: 0;
+      height: 34px;
+      border-radius: 20px;
+      padding: 0 14px;
       font-size: 13px;
-      font-weight: 500;
-      border-radius: 99px;
-      padding: 6px 14px;
-      border: 1.5px solid var(--chip-off);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border);
       color: var(--ink-2);
       background: var(--surface);
       cursor: pointer;
-      transition: background 150ms, border-color 150ms, color 150ms, transform 0.15s ease;
+      transition: transform 0.15s ease;
       white-space: nowrap;
     }
     .chip:active { transform: scale(0.97); }
-    .chip.active {
-      background: var(--brand-tint);
-      border-color: var(--brand);
-      color: var(--brand);
-    }
-    [data-nearby-cat] {
-      min-height: 44px;
-      padding: 11px 16px;
-      transition: transform 0.15s ease;
-    }
+    .chip.active { background: var(--brand); color: #FFFFFF; border: none; }
+    body.night .chip { background: rgba(255,255,255,0.07); color: var(--ink-2); border-color: var(--border); }
+    body.night .chip.active { background: #3D6B22; color: #FFFFFF; border: none; }
+    [data-nearby-cat] { transition: transform 0.15s ease; }
     [data-nearby-cat]:active { transform: scale(0.97); }
 
     /* Segmented toggle (List / Map) */
@@ -1709,7 +1707,11 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 7px 14px;
+      padding: 0 14px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       white-space: nowrap;
       cursor: pointer;
       flex-shrink: 0;
@@ -1775,12 +1777,16 @@
     .nearby-map-fullscreen-chips::-webkit-scrollbar { display: none; }
     body.night .nearby-map-fullscreen-chips { background: rgba(31,31,31,0.95); }
     .fs-map-chip {
-      font: 500 13px/1 'Inter',sans-serif;
+      font: 600 13px/1 'Inter',sans-serif;
       color: var(--ink);
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 7px 14px;
+      padding: 0 14px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       white-space: nowrap;
       cursor: pointer;
       flex-shrink: 0;
@@ -3198,7 +3204,7 @@
     body.night .venue-icon            { background: rgba(106,155,74,0.12); }
     body.night .walk-tag.full         { background: rgba(106,155,74,0.10); border-color: rgba(106,155,74,0.22); }
     body.night .venue-open-gp.open    { background: rgba(106,155,74,0.12); }
-    body.night .chip.active           { background: rgba(106,155,74,0.10); border-color: rgba(106,155,74,0.22); color: var(--brand); }
+    body.night .chip.active           { background: #3D6B22; color: #FFFFFF; border: none; }
     body.night .hazard-card.brand-variant { background: rgba(106,155,74,0.07); }
     body.night .weather-hero { background: #162B0A; }
     body.night .me-stat-number { color: #6A9B4A; }
@@ -12266,6 +12272,14 @@
     other:  luIcon('map-pin', 16)
   };
 
+  var CATEGORY_CHIP_ICON = {
+    pub:    luIcon('beer', 15),
+    cafe:   luIcon('coffee', 15),
+    shop:   luIcon('shopping-bag', 15),
+    vet:    luIcon('stethoscope', 15),
+    saved:  luIcon('bookmark', 15)
+  };
+
   var CATEGORY_LABEL = {
     pub:    'Pub',
     cafe:   'Dog-friendly café',
@@ -12401,9 +12415,10 @@
       if (filterRow) filterRow.style.display = 'none';
       if (catBar) {
         catBar.innerHTML = CATEGORIES.map(function(c) {
-          return '<button class="nearby-cat-bar-chip' + (c.id === nearbyCategory ? ' active' : '') + '" onclick="setNearbyCategory(\'' + c.id + '\')">' + c.label + '</button>';
+          return '<button class="nearby-cat-bar-chip' + (c.id === nearbyCategory ? ' active' : '') + '" data-nearby-cat="' + c.id + '" onclick="setNearbyCategory(\'' + c.id + '\')">' + (CATEGORY_CHIP_ICON[c.id] || '') + c.label + '</button>';
         }).join('');
         catBar.classList.add('visible');
+        syncIcons();
       }
       if (nearbyUserLat && nearbyUserLon) {
         setTimeout(function() { initNearbyMap(nearbyUserLat, nearbyUserLon); }, 50);
@@ -12457,7 +12472,7 @@
     });
     // Update bottom bar chips
     document.querySelectorAll('.nearby-cat-bar-chip').forEach(function(b) {
-      b.classList.toggle('active', b.textContent === (CATEGORIES.find(function(c) { return c.id === cat; }) || {}).label);
+      b.classList.toggle('active', b.getAttribute('data-nearby-cat') === cat);
     });
     var venuesEl = document.getElementById('nearby-venues');
     var countEl  = document.getElementById('nearby-count');
@@ -12492,7 +12507,7 @@
       content.innerHTML =
         '<div class="nearby-filters" id="nearby-filter-row">' +
           CATEGORIES.map(function(c) {
-            return '<button class="chip' + (c.id === nearbyCategory ? ' active' : '') + '" data-nearby-cat="' + c.id + '">' + c.label + '</button>';
+            return '<button class="chip' + (c.id === nearbyCategory ? ' active' : '') + '" data-nearby-cat="' + c.id + '">' + (CATEGORY_CHIP_ICON[c.id] || '') + c.label + '</button>';
           }).join('') +
         '</div>' +
         '<div class="nearby-toggle-row" id="nearby-toggle-row">' +
@@ -12500,6 +12515,7 @@
         '</div>' +
         '<div id="nearby-venues"><div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding places near you…</div></div></div>';
     }
+    syncIcons();
 
     // Bind category chips - delegate to setNearbyCategory so bottom bar stays in sync
     document.querySelectorAll('[data-nearby-cat]').forEach(function(btn) {
@@ -12764,8 +12780,9 @@
     if (chipsEl) {
       nearbyFsCategory = nearbyCategory;
       chipsEl.innerHTML = CATEGORIES.filter(function(c) { return c.id !== 'saved'; }).map(function(c) {
-        return '<button class="fs-map-chip' + (c.id === nearbyFsCategory ? ' active' : '') + '" onclick="setNearbyFsCategory(\'' + c.id + '\')">' + c.label + '</button>';
+        return '<button class="fs-map-chip' + (c.id === nearbyFsCategory ? ' active' : '') + '" onclick="setNearbyFsCategory(\'' + c.id + '\')">' + (CATEGORY_CHIP_ICON[c.id] || '') + c.label + '</button>';
       }).join('');
+      syncIcons();
     }
 
     initNearbyFsMap();
