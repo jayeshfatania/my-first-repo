@@ -6021,7 +6021,7 @@
       if (!picksHeaderEl) { pill.classList.remove('visible'); return; }
       // Show pill when the user has scrolled PAST the top of the Picks section header.
       // isIntersecting === false (out of view above) -> show; isIntersecting === true -> hide.
-      var rect = picksHeaderEl.getBoundingClientRect(); pill.classList.toggle('visible', rect.bottom < 0);
+      pill.classList.toggle('visible', tabPanel.scrollTop > (picksHeaderEl.offsetTop + picksHeaderEl.offsetHeight));
     }
 
     // Attach scroll listener once - guard against duplicates
