@@ -11834,7 +11834,6 @@
       var tileUrl = (typeof OS_TILES !== 'undefined' && OS_TILES[style]) ? OS_TILES[style] : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
       walksMapInstance = L.map('walks-map', { zoomControl: false, attributionControl: false });
       L.tileLayer(tileUrl, { maxZoom: 18 }).addTo(walksMapInstance);
-      L.control.zoom({ position: 'bottomright' }).addTo(walksMapInstance);
       walksMapInstance.on('zoomend moveend', renderWalksMapPins);
       walksMapInstance.on('click', function() { dismissWalksMapCard(); });
     }
@@ -12603,7 +12602,6 @@
         attribution: OS_ATTRIBUTION[style] || OS_ATTRIBUTION.osm,
         maxZoom: 19
       }).addTo(nearbyMap);
-      L.control.zoom({ position: 'bottomright' }).addTo(nearbyMap);
       if (document.body.classList.contains('night')) {
         setTimeout(function() {
           var tp = document.querySelector('#nearby-map .leaflet-tile-pane');
@@ -12717,7 +12715,6 @@
       var tileUrl = OS_TILES[style] || OS_TILES.osm;
       nearbyFsMap = L.map('nearby-map-fullscreen-map', { zoomControl: false, attributionControl: false });
       L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(nearbyFsMap);
-      L.control.zoom({ position: 'bottomright' }).addTo(nearbyFsMap);
       nearbyFsMap.on('click', function() { dismissNearbyMapCard(); });
     }
     nearbyFsMap.setView([lat, lon], 14);
