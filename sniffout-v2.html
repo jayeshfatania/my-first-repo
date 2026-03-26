@@ -11777,6 +11777,7 @@
       });
 
       placesCache[cacheKey] = { ts: Date.now(), data: deduped };
+      try { localStorage.setItem('sniffout_places_cache', JSON.stringify(placesCache)); } catch(e) {}
       cb(deduped);
     });
   }
@@ -12243,7 +12244,30 @@
   var nearbyLocationName = '';
   var nearbyCategory     = 'pub';
   var nearbyView         = 'list';
-  var placesCache         = {}; // { key: { ts, data } } — 30-min expiry for venues, 60-min for green spaces
+  var placesCache = {}; // { key: { ts, data } } — 30-min expiry for venues, 60-min for green spaces
+  try {
+    var _storedCache = localStorage.getItem('sniffout_places_cache');
+    if (_storedCache) placesCache = JSON.parse(_storedCache);
+  } catch(e) { placesCache = {}; }
+
+  function prunePlacesCache() {
+    var now = Date.now();
+    var changed = false;
+    Object.keys(placesCache).forEach(function(k) {
+      var ttl = k.indexOf('gs|') === 0 ? 60 * 60 * 1000 : 30 * 60 * 1000;
+      if (now - placesCache[k].ts > ttl) {
+        delete placesCache[k];
+        changed = true;
+      }
+    });
+    if (changed) {
+      try {
+        localStorage.setItem('sniffout_places_cache', JSON.stringify(placesCache));
+      } catch(e) {}
+    }
+  }
+  prunePlacesCache();
+
   var nearbyHasFetched    = false; // prevent re-fetch on tab switch unless location changes
   var isFetching          = false; // debounce chip taps
   var placesApiCallCount  = 0;     // TASK 5: warn if excessive
@@ -12366,6 +12390,7 @@
       places = places.filter(function(p) { return p.dist === null || p.dist <= radiusKm; });
       places.sort(function(a, b) { return (a.dist || 999) - (b.dist || 999); });
       placesCache[cacheKey] = { ts: Date.now(), data: places };
+      try { localStorage.setItem('sniffout_places_cache', JSON.stringify(placesCache)); } catch(e) {}
       cb(places);
     })
     .catch(function() { cb([]); });
@@ -13621,6 +13646,7 @@
     try { localStorage.setItem('sniffout_radius', km); } catch(e) {}
     // Clear caches so re-render fetches fresh data at new radius
     placesCache = {}; nearbyHasFetched = false;
+    try { localStorage.removeItem('sniffout_places_cache'); } catch(e) {}
     syncRadiusChips();
     // Close all pickers
     document.querySelectorAll('.radius-picker').forEach(function(p) {
@@ -13772,6 +13798,7 @@
     saveRadius(activeRadius);
     applyRadiusPreference(getSavedRadiusMi());
     placesCache = {}; nearbyHasFetched = false;
+    try { localStorage.removeItem('sniffout_places_cache'); } catch(e) {}
 
     var surfaceBtn    = sheet.querySelector('[data-walks-surface].active');
     var envBtn        = sheet.querySelector('[data-walks-env].active');
@@ -13836,6 +13863,7 @@
     saveRadius(activeRadius);
     applyRadiusPreference(getSavedRadiusMi());
     placesCache = {}; nearbyHasFetched = false;
+    try { localStorage.removeItem('sniffout_places_cache'); } catch(e) {}
 
     // Set pending sort — applied inside renderVenueList() when it runs (sync or after async fetch)
     nearbyPendingSort = activeSort;
