@@ -5969,6 +5969,11 @@
     try { localStorage.setItem(PHOTO_CACHE_KEY, JSON.stringify(cache)); } catch(e) {}
   }
 
+  function extractPlaceId(url) {
+    var match = url.match(/\/places\/([^/]+)\/photos\//);
+    return match ? match[1] : url;
+  }
+
   function resolvePhotos(container) {
     var imgs = container.querySelectorAll('img[data-photo-meta]');
     var cache = getPhotoCache();
@@ -5976,8 +5981,9 @@
       var metaUrl = img.getAttribute('data-photo-meta');
       if (!metaUrl) return;
       img.removeAttribute('data-photo-meta');
-      if (cache[metaUrl]) {
-        img.src = cache[metaUrl];
+      var cacheKey = extractPlaceId(metaUrl);
+      if (cache[cacheKey]) {
+        img.src = cache[cacheKey];
         return;
       }
       fetch(metaUrl)
@@ -5986,7 +5992,7 @@
           if (data.photoUri) {
             img.src = data.photoUri;
             var updated = getPhotoCache();
-            updated[metaUrl] = data.photoUri;
+            updated[cacheKey] = data.photoUri;
             setPhotoCache(updated);
           }
         })
