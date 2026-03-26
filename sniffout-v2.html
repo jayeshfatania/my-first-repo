@@ -5961,15 +5961,35 @@
     if (window.lucide) lucide.createIcons();
   }
 
+  var PHOTO_CACHE_KEY = 'sniffout_photo_cache';
+  function getPhotoCache() {
+    try { return JSON.parse(localStorage.getItem(PHOTO_CACHE_KEY) || '{}'); } catch(e) { return {}; }
+  }
+  function setPhotoCache(cache) {
+    try { localStorage.setItem(PHOTO_CACHE_KEY, JSON.stringify(cache)); } catch(e) {}
+  }
+
   function resolvePhotos(container) {
     var imgs = container.querySelectorAll('img[data-photo-meta]');
+    var cache = getPhotoCache();
     imgs.forEach(function(img) {
       var metaUrl = img.getAttribute('data-photo-meta');
       if (!metaUrl) return;
       img.removeAttribute('data-photo-meta');
+      if (cache[metaUrl]) {
+        img.src = cache[metaUrl];
+        return;
+      }
       fetch(metaUrl)
         .then(function(r) { return r.json(); })
-        .then(function(data) { if (data.photoUri) img.src = data.photoUri; })
+        .then(function(data) {
+          if (data.photoUri) {
+            img.src = data.photoUri;
+            var updated = getPhotoCache();
+            updated[metaUrl] = data.photoUri;
+            setPhotoCache(updated);
+          }
+        })
         .catch(function() {});
     });
   }
