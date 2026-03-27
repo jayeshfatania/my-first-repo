@@ -1732,22 +1732,23 @@
     /* Map empty state */
     .walks-map-empty {
       position: absolute;
-      top: 50%;
+      bottom: 80px;
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translateX(-50%);
       background: rgba(255,255,255,0.92);
-      border-radius: 12px;
-      padding: 20px;
-      max-width: 260px;
+      border-radius: var(--radius-pill);
+      padding: 10px 18px;
+      white-space: nowrap;
       text-align: center;
       pointer-events: none;
       z-index: 500;
       display: none;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
     }
     body.night .walks-map-empty { background: rgba(31,31,31,0.92); }
     .walks-map-empty.visible { display: block; }
-    .walks-map-empty-title { font: 600 15px/1 'Plus Jakarta Sans',sans-serif; color: var(--ink); margin-top: 10px; }
-    .walks-map-empty-body { font: 400 13px/1.4 'Plus Jakarta Sans',sans-serif; color: var(--ink-2); margin-top: 4px; }
+    .walks-map-empty-title { font: 500 13px/1 'Plus Jakarta Sans',sans-serif; color: var(--ink); }
+    .walks-map-empty-body { display: none; }
     /* Compact walk card on pin tap */
     /* Compact walk card on pin tap */
     .walks-map-card {
@@ -4743,7 +4744,7 @@
       <!-- Walks map view -->
       <div id="walks-map-container">
         <div id="walks-map"></div>
-        <div class="map-style-row" id="walks-map-style-row" style="display:none;padding:6px 0 4px;">
+        <div class="map-style-row" id="walks-map-style-row" style="display:none;position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:500;">
           <div class="map-style-control" id="walks-map-style-control" role="group" aria-label="Map style">
             <div class="map-style-pill" id="walks-map-style-pill" aria-hidden="true"></div>
             <button class="map-style-btn active" data-map-style="osm">Standard</button>
@@ -12146,7 +12147,7 @@
 
   function fetchGreenSpacesForWalks(lat, lon, locationName, cb) {
     var radiusM  = getSavedRadius() * 1000;
-    var cacheKey = 'gs|' + lat.toFixed(3) + '|' + lon.toFixed(3) + '|' + radiusM;
+    var cacheKey = 'gs2|' + lat.toFixed(3) + '|' + lon.toFixed(3) + '|' + radiusM;
     var cached   = placesCache[cacheKey];
     if (cached && (Date.now() - cached.ts) < 24 * 60 * 60 * 1000) { cb(cached.data); return; }
     if (_gsInFlight[cacheKey]) { _gsInFlight[cacheKey].push(cb); return; }
@@ -12179,9 +12180,14 @@
             return {
               name: name, lat: plat, lon: plon,
               photoUrl: photoUrl, rating: p.rating || null,
-              mapsUrl: p.googleMapsUri || null, source: 'google'
+              mapsUrl: p.googleMapsUri || null, source: 'google',
+              primaryType: p.primaryType || ''
             };
-          }).filter(Boolean);
+          }).filter(Boolean)
+          .filter(function(place) {
+            var GS_EXCLUDE_TYPES = ['playground', 'amusement_park', 'sports_complex', 'athletic_field', 'stadium', 'golf_course', 'swimming_pool', 'gym', 'school'];
+            return !GS_EXCLUDE_TYPES.includes(place.primaryType);
+          });
         })
         .catch(function() { return []; });
       }
@@ -12248,7 +12254,7 @@
       });
 
       // Filter obvious non-public spaces by name
-      var EXCLUDE_NAMES = ['car park', 'parking', 'park and ride', 'multistorey', 'multi-storey', 'ncp'];
+      var EXCLUDE_NAMES = ['car park', 'parking', 'park and ride', 'multistorey', 'multi-storey', 'ncp', 'playground', 'recreation ground', 'playing field', 'sports ground', 'leisure centre', 'bowling green', 'tennis court', 'skate park'];
       merged = merged.filter(function(gs) {
         var lname = gs.name.toLowerCase();
         return !EXCLUDE_NAMES.some(function(kw) { return lname.includes(kw); });
