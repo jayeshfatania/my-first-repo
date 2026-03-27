@@ -3658,7 +3658,6 @@
     /* Map style toggle */
     .map-style-row {
       padding: 8px 16px 4px;
-      display: flex;
       align-items: center;
     }
     .map-style-control {
@@ -4744,7 +4743,7 @@
       <!-- Walks map view -->
       <div id="walks-map-container">
         <div id="walks-map"></div>
-        <div class="map-style-row" id="walks-map-style-row" style="display:none;position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:500;">
+        <div id="walks-map-style-row" style="display:none;position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:500;">
           <div class="map-style-control" id="walks-map-style-control" role="group" aria-label="Map style">
             <div class="map-style-pill" id="walks-map-style-pill" aria-hidden="true"></div>
             <button class="map-style-btn active" data-map-style="osm">Standard</button>
@@ -4820,7 +4819,7 @@
       <div id="nearby-content">
         <div class="empty-state">Set your location on the Today tab to find dog-friendly places near you.</div>
       </div>
-      <div id="nearby-map-style-row" class="map-style-row" style="display:none;">
+      <div id="nearby-map-style-row" class="map-style-row" style="display:none;flex-direction:row;">
         <div class="map-style-control" id="nearby-map-style-control" role="group" aria-label="Map style">
           <div class="map-style-pill" id="nearby-map-style-pill" aria-hidden="true"></div>
           <button class="map-style-btn active" data-map-style="osm">Standard</button>
@@ -5378,7 +5377,7 @@
     </div>
     <div class="walk-detail-map-section">
       <div class="walk-detail-map-title">Location</div>
-      <div class="map-style-row" style="padding:6px 0 4px;">
+      <div class="map-style-row" style="padding:6px 0 4px;display:flex;">
         <div class="map-style-control" id="detail-map-style-control" role="group" aria-label="Map style">
           <div class="map-style-pill" id="detail-map-style-pill" aria-hidden="true"></div>
           <button class="map-style-btn active" data-map-style="osm">Standard</button>
