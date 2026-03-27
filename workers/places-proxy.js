@@ -9,6 +9,12 @@ addEventListener('fetch', event => {
 })
 
 async function handleRequest(request, event) {
+  // Block requests not originating from sniffout.app
+  const referer = request.headers.get('Referer') || '';
+  if (!referer.startsWith('https://sniffout.app')) {
+    return new Response('Forbidden', { status: 403 });
+  }
+
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return new Response(null, {
