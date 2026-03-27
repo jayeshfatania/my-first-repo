@@ -4741,15 +4741,15 @@
         <div class="empty-state">Set your location on the Today tab to see nearby walks.</div>
       </div>
       <!-- Walks map view -->
+      <div id="walks-map-style-row" class="map-style-row" style="display:none;">
+        <div class="map-style-control" id="walks-map-style-control" role="group" aria-label="Map style">
+          <div class="map-style-pill" id="walks-map-style-pill" aria-hidden="true"></div>
+          <button class="map-style-btn active" data-map-style="osm">Standard</button>
+          <button class="map-style-btn" data-map-style="outdoor">OS Map</button>
+        </div>
+      </div>
       <div id="walks-map-container">
         <div id="walks-map"></div>
-        <div id="walks-map-style-row" style="display:none;position:absolute;top:12px;left:16px;right:16px;justify-content:center;z-index:500;flex-direction:row;">
-          <div class="map-style-control" id="walks-map-style-control" role="group" aria-label="Map style">
-            <div class="map-style-pill" id="walks-map-style-pill" aria-hidden="true"></div>
-            <button class="map-style-btn active" data-map-style="osm">Standard</button>
-            <button class="map-style-btn" data-map-style="outdoor">OS Map</button>
-          </div>
-        </div>
         <div class="walks-inmap-filter" id="walksInmapFilter" role="group" aria-label="Filter walks">
           <button class="walks-inmap-btn active" id="walksInmapPicks" onclick="setWalksMapFilter('picks')"><i data-lucide="star" style="width:15px;height:15px;"></i>Sniffout Picks</button>
           <button class="walks-inmap-btn" id="walksInmapGreen" onclick="setWalksMapFilter('greenspaces')"><i data-lucide="trees" style="width:15px;height:15px;"></i>Green spaces</button>
