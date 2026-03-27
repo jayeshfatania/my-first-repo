@@ -4743,6 +4743,13 @@
       <!-- Walks map view -->
       <div id="walks-map-container">
         <div id="walks-map"></div>
+        <div class="map-style-row" id="walks-map-style-row" style="display:none;padding:6px 0 4px;">
+          <div class="map-style-control" id="walks-map-style-control" role="group" aria-label="Map style">
+            <div class="map-style-pill" id="walks-map-style-pill" aria-hidden="true"></div>
+            <button class="map-style-btn active" data-map-style="osm">Standard</button>
+            <button class="map-style-btn" data-map-style="outdoor">OS Map</button>
+          </div>
+        </div>
         <div class="walks-inmap-filter" id="walksInmapFilter" role="group" aria-label="Filter walks">
           <button class="walks-inmap-btn active" id="walksInmapPicks" onclick="setWalksMapFilter('picks')"><i data-lucide="star" style="width:15px;height:15px;"></i>Sniffout Picks</button>
           <button class="walks-inmap-btn" id="walksInmapGreen" onclick="setWalksMapFilter('greenspaces')"><i data-lucide="trees" style="width:15px;height:15px;"></i>Green spaces</button>
@@ -12337,13 +12344,16 @@
       if (mapCont) mapCont.classList.toggle('visible', showMap);
     }
 
-    // In-map filter: show only in map view
+    // In-map filter + map style toggle: show only in map view
     var inmapFilter = document.getElementById('walksInmapFilter');
+    var walksStyleRow = document.getElementById('walks-map-style-row');
     if (showMap) {
       if (inmapFilter) inmapFilter.style.display = 'flex';
+      if (walksStyleRow) walksStyleRow.style.display = '';
       setWalksMapFilter('picks');
     } else {
       if (inmapFilter) inmapFilter.style.display = 'none';
+      if (walksStyleRow) walksStyleRow.style.display = 'none';
     }
 
     // Picks anchor: hide in map view, restore scroll-based control in list view
@@ -12390,6 +12400,17 @@
       L.tileLayer(tileUrl, { maxZoom: 18 }).addTo(walksMapInstance);
       walksMapInstance.on('zoomend moveend', renderWalksMapPins);
       walksMapInstance.on('click', function() { dismissWalksMapCard(); });
+      applyMapStyleControl('walks-map-style-control', style);
+      /* Wire up toggle buttons once on first map creation */
+      var walksStyleControl = document.getElementById('walks-map-style-control');
+      if (walksStyleControl && !walksStyleControl._styleBound) {
+        walksStyleControl._styleBound = true;
+        walksStyleControl.querySelectorAll('.map-style-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            setMapStyle(btn.getAttribute('data-map-style'));
+          });
+        });
+      }
     }
     walksMapInstance.setView([lat, lon], 12);
     walksMapInstance.invalidateSize();
@@ -12733,8 +12754,12 @@
     if (typeof walkDetailMap !== 'undefined' && walkDetailMap) {
       swapTileLayer(walkDetailMap, style, 18);
     }
+    if (typeof walksMapInstance !== 'undefined' && walksMapInstance) {
+      swapTileLayer(walksMapInstance, style, 18);
+    }
     applyMapStyleControl('nearby-map-style-control', style);
     applyMapStyleControl('detail-map-style-control', style);
+    applyMapStyleControl('walks-map-style-control', style);
   }
 
   var nearbyMap          = null;
