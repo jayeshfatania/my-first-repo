@@ -11966,14 +11966,15 @@
     if (_gsInFlight[cacheKey]) { _gsInFlight[cacheKey].push(cb); return; }
     _gsInFlight[cacheKey] = [cb];
 
-    var query = '[out:json][timeout:10];'
+    var query = '[out:json][timeout:15];'
       + '('
-      + 'way["leisure"="park"](around:' + radiusM + ',' + lat + ',' + lon + ');'
-      + 'way["leisure"="nature_reserve"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+      + 'way["leisure"="park"]["access"!~"private|no|restricted"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+      + 'way["leisure"="nature_reserve"]["access"!~"private|no|restricted"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+      + 'way["leisure"="common"](around:' + radiusM + ',' + lat + ',' + lon + ');'
       + 'way["landuse"="common"](around:' + radiusM + ',' + lat + ',' + lon + ');'
-      + 'way["landuse"="recreation_ground"](around:' + radiusM + ',' + lat + ',' + lon + ');'
-      + 'relation["leisure"="park"](around:' + radiusM + ',' + lat + ',' + lon + ');'
-      + 'relation["leisure"="nature_reserve"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+      + 'way["landuse"="village_green"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+      + 'relation["leisure"="park"]["access"!~"private|no|restricted"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+      + 'relation["leisure"="nature_reserve"]["access"!~"private|no|restricted"](around:' + radiusM + ',' + lat + ',' + lon + ');'
       + ');'
       + 'out center 30;';
 
@@ -11983,9 +11984,24 @@
       body: 'data=' + encodeURIComponent(query)
     })
     .then(function(r) { return r.json(); })
+    .catch(function() {
+      // Retry once after 2 seconds
+      return new Promise(function(resolve) { setTimeout(resolve, 2000); })
+        .then(function() {
+          return fetch('https://overpass-api.de/api/interpreter', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'data=' + encodeURIComponent(query)
+          }).then(function(r) { return r.json(); });
+        })
+        .catch(function() { return { elements: [] }; });
+    })
     .then(function(data) {
       var EXCLUDE_NAME_KEYWORDS = [
-        'car park', 'parking', 'park and ride', 'p&r', 'multistorey', 'multi-storey', 'ncp'
+        'car park', 'parking', 'park and ride', 'p&r', 'multistorey', 'multi-storey', 'ncp',
+        'playing fields', 'sports ground', 'sports club', 'recreation ground',
+        'school', 'college', 'university', 'burial ground', 'cemetery', 'graveyard',
+        'allotment', 'allotments', 'golf course', 'golf club'
       ];
 
       var results = (data.elements || [])
@@ -11994,6 +12010,17 @@
           if (!name) return false;
           var lname = name.toLowerCase();
           return !EXCLUDE_NAME_KEYWORDS.some(function(kw) { return lname.includes(kw); });
+        })
+        .filter(function(el) {
+          var tags = el.tags || {};
+          if (tags['operator:type'] === 'school') return false;
+          if (tags['landuse'] === 'cemetery') return false;
+          if (tags['amenity'] === 'grave_yard') return false;
+          if (tags['leisure'] === 'pitch') return false;
+          if (tags['leisure'] === 'stadium') return false;
+          if (tags['leisure'] === 'sports_centre') return false;
+          if (!(tags.name || '').trim()) return false;
+          return true;
         })
         .map(function(el) {
           var clat = el.center ? el.center.lat : el.lat;
