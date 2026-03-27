@@ -5,10 +5,10 @@
 // the repository.
 
 addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
+  event.respondWith(handleRequest(event.request, event))
 })
 
-async function handleRequest(request) {
+async function handleRequest(request, event) {
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return new Response(null, {
@@ -21,6 +21,54 @@ async function handleRequest(request) {
     })
   }
 
+  const url = new URL(request.url)
+  const cache = caches.default
+
+  // GET photo requests - cache at Cloudflare edge for 24 hours
+  if (request.method === 'GET' && url.pathname.includes('/photos/')) {
+    const cached = await cache.match(request)
+    if (cached) return cached
+
+    const response = await forwardToGoogle(request)
+    if (response.ok) {
+      const cachedResponse = new Response(response.body, response)
+      cachedResponse.headers.set('Cache-Control', 'public, max-age=86400')
+      event.waitUntil(cache.put(request, cachedResponse.clone()))
+      return cachedResponse
+    }
+    return response
+  }
+
+  // POST searchText requests - cache using URL + body hash as synthetic key
+  if (request.method === 'POST' && url.pathname.includes('searchText')) {
+    const bodyText = await request.clone().text()
+    const hashBuffer = await crypto.subtle.digest(
+      'SHA-256',
+      new TextEncoder().encode(url.pathname + bodyText)
+    )
+    const hashHex = Array.from(new Uint8Array(hashBuffer))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('')
+    const cacheKey = new Request('https://sniffout-cache.internal/' + hashHex)
+
+    const cached = await cache.match(cacheKey)
+    if (cached) return cached
+
+    const response = await forwardToGoogle(request)
+    if (response.ok) {
+      const cachedResponse = new Response(response.body, response)
+      cachedResponse.headers.set('Cache-Control', 'public, max-age=86400')
+      event.waitUntil(cache.put(cacheKey, cachedResponse.clone()))
+      return cachedResponse
+    }
+    return response
+  }
+
+  // All other requests pass through unchanged
+  return forwardToGoogle(request)
+}
+
+async function forwardToGoogle(request) {
   const url = new URL(request.url)
   const path = url.pathname.replace('/places-proxy', '')
   const params = url.searchParams
