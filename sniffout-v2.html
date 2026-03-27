@@ -825,6 +825,18 @@
       background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 70%);
       pointer-events: none;
     }
+    .weather-hero-icon-bg {
+      position: absolute;
+      right: 40px;
+      top: -15px;
+      width: 180px;
+      height: 180px;
+      opacity: 0.28;
+      pointer-events: none;
+      z-index: 0;
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0.4) 88%, rgba(0,0,0,0) 100%);
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0.4) 88%, rgba(0,0,0,0) 100%);
+    }
     .hero-divider-top {
       height: 1px;
       background: rgba(255,255,255,0.09);
@@ -6718,11 +6730,41 @@
 
     var sunPillText = '';
     if (daily && daily.sunrise && daily.sunset && daily.sunrise[0] && daily.sunset[0]) {
-      var nowHour = new Date().getHours();
-      var isMorning = nowHour < 12;
-      var rawTime = isMorning ? daily.sunrise[0] : daily.sunset[0];
-      var timePart = rawTime.indexOf('T') !== -1 ? rawTime.split('T')[1] : rawTime;
-      sunPillText = luIcon(isMorning ? 'sunrise' : 'sunset', 14) + ' ' + (isMorning ? 'Sunrise ' : 'Sunset ') + timePart;
+      var now = new Date();
+      var nowMins = now.getHours() * 60 + now.getMinutes();
+
+      // Parse today's sunset as minutes since midnight for comparison
+      var sunsetRaw0   = daily.sunset[0];
+      var sunsetPart0  = sunsetRaw0.indexOf('T') !== -1 ? sunsetRaw0.split('T')[1] : sunsetRaw0;
+      var sunsetSplit0 = sunsetPart0.split(':');
+      var sunsetMins0  = parseInt(sunsetSplit0[0]) * 60 + parseInt(sunsetSplit0[1] || 0);
+
+      var sunRawTime, sunIcon, sunLabel;
+
+      if (nowMins >= sunsetMins0) {
+        // After today's sunset - show tomorrow's sunrise if available
+        var tomorrowSunrise = (daily.sunrise[1]) ? daily.sunrise[1] : null;
+        if (tomorrowSunrise) {
+          sunRawTime = tomorrowSunrise;
+          sunIcon    = 'sunrise';
+          sunLabel   = 'Sunrise ';
+        }
+      } else if (now.getHours() >= 12) {
+        // After noon, before sunset - show today's sunset
+        sunRawTime = daily.sunset[0];
+        sunIcon    = 'sunset';
+        sunLabel   = 'Sunset ';
+      } else {
+        // Before noon - show today's sunrise
+        sunRawTime = daily.sunrise[0];
+        sunIcon    = 'sunrise';
+        sunLabel   = 'Sunrise ';
+      }
+
+      if (sunRawTime) {
+        var sunTimePart = sunRawTime.indexOf('T') !== -1 ? sunRawTime.split('T')[1] : sunRawTime;
+        sunPillText = luIcon(sunIcon, 14) + ' ' + sunLabel + sunTimePart;
+      }
     }
 
     // FIX 3: suppress hazard cards whose key matches the verdict key (duplicate info)
@@ -6789,33 +6831,35 @@
     content.innerHTML =
       '<div class="weather-hero' + heroClass + '">' +
         '<div class="weather-hero-glow"></div>' +
-        '<div class="weather-hero-top">' +
-          '<div>' +
-            '<div class="weather-hero-temp">' + temp + '\u00b0C</div>' +
-            '<div class="weather-hero-feels">Feels like ' + feels + '\u00b0C</div>' +
+        (heroIconHtml ? heroIconHtml.replace('<img ', '<img class="weather-hero-icon-bg" ').replace(/width="\d+"/, 'width="180"').replace(/height="\d+"/, 'height="180"').replace(/style="[^"]*"/, '') : '') +
+        '<div style="position:relative;z-index:1;">' +
+          '<div class="weather-hero-top">' +
+            '<div>' +
+              '<div class="weather-hero-temp">' + temp + '\u00b0C</div>' +
+              '<div class="weather-hero-feels">Feels like ' + feels + '\u00b0C</div>' +
+            '</div>' +
           '</div>' +
-          heroIconHtml +
-        '</div>' +
-        '<div class="weather-verdict">' +
-          '<span>' +
-            (greetingText ? '<span class="weather-greeting">' + greetingText + '</span>' : '') +
-            verdictLabel +
-            pawInline +
-          '</span>' +
-        '</div>' +
-        '<div class="weather-hero-body">' + verdict.body + '</div>' +
-        windowHtml +
-        alertPillHtml +
-        '<div class="hero-divider-top"></div>' +
-        '<div class="weather-pills">' +
-          '<span class="weather-pill">' + luIcon('cloud-rain', 14) + ' ' + maxRainProbHero + '%</span>' +
-          '<span class="weather-pill">' + luIcon('wind', 14) + ' ' + wind + ' km/h</span>' +
-          (sunPillText ? '<span class="weather-pill">' + sunPillText + '</span>' : '') +
-        '</div>' +
-        '<div class="hero-divider-bottom"></div>' +
-        '<div class="weather-hero-footer" onclick="event.stopPropagation();switchTab(\'weather\')" role="button" aria-label="Full forecast">' +
-          '<span class="weather-hero-footer-label">Full forecast</span>' +
-          '<span class="weather-hero-footer-chevron">' + luIcon('chevron-right', 14) + '</span>' +
+          '<div class="weather-verdict">' +
+            '<span>' +
+              (greetingText ? '<span class="weather-greeting">' + greetingText + '</span>' : '') +
+              verdictLabel +
+              pawInline +
+            '</span>' +
+          '</div>' +
+          '<div class="weather-hero-body">' + verdict.body + '</div>' +
+          windowHtml +
+          alertPillHtml +
+          '<div class="hero-divider-top"></div>' +
+          '<div class="weather-pills">' +
+            '<span class="weather-pill">' + luIcon('cloud-rain', 14) + ' ' + maxRainProbHero + '%</span>' +
+            '<span class="weather-pill">' + luIcon('wind', 14) + ' ' + wind + ' km/h</span>' +
+            (sunPillText ? '<span class="weather-pill">' + sunPillText + '</span>' : '') +
+          '</div>' +
+          '<div class="hero-divider-bottom"></div>' +
+          '<div class="weather-hero-footer" onclick="event.stopPropagation();switchTab(\'weather\')" role="button" aria-label="Full forecast">' +
+            '<span class="weather-hero-footer-label">Full forecast</span>' +
+            '<span class="weather-hero-footer-chevron">' + luIcon('chevron-right', 14) + '</span>' +
+          '</div>' +
         '</div>' +
       '</div>' +
       '<div id="today-walks-section"></div>' +
@@ -12805,11 +12849,6 @@
         var plat   = p.location ? p.location.latitude  : null;
         var plon   = p.location ? p.location.longitude : null;
         var distKm = (plat && plon) ? haversineKm(lat, lon, plat, plon) : null;
-        var openNow = null;
-        if (p.regularOpeningHours) {
-          openNow = p.regularOpeningHours.openNow === true ? true
-                  : p.regularOpeningHours.openNow === false ? false : null;
-        }
         var photoUrl = (p.photos && p.photos.length > 0)
           ? PLACES_PROXY + '/v1/' + p.photos[0].name + '/media?maxWidthPx=400&skipHttpRedirect=true'
           : null;
@@ -12820,7 +12859,7 @@
           address:     (p.formattedAddress || '').split(',').slice(0, 2).join(', ').trim(),
           rating:      p.rating    || null,
           ratingCount: p.userRatingCount || 0,
-          isOpen:      openNow,
+          openingHours: (p.regularOpeningHours && p.regularOpeningHours.periods) ? p.regularOpeningHours.periods : null,
           mapsUrl:     p.googleMapsUri || '',
           photoUrl:    photoUrl,
           primaryType: p.primaryType || null,
@@ -12851,6 +12890,29 @@
       cb(places);
     })
     .catch(function() { cb([]); });
+  }
+
+  function isVenueOpenNow(openingHours) {
+    if (!openingHours || !openingHours.length) return null;
+    var now = new Date();
+    var day = now.getDay();
+    var mins = now.getHours() * 60 + now.getMinutes();
+    for (var i = 0; i < openingHours.length; i++) {
+      var p = openingHours[i];
+      if (!p.open) continue;
+      var openDay   = p.open.day;
+      var openMins  = p.open.hour * 60 + (p.open.minute || 0);
+      var closeDay  = p.close ? p.close.day  : openDay;
+      var closeMins = p.close ? p.close.hour * 60 + (p.close.minute || 0) : 24 * 60;
+      if (closeDay !== openDay) {
+        var prevDay = (day + 6) % 7;
+        if (openDay === prevDay && mins < closeMins) return true;
+        if (openDay === day && mins >= openMins) return true;
+      } else {
+        if (openDay === day && mins >= openMins && mins < closeMins) return true;
+      }
+    }
+    return false;
   }
 
   /* ─── Directions URL (iOS → Apple Maps, others → Google Maps) ─── */
@@ -13094,8 +13156,9 @@
       : '';
 
     var openHtml = '';
-    if (venue.isOpen === true)  openHtml = '<span class="venue-open-gp open">Open now</span>';
-    if (venue.isOpen === false) openHtml = '<span class="venue-open-gp closed">Closed</span>';
+    var _openNow = isVenueOpenNow(venue.openingHours);
+    if (_openNow === true)  openHtml = '<span class="venue-open-gp open">Open now</span>';
+    if (_openNow === false) openHtml = '<span class="venue-open-gp closed">Closed</span>';
 
     var venuePlaceholders = {
       pub:  'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-pub.png',
@@ -13370,9 +13433,10 @@
     var catLabel = CATEGORY_LABEL[venue.cat] || 'Place';
     var distText = venue.dist != null ? formatDist(venue.dist) : '';
     var openHtml = '';
-    if (venue.isOpen === true) {
+    var _openNowDetail = isVenueOpenNow(venue.openingHours);
+    if (_openNowDetail === true) {
       openHtml = ' &middot; <span style="color:#2D7A3A;font-weight:500">Open now</span>';
-    } else if (venue.isOpen === false) {
+    } else if (_openNowDetail === false) {
       openHtml = ' &middot; <span style="color:var(--red);font-weight:500">Closed</span>';
     }
     var mapsUrl = venue.mapsUrl
