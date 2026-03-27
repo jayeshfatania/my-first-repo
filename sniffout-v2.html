@@ -4816,7 +4816,7 @@
         <div class="map-style-control" id="nearby-map-style-control" role="group" aria-label="Map style">
           <div class="map-style-pill" id="nearby-map-style-pill" aria-hidden="true"></div>
           <button class="map-style-btn active" data-map-style="osm">Standard</button>
-          <button class="map-style-btn" data-map-style="leisure">OS Map</button>
+          <button class="map-style-btn" data-map-style="outdoor">OS Map</button>
         </div>
       </div>
       <div id="nearby-map"></div>
@@ -5374,7 +5374,7 @@
         <div class="map-style-control" id="detail-map-style-control" role="group" aria-label="Map style">
           <div class="map-style-pill" id="detail-map-style-pill" aria-hidden="true"></div>
           <button class="map-style-btn active" data-map-style="osm">Standard</button>
-          <button class="map-style-btn" data-map-style="leisure">OS Map</button>
+          <button class="map-style-btn" data-map-style="outdoor">OS Map</button>
         </div>
       </div>
       <div class="walk-detail-map" id="walk-detail-map"></div>
@@ -12681,16 +12681,20 @@
   const OS_API_KEY = 'JcMmulbTghzn8pkYAGdxd8MH6GTK2314';
   const OS_TILES = {
     osm:     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    leisure: 'https://api.os.uk/maps/raster/v1/zxy/Leisure_3857/{z}/{x}/{y}.png?key=' + OS_API_KEY
+    outdoor: 'https://api.os.uk/maps/raster/v1/zxy/Outdoor_3857/{z}/{x}/{y}.png?key=' + OS_API_KEY
   };
   const OS_ATTRIBUTION = {
     osm:     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    leisure: '&copy; Crown copyright and database rights 2026 OS'
+    outdoor: '&copy; Crown copyright and database rights 2026 OS'
   };
   const MAP_STYLE_KEY = 'sniffout_map_style';
 
   function getSavedMapStyle() {
-    try { return localStorage.getItem(MAP_STYLE_KEY) || 'osm'; } catch(e) { return 'osm'; }
+    try {
+      var saved = localStorage.getItem(MAP_STYLE_KEY);
+      if (saved === 'leisure') saved = 'outdoor';
+      return saved || 'osm';
+    } catch(e) { return 'osm'; }
   }
   function saveMapStyle(style) {
     try { localStorage.setItem(MAP_STYLE_KEY, style); } catch(e) {}
