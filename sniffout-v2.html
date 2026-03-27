@@ -6150,26 +6150,46 @@
   function resolvePhotos(container) {
     var imgs = container.querySelectorAll('img[data-photo-meta]');
     var cache = getPhotoCache();
+
     imgs.forEach(function(img) {
       var metaUrl = img.getAttribute('data-photo-meta');
       if (!metaUrl) return;
-      img.removeAttribute('data-photo-meta');
+
       var cacheKey = extractPlaceId(metaUrl);
+      if (!cacheKey) { cacheKey = metaUrl; }
+
+      // Serve from cache immediately if available
       if (cache[cacheKey]) {
         img.src = cache[cacheKey];
+        img.removeAttribute('data-photo-meta');
         return;
       }
-      fetch(metaUrl)
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          if (data.photoUri) {
-            img.src = data.photoUri;
-            var updated = getPhotoCache();
-            updated[cacheKey] = data.photoUri;
-            setPhotoCache(updated);
-          }
-        })
-        .catch(function() {});
+
+      // Otherwise observe - fetch only when visible
+      var observer = new IntersectionObserver(function(entries, obs) {
+        entries.forEach(function(entry) {
+          if (!entry.isIntersecting) return;
+          obs.unobserve(entry.target);
+
+          var url = entry.target.getAttribute('data-photo-meta');
+          if (!url) return;
+          entry.target.removeAttribute('data-photo-meta');
+
+          fetch(url)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              if (data.photoUri) {
+                entry.target.src = data.photoUri;
+                var updated = getPhotoCache();
+                updated[cacheKey] = data.photoUri;
+                setPhotoCache(updated);
+              }
+            })
+            .catch(function() {});
+        });
+      }, { rootMargin: '200px' });
+
+      observer.observe(img);
     });
   }
 
