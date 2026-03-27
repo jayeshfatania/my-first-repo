@@ -4743,7 +4743,7 @@
       <!-- Walks map view -->
       <div id="walks-map-container">
         <div id="walks-map"></div>
-        <div id="walks-map-style-row" style="display:none;position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:500;">
+        <div id="walks-map-style-row" style="display:none;position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:500;flex-direction:row;">
           <div class="map-style-control" id="walks-map-style-control" role="group" aria-label="Map style">
             <div class="map-style-pill" id="walks-map-style-pill" aria-hidden="true"></div>
             <button class="map-style-btn active" data-map-style="osm">Standard</button>
@@ -12354,7 +12354,7 @@
     var walksStyleRow = document.getElementById('walks-map-style-row');
     if (showMap) {
       if (inmapFilter) inmapFilter.style.display = 'flex';
-      if (walksStyleRow) walksStyleRow.style.display = '';
+      if (walksStyleRow) walksStyleRow.style.display = 'flex';
       setWalksMapFilter('picks');
     } else {
       if (inmapFilter) inmapFilter.style.display = 'none';
