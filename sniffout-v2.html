@@ -795,53 +795,115 @@
     .location-line:active { transform: scale(0.97); }
     .weather-hero {
       margin: 0 16px 12px;
-      background: var(--brand);
+      background: linear-gradient(145deg, #3E6622 0%, #2C4A14 55%, #243D10 100%);
       border-radius: var(--radius-xl);
-      padding: 20px 20px 16px 20px;
+      padding: 20px 20px 0 20px;
       color: #fff;
       cursor: pointer;
       transition: transform 150ms ease-out;
       box-shadow:
-        0 8px 28px rgba(44,74,20,0.22),
-        0 2px 8px rgba(44,74,20,0.14),
-        inset 0 1px 0 rgba(255,255,255,0.12);
+        0 12px 36px rgba(44,74,20,0.28),
+        0 4px 12px rgba(44,74,20,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.13),
+        inset 0 -1px 0 rgba(0,0,0,0.12);
       position: relative;
       overflow: hidden;
     }
     .weather-hero:active { transform: scale(0.98); }
     .weather-hero--caution {
-      background: #7C4A00;
-      box-shadow:
-        0 8px 28px rgba(120,72,0,0.22),
-        0 2px 8px rgba(120,72,0,0.14),
-        inset 0 1px 0 rgba(255,255,255,0.10);
+      background: linear-gradient(145deg, #2C4A14 0%, #263F12 55%, #1F3410 100%);
     }
     .weather-hero--avoid {
-      background: #8A1A1A;
-      box-shadow:
-        0 8px 28px rgba(138,26,26,0.22),
-        0 2px 8px rgba(138,26,26,0.14),
-        inset 0 1px 0 rgba(255,255,255,0.10);
+      background: linear-gradient(145deg, #243D10 0%, #1A2D0B 55%, #152408 100%);
+    }
+    .weather-hero-glow {
+      position: absolute;
+      top: -60px;
+      left: -60px;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 70%);
+      pointer-events: none;
+    }
+    .hero-divider-top {
+      height: 1px;
+      background: rgba(255,255,255,0.09);
+      margin: 16px 0;
+    }
+    .hero-divider-bottom {
+      height: 1px;
+      background: rgba(255,255,255,0.09);
+      margin: 14px 0 0;
+    }
+    .weather-hero-window {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.55);
+      margin-top: 12px;
+    }
+    .weather-alert-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      border-radius: var(--radius-pill);
+      padding: 4px 10px 4px 8px;
+      margin-top: 12px;
+    }
+    .weather-alert-pill--caution {
+      background: rgba(255,185,0,0.18);
+      border: 1px solid rgba(255,185,0,0.30);
+      color: rgba(255,220,100,0.95);
+    }
+    .weather-alert-pill--avoid {
+      background: rgba(255,110,90,0.20);
+      border: 1px solid rgba(255,110,90,0.32);
+      color: rgba(255,180,165,0.95);
+    }
+    .weather-hero-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 0 20px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease;
+    }
+    .weather-hero-footer:active {
+      transform: scale(0.97);
+    }
+    .weather-hero-footer-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.50);
+    }
+    .weather-hero-footer-chevron {
+      color: rgba(255,255,255,0.40);
     }
     .weather-hero-top {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 0;
     }
-    .weather-hero-temp { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -2px; }
+    .weather-hero-temp { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 56px; font-weight: 800; letter-spacing: -3.5px; line-height: 0.95; }
     .weather-hero-feels { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 2px; }
     .weather-verdict {
+      font-family: var(--font-display);
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.18;
+      margin-top: 18px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-family: var(--font-display);
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      line-height: 1.2;
     }
-    .weather-verdict > svg { flex-shrink: 0; }
+
     .weather-pills {
       display: flex;
       gap: 6px;
@@ -852,10 +914,13 @@
       font-size: 12px;
       font-weight: 500;
       color: rgba(255,255,255,0.9);
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.28);
+      background: rgba(255,255,255,0.11);
+      border: 1px solid rgba(255,255,255,0.18);
       border-radius: 99px;
-      padding: 3px 10px;
+      padding: 5px 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     /* Hazard card */
@@ -1187,6 +1252,38 @@
 
     /* Metric tiles */
     .wx-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .wx-sun-row {
+      display: flex;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+      overflow: hidden;
+      margin: 0 16px;
+    }
+    .wx-sun-cell {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+    }
+    .wx-sun-cell + .wx-sun-cell {
+      border-left: 1px solid var(--border);
+    }
+    .wx-sun-time {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+    .wx-sun-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-2);
+      margin-top: 3px;
+    }
     .wx-tile {
       background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
       padding: 14px; min-height: 130px; display: flex; flex-direction: column;
@@ -3294,23 +3391,19 @@
     body.night .chip.active           { background: var(--brand-mid); color: #FFFFFF; border-color: var(--brand-mid); }
     body.night .hazard-card.brand-variant { background: rgba(106,155,74,0.07); }
     body.night .weather-hero {
-      background: #1A3522;
+      background: linear-gradient(145deg, #1F3D1A 0%, #162C0F 55%, #11240B 100%);
       box-shadow:
-        0 0 0 1px rgba(255,255,255,0.08),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+        0 0 0 1px rgba(255,255,255,0.07),
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -1px 0 rgba(0,0,0,0.18);
     }
     body.night .weather-hero--caution {
-      background: #4A2C00;
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,0.06),
-        inset 0 1px 0 rgba(255,255,255,0.07);
+      background: linear-gradient(145deg, #1A2E0D 0%, #152608 55%, #101E06 100%);
     }
     body.night .weather-hero--avoid {
-      background: #4A0E0E;
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,0.06),
-        inset 0 1px 0 rgba(255,255,255,0.07);
+      background: linear-gradient(145deg, #151E08 0%, #101705 55%, #0C1204 100%);
     }
+
     body.night .me-stat-number { color: #6A9B4A; }
     body.night .me-entry-label { color: #6A9B4A; }
     body.night .walk-card,
@@ -3994,20 +4087,7 @@
     }
     .modal-body p { font-size: 14px; color: var(--ink-2); line-height: 1.6; margin-bottom: 12px; }
     .modal-body p:last-child { margin-bottom: 0; }
-    .weather-info-btn {
-      background: rgba(255,255,255,0.6);
-      border: none;
-      border-radius: 50%;
-      width: 22px; height: 22px;
-      padding: 0;
-      color: var(--brand);
-      cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      -webkit-tap-highlight-color: transparent;
-      vertical-align: middle;
-      margin-left: 6px;
-    }
+
     .weather-greeting {
       font: 400 14px/1 'Plus Jakarta Sans', sans-serif;
       color: rgba(255,255,255,0.75);
@@ -4016,59 +4096,19 @@
     }
     .weather-hero { position: relative; }
     /* Unified hero card internals */
-    .weather-hero-divider {
-      display: none;
-    }
+
     .weather-hero-body {
-      font: 400 14px/1.55 'Plus Jakarta Sans', sans-serif;
-      color: rgba(255,255,255,0.85);
+      font: 400 14px/1.6 'Plus Jakarta Sans', sans-serif;
+      color: rgba(255,255,255,0.72);
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      margin-top: 5px;
       margin-bottom: 0;
     }
-    .weather-hero-forecast-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 14px;
-      padding: 8px 12px;
-      background: rgba(255,255,255,0.10);
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      transition: transform 0.15s ease;
-    }
-    .weather-hero-forecast-row:active { transform: scale(0.97); }
-    .weather-hero-forecast-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.80);
-      letter-spacing: 0.01em;
-    }
-    .weather-hero-forecast-chevron {
-      color: rgba(255,255,255,0.65);
-      opacity: 0.65;
-    }
-    .weather-hero-info-btn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      background: none;
-      color: rgba(255,255,255,0.65);
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      transform-origin: center;
-      transition: transform 0.15s ease;
-    }
-    .weather-hero-info-btn:active { transform: scale(0.97); }
+
+
     /* ─── Lucide icons ─── */
     [data-lucide] { display:inline-block; vertical-align:middle; flex-shrink:0; }
 
@@ -6656,7 +6696,7 @@
     return active.map(buildHazardCard).join('');
   }
 
-  function renderTodayStateB(cur, verdict, hazards, daily) {
+  function renderTodayStateB(cur, verdict, hazards, daily, hourly) {
     var content = document.getElementById('state-b-content');
     if (!content) return;
 
@@ -6706,12 +6746,49 @@
       ? luIcon('paw-print', 18, 'color:white;margin-left:6px;flex-shrink:0;')
       : '';
 
+    // Rain chance for next 12 hours
+    var maxRainProbHero = 0;
+    if (hourly && hourly.precipitation_probability) {
+      var hNow = new Date().getHours();
+      for (var ri = hNow; ri < Math.min(hNow + 12, hourly.precipitation_probability.length); ri++) {
+        var rp = hourly.precipitation_probability[ri] || 0;
+        if (rp > maxRainProbHero) maxRainProbHero = rp;
+      }
+    }
+
+    // Best walk window line
+    var windowHtml = '';
+    if (hourly) {
+      var winResult = getBestWindowTime(hourly);
+      if (verdict.type === 'approved' || verdict.type === 'caution' || verdict.type === 'caveat') {
+        windowHtml = '<div class="weather-hero-window">' +
+          luIcon('clock', 12) + ' Best window: ' + winResult.time +
+        '</div>';
+      } else if (verdict.type === 'avoid' && !winResult.isTomorrow) {
+        windowHtml = '<div class="weather-hero-window">' +
+          luIcon('clock', 12) + ' Better conditions expected after ' + winResult.time.split(' - ')[0] +
+        '</div>';
+      }
+    }
+
+    // Alert pill
+    var alertPillHtml = '';
+    if (verdict.type === 'caution' || verdict.type === 'caveat') {
+      alertPillHtml = '<div class="weather-alert-pill weather-alert-pill--caution">' +
+        luIcon('alert-triangle', 11) + ' Challenging conditions' +
+      '</div>';
+    } else if (verdict.type === 'avoid') {
+      alertPillHtml = '<div class="weather-alert-pill weather-alert-pill--avoid">' +
+        luIcon('alert-octagon', 11) + ' Severe weather' +
+      '</div>';
+    }
+
     var verdictLabel = getDogName() ? verdict.shortTitle.replace('[name]', getDogName()) : verdict.title;
     var heroClass = (verdict.type === 'caution' || verdict.type === 'caveat' ? ' weather-hero--caution' : verdict.type === 'avoid' ? ' weather-hero--avoid' : '');
 
     content.innerHTML =
       '<div class="weather-hero' + heroClass + '">' +
-        '<button class="weather-hero-info-btn" onclick="event.stopPropagation();switchTab(\'weather\')" aria-label="Full forecast">' + luIcon('info', 18) + '</button>' +
+        '<div class="weather-hero-glow"></div>' +
         '<div class="weather-hero-top">' +
           '<div>' +
             '<div class="weather-hero-temp">' + temp + '\u00b0C</div>' +
@@ -6720,24 +6797,25 @@
           heroIconHtml +
         '</div>' +
         '<div class="weather-verdict">' +
-          luIcon(verdict.icon, 20) +
           '<span>' +
             (greetingText ? '<span class="weather-greeting">' + greetingText + '</span>' : '') +
             verdictLabel +
             pawInline +
           '</span>' +
         '</div>' +
-        '<div class="weather-hero-divider"></div>' +
         '<div class="weather-hero-body">' + verdict.body + '</div>' +
-        '<div class="weather-pills" style="margin-top:12px;">' +
-          '<span class="weather-pill">' + luIcon('droplets', 14) + ' ' + humidity + '%</span>' +
+        windowHtml +
+        alertPillHtml +
+        '<div class="hero-divider-top"></div>' +
+        '<div class="weather-pills">' +
+          '<span class="weather-pill">' + luIcon('cloud-rain', 14) + ' ' + maxRainProbHero + '%</span>' +
           '<span class="weather-pill">' + luIcon('wind', 14) + ' ' + wind + ' km/h</span>' +
           (sunPillText ? '<span class="weather-pill">' + sunPillText + '</span>' : '') +
         '</div>' +
-        '<div class="weather-hero-divider"></div>' +
-        '<div class="weather-hero-forecast-row" onclick="switchTab(\'weather\')" role="button" aria-label="Full forecast">' +
-          '<span class="weather-hero-forecast-label">Full forecast</span>' +
-          '<span class="weather-hero-forecast-chevron">' + luIcon('chevron-right', 14) + '</span>' +
+        '<div class="hero-divider-bottom"></div>' +
+        '<div class="weather-hero-footer" onclick="event.stopPropagation();switchTab(\'weather\')" role="button" aria-label="Full forecast">' +
+          '<span class="weather-hero-footer-label">Full forecast</span>' +
+          '<span class="weather-hero-footer-chevron">' + luIcon('chevron-right', 14) + '</span>' +
         '</div>' +
       '</div>' +
       '<div id="today-walks-section"></div>' +
@@ -6952,6 +7030,17 @@
     var walkWindowTime = walkWindowResult.time;
     var walkWindowTomorrow = walkWindowResult.isTomorrow;
 
+    var sunriseTime = '--:--';
+    var sunsetTime  = '--:--';
+    if (daily && daily.sunrise && daily.sunrise[0]) {
+      var srRaw = daily.sunrise[0];
+      sunriseTime = srRaw.indexOf('T') !== -1 ? srRaw.split('T')[1] : srRaw;
+    }
+    if (daily && daily.sunset && daily.sunset[0]) {
+      var ssRaw = daily.sunset[0];
+      sunsetTime = ssRaw.indexOf('T') !== -1 ? ssRaw.split('T')[1] : ssRaw;
+    }
+
     // Yr.no icon HTML for hero (72px)
     var heroIconSrc = '';
     if (WMO_YR[cur.weather_code]) {
@@ -7061,6 +7150,23 @@
             '<div class="wx-tile-desc ' + hl.cls + '">' + hl.text + '</div>' +
           '</div>' +
 
+        '</div>' +
+
+        '<div class="wx-sun-row" style="margin-top:12px;">' +
+          '<div class="wx-sun-cell">' +
+            luIcon('sunrise', 20, 'color:var(--amber);flex-shrink:0;') +
+            '<div>' +
+              '<div class="wx-sun-time">' + sunriseTime + '</div>' +
+              '<div class="wx-sun-label">Sunrise</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="wx-sun-cell">' +
+            luIcon('sunset', 20, 'color:var(--amber);flex-shrink:0;') +
+            '<div>' +
+              '<div class="wx-sun-time">' + sunsetTime + '</div>' +
+              '<div class="wx-sun-label">Sunset</div>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
 
         // 5-day forecast card
@@ -7291,7 +7397,7 @@
     var hazards = detectHazards(cur);
     var paw     = getPawSafety(cur.temperature_2m);
 
-    renderTodayStateB(cur, verdict, hazards, daily);
+    renderTodayStateB(cur, verdict, hazards, daily, hourly);
     renderWeatherTab(cur, hourly, daily, locationName, verdict, hazards, paw);
   }
 
