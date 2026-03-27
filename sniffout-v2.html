@@ -5599,7 +5599,7 @@
      PHASE B — Navigation & tab switching
   ═══════════════════════════════ */
 
-  var ACTIVE_TAB_KEY = 'sniffout_active_tab';
+  const ACTIVE_TAB_KEY = 'sniffout_active_tab';
   var currentTab = 'today';
   var isStateB = false;
 
@@ -5846,8 +5846,8 @@
      PHASE C — Weather integration
   ═══════════════════════════════ */
 
-  var SESSION_KEY = 'sniffout_session';
-  var SESSION_TTL = 8 * 60 * 60 * 1000; // 8 hours
+  const SESSION_KEY = 'sniffout_session';
+  const SESSION_TTL = 8 * 60 * 60 * 1000; // 8 hours
 
   /* ─── Location entry points ─── */
 
@@ -6106,7 +6106,7 @@
 
   /* ─── WMO code helpers ─── */
 
-  var WMO_DESC = {
+  const WMO_DESC = {
     0:'Clear sky', 1:'Mainly clear', 2:'Partly cloudy', 3:'Overcast',
     45:'Foggy', 48:'Icy fog',
     51:'Light drizzle', 53:'Drizzle', 55:'Heavy drizzle',
@@ -6119,7 +6119,7 @@
     95:'Thunderstorm', 96:'Thunderstorm with hail', 99:'Heavy thunderstorm'
   };
 
-  var WMO_EMOJI = {
+  const WMO_EMOJI = {
     0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️',
     45:'🌁', 48:'🌁',
     51:'🌦️', 53:'🌦️', 55:'🌧️', 56:'🌧️', 57:'🌧️',
@@ -6130,7 +6130,7 @@
     95:'⛈️', 96:'⛈️', 99:'⛈️'
   };
 
-  var WMO_ICON = {
+  const WMO_ICON = {
     0:'sun', 1:'sun', 2:'cloud-sun', 3:'cloud',
     45:'cloud-fog', 48:'cloud-fog',
     51:'cloud-drizzle', 53:'cloud-drizzle', 55:'cloud-drizzle', 56:'cloud-drizzle', 57:'cloud-drizzle',
@@ -6142,9 +6142,9 @@
   };
 
   /* ─── Meteocons weather icon lookup ─── */
-  var YR_BASE = 'https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/';
+  const YR_BASE = 'https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols@8.0.1/dist/svg/';
 
-  var WMO_YR = {
+  const WMO_YR = {
     0:  { day: '01d', night: '01n' }, 1:  { day: '02d', night: '02n' },
     2:  { day: '03d', night: '03n' }, 3:  { day: '04',  night: '04'  },
     45: { day: '15',  night: '15'  }, 48: { day: '15',  night: '15'  },
@@ -6161,15 +6161,6 @@
     96: { day: '25d', night: '25n' }, 99: { day: '25d', night: '25n' }
   };
 
-  function yrIcon(code, isDay, size) {
-    var entry = WMO_YR[code];
-    var name  = entry ? (isDay === 0 ? entry.night : entry.day) : '04';
-    return '<img src="' + YR_BASE + name + '.svg"'
-      + ' alt="' + (WMO_DESC[code] || 'Weather') + '"'
-      + ' width="' + size + '" height="' + size + '"'
-      + ' style="display:block;flex-shrink:0;">';
-  }
-
   function luIcon(name, size, extra) {
     size = size || 16;
     return '<i data-lucide="' + name + '" style="width:' + size + 'px;height:' + size + 'px;' + (extra || '') + '"></i>';
@@ -6179,7 +6170,7 @@
     if (window.lucide) lucide.createIcons();
   }
 
-  var PHOTO_CACHE_KEY = 'sniffout_photo_cache';
+  const PHOTO_CACHE_KEY = 'sniffout_photo_cache';
   function getPhotoCache() {
     try { return JSON.parse(localStorage.getItem(PHOTO_CACHE_KEY) || '{}'); } catch(e) { return {}; }
   }
@@ -7328,7 +7319,7 @@
   ═══════════════════════════════ */
 
   /* ─── Tag taxonomy ─── */
-  var CONDITION_TAGS = [
+  const CONDITION_TAGS = [
     { key: 'cattle',    label: 'Cattle in field',        icon: 'triangle-alert', cat: 'Hazard'   },
     { key: 'sheep',     label: 'Sheep in field',          icon: 'triangle-alert', cat: 'Hazard'   },
     { key: 'leads',     label: 'Dogs on leads here',      icon: 'dog',            cat: 'Hazard'   },
@@ -7343,7 +7334,7 @@
     { key: 'quiet',     label: 'Quiet today',             icon: 'volume-x',       cat: 'Footfall' }
   ];
 
-  var HAZARD_KEYS = ['cattle', 'sheep', 'leads', 'access'];
+  const HAZARD_KEYS = ['cattle', 'sheep', 'leads', 'access'];
 
   /* ─── Session dismissal tracker ─── */
   /* promptDismissedThisSession removed — FIX 13.2 replaces with hasSubmittedTagsToday() */
@@ -8701,7 +8692,7 @@
   }
 
   /* ─── Condition tag conflict map — FIX 13.3 ─── */
-  var COND_CONFLICTS = {
+  const COND_CONFLICTS = {
     busy:  ['quiet'],
     quiet: ['busy']
   };
@@ -9685,12 +9676,12 @@
 
   /* ─── Favourites ─── */
 
-  var FAVS_KEY             = 'sniffout_favs';
-  var PLACE_FAVS_KEY       = 'sniffout_place_favs';
-  var GREENSPACE_FAVS_KEY  = 'sniffout_greenspace_favs';
-  var DOGS_KEY             = 'sniffout_dogs';
-  var DOG_DISMISSED_KEY    = 'sniffout_dog_dismissed';
-  var WISHLIST_KEY         = 'sniffout_wishlist';
+  const FAVS_KEY             = 'sniffout_favs';
+  const PLACE_FAVS_KEY       = 'sniffout_place_favs';
+  const GREENSPACE_FAVS_KEY  = 'sniffout_greenspace_favs';
+  const DOGS_KEY             = 'sniffout_dogs';
+  const DOG_DISMISSED_KEY    = 'sniffout_dog_dismissed';
+  const WISHLIST_KEY         = 'sniffout_wishlist';
 
   function getPlaceFavourites() {
     try { return JSON.parse(localStorage.getItem(PLACE_FAVS_KEY)) || []; } catch(e) { return []; }
@@ -9886,7 +9877,7 @@
       renderVenueList();
     }
   }
-  var EXPLORED_KEY = 'sniffout_explored';
+  const EXPLORED_KEY = 'sniffout_explored';
 
   function tsToSeason(ts) {
     var m = new Date(ts).getMonth();
@@ -9991,7 +9982,7 @@
 
   /* -- All badge definitions (Phase 2) ---------------------------------- */
   /* -- Badge storage -------------------------------------------------- */
-  var BADGES_KEY = 'sniffout_badges';
+  const BADGES_KEY = 'sniffout_badges';
 
   function getBadgeStorage() {
     try { return JSON.parse(localStorage.getItem(BADGES_KEY)) || {}; } catch(e) { return {}; }
@@ -10108,7 +10099,7 @@
     }
   }
 
-  var BADGE_ICONS = {
+  const BADGE_ICONS = {
     'leads-on':
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
         '<ellipse cx="8" cy="7" rx="4" ry="5"/>' +
@@ -10173,7 +10164,7 @@
       '</svg>'
   };
 
-  var ALL_BADGES = [
+  const ALL_BADGES = [
     // Trigger: walk log entries on 3+ distinct calendar dates
     { id: 'leads-on',          name: 'Leads On',          category: 'explorer',    phase: 1, earnedMoment: 'You kept coming back. The lead was always on.' },
     // Trigger: sum of walk distances >= 25 miles
@@ -10613,7 +10604,7 @@
 
   /* ─── Dog setup card functions ─── */
 
-  var DOG_NOSE_SVG = '<svg width="28" height="20" viewBox="0 0 48 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+  const DOG_NOSE_SVG = '<svg width="28" height="20" viewBox="0 0 48 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
     '<path d="M24 2C30 2 43 8 43 18C43 28 35 36 24 36C13 36 5 28 5 18C5 8 18 2 24 2Z" fill="var(--brand)"/>' +
     '<ellipse cx="15.5" cy="21" rx="5.5" ry="5.5" fill="#FFFFFF"/>' +
     '<ellipse cx="32.5" cy="21" rx="5.5" ry="5.5" fill="#FFFFFF"/>' +
@@ -11394,7 +11385,7 @@
 
   /* ─── Dog settings sheet functions ─── */
 
-  var DOG_SIZE_OPTIONS = ['small', 'medium', 'large'];
+  const DOG_SIZE_OPTIONS = ['small', 'medium', 'large'];
 
   function applyDogSizePreference(size) {
     var btns = document.querySelectorAll('#segment-control-size .segment-btn');
@@ -12510,13 +12501,13 @@
   });
 
   /* ─── Hoisted: units helpers (needed by init) ─── */
-  var UNITS_KEY = 'sniffout_units';
+  const UNITS_KEY = 'sniffout_units';
   function getSavedUnits() { try { return localStorage.getItem(UNITS_KEY) || 'km'; } catch(e) { return 'km'; } }
   function saveUnits(u)    { try { localStorage.setItem(UNITS_KEY, u); } catch(e) {} }
 
   /* ─── Hoisted: recently viewed helpers (needed by init) ─── */
-  var RECENT_WALKS_KEY = 'sniffout_recent_walks';
-  var RECENT_WALKS_MAX = 10;
+  const RECENT_WALKS_KEY = 'sniffout_recent_walks';
+  const RECENT_WALKS_MAX = 10;
   function getRecentWalks() {
     try { return JSON.parse(localStorage.getItem(RECENT_WALKS_KEY)) || []; } catch(e) { return []; }
   }
@@ -12539,16 +12530,16 @@
   ═══════════════════════════════ */
 
   /* ─── OS Maps constants ─── */
-  var OS_API_KEY = 'JcMmulbTghzn8pkYAGdxd8MH6GTK2314';
-  var OS_TILES = {
+  const OS_API_KEY = 'JcMmulbTghzn8pkYAGdxd8MH6GTK2314';
+  const OS_TILES = {
     osm:     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     leisure: 'https://api.os.uk/maps/raster/v1/zxy/Leisure_3857/{z}/{x}/{y}.png?key=' + OS_API_KEY
   };
-  var OS_ATTRIBUTION = {
+  const OS_ATTRIBUTION = {
     osm:     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     leisure: '&copy; Crown copyright and database rights 2026 OS'
   };
-  var MAP_STYLE_KEY = 'sniffout_map_style';
+  const MAP_STYLE_KEY = 'sniffout_map_style';
 
   function getSavedMapStyle() {
     try { return localStorage.getItem(MAP_STYLE_KEY) || 'osm'; } catch(e) { return 'osm'; }
@@ -12633,7 +12624,7 @@
   var placesApiCallCount  = 0;     // TASK 5: warn if excessive
 
   /* ─── Google Places proxy endpoint ─── */
-  var PLACES_PROXY = 'https://places-proxy.sniffout.app';
+  const PLACES_PROXY = 'https://places-proxy.sniffout.app';
 
   /* ─── Category config — mirrors dog-walk-dashboard.html CAT_CONFIG ─── */
   var CATEGORIES = [
