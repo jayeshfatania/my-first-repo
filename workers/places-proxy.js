@@ -29,7 +29,7 @@ async function handleRequest(request, event) {
     const cached = await cache.match(request)
     if (cached) return cached
 
-    const response = await forwardToGoogle(request)
+    const response = await forwardToGoogle(request, null)
     if (response.ok) {
       const cachedResponse = new Response(response.body, response)
       cachedResponse.headers.set('Cache-Control', 'public, max-age=86400')
@@ -39,9 +39,11 @@ async function handleRequest(request, event) {
     return response
   }
 
-  // POST searchText requests - cache using URL + body hash as synthetic key
+  // POST searchText - read body once, hash for cache key, pass string to Google
   if (request.method === 'POST' && url.pathname.includes('searchText')) {
-    const bodyText = await request.clone().text()
+    // Read body from original request once - avoids stream consumption issues with clone()
+    const bodyText = await request.text()
+
     const hashBuffer = await crypto.subtle.digest(
       'SHA-256',
       new TextEncoder().encode(url.pathname + bodyText)
@@ -54,7 +56,8 @@ async function handleRequest(request, event) {
     const cached = await cache.match(cacheKey)
     if (cached) return cached
 
-    const response = await forwardToGoogle(request)
+    // Pass bodyText string explicitly - body stream already consumed above
+    const response = await forwardToGoogle(request, bodyText)
     if (response.ok) {
       const cachedResponse = new Response(response.body, response)
       cachedResponse.headers.set('Cache-Control', 'public, max-age=86400')
@@ -65,10 +68,11 @@ async function handleRequest(request, event) {
   }
 
   // All other requests pass through unchanged
-  return forwardToGoogle(request)
+  return forwardToGoogle(request, null)
 }
 
-async function forwardToGoogle(request) {
+// bodyOverride: string to use as POST body (pass null to use request.body stream)
+async function forwardToGoogle(request, bodyOverride) {
   const url = new URL(request.url)
   const path = url.pathname.replace('/places-proxy', '')
   const params = url.searchParams
@@ -81,9 +85,12 @@ async function forwardToGoogle(request) {
     method: request.method,
     headers: {
       'Content-Type': 'application/json',
-      'X-Goog-FieldMask': request.headers.get('X-Goog-FieldMask') || '*'
+      'X-Goog-FieldMask': request.headers.get('X-Goog-FieldMask') || '*',
+      'Referer': 'https://sniffout.app'
     },
-    body: request.method === 'POST' ? request.body : undefined
+    body: request.method === 'POST'
+      ? (bodyOverride !== null ? bodyOverride : request.body)
+      : undefined
   })
 
   const data = await response.json()
