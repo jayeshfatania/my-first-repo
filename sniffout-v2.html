@@ -3462,6 +3462,27 @@
       -webkit-tap-highlight-color: transparent;
     }
     .nearby-view-more-btn:active { transform: scale(0.97); }
+    .gs-maps-escape {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+      width: calc(100% - 32px);
+      margin: 4px 16px 16px;
+      padding: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--brand);
+      text-decoration: none;
+      text-align: center;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .gs-maps-escape:active { transform: scale(0.97); }
     /* ── Saved places list ── */
     .saved-place-card {
       display: flex;
@@ -11878,6 +11899,15 @@
             gsMoreBtn.remove();
             resolvePhotos(gsList);
             syncIcons();
+            var gsEscapeUrl = 'https://www.google.com/maps/search/' + encodeURIComponent('parks near me') + '/@' + lat + ',' + lon + ',13z';
+            var gsEscapeLink = document.createElement('a');
+            gsEscapeLink.className = 'gs-maps-escape';
+            gsEscapeLink.href = gsEscapeUrl;
+            gsEscapeLink.target = '_blank';
+            gsEscapeLink.rel = 'noopener noreferrer';
+            gsEscapeLink.innerHTML = luIcon('map-pin', 14) + ' View more green spaces on Google Maps';
+            gsList.appendChild(gsEscapeLink);
+            syncIcons();
           };
           gsList.appendChild(gsMoreBtn);
         }
@@ -11966,95 +11996,125 @@
     if (_gsInFlight[cacheKey]) { _gsInFlight[cacheKey].push(cb); return; }
     _gsInFlight[cacheKey] = [cb];
 
-    var query = '[out:json][timeout:15];'
-      + '('
-      + 'way["leisure"="park"]["access"!~"private|no|restricted"](around:' + radiusM + ',' + lat + ',' + lon + ');'
-      + 'way["leisure"="nature_reserve"]["access"!~"private|no|restricted"](around:' + radiusM + ',' + lat + ',' + lon + ');'
-      + 'way["leisure"="common"](around:' + radiusM + ',' + lat + ',' + lon + ');'
-      + 'way["landuse"="common"](around:' + radiusM + ',' + lat + ',' + lon + ');'
-      + 'way["landuse"="village_green"](around:' + radiusM + ',' + lat + ',' + lon + ');'
-      + 'relation["leisure"="park"]["access"!~"private|no|restricted"](around:' + radiusM + ',' + lat + ',' + lon + ');'
-      + 'relation["leisure"="nature_reserve"]["access"!~"private|no|restricted"](around:' + radiusM + ',' + lat + ',' + lon + ');'
-      + ');'
-      + 'out center 30;';
+    var radiusM = getSavedRadius() * 1000;
+    var locationBias = { circle: { center: { latitude: lat, longitude: lon }, radius: radiusM } };
 
-    fetch('https://overpass-api.de/api/interpreter', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'data=' + encodeURIComponent(query)
-    })
-    .then(function(r) { return r.json(); })
-    .catch(function() {
-      // Retry once after 2 seconds
-      return new Promise(function(resolve) { setTimeout(resolve, 2000); })
-        .then(function() {
-          return fetch('https://overpass-api.de/api/interpreter', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'data=' + encodeURIComponent(query)
-          }).then(function(r) { return r.json(); });
+    // Google Places fetch - 4 queries, maxResultCount 10 each
+    function fetchGsFromGoogle() {
+      var queries = ['parks', 'nature reserve', 'common land', 'country park'];
+      placesApiCallCount += queries.length;
+      function runQuery(q) {
+        return fetch(PLACES_PROXY + '/v1/places:searchText', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Goog-FieldMask': 'places.displayName,places.location,places.photos,places.rating,places.googleMapsUri,places.primaryType'
+          },
+          body: JSON.stringify({ textQuery: q, locationBias: locationBias, maxResultCount: 10, languageCode: 'en-GB' })
         })
-        .catch(function() { return { elements: [] }; });
-    })
-    .then(function(data) {
-      var EXCLUDE_NAME_KEYWORDS = [
-        'car park', 'parking', 'park and ride', 'p&r', 'multistorey', 'multi-storey', 'ncp',
-        'playing fields', 'sports ground', 'sports club', 'recreation ground',
-        'school', 'college', 'university', 'burial ground', 'cemetery', 'graveyard',
-        'allotment', 'allotments', 'golf course', 'golf club'
-      ];
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          return (data.places || []).map(function(p) {
+            var plat = p.location && p.location.latitude;
+            var plon = p.location && p.location.longitude;
+            var name = p.displayName && p.displayName.text;
+            if (!plat || !plon || !name) return null;
+            var photoUrl = p.photos && p.photos[0] ? p.photos[0].name : null;
+            return {
+              name: name, lat: plat, lon: plon,
+              photoUrl: photoUrl, rating: p.rating || null,
+              mapsUrl: p.googleMapsUri || null, source: 'google'
+            };
+          }).filter(Boolean);
+        })
+        .catch(function() { return []; });
+      }
+      return Promise.all(queries.map(runQuery))
+        .then(function(arrays) { return [].concat.apply([], arrays); })
+        .catch(function() { return []; });
+    }
 
-      var results = (data.elements || [])
-        .filter(function(el) {
+    // OSM Overpass fetch - free, single request
+    function fetchGsFromOSM() {
+      var query = '[out:json][timeout:15];'
+        + '('
+        + 'way["leisure"="park"]["access"!~"private|no|restricted"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+        + 'way["leisure"="nature_reserve"]["access"!~"private|no|restricted"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+        + 'way["landuse"="common"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+        + 'way["landuse"="village_green"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+        + 'relation["leisure"="park"]["access"!~"private|no|restricted"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+        + 'relation["leisure"="nature_reserve"]["access"!~"private|no|restricted"](around:' + radiusM + ',' + lat + ',' + lon + ');'
+        + ');'
+        + 'out center 20;';
+      return fetch('https://overpass-api.de/api/interpreter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'data=' + encodeURIComponent(query)
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var EXCLUDE = ['car park', 'parking', 'playing fields', 'sports ground',
+          'sports club', 'school', 'college', 'burial ground', 'cemetery',
+          'allotment', 'allotments', 'golf'];
+        return (data.elements || []).filter(function(el) {
           var name = (el.tags && el.tags.name) || '';
-          if (!name) return false;
+          if (!name.trim()) return false;
           var lname = name.toLowerCase();
-          return !EXCLUDE_NAME_KEYWORDS.some(function(kw) { return lname.includes(kw); });
-        })
-        .filter(function(el) {
-          var tags = el.tags || {};
-          if (tags['operator:type'] === 'school') return false;
-          if (tags['landuse'] === 'cemetery') return false;
-          if (tags['amenity'] === 'grave_yard') return false;
-          if (tags['leisure'] === 'pitch') return false;
-          if (tags['leisure'] === 'stadium') return false;
-          if (tags['leisure'] === 'sports_centre') return false;
-          if (!(tags.name || '').trim()) return false;
-          return true;
-        })
-        .map(function(el) {
+          return !EXCLUDE.some(function(kw) { return lname.includes(kw); });
+        }).map(function(el) {
           var clat = el.center ? el.center.lat : el.lat;
           var clon = el.center ? el.center.lon : el.lon;
           if (!clat || !clon) return null;
-          var name = el.tags.name;
-          var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name) + '&query_place_id=' + el.id;
           return {
-            name:     name,
-            lat:      clat,
-            lon:      clon,
-            photoUrl: null,
-            rating:   null,
-            mapsUrl:  mapsUrl,
-            osmId:    el.id
+            name: el.tags.name, lat: clat, lon: clon,
+            photoUrl: null, rating: null,
+            mapsUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(el.tags.name),
+            source: 'osm'
           };
-        })
-        .filter(Boolean);
+        }).filter(Boolean);
+      })
+      .catch(function() { return []; });
+    }
 
-      // Deduplicate by proximity (0.1km)
-      var deduped = [];
-      results.forEach(function(candidate) {
-        var dup = deduped.findIndex(function(existing) {
-          return haversineKm(candidate.lat, candidate.lon, existing.lat, existing.lon) < 0.1;
+    // Run both in parallel
+    Promise.all([fetchGsFromGoogle(), fetchGsFromOSM()])
+    .then(function(results) {
+      var googleResults = results[0];
+      var osmResults    = results[1];
+
+      // Merge - add OSM results not already covered by Google (0.15km threshold)
+      var merged = googleResults.slice();
+      osmResults.forEach(function(osmPlace) {
+        var isDuplicate = merged.some(function(existing) {
+          return haversineKm(osmPlace.lat, osmPlace.lon, existing.lat, existing.lon) < 0.15;
         });
-        if (dup === -1) { deduped.push(candidate); }
+        if (!isDuplicate) merged.push(osmPlace);
       });
 
-      // Sort by distance
+      // Filter obvious non-public spaces by name
+      var EXCLUDE_NAMES = ['car park', 'parking', 'park and ride', 'multistorey', 'multi-storey', 'ncp'];
+      merged = merged.filter(function(gs) {
+        var lname = gs.name.toLowerCase();
+        return !EXCLUDE_NAMES.some(function(kw) { return lname.includes(kw); });
+      });
+
+      // Deduplicate by proximity - Google wins over OSM on overlap
+      var deduped = [];
+      merged.forEach(function(candidate) {
+        var dupIdx = deduped.findIndex(function(existing) {
+          return haversineKm(candidate.lat, candidate.lon, existing.lat, existing.lon) < 0.1;
+        });
+        if (dupIdx === -1) {
+          deduped.push(candidate);
+        } else if (candidate.source === 'google' && deduped[dupIdx].source === 'osm') {
+          deduped[dupIdx] = candidate;
+        }
+      });
+
+      // Sort by distance, cap at 20
       deduped.sort(function(a, b) {
         return haversineKm(lat, lon, a.lat, a.lon) - haversineKm(lat, lon, b.lat, b.lon);
       });
-
-      // Cap at 20
       deduped = deduped.slice(0, 20);
 
       placesCache[cacheKey] = { ts: Date.now(), data: deduped };
@@ -12619,7 +12679,7 @@
     var body = {
       textQuery:           cfg.query,
       locationBias: { circle: { center: { latitude: lat, longitude: lon }, radius: radius } },
-      maxResultCount: 20,
+      maxResultCount: 10,
       languageCode:  'en-GB'
     };
 
@@ -12894,8 +12954,19 @@
       moreBtn.onclick = function() {
         moreBtn.insertAdjacentHTML('beforebegin', hiddenVenues.map(renderVenueCard).join(''));
         moreBtn.remove();
-        if (count) count.textContent = venues.length + ' place' + (venues.length !== 1 ? 's' : '') + ' found';
+        if (count) count.textContent = venues.length + ' places found';
         resolvePhotos(el);
+        syncIcons();
+        var searchTerms = { pub: 'dog friendly pubs', cafe: 'dog friendly cafes', shop: 'pet shops', vet: 'veterinary clinics' };
+        var term = searchTerms[nearbyCategory] || 'dog friendly places';
+        var mapsEscapeUrl = 'https://www.google.com/maps/search/' + encodeURIComponent(term) + '/@' + nearbyUserLat + ',' + nearbyUserLon + ',14z';
+        var escapeLink = document.createElement('a');
+        escapeLink.className = 'gs-maps-escape';
+        escapeLink.href = mapsEscapeUrl;
+        escapeLink.target = '_blank';
+        escapeLink.rel = 'noopener noreferrer';
+        escapeLink.innerHTML = luIcon('map-pin', 14) + ' View more on Google Maps';
+        el.appendChild(escapeLink);
         syncIcons();
       };
       el.appendChild(moreBtn);
