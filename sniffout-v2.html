@@ -3444,6 +3444,24 @@
       line-height: 1.5;
       text-align: center;
     }
+    .nearby-view-more-btn {
+      display: block;
+      width: calc(100% - 32px);
+      margin: 4px 16px 16px;
+      padding: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--brand);
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nearby-view-more-btn:active { transform: scale(0.97); }
     /* ── Saved places list ── */
     .saved-place-card {
       display: flex;
@@ -11808,9 +11826,26 @@
       if (!gsList) return;
       if (greenSpaces.length) {
         nearbyGreenSpaces = greenSpaces;
-        gsList.innerHTML = greenSpaces.map(function(gs) {
+        var GS_INITIAL_LIMIT = 10;
+        var visibleGs = greenSpaces.slice(0, GS_INITIAL_LIMIT);
+        var hiddenGs  = greenSpaces.slice(GS_INITIAL_LIMIT);
+        gsList.innerHTML = visibleGs.map(function(gs) {
           return renderGreenSpaceCard(gs, lat, lon);
         }).join('');
+        if (hiddenGs.length > 0) {
+          var gsMoreBtn = document.createElement('button');
+          gsMoreBtn.className = 'nearby-view-more-btn';
+          gsMoreBtn.textContent = 'View ' + hiddenGs.length + ' more green spaces';
+          gsMoreBtn.onclick = function() {
+            gsMoreBtn.insertAdjacentHTML('beforebegin', hiddenGs.map(function(gs) {
+              return renderGreenSpaceCard(gs, lat, lon);
+            }).join(''));
+            gsMoreBtn.remove();
+            resolvePhotos(gsList);
+            syncIcons();
+          };
+          gsList.appendChild(gsMoreBtn);
+        }
         resolvePhotos(gsList);
       } else if (gsSection) {
         gsSection.style.display = 'none';
@@ -11885,11 +11920,15 @@
 
   /* ─── Fetch green spaces for Walks tab supplement ─── */
 
+  var _gsInFlight = {};
+
   function fetchGreenSpacesForWalks(lat, lon, locationName, cb) {
     var radius   = getSavedRadius() * 1000;
     var cacheKey = 'gs|' + lat.toFixed(3) + '|' + lon.toFixed(3) + '|' + radius;
     var cached   = placesCache[cacheKey];
-    if (cached && (Date.now() - cached.ts) < 60 * 60 * 1000) { cb(cached.data); return; }
+    if (cached && (Date.now() - cached.ts) < 24 * 60 * 60 * 1000) { cb(cached.data); return; }
+    if (_gsInFlight[cacheKey]) { _gsInFlight[cacheKey].push(cb); return; }
+    _gsInFlight[cacheKey] = [cb];
 
     var queries = ['parks', 'nature reserve', 'common land', 'country park'];
     var locationBias = { circle: { center: { latitude: lat, longitude: lon }, radius: radius } };
@@ -11968,7 +12007,13 @@
 
       placesCache[cacheKey] = { ts: Date.now(), data: deduped };
       try { localStorage.setItem('sniffout_places_cache', JSON.stringify(placesCache)); } catch(e) {}
-      cb(deduped);
+      var _cbs = _gsInFlight[cacheKey] || [];
+      delete _gsInFlight[cacheKey];
+      _cbs.forEach(function(fn) { fn(deduped); });
+    }).catch(function() {
+      var _cbs = _gsInFlight[cacheKey] || [];
+      delete _gsInFlight[cacheKey];
+      _cbs.forEach(function(fn) { fn([]); });
     });
   }
 
@@ -12444,7 +12489,7 @@
     var now = Date.now();
     var changed = false;
     Object.keys(placesCache).forEach(function(k) {
-      var ttl = k.indexOf('gs|') === 0 ? 60 * 60 * 1000 : 30 * 60 * 1000;
+      var ttl = 24 * 60 * 60 * 1000;
       if (now - placesCache[k].ts > ttl) {
         delete placesCache[k];
         changed = true;
@@ -12512,7 +12557,7 @@
     var radius   = radiusKm * 1000; // km → metres
     var cacheKey = cat + '|' + lat.toFixed(3) + '|' + lon.toFixed(3) + '|' + radius;
     var cached   = placesCache[cacheKey];
-    if (cached && (Date.now() - cached.ts) < 30 * 60 * 1000) { cb(cached.data); return; }
+    if (cached && (Date.now() - cached.ts) < 24 * 60 * 60 * 1000) { cb(cached.data); return; }
     placesApiCallCount++;
     if (placesApiCallCount > 20) { console.warn('[Sniffout] Places API call count exceeded 20 (' + placesApiCallCount + ')'); }
 
@@ -12766,17 +12811,42 @@
     nearbyPendingSort = null;
 
     var venues = nearbyVenues; // already filtered to active category by Google Places query
-    if (count) count.textContent = venues.length + ' place' + (venues.length !== 1 ? 's' : '') + ' found';
 
     if (venues.length === 0) {
+      if (count) count.textContent = '0 places found';
       el.innerHTML = '<div class="empty-state">No ' + (CATEGORY_LABEL[nearbyCategory] || 'places').toLowerCase() + 's found nearby. Try a different category or a wider radius.</div>';
       return;
     }
 
+    var INITIAL_LIMIT = 10;
+    var visibleVenues = venues.slice(0, INITIAL_LIMIT);
+    var hiddenVenues  = venues.slice(INITIAL_LIMIT);
+
+    if (count) {
+      count.textContent = hiddenVenues.length > 0
+        ? 'Showing ' + INITIAL_LIMIT + ' of ' + venues.length + ' places'
+        : venues.length + ' place' + (venues.length !== 1 ? 's' : '') + ' found';
+    }
+
     var tip = (CAT_GOOGLE_CONFIG[nearbyCategory] || {}).tip || '';
     var tipHtml = tip ? '<div class="venue-cat-tip">' + tip + '</div>' : '';
-    el.innerHTML = tipHtml + venues.map(renderVenueCard).join('') +
+    el.innerHTML = tipHtml + visibleVenues.map(renderVenueCard).join('') +
       '<div class="nearby-disclaimer">Results may not always be up to date. We recommend calling ahead or checking official sources to confirm dogs are welcome and to verify opening times.</div>';
+
+    if (hiddenVenues.length > 0) {
+      var moreBtn = document.createElement('button');
+      moreBtn.className = 'nearby-view-more-btn';
+      moreBtn.textContent = 'View ' + hiddenVenues.length + ' more';
+      moreBtn.onclick = function() {
+        moreBtn.insertAdjacentHTML('beforebegin', hiddenVenues.map(renderVenueCard).join(''));
+        moreBtn.remove();
+        if (count) count.textContent = venues.length + ' place' + (venues.length !== 1 ? 's' : '') + ' found';
+        resolvePhotos(el);
+        syncIcons();
+      };
+      el.appendChild(moreBtn);
+    }
+
     resolvePhotos(el);
     syncIcons();
   }
