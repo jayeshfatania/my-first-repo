@@ -3684,6 +3684,7 @@
       transform: scale(0.85);
       opacity: 0;
       pointer-events: none;
+      z-index: 402;
       transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.18s ease;
     }
 
@@ -3743,10 +3744,6 @@
     }
 
     .map-fab-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 398;
-      background: transparent;
       display: none;
     }
 
@@ -12852,7 +12849,6 @@
       panel.classList.add('map-fab-panel--open');
       btn.classList.add('map-fab-btn--open');
       btn.setAttribute('aria-expanded', 'true');
-      if (overlay) overlay.classList.add('map-fab-overlay--active');
       updateMapFabState(context);
     }
   }
@@ -12869,6 +12865,19 @@
     var overlay = document.getElementById('mapFabOverlay');
     if (overlay) overlay.classList.remove('map-fab-overlay--active');
   }
+
+  document.addEventListener('click', function(e) {
+    var walksContainer  = document.getElementById('walksMapFab');
+    var nearbyContainer = document.getElementById('nearbyMapFab');
+    var walksOpen  = walksContainer  && walksContainer.querySelector('.map-fab-panel--open');
+    var nearbyOpen = nearbyContainer && nearbyContainer.querySelector('.map-fab-panel--open');
+    if (!walksOpen && !nearbyOpen) return;
+    var clickedInsideWalks  = walksContainer  && walksContainer.contains(e.target);
+    var clickedInsideNearby = nearbyContainer && nearbyContainer.contains(e.target);
+    if (!clickedInsideWalks && !clickedInsideNearby) {
+      closeAllMapFabs();
+    }
+  });
 
   function updateMapFabState(context) {
     var style  = getSavedMapStyle() || 'osm';
