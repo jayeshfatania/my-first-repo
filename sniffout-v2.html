@@ -6552,6 +6552,12 @@
     if (month >= 6 && month <= 8)                      hazards.push('grassseeds');
     if (month >= 8 && month <= 10)                     hazards.push('harvestmites');
     if (month >= 11 || month <= 3)                     hazards.push('rocksalt');
+    if (month >= 3 && month <= 10)                     hazards.push('ticks');
+    if (month >= 5 && month <= 7)                      hazards.push('oakmoth');
+    if (month >= 8 && month <= 10)                     hazards.push('lungworm');
+    if (month >= 8 && month <= 11)                     hazards.push('fungi');
+    if (month >= 11 || month <= 3)                     hazards.push('antifreeze');
+    if (month >= 3 && month <= 6)                      hazards.push('cattle');
     return hazards;
   }
 
@@ -6674,6 +6680,18 @@
         hazards.push({ key: 'seasonal', title: 'Harvest mite season', body: 'Tiny orange larvae in long grass can make dogs very itchy, especially around the paws and belly. A quick paw rinse after walks helps.' });
       } else if (key === 'rocksalt' && temp < 3) {
         hazards.push({ key: 'seasonal', title: 'Rock salt on paths', body: 'Paths may have grit and rock salt today. Rinse ' + dogName + '\'s paws when you get home and check they are not licking them.' });
+      } else if (key === 'ticks') {
+        hazards.push({ key: 'seasonal', title: 'Tick check season', body: 'Tick season is underway. After walks in woodland, heathland, or long grass, check ' + dogName + ' carefully around the ears, neck, armpits, and between the toes. If you find one, use a tick removal tool and twist gently - do not squeeze or pull straight off.' });
+      } else if (key === 'oakmoth') {
+        hazards.push({ key: 'seasonal', title: 'Oak moth season', body: 'Oak processionary moth caterpillars are active on oak trees this time of year - look out for white silken nests on trunks and branches. Keep ' + dogName + ' away from any nests and from the ground beneath affected trees, as the tiny hairs are hazardous even after falling from the nest. If ' + dogName + ' has been near any, rinse their mouth and eyes with clean water and contact your vet straight away.' });
+      } else if (key === 'lungworm') {
+        hazards.push({ key: 'seasonal', title: 'Slugs and snails', body: dogName + ' can pick up lungworm from eating slugs or snails - worth actively discouraging that habit, especially on damp evening walks. If ' + dogName + ' is not already on a specific lungworm preventative (standard worming products do not cover it), it is worth a quick chat with your vet.' });
+      } else if (key === 'fungi') {
+        hazards.push({ key: 'seasonal', title: 'Autumn mushroom season', body: 'Autumn mushrooms are appearing in woodland and grassland across the UK. Keep ' + dogName + ' away from any mushrooms on the ground - some UK species are highly toxic and symptoms can take several hours to show. If you think ' + dogName + ' has eaten one, call your vet straight away and do not wait for signs.' });
+      } else if (key === 'antifreeze') {
+        hazards.push({ key: 'seasonal', title: 'Antifreeze this winter', body: 'Antifreeze is used on driveways and car parks over winter and tastes sweet to dogs. Keep ' + dogName + ' away from puddles near parked cars and along roadsides on your walk. If you think ' + dogName + ' has licked any, get to a vet immediately - do not wait to see how they seem.' });
+      } else if (key === 'cattle') {
+        hazards.push({ key: 'seasonal', title: 'Cattle in fields', body: 'Cattle can be unpredictable around dogs, especially during calving season in spring. Keep ' + dogName + ' on a short lead when walking through fields with cattle nearby. If cattle start to approach, let ' + dogName + ' off the lead, do not run, and walk calmly to the nearest gate or field edge.' });
       }
     });
 
