@@ -1621,45 +1621,6 @@
       color: var(--brand);
     }
     /* In-map segmented filter */
-    .walks-inmap-filter {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: auto;
-      z-index: 400;
-      display: none;
-      align-items: center;
-      gap: 8px;
-      padding: 0;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-    }
-    .walks-inmap-btn {
-      height: 34px;
-      border-radius: 20px;
-      padding: 0 14px;
-      font-size: 13px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--ink-2);
-      transition: transform 0.15s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .walks-inmap-btn:active { transform: scale(0.97); }
-    .walks-inmap-btn.active {
-      background: var(--brand);
-      color: #FFFFFF;
-      border: none;
-    }
-    body.night .walks-inmap-btn.active { background: #3D6B22; }
     /* Green space pin */
     .greenspace-pin {
       width: 28px;
@@ -3655,57 +3616,162 @@
       pointer-events: none; z-index: 1;
     }
 
-    /* Map style toggle */
-    .map-style-row {
-      padding: 8px 16px 4px;
-      align-items: center;
-    }
-    .map-style-control {
-      position: relative;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      background: rgba(0,0,0,0.06);
-      border-radius: 10px;
-      padding: 3px;
-      height: 34px;
-      width: 160px;
-      box-sizing: border-box;
-    }
-    .map-style-pill {
+    /* Map FAB */
+    .map-fab-container {
       position: absolute;
-      top: 3px; left: 3px;
-      width: calc((100% - 6px) / 2);
-      height: calc(100% - 6px);
-      background: var(--surface);
-      border-radius: 7px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-      transition: transform 200ms ease;
-      pointer-events: none;
-      z-index: 0;
+      bottom: 72px;
+      right: 12px;
+      z-index: 400;
+      display: none;
     }
-    .map-style-pill[data-active="0"] { transform: translateX(0); }
-    .map-style-pill[data-active="1"] { transform: translateX(100%); }
-    .map-style-btn {
-      position: relative;
-      z-index: 1;
+
+    .map-fab-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.10);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.14), 0 1px 3px rgba(0,0,0,0.08);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       justify-content: center;
-      font: 500 12px/1 'Plus Jakarta Sans', sans-serif;
-      color: rgba(0,0,0,0.4);
-      background: none;
-      border: none;
       cursor: pointer;
-      padding: 0;
-      border-radius: 7px;
-      transition: color 200ms;
-      white-space: nowrap;
+      color: var(--brand);
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+      z-index: 2;
+      transition: background 0.15s ease;
     }
-    .map-style-btn.active { color: var(--ink); font-weight: 600; }
-    body.night .map-style-control { background: rgba(255,255,255,0.08); }
-    body.night .map-style-pill { background: rgba(255,255,255,0.18); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
-    body.night .map-style-btn { color: rgba(255,255,255,0.4); }
-    body.night .map-style-btn.active { color: #FFFFFF; }
+
+    .map-fab-btn:active { transform: scale(0.93); }
+
+    .map-fab-btn--open { background: rgba(255,255,255,0.98); }
+
+    .map-fab-btn-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.15s ease, transform 0.18s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .map-fab-btn-icon--layers { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
+    .map-fab-btn--open .map-fab-btn-icon--layers { opacity: 0; transform: translate(-50%, -50%) rotate(180deg); }
+    .map-fab-btn-icon--close { opacity: 0; transform: translate(-50%, -50%) rotate(-180deg); }
+    .map-fab-btn--open .map-fab-btn-icon--close { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
+
+    .map-fab-panel {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 0;
+      width: 190px;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid rgba(0,0,0,0.09);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.14), 0 1px 4px rgba(0,0,0,0.08);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 10px 0;
+      transform-origin: bottom right;
+      transform: scale(0.85);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.18s ease;
+    }
+
+    .map-fab-panel--open {
+      transform: scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .map-fab-panel-label {
+      height: 30px;
+      padding: 0 14px 4px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.35);
+      display: flex;
+      align-items: flex-end;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .map-fab-panel-row {
+      height: 40px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-2);
+      cursor: pointer;
+      transition: background 0.1s ease;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .map-fab-panel-row:active { background: rgba(0,0,0,0.04); }
+    .map-fab-panel-row--active { color: var(--brand); }
+
+    .map-fab-panel-row-check {
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      opacity: 0;
+    }
+
+    .map-fab-panel-row--active .map-fab-panel-row-check { opacity: 1; }
+
+    .map-fab-divider {
+      height: 1px;
+      background: rgba(0,0,0,0.07);
+      margin: 4px 0;
+    }
+
+    .map-fab-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 399;
+      background: transparent;
+      display: none;
+    }
+
+    .map-fab-overlay--active { display: block; }
+
+    .map-fab-filter-group { display: block; }
+    .map-fab-filter-group--hidden { display: none; }
+
+    body.night .map-fab-btn {
+      background: rgba(31,31,31,0.92);
+      border-color: rgba(255,255,255,0.10);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.25);
+    }
+
+    body.night .map-fab-btn--open { background: rgba(31,31,31,0.98); }
+
+    body.night .map-fab-panel {
+      background: rgba(28,28,28,0.96);
+      border-color: rgba(255,255,255,0.08);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.45), 0 1px 4px rgba(0,0,0,0.30);
+    }
+
+    body.night .map-fab-panel-label { color: rgba(255,255,255,0.30); }
+    body.night .map-fab-panel-row { color: var(--ink-2); }
+    body.night .map-fab-panel-row--active { color: var(--brand); }
+    body.night .map-fab-panel-row:active { background: rgba(255,255,255,0.05); }
+    body.night .map-fab-divider { background: rgba(255,255,255,0.07); }
+
     .trail-card {
       flex-shrink: 0;
       width: 240px;
@@ -4577,6 +4643,8 @@
 
 <div id="app">
 
+  <div class="map-fab-overlay" id="mapFabOverlay" onclick="closeAllMapFabs()"></div>
+
   <div class="screen-area">
 
     <!-- ══════════ TODAY TAB ══════════ -->
@@ -4741,19 +4809,8 @@
         <div class="empty-state">Set your location on the Today tab to see nearby walks.</div>
       </div>
       <!-- Walks map view -->
-      <div id="walks-map-style-row" class="map-style-row" style="display:none;">
-        <div class="map-style-control" id="walks-map-style-control" role="group" aria-label="Map style">
-          <div class="map-style-pill" id="walks-map-style-pill" aria-hidden="true"></div>
-          <button class="map-style-btn active" data-map-style="osm">Standard</button>
-          <button class="map-style-btn" data-map-style="outdoor">OS Map</button>
-        </div>
-      </div>
       <div id="walks-map-container">
         <div id="walks-map"></div>
-        <div class="walks-inmap-filter" id="walksInmapFilter" role="group" aria-label="Filter walks">
-          <button class="walks-inmap-btn active" id="walksInmapPicks" onclick="setWalksMapFilter('picks')"><i data-lucide="star" style="width:15px;height:15px;"></i>Sniffout Picks</button>
-          <button class="walks-inmap-btn" id="walksInmapGreen" onclick="setWalksMapFilter('greenspaces')"><i data-lucide="trees" style="width:15px;height:15px;"></i>Green spaces</button>
-        </div>
         <div class="walks-map-zoom-msg" id="walks-map-zoom-msg" aria-hidden="true">
           <div style="display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;">
             <i data-lucide="map-pin" style="width:24px;height:24px;color:var(--ink-2);"></i>
@@ -4765,6 +4822,39 @@
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="var(--ink-2)" aria-hidden="true"><line x1="1" y1="1" x2="23" y2="23"/><path d="M20.9 20.9A10 10 0 0 1 4 12.1M12 2a10 10 0 0 1 8.9 14.8"/></svg>
           <div class="walks-map-empty-title">No walks match your filters</div>
           <div class="walks-map-empty-body">Try adjusting your filters above.</div>
+        </div>
+        <div class="map-fab-container" id="walksMapFab">
+          <div class="map-fab-panel" id="walksMapFabPanel">
+            <div class="map-fab-panel-label">Map style</div>
+            <div class="map-fab-panel-row map-fab-panel-row--active" id="walksStyleOsm" onclick="setMapStyle('osm');updateMapFabState('walks')">
+              <span class="map-fab-panel-row-check" id="walksStyleOsmCheck"></span>
+              Standard
+            </div>
+            <div class="map-fab-panel-row" id="walksStyleOutdoor" onclick="setMapStyle('outdoor');updateMapFabState('walks')">
+              <span class="map-fab-panel-row-check" id="walksStyleOutdoorCheck"></span>
+              OS Map
+            </div>
+            <div class="map-fab-divider"></div>
+            <div class="map-fab-filter-group" id="walksMapFabFilterGroup">
+              <div class="map-fab-panel-label">Walk filter</div>
+              <div class="map-fab-panel-row map-fab-panel-row--active" id="walksFilterAll" onclick="setWalksMapFilter('all');updateMapFabState('walks')">
+                <span class="map-fab-panel-row-check" id="walksFilterAllCheck"></span>
+                All walks
+              </div>
+              <div class="map-fab-panel-row" id="walksFilterPicks" onclick="setWalksMapFilter('picks');updateMapFabState('walks')">
+                <span class="map-fab-panel-row-check" id="walksFilterPicksCheck"></span>
+                Sniffout Picks
+              </div>
+              <div class="map-fab-panel-row" id="walksFilterGreen" onclick="setWalksMapFilter('greenspaces');updateMapFabState('walks')">
+                <span class="map-fab-panel-row-check" id="walksFilterGreenCheck"></span>
+                Green spaces
+              </div>
+            </div>
+          </div>
+          <button class="map-fab-btn" id="walksMapFabBtn" onclick="toggleMapFab('walks')" aria-label="Map options" aria-expanded="false">
+            <span class="map-fab-btn-icon map-fab-btn-icon--layers"></span>
+            <span class="map-fab-btn-icon map-fab-btn-icon--close"></span>
+          </button>
         </div>
       </div>
       <!-- Compact walk card (map pin tap) -->
@@ -4819,14 +4909,25 @@
       <div id="nearby-content">
         <div class="empty-state">Set your location on the Today tab to find dog-friendly places near you.</div>
       </div>
-      <div id="nearby-map-style-row" class="map-style-row" style="display:none;flex-direction:row;">
-        <div class="map-style-control" id="nearby-map-style-control" role="group" aria-label="Map style">
-          <div class="map-style-pill" id="nearby-map-style-pill" aria-hidden="true"></div>
-          <button class="map-style-btn active" data-map-style="osm">Standard</button>
-          <button class="map-style-btn" data-map-style="outdoor">OS Map</button>
+      <div id="nearby-map">
+        <div class="map-fab-container" id="nearbyMapFab">
+          <div class="map-fab-panel" id="nearbyMapFabPanel">
+            <div class="map-fab-panel-label">Map style</div>
+            <div class="map-fab-panel-row map-fab-panel-row--active" id="nearbyStyleOsm" onclick="setMapStyle('osm');updateMapFabState('nearby')">
+              <span class="map-fab-panel-row-check" id="nearbyStyleOsmCheck"></span>
+              Standard
+            </div>
+            <div class="map-fab-panel-row" id="nearbyStyleOutdoor" onclick="setMapStyle('outdoor');updateMapFabState('nearby')">
+              <span class="map-fab-panel-row-check" id="nearbyStyleOutdoorCheck"></span>
+              OS Map
+            </div>
+          </div>
+          <button class="map-fab-btn" id="nearbyMapFabBtn" onclick="toggleMapFab('nearby')" aria-label="Map options" aria-expanded="false">
+            <span class="map-fab-btn-icon map-fab-btn-icon--layers"></span>
+            <span class="map-fab-btn-icon map-fab-btn-icon--close"></span>
+          </button>
         </div>
       </div>
-      <div id="nearby-map"></div>
     </div><!-- /tab-nearby -->
 
     <!-- ══════════ ME TAB ══════════ -->
@@ -12015,9 +12116,9 @@
     var mapBtn2  = document.getElementById('walks-map-view-btn');
     if (listBtn2) listBtn2.classList.toggle('active', showListNow);
     if (mapBtn2)  mapBtn2.classList.toggle('active', !showListNow);
-    // Sync in-map filter visibility
-    var inmapFilter2 = document.getElementById('walksInmapFilter');
-    if (inmapFilter2) inmapFilter2.style.display = showListNow ? 'none' : 'flex';
+    // Sync FAB visibility
+    var walksFab2 = document.getElementById('walksMapFab');
+    if (walksFab2) walksFab2.style.display = showListNow ? 'none' : 'flex';
     if (!showListNow) {
       var tabPanelW = document.getElementById('tab-walks');
       var titleBarW = tabPanelW ? tabPanelW.querySelector('.tab-title-bar') : null;
@@ -12298,15 +12399,12 @@
   var walksMapCurrentView = 'list'; // 'list' | 'map'
   var walksMapSelectedId = null;
   var walksGreenSpaceMarkers = [];
-  var walksMapFilter = 'picks'; // 'picks' | 'greenspaces'
+  var walksMapFilter = 'all'; // 'all' | 'picks' | 'greenspaces'
 
   function setWalksMapFilter(mode) {
     walksMapFilter = mode;
-    var btnPicks = document.getElementById('walksInmapPicks');
-    var btnGreen = document.getElementById('walksInmapGreen');
-    if (btnPicks) btnPicks.classList.toggle('active', mode === 'picks');
-    if (btnGreen) btnGreen.classList.toggle('active', mode === 'greenspaces');
     renderWalksMapPins();
+    updateMapFabState('walks');
   }
 
   function setWalksView(mode) {
@@ -12349,17 +12447,10 @@
       if (mapCont) mapCont.classList.toggle('visible', showMap);
     }
 
-    // In-map filter + map style toggle: show only in map view
-    var inmapFilter = document.getElementById('walksInmapFilter');
-    var walksStyleRow = document.getElementById('walks-map-style-row');
-    if (showMap) {
-      if (inmapFilter) inmapFilter.style.display = 'flex';
-      if (walksStyleRow) walksStyleRow.style.display = 'flex';
-      setWalksMapFilter('picks');
-    } else {
-      if (inmapFilter) inmapFilter.style.display = 'none';
-      if (walksStyleRow) walksStyleRow.style.display = 'none';
-    }
+    // FAB: show only in map view
+    var walksFab = document.getElementById('walksMapFab');
+    if (walksFab) walksFab.style.display = showMap ? 'flex' : 'none';
+    if (!showMap) closeAllMapFabs();
 
     // Picks anchor: hide in map view, restore scroll-based control in list view
     var anchorBtn = document.getElementById('picks-anchor-btn');
@@ -12405,17 +12496,6 @@
       L.tileLayer(tileUrl, { maxZoom: 18 }).addTo(walksMapInstance);
       walksMapInstance.on('zoomend moveend', renderWalksMapPins);
       walksMapInstance.on('click', function() { dismissWalksMapCard(); });
-      applyMapStyleControl('walks-map-style-control', style);
-      /* Wire up toggle buttons once on first map creation */
-      var walksStyleControl = document.getElementById('walks-map-style-control');
-      if (walksStyleControl && !walksStyleControl._styleBound) {
-        walksStyleControl._styleBound = true;
-        walksStyleControl.querySelectorAll('.map-style-btn').forEach(function(btn) {
-          btn.addEventListener('click', function() {
-            setMapStyle(btn.getAttribute('data-map-style'));
-          });
-        });
-      }
     }
     walksMapInstance.setView([lat, lon], 12);
     walksMapInstance.invalidateSize();
@@ -12739,6 +12819,77 @@
     });
   }
 
+  function initMapFabIcons() {
+    var layersHtml = luIcon('layers', 20);
+    var closeHtml  = luIcon('x', 20);
+    var checkHtml  = luIcon('check', 14);
+    ['walksMapFabBtn', 'nearbyMapFabBtn'].forEach(function(id) {
+      var btn = document.getElementById(id);
+      if (!btn) return;
+      var layersEl = btn.querySelector('.map-fab-btn-icon--layers');
+      var closeEl  = btn.querySelector('.map-fab-btn-icon--close');
+      if (layersEl) layersEl.innerHTML = layersHtml;
+      if (closeEl)  closeEl.innerHTML  = closeHtml;
+    });
+    document.querySelectorAll('.map-fab-panel-row-check').forEach(function(el) {
+      el.innerHTML = checkHtml;
+    });
+  }
+
+  function toggleMapFab(context) {
+    var btnId   = context === 'walks' ? 'walksMapFabBtn'   : 'nearbyMapFabBtn';
+    var panelId = context === 'walks' ? 'walksMapFabPanel' : 'nearbyMapFabPanel';
+    var btn     = document.getElementById(btnId);
+    var panel   = document.getElementById(panelId);
+    var overlay = document.getElementById('mapFabOverlay');
+    if (!btn || !panel) return;
+    var isOpen = panel.classList.contains('map-fab-panel--open');
+    closeAllMapFabs();
+    if (!isOpen) {
+      panel.classList.add('map-fab-panel--open');
+      btn.classList.add('map-fab-btn--open');
+      btn.setAttribute('aria-expanded', 'true');
+      if (overlay) overlay.classList.add('map-fab-overlay--active');
+      updateMapFabState(context);
+    }
+  }
+
+  function closeAllMapFabs() {
+    ['walksMapFab', 'nearbyMapFab'].forEach(function(id) {
+      var container = document.getElementById(id);
+      if (!container) return;
+      var btn   = container.querySelector('.map-fab-btn');
+      var panel = container.querySelector('.map-fab-panel');
+      if (btn)   { btn.classList.remove('map-fab-btn--open'); btn.setAttribute('aria-expanded', 'false'); }
+      if (panel) { panel.classList.remove('map-fab-panel--open'); }
+    });
+    var overlay = document.getElementById('mapFabOverlay');
+    if (overlay) overlay.classList.remove('map-fab-overlay--active');
+  }
+
+  function updateMapFabState(context) {
+    var style  = getSavedMapStyle() || 'osm';
+    var filter = typeof walksMapFilter !== 'undefined' ? walksMapFilter : 'all';
+    if (context === 'walks' || context === 'all') {
+      var wOsm     = document.getElementById('walksStyleOsm');
+      var wOutdoor = document.getElementById('walksStyleOutdoor');
+      var wAll     = document.getElementById('walksFilterAll');
+      var wPicks   = document.getElementById('walksFilterPicks');
+      var wGreen   = document.getElementById('walksFilterGreen');
+      if (wOsm)     wOsm.classList.toggle('map-fab-panel-row--active',     style === 'osm');
+      if (wOutdoor) wOutdoor.classList.toggle('map-fab-panel-row--active', style === 'outdoor');
+      if (wAll)     wAll.classList.toggle('map-fab-panel-row--active',     filter === 'all');
+      if (wPicks)   wPicks.classList.toggle('map-fab-panel-row--active',   filter === 'picks');
+      if (wGreen)   wGreen.classList.toggle('map-fab-panel-row--active',   filter === 'greenspaces');
+    }
+    if (context === 'nearby' || context === 'all') {
+      var nOsm     = document.getElementById('nearbyStyleOsm');
+      var nOutdoor = document.getElementById('nearbyStyleOutdoor');
+      if (nOsm)     nOsm.classList.toggle('map-fab-panel-row--active',     style === 'osm');
+      if (nOutdoor) nOutdoor.classList.toggle('map-fab-panel-row--active', style === 'outdoor');
+    }
+  }
+
   /* Swap tile layer on a Leaflet map instance */
   function swapTileLayer(map, style, maxZoom) {
     map.eachLayer(function(layer) {
@@ -12762,9 +12913,8 @@
     if (typeof walksMapInstance !== 'undefined' && walksMapInstance) {
       swapTileLayer(walksMapInstance, style, 18);
     }
-    applyMapStyleControl('nearby-map-style-control', style);
     applyMapStyleControl('detail-map-style-control', style);
-    applyMapStyleControl('walks-map-style-control', style);
+    updateMapFabState('all');
   }
 
   var nearbyMap          = null;
@@ -12968,7 +13118,7 @@
 
     var mapEl    = document.getElementById('nearby-map');
     var venuesEl = document.getElementById('nearby-venues');
-    var styleRow = document.getElementById('nearby-map-style-row');
+    var nearbyFab = document.getElementById('nearbyMapFab');
     var catBar   = document.getElementById('nearby-map-cat-bar');
     var filterRow = document.getElementById('nearby-filter-row');
     var toggleRow = document.getElementById('nearby-toggle-row');
@@ -12982,7 +13132,7 @@
         mapEl.style.height = Math.max(200, mapH) + 'px';
         mapEl.classList.add('visible');
       }
-      if (styleRow) styleRow.style.display = 'none';
+      if (nearbyFab) nearbyFab.style.display = 'flex';
       if (toggleRow) toggleRow.style.display = 'none';
       if (filterRow) filterRow.style.display = 'none';
       if (catBar) {
@@ -13019,7 +13169,7 @@
           mapEl.style.opacity = '';
           mapEl.style.transition = '';
           if (venuesEl) venuesEl.style.display = '';
-          if (styleRow) styleRow.style.display = 'none';
+          if (nearbyFab) { nearbyFab.style.display = 'none'; closeAllMapFabs(); }
           if (toggleRow) toggleRow.style.display = '';
           if (filterRow) filterRow.style.display = '';
           if (catBar) catBar.classList.remove('visible');
@@ -13027,7 +13177,7 @@
       } else {
         if (mapEl) mapEl.classList.remove('visible');
         if (venuesEl) venuesEl.style.display = '';
-        if (styleRow) styleRow.style.display = 'none';
+        if (nearbyFab) { nearbyFab.style.display = 'none'; closeAllMapFabs(); }
         if (toggleRow) toggleRow.style.display = '';
         if (filterRow) filterRow.style.display = '';
         if (catBar) catBar.classList.remove('visible');
@@ -13311,20 +13461,8 @@
           if (tp) tp.style.filter = 'brightness(0.75) contrast(1.05)';
         }, 100);
       }
-      applyMapStyleControl('nearby-map-style-control', style);
-      /* Wire up toggle buttons once on first map creation */
-      var nearbyStyleControl = document.getElementById('nearby-map-style-control');
-      if (nearbyStyleControl && !nearbyStyleControl._styleBound) {
-        nearbyStyleControl._styleBound = true;
-        nearbyStyleControl.querySelectorAll('.map-style-btn').forEach(function(btn) {
-          btn.addEventListener('click', function() {
-            setMapStyle(btn.getAttribute('data-map-style'));
-          });
-        });
-      }
     } else {
       nearbyMap.setView([lat, lon], 14);
-      applyMapStyleControl('nearby-map-style-control', style);
     }
 
     nearbyMap.invalidateSize();
@@ -14650,6 +14788,8 @@
   ═══════════════════════════════ */
 
   function initApp() {
+    initMapFabIcons();
+
     // 1. Try to restore location (no TTL — persists across refreshes)
     var locRaw;
     try { locRaw = localStorage.getItem('sniffout_location'); } catch(e) {}
