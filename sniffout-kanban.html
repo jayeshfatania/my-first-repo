@@ -353,6 +353,25 @@
 .walk-check-item label{font-size:11px;color:#333;cursor:pointer;line-height:1.4;flex:1}
 .walk-check-item.checked label{color:#aaa;text-decoration:line-through}
 .walk-location{font-size:10px;color:#aaa;white-space:nowrap;flex-shrink:0}
+.add-card-btn{display:block;width:100%;margin-top:10px;padding:9px;background:none;border:1.5px dashed var(--border);border-radius:var(--radius);font-size:12px;font-weight:600;color:var(--ink-3);cursor:pointer;font-family:inherit;transition:border-color 0.15s ease,color 0.15s ease,background 0.15s ease;text-align:center}
+.add-card-btn:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-tint)}
+.add-card-btn:active{transform:scale(0.97)}
+.add-card-form{display:none;margin-top:8px;background:var(--surface);border:1.5px solid var(--brand);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
+.add-card-form.visible{display:block}
+.add-card-form input,.add-card-form textarea{display:block;width:100%;font-family:inherit;font-size:12px;border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;margin-bottom:8px;background:white;color:var(--ink);outline:none;resize:vertical}
+.add-card-form input:focus,.add-card-form textarea:focus{border-color:var(--brand)}
+.add-card-actions{display:flex;gap:8px;align-items:center}
+.add-card-submit{font-size:12px;font-weight:600;background:var(--brand);color:white;border:none;border-radius:var(--radius-sm);padding:7px 14px;cursor:pointer;font-family:inherit;transition:opacity 0.15s ease}
+.add-card-submit:hover{opacity:0.88}
+.add-card-submit:active{transform:scale(0.97)}
+.add-card-cancel{font-size:12px;font-weight:600;background:none;color:var(--ink-3);border:none;cursor:pointer;font-family:inherit;padding:7px 4px}
+.add-card-cancel:hover{color:var(--ink)}
+.cards.drag-over{background:var(--brand-tint);border-radius:var(--radius);outline:2px dashed var(--brand);outline-offset:3px}
+.card.dragging{opacity:0.35;pointer-events:none}
+.card-move-btn{display:none;font-size:10px;color:var(--brand);cursor:pointer;font-weight:600;background:none;border:none;padding:4px 0 0;font-family:inherit}
+.card-move-btn:hover{text-decoration:underline}
+.card-move-select{display:none;width:100%;font-size:11px;font-family:inherit;border:0.5px solid var(--border);border-radius:6px;padding:5px 8px;margin-top:4px;color:var(--ink);background:white;cursor:pointer}
+@media (hover:none) and (pointer:coarse){.card-move-btn{display:block}}
 </style>
 </head>
 <body>
@@ -378,19 +397,19 @@
   <div class="stat">
     <div class="stat-dot backlog"></div>
     <div class="stat-label">Backlog</div>
-    <div class="stat-count">14</div>
+    <div class="stat-count" id="stat-backlog">14</div>
   </div>
   <div class="stat-divider"></div>
   <div class="stat">
     <div class="stat-dot progress"></div>
     <div class="stat-label">In Progress</div>
-    <div class="stat-count">4</div>
+    <div class="stat-count" id="stat-inprogress">4</div>
   </div>
   <div class="stat-divider"></div>
   <div class="stat">
     <div class="stat-dot done"></div>
     <div class="stat-label">Done</div>
-    <div class="stat-count">22</div>
+    <div class="stat-count" id="stat-done">22</div>
   </div>
   <div class="stat-divider"></div>
   <div class="stat">
@@ -404,14 +423,14 @@
 <div class="board">
 
   <!-- BACKLOG -->
-  <div class="column">
+  <div class="column" id="col-backlog">
     <div class="column-header">
       <div class="column-title">
         <div class="column-title-text">Backlog</div>
-        <div class="column-count">14</div>
+        <div class="column-count" id="count-backlog">14</div>
       </div>
     </div>
-    <div class="cards">
+    <div class="cards" id="cards-backlog">
 
       <div class="section-label">Hard Go-Live Blockers</div>
 
@@ -720,17 +739,27 @@
       </div>
 
     </div>
+    <button class="add-card-btn" onclick="showAddForm('backlog')">+ Add card</button>
+    <div class="add-card-form" id="add-form-backlog">
+      <input type="text" id="add-title-backlog" placeholder="Card title" onkeydown="if(event.key==='Enter')submitCard('backlog')">
+      <textarea id="add-body-backlog" placeholder="Description" rows="3"></textarea>
+      <input type="text" id="add-tags-backlog" placeholder="Tags e.g. Dev, Designer">
+      <div class="add-card-actions">
+        <button class="add-card-submit" onclick="submitCard('backlog')">Add card</button>
+        <button class="add-card-cancel" onclick="hideAddForm('backlog')">Cancel</button>
+      </div>
+    </div>
   </div>
 
   <!-- IN PROGRESS -->
-  <div class="column">
+  <div class="column" id="col-inprogress">
     <div class="column-header">
       <div class="column-title">
         <div class="column-title-text">In Progress</div>
-        <div class="column-count progress">4</div>
+        <div class="column-count progress" id="count-inprogress">4</div>
       </div>
     </div>
-    <div class="cards">
+    <div class="cards" id="cards-inprogress">
 
       <div class="card" id="card-website">
         <div class="card-top">
@@ -825,17 +854,27 @@
       </div>
 
     </div>
+    <button class="add-card-btn" onclick="showAddForm('inprogress')">+ Add card</button>
+    <div class="add-card-form" id="add-form-inprogress">
+      <input type="text" id="add-title-inprogress" placeholder="Card title" onkeydown="if(event.key==='Enter')submitCard('inprogress')">
+      <textarea id="add-body-inprogress" placeholder="Description" rows="3"></textarea>
+      <input type="text" id="add-tags-inprogress" placeholder="Tags e.g. Dev, Designer">
+      <div class="add-card-actions">
+        <button class="add-card-submit" onclick="submitCard('inprogress')">Add card</button>
+        <button class="add-card-cancel" onclick="hideAddForm('inprogress')">Cancel</button>
+      </div>
+    </div>
   </div>
 
   <!-- DONE -->
-  <div class="column">
+  <div class="column" id="col-done">
     <div class="column-header">
       <div class="column-title">
         <div class="column-title-text">Done</div>
-        <div class="column-count done-count">22</div>
+        <div class="column-count done-count" id="count-done">22</div>
       </div>
     </div>
-    <div class="cards">
+    <div class="cards" id="cards-done">
 
       <div class="card done-card" id="card-fab">
         <div class="card-top">
@@ -1300,6 +1339,16 @@
       </div>
 
     </div>
+    <button class="add-card-btn" onclick="showAddForm('done')">+ Add card</button>
+    <div class="add-card-form" id="add-form-done">
+      <input type="text" id="add-title-done" placeholder="Card title" onkeydown="if(event.key==='Enter')submitCard('done')">
+      <textarea id="add-body-done" placeholder="Description" rows="3"></textarea>
+      <input type="text" id="add-tags-done" placeholder="Tags e.g. Dev, Designer">
+      <div class="add-card-actions">
+        <button class="add-card-submit" onclick="submitCard('done')">Add card</button>
+        <button class="add-card-cancel" onclick="hideAddForm('done')">Cancel</button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -1331,5 +1380,210 @@ function saveCheck(n,cardId){var cb=document.getElementById('chk-'+n);if(!cb)ret
 function updateProgress(cardId){var key='sniffout-walk-img-'+cardId;var state=JSON.parse(localStorage.getItem(key)||'{}');var total=document.querySelectorAll('#checklist-'+cardId+' .walk-check-item').length;var done=Object.values(state).filter(Boolean).length;var p=document.getElementById('prog-'+cardId);if(p)p.innerHTML='<span>'+done+'</span> of '+total+' images sourced';}
 function loadChecklist(cardId){var key='sniffout-walk-img-'+cardId;var state=JSON.parse(localStorage.getItem(key)||'{}');Object.keys(state).forEach(function(n){if(state[n]){var cb=document.getElementById('chk-'+n);if(cb){cb.checked=true;var item=cb.closest('.walk-check-item');if(item)item.classList.add('checked');}}});updateProgress(cardId);}
 document.addEventListener('DOMContentLoaded',function(){loadChecklist('website');});
+</script>
+<script>
+(function(){
+  var STORE_CUSTOM='sniffout-kanban-custom-cards';
+  var STORE_MOVES='sniffout-kanban-card-moves';
+  var COLS=['backlog','inprogress','done'];
+  var COL_LABELS={backlog:'Backlog',inprogress:'In Progress',done:'Done'};
+  var dragging=null;
+
+  function getCustomCards(){return JSON.parse(localStorage.getItem(STORE_CUSTOM)||'[]');}
+  function saveCustomCards(a){localStorage.setItem(STORE_CUSTOM,JSON.stringify(a));}
+  function getMoves(){return JSON.parse(localStorage.getItem(STORE_MOVES)||'{}');}
+  function saveMoves(m){localStorage.setItem(STORE_MOVES,JSON.stringify(m));}
+
+  function getTagClass(t){
+    t=(t||'').toLowerCase();
+    if(t==='dev'||t==='developer')return'tag-dev';
+    if(t==='design'||t==='designer')return'tag-design';
+    if(t==='owner')return'tag-owner';
+    if(t==='research')return'tag-research';
+    if(t==='blocker')return'tag-blocker';
+    if(t==='copy'||t==='copywriter')return'tag-copy';
+    return'tag-dev';
+  }
+
+  window.showAddForm=function(col){
+    COLS.forEach(function(c){var f=document.getElementById('add-form-'+c);if(f)f.classList.remove('visible');});
+    var f=document.getElementById('add-form-'+col);
+    if(!f)return;
+    f.classList.add('visible');
+    var ti=document.getElementById('add-title-'+col);
+    if(ti)ti.focus();
+  };
+
+  window.hideAddForm=function(col){
+    var f=document.getElementById('add-form-'+col);
+    if(!f)return;
+    f.classList.remove('visible');
+    ['add-title-','add-body-','add-tags-'].forEach(function(p){var el=document.getElementById(p+col);if(el)el.value='';});
+  };
+
+  window.submitCard=function(col){
+    var titleEl=document.getElementById('add-title-'+col);
+    if(!titleEl||!titleEl.value.trim()){if(titleEl)titleEl.focus();return;}
+    var title=titleEl.value.trim();
+    var body=(document.getElementById('add-body-'+col)||{value:''}).value.trim();
+    var tagsRaw=(document.getElementById('add-tags-'+col)||{value:''}).value;
+    var tags=tagsRaw.split(',').map(function(t){return t.trim();}).filter(Boolean);
+    var card={id:'custom-'+Date.now(),title:title,body:body,tags:tags,column:col};
+    var all=getCustomCards();all.push(card);saveCustomCards(all);
+    var container=document.getElementById('cards-'+col);
+    if(container){var el=buildCardEl(card);container.appendChild(el);renderNotes(card.id);}
+    window.hideAddForm(col);
+    updateCounts();
+  };
+
+  function buildCardEl(card){
+    var div=document.createElement('div');
+    div.className='card';div.id=card.id;
+    div.setAttribute('draggable','true');div.setAttribute('data-custom','1');
+
+    var top=document.createElement('div');top.className='card-top';
+    var titleEl=document.createElement('div');titleEl.className='card-title';titleEl.textContent=card.title;
+    top.appendChild(titleEl);
+    if(card.tags&&card.tags.length){var tag=document.createElement('div');tag.className='card-tag '+getTagClass(card.tags[0]);tag.textContent=card.tags[0];top.appendChild(tag);}
+    div.appendChild(top);
+
+    if(card.body){var body=document.createElement('div');body.className='card-body';body.textContent=card.body;div.appendChild(body);}
+
+    if(card.tags&&card.tags.length>1){
+      var footer=document.createElement('div');footer.className='card-footer';
+      card.tags.slice(1).forEach(function(t){var lbl=document.createElement('div');lbl.className='card-label';lbl.textContent=t;footer.appendChild(lbl);});
+      div.appendChild(footer);
+    }
+
+    var moveBtn=document.createElement('button');moveBtn.className='card-move-btn';moveBtn.textContent='Move to...';
+    var moveSel=document.createElement('select');moveSel.className='card-move-select';
+    moveBtn.onclick=function(){moveSel.style.display=moveSel.style.display==='block'?'none':'block';};
+    buildMoveSelect(moveSel,card.id,card.column,true);
+    div.appendChild(moveBtn);div.appendChild(moveSel);
+
+    var notesWrap=document.createElement('div');notesWrap.className='card-notes';
+    var notesHdr=document.createElement('div');notesHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;';
+    var notesLbl=document.createElement('div');notesLbl.className='card-notes-label';notesLbl.textContent='Notes';
+    var notesAdd=document.createElement('button');notesAdd.className='card-notes-add';notesAdd.textContent='+ Add note';
+    (function(id){notesAdd.onclick=function(){showNoteInput(id);};})(card.id);
+    notesHdr.appendChild(notesLbl);notesHdr.appendChild(notesAdd);notesWrap.appendChild(notesHdr);
+    var notesList=document.createElement('div');notesList.id='notes-'+card.id;notesWrap.appendChild(notesList);
+    var noteInputWrap=document.createElement('div');noteInputWrap.className='card-note-input-wrap';noteInputWrap.id='input-'+card.id;
+    var noteInput=document.createElement('input');noteInput.className='card-note-input';noteInput.id='text-'+card.id;noteInput.placeholder='Add a note...';
+    (function(id){noteInput.addEventListener('keydown',function(e){if(e.key==='Enter')saveNote(id);});})(card.id);
+    var noteSaveBtn=document.createElement('button');noteSaveBtn.className='card-note-save';noteSaveBtn.textContent='Save';
+    (function(id){noteSaveBtn.onclick=function(){saveNote(id);};})(card.id);
+    noteInputWrap.appendChild(noteInput);noteInputWrap.appendChild(noteSaveBtn);notesWrap.appendChild(noteInputWrap);
+    div.appendChild(notesWrap);
+
+    addDragListeners(div);
+    return div;
+  }
+
+  function buildMoveSelect(sel,cardId,currentCol,isCustom){
+    sel.innerHTML='';
+    var opt0=document.createElement('option');opt0.value='';opt0.textContent='Move to...';sel.appendChild(opt0);
+    COLS.filter(function(c){return c!==currentCol;}).forEach(function(c){
+      var opt=document.createElement('option');opt.value=c;opt.textContent=COL_LABELS[c];sel.appendChild(opt);
+    });
+    sel.onchange=function(){if(sel.value)window.moveCard(cardId,sel.value,isCustom);};
+  }
+
+  function addDragListeners(el){
+    el.addEventListener('dragstart',function(e){
+      dragging=el;
+      e.dataTransfer.effectAllowed='move';
+      e.dataTransfer.setData('text/plain',el.id);
+      setTimeout(function(){el.classList.add('dragging');},0);
+    });
+    el.addEventListener('dragend',function(){el.classList.remove('dragging');dragging=null;});
+  }
+
+  function setupDropZone(col){
+    var container=document.getElementById('cards-'+col);
+    if(!container)return;
+    container.addEventListener('dragover',function(e){e.preventDefault();e.dataTransfer.dropEffect='move';container.classList.add('drag-over');});
+    container.addEventListener('dragenter',function(e){e.preventDefault();container.classList.add('drag-over');});
+    container.addEventListener('dragleave',function(e){if(!container.contains(e.relatedTarget))container.classList.remove('drag-over');});
+    container.addEventListener('drop',function(e){
+      e.preventDefault();container.classList.remove('drag-over');
+      var id=(dragging&&dragging.id)||e.dataTransfer.getData('text/plain');
+      if(!id)return;
+      var el=document.getElementById(id);
+      var isCustom=!!(el&&el.getAttribute('data-custom'));
+      window.moveCard(id,col,isCustom);
+    });
+  }
+
+  window.moveCard=function(cardId,targetCol,isCustom){
+    var el=document.getElementById(cardId);if(!el)return;
+    var currentCol=null;
+    COLS.forEach(function(c){var cont=document.getElementById('cards-'+c);if(cont&&cont.contains(el))currentCol=c;});
+    if(currentCol===targetCol)return;
+    var targetContainer=document.getElementById('cards-'+targetCol);
+    if(!targetContainer)return;
+    targetContainer.appendChild(el);
+    if(isCustom){
+      var all=getCustomCards();
+      for(var i=0;i<all.length;i++){if(all[i].id===cardId){all[i].column=targetCol;break;}}
+      saveCustomCards(all);
+    } else {
+      var moves=getMoves();moves[cardId]=targetCol;saveMoves(moves);
+    }
+    var moveSel=el.querySelector('.card-move-select');
+    if(moveSel){buildMoveSelect(moveSel,cardId,targetCol,isCustom);moveSel.style.display='none';}
+    updateCounts();
+  };
+
+  function updateCounts(){
+    COLS.forEach(function(col){
+      var cont=document.getElementById('cards-'+col);
+      var n=cont?cont.querySelectorAll('.card').length:0;
+      var badge=document.getElementById('count-'+col);var stat=document.getElementById('stat-'+col);
+      if(badge)badge.textContent=n;if(stat)stat.textContent=n;
+    });
+  }
+
+  function applyMoves(){
+    var moves=getMoves();
+    Object.keys(moves).forEach(function(cardId){
+      var el=document.getElementById(cardId);if(!el)return;
+      var targetContainer=document.getElementById('cards-'+moves[cardId]);
+      if(targetContainer&&!targetContainer.contains(el))targetContainer.appendChild(el);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
+    applyMoves();
+
+    document.querySelectorAll('.card').forEach(function(card){
+      if(card.getAttribute('data-custom'))return;
+      card.setAttribute('draggable','true');
+      addDragListeners(card);
+
+      var col=null;
+      COLS.forEach(function(c){var cont=document.getElementById('cards-'+c);if(cont&&cont.contains(card))col=c;});
+
+      var moveBtn=document.createElement('button');moveBtn.className='card-move-btn';moveBtn.textContent='Move to...';
+      var moveSel=document.createElement('select');moveSel.className='card-move-select';
+      moveBtn.onclick=function(){moveSel.style.display=moveSel.style.display==='block'?'none':'block';};
+      buildMoveSelect(moveSel,card.id,col,false);
+
+      var notesSection=card.querySelector('.card-notes');
+      if(notesSection){card.insertBefore(moveBtn,notesSection);card.insertBefore(moveSel,notesSection);}
+      else{card.appendChild(moveBtn);card.appendChild(moveSel);}
+    });
+
+    COLS.forEach(setupDropZone);
+
+    getCustomCards().forEach(function(card){
+      var container=document.getElementById('cards-'+card.column);
+      if(!container)return;
+      var el=buildCardEl(card);container.appendChild(el);renderNotes(card.id);
+    });
+
+    updateCounts();
+  });
+})();
 </script></body>
 </html>
