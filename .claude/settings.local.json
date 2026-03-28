@@ -256,7 +256,22 @@
       "Bash(git -C ~/Desktop/my-first-repo diff --name-only)",
       "Bash(source ~/.zshrc)",
       "Bash(node --check /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html 2>&1 | head -20)",
-      "Bash(node --check /tmp/sniffout_main.js 2>&1 | head -20)"
+      "Bash(node --check /tmp/sniffout_main.js 2>&1 | head -20)",
+      "Bash(find ~/Desktop/my-first-repo -name \"*.js\" | grep -i \"worker\\\\|proxy\\\\|cloudflare\" 2>/dev/null; ls ~/Desktop/my-first-repo/*.js 2>/dev/null)",
+      "Bash(cd ~/Desktop/my-first-repo/workers && npx wrangler deploy places-proxy.js 2>&1 | tail -20)",
+      "Bash(cd ~/Desktop/my-first-repo/workers && npx wrangler deploy places-proxy.js 2>&1)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -X POST https://places-proxy.sniffout.app/v1/places:searchText -H \"Content-Type: application/json\" -d '{\"textQuery\":\"dog friendly pub London\"}')",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -X POST https://places-proxy.sniffout.workers.dev/v1/places:searchText -H \"Content-Type: application/json\" -d '{\"textQuery\":\"dog friendly pub London\"}')",
+      "Bash(curl -s -X POST https://places-proxy.sniffout.workers.dev/v1/places:searchText -H \"Content-Type: application/json\" -d '{\"textQuery\":\"dog friendly pub London\"}' 2>&1)",
+      "Bash(curl -s -X POST https://places-proxy.sniffout.app/v1/places:searchText -H \"Content-Type: application/json\" -d '{\"textQuery\":\"dog friendly pub London\"}' 2>&1 | head -c 500)",
+      "Bash(grep -n \"var query = '\\\\[out:json\\\\]\" ~/Desktop/my-first-repo/sniffout-v2.html)",
+      "Bash(cd ~/Desktop/my-first-repo && awk 'NR>=6230 && NR<=6260' sniffout-v2.html | grep -n \"var temp\\\\|temp =\")",
+      "Bash(cd ~/Desktop/my-first-repo && sed -i '' \"s/'Inter'/'Plus Jakarta Sans'/g\" sniffout-v2.html && grep -c \"'Plus Jakarta Sans'\" sniffout-v2.html)",
+      "Bash(cd ~/Desktop/my-first-repo && grep -c \"'Inter'\" sniffout-v2.html)",
+      "Bash(cd ~/Desktop/my-first-repo/workers && npx wrangler deploy places-proxy.js --name places-proxy 2>&1)",
+      "Bash(grep -n \"cacheKey = 'gs\" /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html)",
+      "Read(//Users/jayeshfatania/Downloads/**)",
+      "Read(//Users/jayeshfatania/Desktop/**)"
     ]
   }
 }
