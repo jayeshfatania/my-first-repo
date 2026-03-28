@@ -1643,6 +1643,7 @@
     #walks-map-container {
       display: none;
       position: relative;
+      overflow: visible;
       background: var(--bg);
     }
     body.night #walks-map-container { background: #1A1A1A; }
@@ -1650,6 +1651,7 @@
     #walks-map {
       width: 100%;
       min-height: 300px;
+      overflow: visible;
     }
     body.night #walks-map .leaflet-tile-pane { filter: brightness(0.75) contrast(1.05); }
     /* Pin centering wrapper - 44px tap target, visual pin centered inside */
@@ -1834,6 +1836,7 @@
       height: 300px;
       display: none;
       position: relative;
+      overflow: visible;
     }
     #nearby-map.visible { display: block; }
     body.night #nearby-map .leaflet-tile-pane { filter: brightness(0.75) contrast(1.05); }
@@ -3619,9 +3622,9 @@
     /* Map FAB */
     .map-fab-container {
       position: absolute;
-      bottom: 72px;
-      right: 12px;
-      z-index: 400;
+      bottom: 80px;
+      right: 16px;
+      z-index: 401;
       display: none;
     }
 
@@ -3742,7 +3745,7 @@
     .map-fab-overlay {
       position: fixed;
       inset: 0;
-      z-index: 399;
+      z-index: 398;
       background: transparent;
       display: none;
     }
