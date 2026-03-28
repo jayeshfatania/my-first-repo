@@ -4837,11 +4837,7 @@
             <div class="map-fab-divider"></div>
             <div class="map-fab-filter-group" id="walksMapFabFilterGroup">
               <div class="map-fab-panel-label">Walk filter</div>
-              <div class="map-fab-panel-row map-fab-panel-row--active" id="walksFilterAll" onclick="setWalksMapFilter('all');updateMapFabState('walks')">
-                <span class="map-fab-panel-row-check" id="walksFilterAllCheck"></span>
-                All walks
-              </div>
-              <div class="map-fab-panel-row" id="walksFilterPicks" onclick="setWalksMapFilter('picks');updateMapFabState('walks')">
+              <div class="map-fab-panel-row map-fab-panel-row--active" id="walksFilterPicks" onclick="setWalksMapFilter('picks');updateMapFabState('walks')">
                 <span class="map-fab-panel-row-check" id="walksFilterPicksCheck"></span>
                 Sniffout Picks
               </div>
@@ -12399,7 +12395,7 @@
   var walksMapCurrentView = 'list'; // 'list' | 'map'
   var walksMapSelectedId = null;
   var walksGreenSpaceMarkers = [];
-  var walksMapFilter = 'all'; // 'all' | 'picks' | 'greenspaces'
+  var walksMapFilter = 'picks'; // 'picks' | 'greenspaces'
 
   function setWalksMapFilter(mode) {
     walksMapFilter = mode;
@@ -12881,16 +12877,14 @@
 
   function updateMapFabState(context) {
     var style  = getSavedMapStyle() || 'osm';
-    var filter = typeof walksMapFilter !== 'undefined' ? walksMapFilter : 'all';
+    var filter = typeof walksMapFilter !== 'undefined' ? walksMapFilter : 'picks';
     if (context === 'walks' || context === 'all') {
       var wOsm     = document.getElementById('walksStyleOsm');
       var wOutdoor = document.getElementById('walksStyleOutdoor');
-      var wAll     = document.getElementById('walksFilterAll');
       var wPicks   = document.getElementById('walksFilterPicks');
       var wGreen   = document.getElementById('walksFilterGreen');
       if (wOsm)     wOsm.classList.toggle('map-fab-panel-row--active',     style === 'osm');
       if (wOutdoor) wOutdoor.classList.toggle('map-fab-panel-row--active', style === 'outdoor');
-      if (wAll)     wAll.classList.toggle('map-fab-panel-row--active',     filter === 'all');
       if (wPicks)   wPicks.classList.toggle('map-fab-panel-row--active',   filter === 'picks');
       if (wGreen)   wGreen.classList.toggle('map-fab-panel-row--active',   filter === 'greenspaces');
     }
