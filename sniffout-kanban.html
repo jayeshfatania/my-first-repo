@@ -308,7 +308,26 @@
     .header { padding: 12px 16px; }
     .stats-bar { padding: 10px 16px; }
   }
-</style>
+  .card-notes{margin-top:8px;border-top:0.5px solid var(--border);padding-top:8px}
+  .card-notes-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-3);margin-bottom:4px}
+  .card-notes-add{font-size:10px;color:var(--brand);cursor:pointer;font-weight:600;background:none;border:none;padding:0;font-family:inherit;float:right}
+  .card-notes-add:hover{text-decoration:underline}
+  .card-note-item{background:#FFFBF0;border:0.5px solid #F0E0A0;border-radius:6px;padding:6px 8px;font-size:11px;color:#5C4A00;line-height:1.5;margin-bottom:4px;display:flex;gap:6px;align-items:flex-start}
+  .card-note-dot{width:4px;height:4px;background:#B09020;border-radius:50%;margin-top:5px;flex-shrink:0}
+  .card-note-input-wrap{display:none;margin-top:4px;gap:4px}
+  .card-note-input-wrap.visible{display:flex}
+  .card-note-input{flex:1;font-size:11px;font-family:inherit;border:0.5px solid var(--border);border-radius:6px;padding:5px 8px;background:white;color:var(--ink);outline:none}
+  .card-note-input:focus{border-color:var(--brand)}
+  .card-note-save{font-size:10px;font-weight:600;background:var(--brand);color:white;border:none;border-radius:6px;padding:5px 10px;cursor:pointer;font-family:inherit}
+  .img-sources{margin-top:10px;border-top:0.5px solid var(--border);padding-top:10px}
+  .img-sources-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-3);margin-bottom:8px}
+  .img-source-row{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:11px}
+  .img-source-row:last-child{border-bottom:none}
+  .img-source-name{font-weight:600;color:var(--ink);flex:0 0 130px}
+  .img-source-desc{color:var(--ink-3);flex:1;line-height:1.4}
+  .img-source-tag{font-size:9px;font-weight:600;padding:2px 6px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+  .tag-free{background:#E8F0DC;color:#2C4A14}.tag-cc{background:#E8F5F0;color:#1A6B4A}
+.card-notes{margin-top:8px;border-top:0.5px solid rgba(0,0,0,0.08);padding-top:8px}.card-notes-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}.card-notes-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888}.card-notes-add{font-size:10px;color:#2C4A14;cursor:pointer;font-weight:600;background:none;border:none;padding:0;font-family:inherit}.card-note-item{background:#FFFBF0;border:0.5px solid #F0E0A0;border-radius:6px;padding:6px 8px;font-size:11px;color:#5C4A00;line-height:1.5;margin-bottom:4px}.card-note-input-wrap{display:none;margin-top:4px;gap:4px;align-items:center}.card-note-input-wrap.visible{display:flex}.card-note-input{flex:1;font-size:11px;font-family:inherit;border:0.5px solid rgba(0,0,0,0.1);border-radius:6px;padding:5px 8px;outline:none}.card-note-save{font-size:10px;font-weight:600;background:#2C4A14;color:white;border:none;border-radius:6px;padding:5px 10px;cursor:pointer}</style>
 </head>
 <body>
 
@@ -370,7 +389,7 @@
 
       <div class="section-label">Hard Go-Live Blockers</div>
 
-      <div class="card blocker">
+      <div class="card blocker" id="card-tc">
         <div class="card-top">
           <div class="card-title">T&C consent screen</div>
           <div class="card-tag tag-blocker">Blocker</div>
@@ -380,94 +399,212 @@
           <div class="card-label">Owner action</div>
           <div class="card-label">Dev</div>
         </div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-tc')">+ Add note</button>
+          </div>
+          <div id="notes-card-tc"></div>
+          <div class="card-note-input-wrap" id="input-card-tc">
+            <input class="card-note-input" id="text-card-tc" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-tc')">
+            <button class="card-note-save" onclick="saveNote('card-tc')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card blocker">
+      <div class="card blocker" id="card-pentest">
         <div class="card-top">
           <div class="card-title">Pen test (T12)</div>
           <div class="card-tag tag-blocker">Blocker</div>
         </div>
         <div class="card-body">Mandatory security penetration test before launch.</div>
         <div class="card-footer"><div class="card-label">Owner action</div></div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-pentest')">+ Add note</button>
+          </div>
+          <div id="notes-card-pentest"></div>
+          <div class="card-note-input-wrap" id="input-card-pentest">
+            <input class="card-note-input" id="text-card-pentest" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-pentest')">
+            <button class="card-note-save" onclick="saveNote('card-pentest')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card blocker">
+      <div class="card blocker" id="card-e2e">
         <div class="card-top">
           <div class="card-title">Full end-to-end test pass (T16)</div>
           <div class="card-tag tag-blocker">Blocker</div>
         </div>
         <div class="card-body">Full test pass across all tabs, features, and edge cases before launch.</div>
         <div class="card-footer"><div class="card-label">Dev</div></div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-e2e')">+ Add note</button>
+          </div>
+          <div id="notes-card-e2e"></div>
+          <div class="card-note-input-wrap" id="input-card-e2e">
+            <input class="card-note-input" id="text-card-e2e" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-e2e')">
+            <button class="card-note-save" onclick="saveNote('card-e2e')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card blocker">
+      <div class="card blocker" id="card-firebase-sec">
         <div class="card-top">
           <div class="card-title">Firebase security review (T17)</div>
           <div class="card-tag tag-blocker">Blocker</div>
         </div>
         <div class="card-body">Security review of Firestore rules and auth before Phase 3 goes live.</div>
         <div class="card-footer"><div class="card-label">Phase 3</div></div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-firebase-sec')">+ Add note</button>
+          </div>
+          <div id="notes-card-firebase-sec"></div>
+          <div class="card-note-input-wrap" id="input-card-firebase-sec">
+            <input class="card-note-input" id="text-card-firebase-sec" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-firebase-sec')">
+            <button class="card-note-save" onclick="saveNote('card-firebase-sec')">Save</button>
+          </div>
+        </div>
       </div>
 
       <div class="section-label">Owner Actions</div>
 
-      <div class="card owner-action">
+      <div class="card owner-action" id="card-companies-house">
         <div class="card-top">
           <div class="card-title">Companies House registration</div>
           <div class="card-tag tag-owner">Owner</div>
         </div>
         <div class="card-body">Limited company formation. £100, 15 min online at Companies House.</div>
         <div class="card-footer"><div class="card-label">companies-house.gov.uk</div></div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-companies-house')">+ Add note</button>
+          </div>
+          <div id="notes-card-companies-house"></div>
+          <div class="card-note-input-wrap" id="input-card-companies-house">
+            <input class="card-note-input" id="text-card-companies-house" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-companies-house')">
+            <button class="card-note-save" onclick="saveNote('card-companies-house')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card owner-action">
+      <div class="card owner-action" id="card-ico">
         <div class="card-top">
           <div class="card-title">ICO registration</div>
           <div class="card-tag tag-owner">Owner</div>
         </div>
         <div class="card-body">Data controller registration. ~£52/year at ico.org.uk.</div>
         <div class="card-footer"><div class="card-label">ico.org.uk</div></div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-ico')">+ Add note</button>
+          </div>
+          <div id="notes-card-ico"></div>
+          <div class="card-note-input-wrap" id="input-card-ico">
+            <input class="card-note-input" id="text-card-ico" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-ico')">
+            <button class="card-note-save" onclick="saveNote('card-ico')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card owner-action">
+      <div class="card owner-action" id="card-trademark">
         <div class="card-top">
           <div class="card-title">Trade mark application</div>
           <div class="card-tag tag-owner">Owner</div>
         </div>
         <div class="card-body">Register "Sniffout" trade mark. ~£170, one class, IPO website.</div>
         <div class="card-footer"><div class="card-label">gov.uk/apply-trade-mark</div></div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-trademark')">+ Add note</button>
+          </div>
+          <div id="notes-card-trademark"></div>
+          <div class="card-note-input-wrap" id="input-card-trademark">
+            <input class="card-note-input" id="text-card-trademark" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-trademark')">
+            <button class="card-note-save" onclick="saveNote('card-trademark')">Save</button>
+          </div>
+        </div>
       </div>
 
       <div class="section-label">Development Backlog</div>
 
-      <div class="card">
+      <div class="card" id="card-placeholder">
         <div class="card-top">
           <div class="card-title">Green space card placeholder image</div>
           <div class="card-tag tag-design">Design</div>
         </div>
         <div class="card-body">OSM-sourced green space results have no photo. Need illustrated fallback matching walk card style.</div>
+        <div class="img-sources">
+          <div class="img-sources-title">Free image sources</div>
+          <div class="img-source-row"><div class="img-source-name">Geograph.org.uk</div><div class="img-source-desc">UK landscapes by grid reference. Best for walk hero images.</div><div class="img-source-tag tag-cc">CC licence</div></div>
+          <div class="img-source-row"><div class="img-source-name">Unsplash</div><div class="img-source-desc">High quality nature/outdoor photos. No attribution needed.</div><div class="img-source-tag tag-free">Free</div></div>
+          <div class="img-source-row"><div class="img-source-name">Pexels</div><div class="img-source-desc">Dogs, parks, countryside. No attribution needed.</div><div class="img-source-tag tag-free">Free</div></div>
+          <div class="img-source-row"><div class="img-source-name">Owner photos (Luna)</div><div class="img-source-desc">Most authentic. Prioritise for Kingston and Surrey walks.</div><div class="img-source-tag tag-free">Free</div></div>
+          <div class="img-source-row"><div class="img-source-name">Micro-influencer swap</div><div class="img-source-desc">Walk documentation photos in exchange for feature placement.</div><div class="img-source-tag tag-free">Free</div></div>
+        </div>
         <div class="card-footer"><div class="card-label">Designer first</div></div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-placeholder')">+ Add note</button>
+          </div>
+          <div id="notes-card-placeholder"></div>
+          <div class="card-note-input-wrap" id="input-card-placeholder">
+            <input class="card-note-input" id="text-card-placeholder" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-placeholder')">
+            <button class="card-note-save" onclick="saveNote('card-placeholder')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="card-pubs">
         <div class="card-top">
           <div class="card-title">Pubs/restaurants Nearby tab (FIX 23.2)</div>
           <div class="card-tag tag-dev">Dev</div>
         </div>
         <div class="card-body">Reverted due to result quality issues. Needs careful scoping before reimplementation.</div>
         <div class="card-footer"><div class="card-label">Needs scoping</div></div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-pubs')">+ Add note</button>
+          </div>
+          <div id="notes-card-pubs"></div>
+          <div class="card-note-input-wrap" id="input-card-pubs">
+            <input class="card-note-input" id="text-card-pubs" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-pubs')">
+            <button class="card-note-save" onclick="saveNote('card-pubs')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="card-beforeunload">
         <div class="card-top">
           <div class="card-title">B2 beforeunload handler</div>
           <div class="card-tag tag-dev">Dev</div>
         </div>
         <div class="card-body">Deferred pending surgical fix and on-device testing.</div>
         <div class="card-footer"><div class="card-label">Android Chrome</div></div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-beforeunload')">+ Add note</button>
+          </div>
+          <div id="notes-card-beforeunload"></div>
+          <div class="card-note-input-wrap" id="input-card-beforeunload">
+            <input class="card-note-input" id="text-card-beforeunload" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-beforeunload')">
+            <button class="card-note-save" onclick="saveNote('card-beforeunload')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="card-tick">
         <div class="card-top">
           <div class="card-title">Tick hazard</div>
           <div class="card-tag tag-dev">Dev</div>
@@ -477,9 +614,20 @@
           <div class="card-label">Copywriter first</div>
           <div class="card-label">Mar-Oct</div>
         </div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-tick')">+ Add note</button>
+          </div>
+          <div id="notes-card-tick"></div>
+          <div class="card-note-input-wrap" id="input-card-tick">
+            <input class="card-note-input" id="text-card-tick" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-tick')">
+            <button class="card-note-save" onclick="saveNote('card-tick')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="card-affiliate">
         <div class="card-top">
           <div class="card-title">Affiliate links - 3 placements</div>
           <div class="card-tag tag-dev">Dev</div>
@@ -489,18 +637,40 @@
           <div class="card-label">Website first</div>
           <div class="card-label">Post-launch</div>
         </div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-affiliate')">+ Add note</button>
+          </div>
+          <div id="notes-card-affiliate"></div>
+          <div class="card-note-input-wrap" id="input-card-affiliate">
+            <input class="card-note-input" id="text-card-affiliate" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-affiliate')">
+            <button class="card-note-save" onclick="saveNote('card-affiliate')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="card-playground">
         <div class="card-top">
           <div class="card-title">Green spaces playground exclusion</div>
           <div class="card-tag tag-dev">Dev</div>
         </div>
         <div class="card-body">Verify Task 3 from 27 March batch brief landed. Run: grep -n "playground\|gs2" sniffout-v2.html | head -10</div>
         <div class="card-footer"><div class="card-label">Verify first</div></div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-playground')">+ Add note</button>
+          </div>
+          <div id="notes-card-playground"></div>
+          <div class="card-note-input-wrap" id="input-card-playground">
+            <input class="card-note-input" id="text-card-playground" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-playground')">
+            <button class="card-note-save" onclick="saveNote('card-playground')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="card-firebase-migration">
         <div class="card-top">
           <div class="card-title">Phase 3 - Firebase migration</div>
           <div class="card-tag tag-dev">Dev</div>
@@ -509,6 +679,17 @@
         <div class="card-footer">
           <div class="card-label">Phase 3</div>
           <div class="card-label">After blockers resolved</div>
+        </div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-firebase-migration')">+ Add note</button>
+          </div>
+          <div id="notes-card-firebase-migration"></div>
+          <div class="card-note-input-wrap" id="input-card-firebase-migration">
+            <input class="card-note-input" id="text-card-firebase-migration" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-firebase-migration')">
+            <button class="card-note-save" onclick="saveNote('card-firebase-migration')">Save</button>
+          </div>
         </div>
       </div>
 
@@ -525,7 +706,7 @@
     </div>
     <div class="cards">
 
-      <div class="card">
+      <div class="card" id="card-website">
         <div class="card-top">
           <div class="card-title">Companion website (sniffout.co.uk)</div>
           <div class="card-tag tag-dev">Dev</div>
@@ -536,9 +717,20 @@
           <div class="card-label">Hugo or Astro</div>
           <div class="card-label">Plausible analytics</div>
         </div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-website')">+ Add note</button>
+          </div>
+          <div id="notes-card-website"></div>
+          <div class="card-note-input-wrap" id="input-card-website">
+            <input class="card-note-input" id="text-card-website" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-website')">
+            <button class="card-note-save" onclick="saveNote('card-website')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="card-personas">
         <div class="card-top">
           <div class="card-title">New Copywriter personas for website</div>
           <div class="card-tag tag-copy">Copy</div>
@@ -547,9 +739,20 @@
         <div class="card-footer">
           <div class="card-label">Brief needed</div>
         </div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-personas')">+ Add note</button>
+          </div>
+          <div id="notes-card-personas"></div>
+          <div class="card-note-input-wrap" id="input-card-personas">
+            <input class="card-note-input" id="text-card-personas" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-personas')">
+            <button class="card-note-save" onclick="saveNote('card-personas')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="card-ios">
         <div class="card-top">
           <div class="card-title">App Store submission (iOS)</div>
           <div class="card-tag tag-dev">Dev</div>
@@ -559,9 +762,20 @@
           <div class="card-label">Capacitor</div>
           <div class="card-label">Pre-launch</div>
         </div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-ios')">+ Add note</button>
+          </div>
+          <div id="notes-card-ios"></div>
+          <div class="card-note-input-wrap" id="input-card-ios">
+            <input class="card-note-input" id="text-card-ios" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-ios')">
+            <button class="card-note-save" onclick="saveNote('card-ios')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="card-play">
         <div class="card-top">
           <div class="card-title">Google Play submission</div>
           <div class="card-tag tag-dev">Dev</div>
@@ -570,6 +784,17 @@
         <div class="card-footer">
           <div class="card-label">PWABuilder</div>
           <div class="card-label">Pre-launch</div>
+        </div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-play')">+ Add note</button>
+          </div>
+          <div id="notes-card-play"></div>
+          <div class="card-note-input-wrap" id="input-card-play">
+            <input class="card-note-input" id="text-card-play" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-play')">
+            <button class="card-note-save" onclick="saveNote('card-play')">Save</button>
+          </div>
         </div>
       </div>
 
@@ -586,7 +811,7 @@
     </div>
     <div class="cards">
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-fab">
         <div class="card-top">
           <div class="card-title">FAB map controls</div>
           <div class="card-done-check">
@@ -594,9 +819,20 @@
           </div>
         </div>
         <div class="card-body">Replaced all map toggles and filter chips with single expandable FAB. Walks + Nearby maps. Document click-outside handler.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-fab')">+ Add note</button>
+          </div>
+          <div id="notes-card-fab"></div>
+          <div class="card-note-input-wrap" id="input-card-fab">
+            <input class="card-note-input" id="text-card-fab" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-fab')">
+            <button class="card-note-save" onclick="saveNote('card-fab')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-hero">
         <div class="card-top">
           <div class="card-title">Today tab hero card redesign</div>
           <div class="card-done-check">
@@ -604,9 +840,20 @@
           </div>
         </div>
         <div class="card-body">Brand green always. Watermark icon, smart sun pill, rain % pill, best window, alert pills. renderTodayStateB 5 params.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-hero')">+ Add note</button>
+          </div>
+          <div id="notes-card-hero"></div>
+          <div class="card-note-input-wrap" id="input-card-hero">
+            <input class="card-note-input" id="text-card-hero" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-hero')">
+            <button class="card-note-save" onclick="saveNote('card-hero')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-design-system">
         <div class="card-top">
           <div class="card-title">Signature Tactile design system</div>
           <div class="card-done-check">
@@ -614,9 +861,20 @@
           </div>
         </div>
         <div class="card-body">Full design system implemented. Spec at docs/design/signature-tactile-spec.md.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-design-system')">+ Add note</button>
+          </div>
+          <div id="notes-card-design-system"></div>
+          <div class="card-note-input-wrap" id="input-card-design-system">
+            <input class="card-note-input" id="text-card-design-system" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-design-system')">
+            <button class="card-note-save" onclick="saveNote('card-design-system')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-font">
         <div class="card-top">
           <div class="card-title">Plus Jakarta Sans migration</div>
           <div class="card-done-check">
@@ -624,9 +882,20 @@
           </div>
         </div>
         <div class="card-body">Replaced Fraunces + Inter with Plus Jakarta Sans throughout. 146 occurrences.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-font')">+ Add note</button>
+          </div>
+          <div id="notes-card-font"></div>
+          <div class="card-note-input-wrap" id="input-card-font">
+            <input class="card-note-input" id="text-card-font" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-font')">
+            <button class="card-note-save" onclick="saveNote('card-font')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-places-cost">
         <div class="card-top">
           <div class="card-title">Google Places API cost reduction</div>
           <div class="card-done-check">
@@ -634,9 +903,20 @@
           </div>
         </div>
         <div class="card-body">99.8% cost reduction. Race condition fix, 24h cache, lazy photos, Cloudflare proxy, maxResultCount 10, OSM hybrid.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-places-cost')">+ Add note</button>
+          </div>
+          <div id="notes-card-places-cost"></div>
+          <div class="card-note-input-wrap" id="input-card-places-cost">
+            <input class="card-note-input" id="text-card-places-cost" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-places-cost')">
+            <button class="card-note-save" onclick="saveNote('card-places-cost')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-cf-worker">
         <div class="card-top">
           <div class="card-title">Cloudflare Worker referer check</div>
           <div class="card-done-check">
@@ -644,9 +924,20 @@
           </div>
         </div>
         <div class="card-body">Returns 403 for non-sniffout.app requests. Blocks API key abuse.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-cf-worker')">+ Add note</button>
+          </div>
+          <div id="notes-card-cf-worker"></div>
+          <div class="card-note-input-wrap" id="input-card-cf-worker">
+            <input class="card-note-input" id="text-card-cf-worker" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-cf-worker')">
+            <button class="card-note-save" onclick="saveNote('card-cf-worker')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-venue-status">
         <div class="card-top">
           <div class="card-title">Open/closed venue status fix</div>
           <div class="card-done-check">
@@ -654,9 +945,20 @@
           </div>
         </div>
         <div class="card-body">isVenueOpenNow() calculates live from regularOpeningHours.periods. No longer stale from cache.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-venue-status')">+ Add note</button>
+          </div>
+          <div id="notes-card-venue-status"></div>
+          <div class="card-note-input-wrap" id="input-card-venue-status">
+            <input class="card-note-input" id="text-card-venue-status" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-venue-status')">
+            <button class="card-note-save" onclick="saveNote('card-venue-status')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-os-tiles">
         <div class="card-top">
           <div class="card-title">OS Maps Outdoor tiles</div>
           <div class="card-done-check">
@@ -664,9 +966,20 @@
           </div>
         </div>
         <div class="card-body">Replaced broken Leisure_3857 with Outdoor_3857. Free OpenData, Web Mercator, footpaths and rights of way. OS ticket closed.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-os-tiles')">+ Add note</button>
+          </div>
+          <div id="notes-card-os-tiles"></div>
+          <div class="card-note-input-wrap" id="input-card-os-tiles">
+            <input class="card-note-input" id="text-card-os-tiles" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-os-tiles')">
+            <button class="card-note-save" onclick="saveNote('card-os-tiles')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-gs-hybrid">
         <div class="card-top">
           <div class="card-title">Green/OSM hybrid for green spaces</div>
           <div class="card-done-check">
@@ -674,9 +987,20 @@
           </div>
         </div>
         <div class="card-body">Google + OSM Overpass parallel fetch. OSM fills coverage gaps Google misses. Cache key gs2|.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-gs-hybrid')">+ Add note</button>
+          </div>
+          <div id="notes-card-gs-hybrid"></div>
+          <div class="card-note-input-wrap" id="input-card-gs-hybrid">
+            <input class="card-note-input" id="text-card-gs-hybrid" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-gs-hybrid')">
+            <button class="card-note-save" onclick="saveNote('card-gs-hybrid')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-sun-pill">
         <div class="card-top">
           <div class="card-title">Smart sun pill</div>
           <div class="card-done-check">
@@ -684,9 +1008,20 @@
           </div>
         </div>
         <div class="card-body">Pre-noon: today sunrise. Post-noon: today sunset. Post-sunset: tomorrow sunrise. Uses daily.sunrise[1].</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-sun-pill')">+ Add note</button>
+          </div>
+          <div id="notes-card-sun-pill"></div>
+          <div class="card-note-input-wrap" id="input-card-sun-pill">
+            <input class="card-note-input" id="text-card-sun-pill" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-sun-pill')">
+            <button class="card-note-save" onclick="saveNote('card-sun-pill')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-walks-empty">
         <div class="card-top">
           <div class="card-title">Walks map empty state pill</div>
           <div class="card-done-check">
@@ -694,9 +1029,20 @@
           </div>
         </div>
         <div class="card-body">"No walks match your filters" converted from blocking centred overlay to small non-blocking pill at bottom of map.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-walks-empty')">+ Add note</button>
+          </div>
+          <div id="notes-card-walks-empty"></div>
+          <div class="card-note-input-wrap" id="input-card-walks-empty">
+            <input class="card-note-input" id="text-card-walks-empty" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-walks-empty')">
+            <button class="card-note-save" onclick="saveNote('card-walks-empty')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-refactor">
         <div class="card-top">
           <div class="card-title">Refactoring round</div>
           <div class="card-done-check">
@@ -704,9 +1050,20 @@
           </div>
         </div>
         <div class="card-body">Dead yrIcon function removed. 32 global vars converted to const. 92 mutable vars correctly left as var.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-refactor')">+ Add note</button>
+          </div>
+          <div id="notes-card-refactor"></div>
+          <div class="card-note-input-wrap" id="input-card-refactor">
+            <input class="card-note-input" id="text-card-refactor" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-refactor')">
+            <button class="card-note-save" onclick="saveNote('card-refactor')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-sun-row">
         <div class="card-top">
           <div class="card-title">Weather tab sunrise/sunset row</div>
           <div class="card-done-check">
@@ -714,9 +1071,20 @@
           </div>
         </div>
         <div class="card-body">.wx-sun-row added between tiles and 5-day forecast. Amber icons.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-sun-row')">+ Add note</button>
+          </div>
+          <div id="notes-card-sun-row"></div>
+          <div class="card-note-input-wrap" id="input-card-sun-row">
+            <input class="card-note-input" id="text-card-sun-row" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-sun-row')">
+            <button class="card-note-save" onclick="saveNote('card-sun-row')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-monetisation">
         <div class="card-top">
           <div class="card-title">Monetisation research</div>
           <div class="card-done-check">
@@ -724,9 +1092,20 @@
           </div>
         </div>
         <div class="card-body">Full research on monetisation strategy, brand building, competitor analysis, content strategy. Saved at docs/research/.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-monetisation')">+ Add note</button>
+          </div>
+          <div id="notes-card-monetisation"></div>
+          <div class="card-note-input-wrap" id="input-card-monetisation">
+            <input class="card-note-input" id="text-card-monetisation" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-monetisation')">
+            <button class="card-note-save" onclick="saveNote('card-monetisation')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-website-research">
         <div class="card-top">
           <div class="card-title">Companion website research</div>
           <div class="card-done-check">
@@ -734,9 +1113,20 @@
           </div>
         </div>
         <div class="card-body">Structure, design, SEO, app store strategy, analytics. Walk page mockups approved (mobile + desktop). sniffout.co.uk.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-website-research')">+ Add note</button>
+          </div>
+          <div id="notes-card-website-research"></div>
+          <div class="card-note-input-wrap" id="input-card-website-research">
+            <input class="card-note-input" id="text-card-website-research" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-website-research')">
+            <button class="card-note-save" onclick="saveNote('card-website-research')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-mockups">
         <div class="card-top">
           <div class="card-title">Walk page mockups</div>
           <div class="card-done-check">
@@ -744,9 +1134,20 @@
           </div>
         </div>
         <div class="card-body">Mobile and desktop walk page mockups built and approved. Real icon integrated. sniffout.co.uk visual direction confirmed.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-mockups')">+ Add note</button>
+          </div>
+          <div id="notes-card-mockups"></div>
+          <div class="card-note-input-wrap" id="input-card-mockups">
+            <input class="card-note-input" id="text-card-mockups" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-mockups')">
+            <button class="card-note-save" onclick="saveNote('card-mockups')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-walks-db">
         <div class="card-top">
           <div class="card-title">100 curated walks in WALKS_DB</div>
           <div class="card-done-check">
@@ -754,9 +1155,20 @@
           </div>
         </div>
         <div class="card-body">100 walks via Morag, Deborah, Priya, Pete, Jamie persona pipeline.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-walks-db')">+ Add note</button>
+          </div>
+          <div id="notes-card-walks-db"></div>
+          <div class="card-note-input-wrap" id="input-card-walks-db">
+            <input class="card-note-input" id="text-card-walks-db" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-walks-db')">
+            <button class="card-note-save" onclick="saveNote('card-walks-db')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-dogs">
         <div class="card-top">
           <div class="card-title">Multiple dog profiles</div>
           <div class="card-done-check">
@@ -764,9 +1176,20 @@
           </div>
         </div>
         <div class="card-body">Multiple dogs supported from Phase 2.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-dogs')">+ Add note</button>
+          </div>
+          <div id="notes-card-dogs"></div>
+          <div class="card-note-input-wrap" id="input-card-dogs">
+            <input class="card-note-input" id="text-card-dogs" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-dogs')">
+            <button class="card-note-save" onclick="saveNote('card-dogs')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-firebase-auth">
         <div class="card-top">
           <div class="card-title">Anonymous Firebase auth + Firestore dual-write</div>
           <div class="card-done-check">
@@ -774,9 +1197,20 @@
           </div>
         </div>
         <div class="card-body">Implemented but FIREBASE_WRITE_ENABLED = false. Ready for Phase 3 activation.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-firebase-auth')">+ Add note</button>
+          </div>
+          <div id="notes-card-firebase-auth"></div>
+          <div class="card-note-input-wrap" id="input-card-firebase-auth">
+            <input class="card-note-input" id="text-card-firebase-auth" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-firebase-auth')">
+            <button class="card-note-save" onclick="saveNote('card-firebase-auth')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-dark-mode">
         <div class="card-top">
           <div class="card-title">Dark mode + light/auto toggle</div>
           <div class="card-done-check">
@@ -784,9 +1218,20 @@
           </div>
         </div>
         <div class="card-body">Default light for new users. Auto mode renamed "Match device". Full night mode CSS throughout.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-dark-mode')">+ Add note</button>
+          </div>
+          <div id="notes-card-dark-mode"></div>
+          <div class="card-note-input-wrap" id="input-card-dark-mode">
+            <input class="card-note-input" id="text-card-dark-mode" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-dark-mode')">
+            <button class="card-note-save" onclick="saveNote('card-dark-mode')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-location-switch">
         <div class="card-top">
           <div class="card-title">Location switching on Walks + Nearby</div>
           <div class="card-done-check">
@@ -794,9 +1239,20 @@
           </div>
         </div>
         <div class="card-body">Users can switch location from the Walks and Nearby tab headers.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-location-switch')">+ Add note</button>
+          </div>
+          <div id="notes-card-location-switch"></div>
+          <div class="card-note-input-wrap" id="input-card-location-switch">
+            <input class="card-note-input" id="text-card-location-switch" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-location-switch')">
+            <button class="card-note-save" onclick="saveNote('card-location-switch')">Save</button>
+          </div>
+        </div>
       </div>
 
-      <div class="card done-card">
+      <div class="card done-card" id="card-leaflet-tap">
         <div class="card-top">
           <div class="card-title">Leaflet 44px DivIcon tap targets</div>
           <div class="card-done-check">
@@ -804,6 +1260,17 @@
           </div>
         </div>
         <div class="card-body">WCAG AA compliant map pin tap targets. Zoom controls permanently removed.</div>
+        <div class="card-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="card-notes-label">Notes</div>
+            <button class="card-notes-add" onclick="showNoteInput('card-leaflet-tap')">+ Add note</button>
+          </div>
+          <div id="notes-card-leaflet-tap"></div>
+          <div class="card-note-input-wrap" id="input-card-leaflet-tap">
+            <input class="card-note-input" id="text-card-leaflet-tap" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-leaflet-tap')">
+            <button class="card-note-save" onclick="saveNote('card-leaflet-tap')">Save</button>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -815,5 +1282,16 @@
   sniffout-kanban.html · Updated by Claude each session · github.com/jayeshfatania/my-first-repo
 </div>
 
-</body>
+<script>
+function showNoteInput(id){var w=document.getElementById('input-'+id);if(w)w.classList.toggle('visible');}
+function saveNote(id){var input=document.getElementById('text-'+id);if(!input||!input.value.trim())return;var notes=JSON.parse(localStorage.getItem('sniffout-notes-'+id)||'[]');notes.push(input.value.trim());localStorage.setItem('sniffout-notes-'+id,JSON.stringify(notes));input.value='';document.getElementById('input-'+id).classList.remove('visible');renderNotes(id);}
+function renderNotes(id){var container=document.getElementById('notes-'+id);if(!container)return;var notes=JSON.parse(localStorage.getItem('sniffout-notes-'+id)||'[]');container.innerHTML=notes.map(function(n){return '<div class="card-note-item"><div class="card-note-dot"></div>'+n+'</div>';}).join('');}
+document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('[id^="card-"]').forEach(function(card){var id=card.id;renderNotes(id);});});
+</script>
+<script>
+function showNoteInput(id){var w=document.getElementById("input-"+id);if(w)w.classList.toggle("visible");}
+function saveNote(id){var input=document.getElementById("text-"+id);if(!input||!input.value.trim())return;var notes=JSON.parse(localStorage.getItem("sniffout-notes-"+id)||"[]");notes.push(input.value.trim());localStorage.setItem("sniffout-notes-"+id,JSON.stringify(notes));input.value="";document.getElementById("input-"+id).classList.remove("visible");renderNotes(id);}
+function renderNotes(id){var c=document.getElementById("notes-"+id);if(!c)return;var notes=JSON.parse(localStorage.getItem("sniffout-notes-"+id)||"[]");c.innerHTML=notes.map(function(n){return "<div class=\"card-note-item\">"+n+"</div>";}).join("");}
+document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll("[id^=\"card-\"]").forEach(function(card){renderNotes(card.id);});});
+</script></body>
 </html>
