@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sniffout — Image Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --brand: #2C4A14;
+    --brand-mid: #3D6B22;
+    --brand-light: #E8F0DC;
+    --ink: #1a1a1a;
+    --ink-2: #555;
+    --ink-3: #888;
+    --surface: #ffffff;
+    --bg: #F7F5F0;
+    --border: rgba(0,0,0,0.08);
+    --amber: #D97706;
+    --amber-bg: #FEF3C7;
+    --green-bg: #E8F5E9;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ---- Header ---- */
+  .header {
+    background: var(--brand);
+    padding: 14px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-icon { flex-shrink: 0; }
+  .header-icon svg { display: block; }
+
+  .header-text { flex: 1; min-width: 0; }
+
+  .header-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+
+  .header-subtitle {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 1px;
+  }
+
+  .header-badge {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 11px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ---- Page content ---- */
+  .content {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  /* ---- Section card ---- */
+  .section-card {
+    background: var(--surface);
+    border-radius: 16px;
+    border: 0.5px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+  }
+
+  .section-head {
+    padding: 16px 16px 14px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .section-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .section-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-3);
+  }
+
+  /* ---- Progress bar ---- */
+  .progress-track {
+    height: 6px;
+    background: #F0EDE8;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 7px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--brand);
+    border-radius: 3px;
+    transition: width 0.35s ease;
+    min-width: 0;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+
+  /* ---- Filter toggles ---- */
+  .filter-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .filter-btn {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,0.14);
+    background: transparent;
+    color: var(--ink-3);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .filter-btn.active {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+  }
+
+  .filter-btn:active { transform: scale(0.94); }
+
+  /* ---- Item list ---- */
+  .item-list { padding: 0 16px; }
+
+  .item-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 0.5px solid rgba(0,0,0,0.055);
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .item-row:last-child { border-bottom: none; }
+  .item-row.is-done { opacity: 0.5; }
+
+  /* ---- Custom checkbox ---- */
+  .cb {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1.5px solid rgba(0,0,0,0.2);
+    background: white;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+    pointer-events: none;
+  }
+
+  .item-row.is-done .cb {
+    background: var(--brand);
+    border-color: var(--brand);
+  }
+
+  .item-row:active .cb { transform: scale(0.84); }
+
+  .cb-check {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .item-row.is-done .cb-check {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* ---- Item name ---- */
+  .item-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.35;
+    transition: color 0.15s ease;
+    user-select: none;
+  }
+
+  .item-row.is-done .item-name {
+    text-decoration: line-through;
+    color: #aaa;
+  }
+
+  /* ---- Status pill ---- */
+  .status-pill {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .status-pill.done {
+    background: var(--green-bg);
+    color: var(--brand);
+  }
+
+  .status-pill.needed {
+    background: var(--amber-bg);
+    color: var(--amber);
+  }
+
+  /* ---- Empty state ---- */
+  .empty-state {
+    padding: 20px 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+
+  /* ---- Desktop ---- */
+  @media (min-width: 520px) {
+    .header { padding: 16px 24px; }
+    .content { padding: 24px 24px 60px; }
+    .header-title { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-icon">
+      <!-- Sniffout paw icon -->
+      <svg width="32" height="32" viewBox="0 0 350 295" fill="white" xmlns="http://www.w3.org/2000/svg" style="opacity:0.9;">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M150.238 1.39505C95.716 8.65305 55.391 40.3151 26.333 98.6801C9.24201 133.01 -0.0129863 168.059 1.36766e-05 198.399C0.0180137 238.297 19.579 266.148 54.238 275.622C62.871 277.982 89.477 278.015 99.605 275.678L106.472 274.094L112.27 277.841C146.167 299.75 197.119 299.989 232.673 278.407L240.3 273.776L248.019 275.588C260.003 278.4 285.056 278.124 295.738 275.063C319.332 268.301 337.339 251.535 344.764 229.417C348.429 218.499 349.555 208.368 348.878 192.399C346.695 140.866 321.225 81.944 285.087 44.8241C269.981 29.3071 249.89 16.105 231.249 9.44504C207.748 1.04904 176.307 -2.07595 150.238 1.39505ZM202.175 30.332C212.982 32.567 224.545 36.489 234.209 41.198C272.997 60.096 307.485 113.931 318.275 172.423C320.853 186.397 321.322 206.325 319.275 214.899C316.093 228.228 307.591 239.155 295.983 244.833C279.894 252.704 257.617 251.456 236.782 241.517C214.985 231.119 198.099 212.317 191.772 191.399C189.409 183.587 189.493 183.417 196.988 180.917C211.786 175.981 229.734 165.497 241.463 154.938C249.242 147.935 257.867 134.725 260.939 125.109C271.029 93.5291 256.287 64.143 223.253 49.991C199.351 39.751 164.895 37.956 138.238 45.562C114.349 52.378 94.739 69.383 87.684 89.399C84.791 97.61 84.578 112.818 87.221 122.612C93.319 145.21 113.619 165.531 142.633 178.08C148.741 180.721 154.301 182.886 154.988 182.891C156.705 182.902 156.564 184.576 154.252 191.618C151.122 201.153 148.61 206.472 144.314 212.656C131.311 231.38 112.55 243.862 90.598 248.396C61.824 254.34 38.433 242.563 30.639 218.209C25.269 201.429 29.7 165.177 40.781 135.236C48.214 115.149 61.584 90.613 73.136 75.857C93.297 50.104 119.375 34.42 150.238 29.485C162.114 27.586 191.189 28.06 202.175 30.332ZM139.509 95.743C143.621 98.135 146.582 104.906 145.727 109.963C144.436 117.606 135.932 123.294 128.562 121.444C127.083 121.073 124.155 119.051 122.055 116.952C118.723 113.619 118.238 112.542 118.238 108.467C118.238 102.948 120.161 98.799 123.973 96.095C128.873 92.618 133.942 92.503 139.509 95.743ZM218.967 94.8631C230.304 100.009 230.118 115.968 218.662 121.036C208.692 125.446 198.238 118.485 198.238 107.435C198.238 101.522 201.004 97.364 206.639 94.804C211.797 92.462 213.699 92.4711 218.967 94.8631ZM177.567 226.339C183.527 235.316 193.004 245.69 201.103 252.105C205.302 255.43 208.866 258.479 209.023 258.881C209.433 259.929 194.965 264.541 186.827 265.958C175.24 267.974 158.557 266.723 146.988 262.969C141.625 261.229 137.248 259.489 137.26 259.102C137.271 258.715 139.794 256.599 142.865 254.399C150.475 248.947 162.367 236.308 167.827 227.868C170.306 224.035 172.699 220.899 173.145 220.899C173.59 220.899 175.58 223.347 177.567 226.339Z"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <div class="header-title">Image Checklist</div>
+      <div class="header-subtitle" id="header-subtitle">Loading...</div>
+    </div>
+    <div class="header-badge" id="header-badge">...</div>
+  </div>
+</header>
+
+<main class="content">
+
+  <!-- Walk Images section -->
+  <div class="section-card">
+    <div class="section-head">
+      <div class="section-title-row">
+        <span class="section-title">Walk Images</span>
+        <span class="section-count" id="walk-count-label"></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="walk-progress-fill" style="width:0%"></div>
+      </div>
+      <div class="progress-label" id="walk-progress-label"></div>
+      <div class="filter-row">
+        <button class="filter-btn active" id="walk-filter-all" onclick="setFilter('walk','all')">All</button>
+        <button class="filter-btn" id="walk-filter-needed" onclick="setFilter('walk','needed')">Needed only</button>
+      </div>
+    </div>
+    <div class="item-list" id="walk-items"></div>
+  </div>
+
+  <!-- Guide Images section -->
+  <div class="section-card">
+    <div class="section-head">
+      <div class="section-title-row">
+        <span class="section-title">Guide Images</span>
+        <span class="section-count" id="guide-count-label"></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="guide-progress-fill" style="width:0%"></div>
+      </div>
+      <div class="progress-label" id="guide-progress-label"></div>
+      <div class="filter-row">
+        <button class="filter-btn active" id="guide-filter-all" onclick="setFilter('guide','all')">All</button>
+        <button class="filter-btn" id="guide-filter-needed" onclick="setFilter('guide','needed')">Needed only</button>
+      </div>
+    </div>
+    <div class="item-list" id="guide-items"></div>
+  </div>
+
+</main>
+
+<script>
+(function() {
+
+  var LS_KEY = 'sniffout-image-checklist';
+  var LS_TS_KEY = 'sniffout-image-checklist-ts';
+
+  // ---- Data ----
+
+  var WALKS = [
+    // Done
+    { name: 'Richmond Park Deer Loop',          done: true  },
+    { name: 'Box Hill Summit Loop',             done: true  },
+    { name: 'Seven Sisters Cliffs',             done: true  },
+    { name: 'Hampstead Heath and Ponds',        done: true  },
+    { name: 'Burley Village and Forest Walks',  done: true  },
+    { name: 'Grasmere Lake Circuit',            done: true  },
+    { name: 'Malham Cove and Gordale Scar',     done: true  },
+    // Needed
+    { name: 'Isabella Plantation',                          done: false },
+    { name: 'Leith Hill and Coldharbour',                   done: false },
+    { name: 'Frensham Great Pond',                          done: false },
+    { name: 'Hindhead Common and Devils Punch Bowl',        done: false },
+    { name: 'Devils Dyke and South Downs',                  done: false },
+    { name: 'Ashridge Estate Bluebell Walk',                done: false },
+    { name: 'Wimbledon Common Loop',                        done: false },
+    { name: 'Newlands Corner and Albury Downs',             done: false },
+    { name: 'Ranmore Common and Denbies',                   done: false },
+    { name: 'Haytor and Hound Tor',                         done: false },
+    { name: 'Stanage Edge and Hathersage Moor',             done: false },
+    { name: 'Headley Heath and Nower Wood',                 done: false },
+    { name: 'Bookham Common and Fetcham Downs',             done: false },
+    { name: 'Holmwood Common',                              done: false },
+    { name: 'Thursley Common and Pudmore Pond',             done: false },
+    { name: 'Reigate Hill and Gatton Park',                 done: false },
+    { name: 'Hurtwood and Pitch Hill',                      done: false },
+    { name: 'Abinger Roughs and Crossways Farm',            done: false },
+    { name: 'Tilgate Forest',                               done: false },
+    { name: 'Cissbury Ring',                                done: false },
+    { name: 'Ditchling Beacon',                             done: false },
+    { name: 'Cuckmere Haven',                               done: false },
+    { name: 'Beachy Head and Birling Gap',                  done: false },
+    { name: 'Kingley Vale',                                 done: false },
+    { name: 'Butser Hill',                                  done: false },
+    { name: 'Queen Elizabeth Country Park',                 done: false },
+    { name: 'Waggoners Wells',                              done: false },
+    { name: 'Alice Holt Forest',                            done: false },
+    { name: 'Woolmer Forest',                               done: false },
+    { name: 'Brockenhurst and Lymington River',             done: false },
+    { name: 'Studland Bay and Old Harry Rocks',             done: false },
+    { name: 'Durlston Country Park',                        done: false },
+    { name: 'Golden Cap',                                   done: false },
+    { name: 'Dartmoor - Bellever Forest',                   done: false },
+    { name: 'Dartmoor - Wistmans Wood',                     done: false },
+    { name: 'Exmoor - Horner Wood',                         done: false },
+    { name: 'Exmoor - Dunkery Beacon',                      done: false },
+    { name: 'Quantock Hills',                               done: false },
+    { name: 'Mendip Hills - Cheddar Gorge',                 done: false },
+    { name: 'Bath Skyline Walk',                            done: false },
+    { name: 'Chipping Campden and Dovers Hill',             done: false },
+    { name: 'Bourton on the Water',                         done: false },
+    { name: 'Broadway Tower',                               done: false },
+    { name: 'Cleeve Hill',                                  done: false },
+    { name: 'Symonds Yat',                                  done: false },
+    { name: 'Malvern Hills',                                done: false },
+    { name: 'Stiperstones',                                 done: false },
+    { name: 'Long Mynd',                                    done: false },
+    { name: 'Wenlock Edge',                                 done: false },
+    { name: 'Clent Hills',                                  done: false },
+    { name: 'Cannock Chase',                                done: false },
+    { name: 'Sherwood Forest',                              done: false },
+    { name: 'Clumber Park',                                 done: false },
+    { name: 'Peak District - Dovedale',                     done: false },
+    { name: 'Peak District - Kinder Scout',                 done: false },
+    { name: 'Peak District - Mam Tor',                      done: false },
+    { name: 'Yorkshire Dales - Aysgarth Falls',             done: false },
+    { name: 'Yorkshire Dales - Hardraw Force',              done: false },
+    { name: 'North York Moors - Goathland',                 done: false },
+    { name: 'North York Moors - Roseberry Topping',         done: false },
+    { name: 'Flamborough Head',                             done: false },
+    { name: 'Filey Brigg',                                  done: false },
+    { name: 'Durham Cathedral and River Wear',              done: false },
+    { name: 'Hadrians Wall - Steel Rigg',                   done: false },
+    { name: 'Kielder Forest',                               done: false },
+    { name: 'Northumberland Coast',                         done: false },
+    { name: 'Bamburgh Castle Beach',                        done: false },
+    { name: 'Lake District - Coniston',                     done: false },
+    { name: 'Lake District - Ullswater',                    done: false },
+    { name: 'Lake District - Buttermere',                   done: false },
+    { name: 'Lake District - Wastwater',                    done: false },
+    { name: 'Yorkshire Three Peaks - Pen y Ghent',          done: false },
+    { name: 'Snowdonia - Aber Falls',                       done: false },
+    { name: 'Brecon Beacons - Pen y Fan',                   done: false },
+    { name: 'Pembrokeshire Coast',                          done: false },
+    { name: 'Gower Peninsula',                              done: false },
+    { name: 'Loch Lomond',                                  done: false },
+    { name: 'Glen Coe',                                     done: false },
+    { name: 'Ben Nevis Foothills',                          done: false },
+    { name: 'Isle of Arran Coastal Path',                   done: false },
+    { name: 'Cairngorms - Loch Morlich',                    done: false },
+    { name: 'Edinburgh - Arthurs Seat',                     done: false },
+    { name: 'Edinburgh - Pentland Hills',                   done: false }
+  ];
+
+  var GUIDES = [
+    // Done
+    { name: 'Ticks on dogs',                        done: true  },
+    { name: 'Heatstroke and hot weather walking',   done: true  },
+    { name: 'Alabama rot',                          done: true  },
+    { name: 'Autumn dog walks',                     done: true  },
+    { name: 'Brachycephalic breeds',                done: true  },
+    { name: 'Walking a Shar Pei',                   done: true  },
+    // Needed
+    { name: 'Blue-green algae guide',               done: false },
+    { name: 'Cattle and dog walkers guide',         done: false },
+    { name: 'Antifreeze guide',                     done: false },
+    { name: 'Senior dog walking guide',             done: false },
+    { name: 'Shar Pei skin fold care guide',        done: false },
+    { name: 'Shar Pei fever guide',                 done: false }
+  ];
+
+  // ---- Slugify ----
+
+  function slugify(name) {
+    return name.toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  }
+
+  // Attach IDs to data
+  WALKS.forEach(function(w) { w.id = slugify(w.name); });
+  GUIDES.forEach(function(g) { g.id = slugify(g.name); });
+
+  // ---- State ----
+
+  var state = {};
+  var walkFilter = 'all';
+  var guideFilter = 'all';
+
+  function loadState() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(LS_KEY));
+      state = saved || {};
+    } catch(e) {
+      state = {};
+    }
+    // Seed missing items with defaults
+    WALKS.concat(GUIDES).forEach(function(item) {
+      if (!(item.id in state)) {
+        state[item.id] = item.done;
+      }
+    });
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify(state));
+      localStorage.setItem(LS_TS_KEY, Date.now().toString());
+    } catch(e) {}
+  }
+
+  // ---- Toggle ----
+
+  function toggleItem(id) {
+    state[id] = !state[id];
+    saveState();
+    renderSection('walk', WALKS);
+    renderSection('guide', GUIDES);
+    updateHeader();
+  }
+  // Expose globally for onclick
+  window.toggleItem = toggleItem;
+
+  // ---- Filter ----
+
+  function setFilter(section, value) {
+    if (section === 'walk') {
+      walkFilter = value;
+      ['all','needed'].forEach(function(v) {
+        var el = document.getElementById('walk-filter-' + v);
+        if (el) el.classList.toggle('active', v === value);
+      });
+      renderSection('walk', WALKS);
+    } else {
+      guideFilter = value;
+      ['all','needed'].forEach(function(v) {
+        var el = document.getElementById('guide-filter-' + v);
+        if (el) el.classList.toggle('active', v === value);
+      });
+      renderSection('guide', GUIDES);
+    }
+  }
+  window.setFilter = setFilter;
+
+  // ---- Render section ----
+
+  function renderSection(section, data) {
+    var filter = section === 'walk' ? walkFilter : guideFilter;
+
+    // Split and sort: needed first, done last
+    var needed = data.filter(function(item) { return !state[item.id]; });
+    var done   = data.filter(function(item) { return  state[item.id]; });
+    var items  = needed.concat(done);
+
+    if (filter === 'needed') {
+      items = needed;
+    }
+
+    var container = document.getElementById(section + '-items');
+    if (!container) return;
+
+    if (items.length === 0) {
+      container.innerHTML = '<div class="empty-state">All done!</div>';
+    } else {
+      container.innerHTML = items.map(function(item) {
+        var checked = !!state[item.id];
+        return [
+          '<div class="item-row ' + (checked ? 'is-done' : '') + '" onclick="toggleItem(\'' + item.id + '\')">',
+          '  <div class="cb">',
+          '    <svg class="cb-check" width="12" height="10" viewBox="0 0 12 10" fill="none">',
+          '      <path d="M1.5 5l3 3 6-7" stroke="white" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>',
+          '    </svg>',
+          '  </div>',
+          '  <span class="item-name">' + escHtml(item.name) + '</span>',
+          '  <span class="status-pill ' + (checked ? 'done' : 'needed') + '">' + (checked ? 'Done' : 'Needed') + '</span>',
+          '</div>'
+        ].join('\n');
+      }).join('\n');
+    }
+
+    // Update progress
+    var totalCount = data.length;
+    var doneCount  = data.filter(function(item) { return state[item.id]; }).length;
+    var pct = totalCount > 0 ? Math.round(doneCount / totalCount * 100) : 0;
+
+    var fill  = document.getElementById(section + '-progress-fill');
+    var label = document.getElementById(section + '-progress-label');
+    var count = document.getElementById(section + '-count-label');
+
+    if (fill)  fill.style.width  = pct + '%';
+    if (label) label.textContent = doneCount + ' of ' + totalCount + ' sourced';
+    if (count) count.textContent = doneCount + ' / ' + totalCount;
+  }
+
+  // ---- Header ----
+
+  function updateHeader() {
+    var allData = WALKS.concat(GUIDES);
+    var total   = allData.length;
+    var done    = allData.filter(function(item) { return state[item.id]; }).length;
+
+    var badge = document.getElementById('header-badge');
+    if (badge) badge.textContent = done + ' of ' + total + ' sourced';
+
+    var sub = document.getElementById('header-subtitle');
+    if (sub) {
+      var ts = localStorage.getItem(LS_TS_KEY);
+      if (ts) {
+        var date = new Date(parseInt(ts, 10));
+        sub.textContent = 'Updated ' + formatDate(date);
+      } else {
+        sub.textContent = 'Tap an item to mark it done';
+      }
+    }
+  }
+
+  function formatDate(date) {
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
+  }
+
+  function escHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ---- Init ----
+
+  loadState();
+  renderSection('walk', WALKS);
+  renderSection('guide', GUIDES);
+  updateHeader();
+
+})();
+</script>
+</body>
+</html>
