@@ -372,6 +372,18 @@
 .card-move-btn:hover{text-decoration:underline}
 .card-move-select{display:none;width:100%;font-size:11px;font-family:inherit;border:0.5px solid var(--border);border-radius:6px;padding:5px 8px;margin-top:4px;color:var(--ink);background:white;cursor:pointer}
 @media (hover:none) and (pointer:coarse){.card-move-btn{display:block}}
+.card-edit-btn{display:block;margin-top:6px;font-size:10px;color:var(--ink-3);cursor:pointer;font-weight:600;background:none;border:none;padding:2px 0;font-family:inherit;transition:color 0.15s ease}
+.card-edit-btn:hover{color:var(--brand)}
+.card-edit-btn:active{transform:scale(0.97)}
+.card-edit-panel{display:none;margin-top:8px;border-top:0.5px solid var(--border);padding-top:8px}
+.card-edit-panel.open{display:block}
+.card-edit-panel input,.card-edit-panel textarea{display:block;width:100%;font-family:inherit;font-size:12px;border:0.5px solid var(--border);border-radius:6px;padding:6px 8px;margin-bottom:6px;background:white;color:var(--ink);outline:none;resize:vertical}
+.card-edit-panel input:focus,.card-edit-panel textarea:focus{border-color:var(--brand)}
+.card-edit-actions{display:flex;gap:6px;align-items:center}
+.card-edit-save{font-size:11px;font-weight:600;background:var(--brand);color:white;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:inherit}
+.card-edit-save:active{transform:scale(0.97)}
+.card-edit-cancel{font-size:11px;font-weight:600;background:none;color:var(--ink-3);border:none;cursor:pointer;font-family:inherit;padding:5px 2px}
+.card-edit-cancel:hover{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -431,8 +443,6 @@
       </div>
     </div>
     <div class="cards" id="cards-backlog">
-
-      <div class="section-label">Hard Go-Live Blockers</div>
 
       <div class="card blocker" id="card-tc">
         <div class="card-top">
@@ -1393,6 +1403,9 @@ document.addEventListener('DOMContentLoaded',function(){loadChecklist('website')
   function saveCustomCards(a){localStorage.setItem(STORE_CUSTOM,JSON.stringify(a));}
   function getMoves(){return JSON.parse(localStorage.getItem(STORE_MOVES)||'{}');}
   function saveMoves(m){localStorage.setItem(STORE_MOVES,JSON.stringify(m));}
+  var STORE_EDITS='sniffout-kanban-card-edits';
+  function getEdits(){return JSON.parse(localStorage.getItem(STORE_EDITS)||'{}');}
+  function saveEdits(e){localStorage.setItem(STORE_EDITS,JSON.stringify(e));}
 
   function getTagClass(t){
     t=(t||'').toLowerCase();
@@ -1476,6 +1489,11 @@ document.addEventListener('DOMContentLoaded',function(){loadChecklist('website')
     noteInputWrap.appendChild(noteInput);noteInputWrap.appendChild(noteSaveBtn);notesWrap.appendChild(noteInputWrap);
     div.appendChild(notesWrap);
 
+    var editBtn=document.createElement('button');editBtn.className='card-edit-btn';editBtn.textContent='Edit';
+    (function(id){editBtn.onclick=function(){window.toggleEditPanel(id);};})(card.id);
+    div.appendChild(editBtn);
+    div.appendChild(buildEditPanel(card.id,true));
+
     addDragListeners(div);
     return div;
   }
@@ -1487,6 +1505,80 @@ document.addEventListener('DOMContentLoaded',function(){loadChecklist('website')
       var opt=document.createElement('option');opt.value=c;opt.textContent=COL_LABELS[c];sel.appendChild(opt);
     });
     sel.onchange=function(){if(sel.value)window.moveCard(cardId,sel.value,isCustom);};
+  }
+
+  function buildEditPanel(cardId,isCustom){
+    var wrap=document.createElement('div');wrap.className='card-edit-panel';wrap.id='edit-panel-'+cardId;
+    var titleIn=document.createElement('input');titleIn.id='edit-title-'+cardId;titleIn.placeholder='Title';
+    var bodyIn=document.createElement('textarea');bodyIn.id='edit-body-'+cardId;bodyIn.placeholder='Description';bodyIn.rows=2;
+    var tagIn=document.createElement('input');tagIn.id='edit-tag-'+cardId;tagIn.placeholder='Tag (e.g. Dev, Design, Blocker, Owner)';
+    var actions=document.createElement('div');actions.className='card-edit-actions';
+    var saveBtn=document.createElement('button');saveBtn.className='card-edit-save';saveBtn.textContent='Save';
+    (function(id,c){saveBtn.onclick=function(){window.saveCardEdit(id,c);};})(cardId,isCustom);
+    var cancelBtn=document.createElement('button');cancelBtn.className='card-edit-cancel';cancelBtn.textContent='Cancel';
+    (function(id){cancelBtn.onclick=function(){window.toggleEditPanel(id);};})(cardId);
+    actions.appendChild(saveBtn);actions.appendChild(cancelBtn);
+    wrap.appendChild(titleIn);wrap.appendChild(bodyIn);wrap.appendChild(tagIn);wrap.appendChild(actions);
+    return wrap;
+  }
+
+  window.toggleEditPanel=function(cardId){
+    var panel=document.getElementById('edit-panel-'+cardId);if(!panel)return;
+    var opening=!panel.classList.contains('open');
+    if(opening){
+      var card=document.getElementById(cardId);
+      var titleEl=card?card.querySelector('.card-title'):null;
+      var bodyEl=card?card.querySelector('.card-body'):null;
+      var tagEl=card?card.querySelector('.card-tag'):null;
+      var ti=document.getElementById('edit-title-'+cardId);
+      var bi=document.getElementById('edit-body-'+cardId);
+      var tagi=document.getElementById('edit-tag-'+cardId);
+      if(ti&&titleEl)ti.value=titleEl.textContent;
+      if(bi)bi.value=bodyEl?bodyEl.textContent:'';
+      if(tagi)tagi.value=tagEl?tagEl.textContent:'';
+    }
+    panel.classList.toggle('open',opening);
+  };
+
+  window.saveCardEdit=function(cardId,isCustom){
+    var card=document.getElementById(cardId);if(!card)return;
+    var ti=document.getElementById('edit-title-'+cardId);
+    var bi=document.getElementById('edit-body-'+cardId);
+    var tagi=document.getElementById('edit-tag-'+cardId);
+    if(!ti||!ti.value.trim())return;
+    var newTitle=ti.value.trim();
+    var newBody=bi?bi.value.trim():'';
+    var newTag=tagi?tagi.value.trim():'';
+    var titleEl=card.querySelector('.card-title');
+    if(titleEl)titleEl.textContent=newTitle;
+    var bodyEl=card.querySelector('.card-body');
+    if(newBody){
+      if(bodyEl)bodyEl.textContent=newBody;
+      else{var nb=document.createElement('div');nb.className='card-body';nb.textContent=newBody;var cardTop=card.querySelector('.card-top');if(cardTop&&cardTop.nextSibling)card.insertBefore(nb,cardTop.nextSibling);else card.appendChild(nb);}
+    } else if(bodyEl){bodyEl.textContent='';}
+    var tagEl=card.querySelector('.card-tag');
+    if(newTag){
+      if(tagEl){tagEl.textContent=newTag;tagEl.className='card-tag '+getTagClass(newTag);}
+      else{var nt=document.createElement('div');nt.className='card-tag '+getTagClass(newTag);nt.textContent=newTag;var ct=card.querySelector('.card-top');if(ct)ct.appendChild(nt);}
+    } else if(tagEl){tagEl.remove();}
+    if(isCustom){
+      var all=getCustomCards();
+      for(var i=0;i<all.length;i++){if(all[i].id===cardId){all[i].title=newTitle;all[i].body=newBody;if(all[i].tags&&all[i].tags.length)all[i].tags[0]=newTag;else all[i].tags=[newTag];break;}}
+      saveCustomCards(all);
+    } else {
+      var edits=getEdits();edits[cardId]={title:newTitle,body:newBody,tag:newTag};saveEdits(edits);
+    }
+    var panel=document.getElementById('edit-panel-'+cardId);if(panel)panel.classList.remove('open');
+  };
+
+  function applyEdits(){
+    var edits=getEdits();
+    Object.keys(edits).forEach(function(cardId){
+      var e=edits[cardId];var card=document.getElementById(cardId);if(!card)return;
+      var titleEl=card.querySelector('.card-title');if(titleEl&&e.title)titleEl.textContent=e.title;
+      var bodyEl=card.querySelector('.card-body');if(bodyEl&&e.body!==undefined)bodyEl.textContent=e.body;
+      if(e.tag!==undefined){var tagEl=card.querySelector('.card-tag');if(tagEl&&e.tag){tagEl.textContent=e.tag;tagEl.className='card-tag '+getTagClass(e.tag);}}
+    });
   }
 
   function addDragListeners(el){
@@ -1572,8 +1664,14 @@ document.addEventListener('DOMContentLoaded',function(){loadChecklist('website')
       var notesSection=card.querySelector('.card-notes');
       if(notesSection){card.insertBefore(moveBtn,notesSection);card.insertBefore(moveSel,notesSection);}
       else{card.appendChild(moveBtn);card.appendChild(moveSel);}
+
+      var editBtn2=document.createElement('button');editBtn2.className='card-edit-btn';editBtn2.textContent='Edit';
+      (function(id){editBtn2.onclick=function(){window.toggleEditPanel(id);};})(card.id);
+      card.appendChild(editBtn2);
+      card.appendChild(buildEditPanel(card.id,false));
     });
 
+    applyEdits();
     COLS.forEach(setupDropZone);
 
     getCustomCards().forEach(function(card){
