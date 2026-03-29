@@ -44,6 +44,38 @@ Google Places API expansion (already integrated at current scope — do not add 
 
 **Firebase note:** Firebase foundation is now in place (project: `sniffout-fe976`, region `europe-west2`, anonymous auth, Firestore, Storage, SDK v10.12.0 via CDN). The foundation is integrated but the **full Firebase migration** — authenticated user accounts, server-side walk log migration, full Firestore read/write — remains Phase 3 and must not be implemented without explicit instruction and GDPR sign-off (L1).
 
+## Hazard Content Rules
+
+These rules are locked. Do not implement hazard content outside these boundaries without PO sign-off.
+
+### Today tab
+The Today tab hazard system handles weather-driven hazards only: heat, cold, wind, storm, paw safety, and existing seasonal alerts (blue-green algae, adders, grass seeds, harvest mites, rock salt). Do not add new hazard alerts to the Today tab without explicit PO instruction. The Today tab must never feel overwhelming.
+
+### Walk card hazard pills
+A small number of terrain-specific hazard pills may appear on individual walk cards and walk detail pages. Pills are informative only - they help users make their own decisions, they do not warn users away from walks. Maximum 3-4 pills per walk. Most walks will show none.
+
+Approved hazard pills and their conditions:
+- Livestock - show if walk.livestock === true (already in WALKS_DB)
+- Ticks - show if walk terrain includes woodland or heathland (March-October only)
+- Blue-green algae - show if walk passes near still or slow water (May-September, temp gated)
+- Adders - show if walk terrain includes heathland or moorland (April-June only)
+
+No other hazard pills are approved. Do not add new pills without PO sign-off.
+
+### Companion website articles
+Hazard guide articles on sniffout.co.uk exist primarily for SEO. They are informative editorial content, not in-app features. The following are approved as website articles:
+- Ticks
+- Heatstroke and hot weather walking
+- Alabama rot
+- Blue-green algae
+- Cattle and dog walkers
+- Antifreeze
+
+Antifreeze and cattle are website articles only - they do not appear in the app in any form.
+
+### Tone
+All hazard content follows docs/specs/hazard-content-tone-guide.md. Informative, warm, practical. Never alarmist. Never disparaging about specific walks or routes. The user makes their own decisions - Sniffout gives them the information to do so confidently.
+
 ## Project Overview
 
 **Sniffout** is a mobile-first PWA for discovering dog walks across the UK. No build step — it's a single HTML file deployed to GitHub Pages at `sniffout.app` via a CNAME. `index.html` redirects to `coming-soon.html` (intentional pre-launch behaviour). Desktop users see a "Coming soon" screen (viewport ≥768px or non-touch device).
@@ -193,5 +225,6 @@ Dark mode is toggled manually by the user via Settings. "Auto" option uses `pref
 - **Nav labels:** Today · Weather · Walks · Nearby · Me
 - **Walk count references:** Use `WALKS_DB.length` dynamically — never hardcode a number
 - All weather verdict strings, hazard titles, and paw safety strings: see `docs/po/copy-review.md` and `docs/po/po-action-plan-round24.md`
+- **Account messaging (Phase 3):** When prompting users to create an account, always frame it as protecting their data across devices - never as registration or sign-up. The approved hook line is: "Keep your walks safe across any device." Secondary framing: "Your stats, your journal, always with you." The trigger moment is when a user has logged enough walks that losing them would matter. Final copy to be confirmed by Copywriter before implementation.
 
 Do not use "free", "no sign-up", "no account", or "no login" anywhere in the app. When account creation arrives (Phase 3), it must be framed as data protection - "Keep your walks safe across any device" or "your data, safe wherever you are" - not as a registration step or burden. The absence of an account is not a selling point; protecting the user's data is. Copy that frames accounts as optional or avoidable will conflict with Phase 3 messaging and must not be introduced.
