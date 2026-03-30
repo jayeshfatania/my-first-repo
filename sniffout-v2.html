@@ -179,7 +179,7 @@
     .section-link { font-size: 14px; font-weight: 500; color: var(--brand); }
 
     /* ─── Tab title bar ─── */
-    .tab-title-bar { height: 60px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 20; border-bottom: 1px solid var(--border); }
+    .tab-title-bar { height: 60px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 30; border-bottom: 1px solid var(--border); }
     .tab-title { font-size: 18px !important; font-weight: 700 !important; color: var(--ink); font-family: var(--font-ui); line-height: 1.2; margin: 0; }
     .filter-btn { background: none; border: none; width: 40px; height: 40px; cursor: pointer; color: var(--ink); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 8px; transition: transform 0.15s ease; -webkit-tap-highlight-color: transparent; }
     .filter-btn:active { color: var(--brand); transform: scale(0.97); }
@@ -1836,7 +1836,8 @@
       height: 300px;
       display: none;
       position: relative;
-      overflow: visible;
+      overflow: hidden;
+      z-index: 1;
     }
     #nearby-map.visible { display: block; }
     body.night #nearby-map .leaflet-tile-pane { filter: brightness(0.75) contrast(1.05); }
