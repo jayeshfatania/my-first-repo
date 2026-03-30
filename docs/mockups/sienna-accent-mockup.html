@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sienna Accent Colour -- Decision Mockup</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Design tokens */
+    :root {
+      --brand: #2C4A14;
+      --brand-light: #E8F0DC;
+      --sienna: #B85C2C;
+      --sienna-light: #F5E8E0;
+      --sienna-border: #E0A078;
+      --bg: #F7F5F0;
+      --surface: #FFFFFF;
+      --border: rgba(0,0,0,0.08);
+      --ink: #1A1A1A;
+      --ink-2: #6B6B6B;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #ECEAE5;
+      color: var(--ink);
+      padding: 40px 20px 80px;
+    }
+
+    /* Page header */
+    .page-header {
+      max-width: 760px;
+      margin: 0 auto 48px;
+    }
+    .page-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .page-header p {
+      font-size: 14px;
+      color: var(--ink-2);
+      line-height: 1.5;
+    }
+    .colour-swatch-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .swatch {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .swatch-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    /* Section wrapper */
+    .section {
+      max-width: 760px;
+      margin: 0 auto 52px;
+    }
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(44,74,20,0.6);
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .section-note {
+      font-size: 13px;
+      color: var(--ink-2);
+      line-height: 1.55;
+      margin-bottom: 24px;
+    }
+
+    /* Comparison grid */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .compare-col {
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .compare-header {
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-header.before {
+      background: #F7F5F0;
+      color: #888888;
+    }
+    .compare-header.after {
+      background: var(--sienna-light);
+      color: var(--sienna);
+    }
+    .compare-body {
+      padding: 24px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100px;
+    }
+    .compare-note {
+      padding: 12px 16px;
+      font-size: 11px;
+      color: var(--ink-2);
+      line-height: 1.5;
+      border-top: 1px solid var(--border);
+      background: #FAFAF8;
+    }
+
+    /* -- Element 1: Header CTA pill -- */
+    .mock-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #F7F5F0;
+      padding: 12px 16px;
+      border-bottom: 0.5px solid rgba(0,0,0,0.08);
+      border-radius: 12px;
+      width: 100%;
+    }
+    .mock-wordmark {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--brand);
+      letter-spacing: -0.3px;
+    }
+    .pill-current {
+      font-size: 11px;
+      color: var(--brand);
+      background: #E8F0DC;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .pill-sienna {
+      font-size: 11px;
+      color: var(--surface);
+      background: var(--sienna);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* -- Element 2: Difficulty badges -- */
+    .badges-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+    .badge-row-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge-label {
+      font-size: 11px;
+      color: var(--ink-2);
+      width: 50px;
+      flex-shrink: 0;
+    }
+    .diff-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    /* Current: all grey/neutral */
+    .diff-easy-current    { background: #F0F7EA; color: #2C6E2F; border: 0.5px solid rgba(0,0,0,0.08); }
+    .diff-mod-current     { background: #F7F5F0; color: #555555; border: 0.5px solid rgba(0,0,0,0.08); }
+    .diff-hard-current    { background: #F7F5F0; color: #555555; border: 0.5px solid rgba(0,0,0,0.08); }
+    /* Proposed: sienna for Moderate, red-tinted for Hard */
+    .diff-easy-after      { background: #F0F7EA; color: #2C6E2F; border: 0.5px solid rgba(0,0,0,0.08); }
+    .diff-mod-after       { background: var(--sienna-light); color: var(--sienna); border: 0.5px solid rgba(184,92,44,0.2); }
+    .diff-hard-after      { background: #FEF2F2; color: #B91C1C; border: 0.5px solid rgba(185,28,28,0.15); }
+
+    /* -- Element 3: Walk card -- */
+    .mock-walk-card {
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: var(--surface);
+      width: 100%;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .card-img-band {
+      height: 120px;
+      position: relative;
+      background: linear-gradient(135deg, #6E9048 0%, #2C4A14 100%);
+      display: flex;
+      align-items: flex-end;
+      padding: 10px;
+    }
+    .card-img-band-after {
+      height: 120px;
+      position: relative;
+      background: linear-gradient(135deg, #6E9048 0%, #2C4A14 100%);
+      display: flex;
+      align-items: flex-end;
+      padding: 10px;
+    }
+    .card-walk-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    .card-badge-current {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      background: var(--brand);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.02em;
+    }
+    .card-badge-sienna {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      background: var(--sienna);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.02em;
+    }
+    .card-body-current {
+      padding: 11px 12px 13px;
+      border-top: 1px solid rgba(0,0,0,0.06);
+    }
+    .card-body-after {
+      padding: 11px 12px 13px;
+      border-top: 2px solid var(--brand);
+    }
+    .card-meta-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .card-meta-pill-current {
+      font-size: 11px;
+      color: #555555;
+      background: #F7F5F0;
+      border: 0.5px solid rgba(0,0,0,0.08);
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+    .card-meta-pill-green {
+      font-size: 11px;
+      color: var(--brand);
+      background: #E8F0DC;
+      border: 0.5px solid rgba(44,74,20,0.15);
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+    .card-meta-pill-sienna {
+      font-size: 11px;
+      color: var(--sienna);
+      background: var(--sienna-light);
+      border: 0.5px solid rgba(184,92,44,0.2);
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    /* -- Element 4: Hero CTA button -- */
+    .mock-hero {
+      width: 100%;
+      border-radius: 12px;
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      text-align: center;
+    }
+    .mock-hero-bg {
+      background: var(--brand);
+    }
+    .mock-hero-headline {
+      font-size: 17px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.25;
+      letter-spacing: -0.3px;
+    }
+    .mock-hero-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+    }
+    .cta-white {
+      background: white;
+      color: var(--brand);
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 14px;
+      padding: 13px 28px;
+      display: inline-block;
+      text-align: center;
+      margin-top: 4px;
+    }
+    .cta-sienna-solid {
+      background: var(--sienna);
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 14px;
+      padding: 13px 28px;
+      display: inline-block;
+      text-align: center;
+      margin-top: 4px;
+    }
+    .cta-sienna-outline {
+      background: transparent;
+      color: var(--sienna-light);
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 14px;
+      padding: 13px 28px;
+      display: inline-block;
+      text-align: center;
+      border: 2px solid rgba(255,255,255,0.5);
+      margin-top: 4px;
+    }
+    .cta-social-proof {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* Option row for hero CTA */
+    .option-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    .option-col {
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .option-label {
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      background: #F7F5F0;
+      color: #888888;
+    }
+    .option-label.opt-a { color: #888888; background: #F7F5F0; }
+    .option-label.opt-b { color: var(--sienna); background: var(--sienna-light); }
+    .option-label.opt-c { color: var(--brand); background: #E8F0DC; }
+    .option-body {
+      padding: 20px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .option-note {
+      padding: 10px 14px;
+      font-size: 11px;
+      color: var(--ink-2);
+      line-height: 1.5;
+      border-top: 1px solid var(--border);
+      background: #FAFAF8;
+    }
+
+    /* Verdict row */
+    .verdict-box {
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 24px;
+    }
+    .verdict-box h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .verdict-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .verdict-list li {
+      font-size: 13px;
+      color: var(--ink-2);
+      line-height: 1.5;
+      padding-left: 16px;
+      position: relative;
+    }
+    .verdict-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 7px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--sienna);
+    }
+
+    /* Divider */
+    .section-divider {
+      max-width: 760px;
+      margin: 0 auto 48px;
+      border: none;
+      border-top: 1px solid rgba(0,0,0,0.08);
+    }
+
+    @media (max-width: 560px) {
+      .compare-grid { grid-template-columns: 1fr; }
+      .option-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <h1>Sienna accent colour -- decision review</h1>
+    <p>Shows how earthy sienna <strong>#B85C2C</strong> would appear on specific elements. Each section shows current vs proposed side by side. No code has been changed.</p>
+    <div class="colour-swatch-row">
+      <div class="swatch">
+        <div class="swatch-dot" style="background:#2C4A14;"></div>
+        <span>Brand green #2C4A14</span>
+      </div>
+      <div class="swatch">
+        <div class="swatch-dot" style="background:#B85C2C;"></div>
+        <span>Sienna #B85C2C</span>
+      </div>
+      <div class="swatch">
+        <div class="swatch-dot" style="background:#F5E8E0; border:1px solid #E0A078;"></div>
+        <span>Sienna light #F5E8E0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ELEMENT 1: Header CTA pill -->
+  <div class="section">
+    <div class="section-label">Element 1 of 4</div>
+    <div class="section-title">Sticky header "Get the app" pill</div>
+    <p class="section-note">Currently: light green background (#E8F0DC) with brand green text. Low contrast -- the pill blends into the header. Proposed: solid sienna with white text. Higher contrast, warmer personality, distinct from the wordmark colour.</p>
+
+    <div class="compare-grid">
+      <div class="compare-col">
+        <div class="compare-header before">Current</div>
+        <div class="compare-body" style="padding: 20px;">
+          <div class="mock-header">
+            <span class="mock-wordmark">Sniffout</span>
+            <a class="pill-current">Get the app</a>
+          </div>
+        </div>
+        <div class="compare-note">Green pill on green header. Low visual pop. Reads as a nav link rather than a CTA.</div>
+      </div>
+      <div class="compare-col">
+        <div class="compare-header after">Proposed</div>
+        <div class="compare-body" style="padding: 20px;">
+          <div class="mock-header">
+            <span class="mock-wordmark">Sniffout</span>
+            <a class="pill-sienna">Get the app</a>
+          </div>
+        </div>
+        <div class="compare-note">Sienna on warm off-white. Clear contrast. First use of sienna on every page -- establishes the second accent immediately.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ELEMENT 2: Difficulty badge -->
+  <div class="section">
+    <div class="section-label">Element 2 of 4</div>
+    <div class="section-title">Walk difficulty badge</div>
+    <p class="section-note">Currently: all difficulty levels use the same neutral grey pill (background #F7F5F0, text #555555). No visual hierarchy. Proposed: Easy stays green, Moderate becomes sienna, Hard gets a muted red. Colour now carries meaning at a glance.</p>
+
+    <div class="compare-grid">
+      <div class="compare-col">
+        <div class="compare-header before">Current -- all neutral grey</div>
+        <div class="compare-body">
+          <div class="badges-row">
+            <div class="badge-row-item">
+              <span class="badge-label">Easy</span>
+              <span class="diff-badge diff-easy-current">Easy</span>
+            </div>
+            <div class="badge-row-item">
+              <span class="badge-label">Moderate</span>
+              <span class="diff-badge diff-mod-current">Moderate</span>
+            </div>
+            <div class="badge-row-item">
+              <span class="badge-label">Hard</span>
+              <span class="diff-badge diff-hard-current">Hard</span>
+            </div>
+          </div>
+        </div>
+        <div class="compare-note">Easy gets a green tint in the current system. Moderate and Hard are visually identical -- no way to scan the difficulty at a glance.</div>
+      </div>
+      <div class="compare-col">
+        <div class="compare-header after">Proposed -- colour-coded</div>
+        <div class="compare-body">
+          <div class="badges-row">
+            <div class="badge-row-item">
+              <span class="badge-label">Easy</span>
+              <span class="diff-badge diff-easy-after">Easy</span>
+            </div>
+            <div class="badge-row-item">
+              <span class="badge-label">Moderate</span>
+              <span class="diff-badge diff-mod-after">Moderate</span>
+            </div>
+            <div class="badge-row-item">
+              <span class="badge-label">Hard</span>
+              <span class="diff-badge diff-hard-after">Hard</span>
+            </div>
+          </div>
+        </div>
+        <div class="compare-note">Sienna for Moderate sits between the green Easy and the red Hard. Warm, not alarming. Red for Hard is informative, not a warning -- same amber approach already used in the hazard system.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ELEMENT 3: Walk card -->
+  <div class="section">
+    <div class="section-label">Element 3 of 4</div>
+    <div class="section-title">Walk card -- green + sienna together</div>
+    <p class="section-note">Shows how sienna interacts with brand green at card level. The "Sniffout Pick" badge and the "Moderate" pill both pick up sienna while the off-lead chip stays brand green. The top rule on the card body (identity review PM-5) also shown in the After state.</p>
+
+    <div class="compare-grid">
+      <div class="compare-col">
+        <div class="compare-header before">Current</div>
+        <div class="compare-body" style="padding: 16px;">
+          <div class="mock-walk-card">
+            <div class="card-img-band">
+              <span class="card-badge-current">Sniffout Pick</span>
+              <span class="card-walk-name">Richmond Park</span>
+            </div>
+            <div class="card-body-current">
+              <div class="card-meta-row">
+                <span class="card-meta-pill-current">9.2 km</span>
+                <span class="card-meta-pill-green">Off lead</span>
+                <span class="card-meta-pill-current">Moderate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="compare-note">Badge, "Off lead" chip, and "Moderate" pill use inconsistent colours. Badge is brand green. "Off lead" is brand green. "Moderate" is grey. No warmth accent.</div>
+      </div>
+      <div class="compare-col">
+        <div class="compare-header after">Proposed</div>
+        <div class="compare-body" style="padding: 16px;">
+          <div class="mock-walk-card">
+            <div class="card-img-band-after">
+              <span class="card-badge-sienna">Sniffout Pick</span>
+              <span class="card-walk-name">Richmond Park</span>
+            </div>
+            <div class="card-body-after">
+              <div class="card-meta-row">
+                <span class="card-meta-pill-current">9.2 km</span>
+                <span class="card-meta-pill-green">Off lead</span>
+                <span class="card-meta-pill-sienna">Moderate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="compare-note">Sienna badge + sienna Moderate pill introduce warmth. Brand green stays on "Off lead" -- the dog-specific info. The 2px brand-green top rule on the card body anchors the card in the brand colour. Two colours, clear roles.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ELEMENT 4: Hero CTA -->
+  <div class="section">
+    <div class="section-label">Element 4 of 4</div>
+    <div class="section-title">Homepage hero CTA button -- three options</div>
+    <p class="section-note">The homepage hero is full-bleed brand green. The current CTA button is white with brand green text (high contrast, works well). Three options shown: keep current, solid sienna button, or sienna-tinted outline button.</p>
+
+    <div class="option-row">
+
+      <div class="option-col">
+        <div class="option-label opt-a">Option A -- Current</div>
+        <div class="option-body">
+          <div class="mock-hero mock-hero-bg" style="padding: 20px 14px;">
+            <span class="mock-hero-headline">Dog walks and live weather</span>
+            <span class="mock-hero-sub">123 handpicked UK walks.</span>
+            <span class="cta-white">Get Sniffout free</span>
+            <span class="cta-social-proof">Free · No account needed</span>
+          </div>
+        </div>
+        <div class="option-note">White on green. Maximum contrast. Clean and confident. The white button draws the eye but adds no warmth personality.</div>
+      </div>
+
+      <div class="option-col">
+        <div class="option-label opt-b">Option B -- Sienna solid</div>
+        <div class="option-body">
+          <div class="mock-hero mock-hero-bg" style="padding: 20px 14px;">
+            <span class="mock-hero-headline">Dog walks and live weather</span>
+            <span class="mock-hero-sub">123 handpicked UK walks.</span>
+            <span class="cta-sienna-solid">Get Sniffout free</span>
+            <span class="cta-social-proof">Free · No account needed</span>
+          </div>
+        </div>
+        <div class="option-note">Sienna solid on green. Two brand colours together at their loudest. Komoot uses this pattern (olive + terracotta). More personality but also more visual noise in the hero.</div>
+      </div>
+
+      <div class="option-col">
+        <div class="option-label opt-c">Option C -- Sienna outline</div>
+        <div class="option-body">
+          <div class="mock-hero mock-hero-bg" style="padding: 20px 14px;">
+            <span class="mock-hero-headline">Dog walks and live weather</span>
+            <span class="mock-hero-sub">123 handpicked UK walks.</span>
+            <span class="cta-sienna-outline">Get Sniffout free</span>
+            <span class="cta-social-proof">Free · No account needed</span>
+          </div>
+        </div>
+        <div class="option-note">Semi-transparent outline with off-white text. Quieter. Keeps brand green dominant. Does not introduce the sienna temperature into the hero.</div>
+      </div>
+
+    </div>
+
+    <div style="margin-top: 12px; background: #FFF8F5; border: 1px solid rgba(184,92,44,0.2); border-radius: 12px; padding: 14px 16px;">
+      <p style="font-size: 12px; color: var(--ink-2); line-height: 1.6;">
+        <strong style="color: var(--sienna);">Recommendation from identity review:</strong> Keep Option A (white CTA) on the homepage hero. The green hero should remain clean. Introduce sienna on the header pill and walk badges instead -- where it provides the most value with the least risk. Option B works as a future consideration once sienna is established across the rest of the UI.
+      </p>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Summary verdict -->
+  <div class="verdict-box">
+    <h3>What you are deciding</h3>
+    <ul class="verdict-list">
+      <li>Header pill: sienna gives the CTA significantly more visual pop against the warm off-white header. Low risk, high impact.</li>
+      <li>Difficulty badges: colour-coding adds genuine scannability. Sienna for Moderate is warm, not alarming. This is the clearest functional win.</li>
+      <li>Walk cards: sienna on "Sniffout Pick" badge distinguishes it from the brand green content chips. The two colours now have distinct roles -- green for dog-specific info, sienna for editorial curation.</li>
+      <li>Homepage hero CTA: Option A (keep white) is the recommended default. Option B available if you want more personality once sienna is established elsewhere.</li>
+    </ul>
+  </div>
+
+</body>
+</html>

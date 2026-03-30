@@ -14,7 +14,15 @@ All new development happens in **`sniffout-v2.html`** only. Do not use `dog-walk
 
 ## Project Vision
 
-Sniffout is a mobile-first PWA for discovering dog walks across the UK, being validated as a POC before investing in a backend. The product is walk discovery first; weather intelligence is the differentiator, not the lead. Keep it simple — do not add complexity unless explicitly instructed.
+Sniffout is a mobile-first PWA for discovering dog walks across the UK, being validated as a POC before investing in a backend. The product is walk discovery first; weather intelligence is the differentiator, not the lead. Keep it simple - do not add complexity unless explicitly instructed.
+
+The long-term vision is to become the definitive community-driven platform for dog walkers across the UK. The product has three layers:
+
+1. Curated content - handpicked walks, live weather intelligence, dog-friendly places, hazard alerts. This is the foundation being built now.
+2. Community layer - users submit walks, rate and review walks and places, content becomes community-driven supplemented by curated editorial. This is Phase 2.
+3. Platform - full community walks database, guides and articles, sponsored venue listings, Sniffout+ subscription. Phase 3.
+
+The community features (user-submitted walks, ratings, reviews) are planned but not yet built. Do not implement or reference them as live features until explicitly instructed.
 
 ## Competitive Context
 
@@ -75,6 +83,55 @@ Antifreeze and cattle are website articles only - they do not appear in the app 
 
 ### Tone
 All hazard content follows docs/specs/hazard-content-tone-guide.md. Informative, warm, practical. Never alarmist. Never disparaging about specific walks or routes. The user makes their own decisions - Sniffout gives them the information to do so confidently.
+
+## Companion Website (sniffout.co.uk)
+
+The companion website is a Hugo static site in a separate repo: github.com/jayeshfatania/sniffout-website. Auto-deployed to Cloudflare Pages on every push to main.
+
+### URLs
+- Live: sniffout-website.pages.dev (baseURL in config.toml)
+- Custom domain: sniffout.co.uk — NOT yet connected. Do not change baseURL until the domain is live.
+
+### Design decisions locked
+- Typeface: Plus Jakarta Sans sole typeface throughout. Fraunces display serif is permanently rejected.
+- Brand colour: #2C4A14 (Woodland Green)
+- Second accent: #B85C2C (Sienna) — approved. Applied to header CTA pill, difficulty badges, Sniffout Pick badge.
+- Card treatment: overlay style kept. Separated card treatment reviewed and rejected.
+- Section labels: low-opacity brand green rgba(44,74,20,0.55)
+- Pull quotes: italic, no quotation marks, sienna left border
+
+### Guide article pages
+- Fully redesigned — CSS classes use ga- prefix throughout
+- Spec at docs/design/guide-article-spec-march-30.md
+- Frontmatter supports: pullQuote (rendered as styled pull quote), heroImage, relatedWalks
+
+### Developer push verification (mandatory)
+Every Developer brief for sniffout-website must end with:
+```
+cd ~/Desktop/sniffout-website && git add . && git commit -m "description" && git push
+git log --oneline -3
+```
+Confirm origin/main matches HEAD before saying the task is complete. This step is mandatory — commits have previously failed to reach GitHub without this check.
+
+### Website personas
+Four copywriter personas for all website content. Full specs at ~/Desktop/sniffout-website/docs/copy/website-personas.md.
+
+| Persona | Content type | Word count |
+|---------|-------------|------------|
+| Ailsa | Walk page descriptions | 150-200 words |
+| Tom | Hazard and safety guide articles | 800-1,500 words |
+| Saoirse | Area index page introductions | 50-80 words |
+| Ravi | Editorial and homepage copy | Varies |
+
+### Content pipeline
+Researcher - Copywriter (Tom/Ailsa/Saoirse/Ravi) - Fact Checker (mandatory for all Tom articles) - fixes - Editor - Validator - Developer
+
+Fact Checker is mandatory after every Tom article without exception. Tom writes about hazards that affect dog health — errors have real-world consequences. Fact check reports saved at ~/Desktop/sniffout-website/docs/fact-check/
+
+### Copy rules for website
+- No em dashes in any user-facing copy (see Em Dash Rule above)
+- No "free", "no account needed", "no sign-up", or "no login" anywhere on the website
+- Do not frame the absence of an account as a selling point
 
 ## Project Overview
 
@@ -216,6 +273,10 @@ Dark mode is toggled manually by the user via Settings. "Auto" option uses `pref
 - **Silent refresh**: `silentWeatherRefresh()` — triggers on `visibilitychange` event and on tab switch; re-fetches weather if data is older than 5 minutes. Does not block UI. Runs silently in background.
 - **Firebase helpers**: `fsWriteWalkLogEntry(entry)`, `fsUpdateWalkNote(entryId, note)`, `fsWriteSavedWalk(walkId)`, `fsWriteUserProfile(profileData)` — write-only helpers for Firestore dual-write. All are fire-and-forget; failures are silent and do not affect UI. localStorage remains source of truth.
 - **Geocoding**: `geocodePostcode(pc)` — postcodes.io lookup
+
+### Em Dash Rule
+
+No em dashes in app or website copy or user-facing strings. Em dashes are fine in documents, reports, and conversation. This applies to all in-app copy, website article body text, guide article copy, UI labels, cards, pills, tooltips, and any string a user reads. Hyphens only in user-facing content.
 
 ### Approved Copy — Key Strings
 
