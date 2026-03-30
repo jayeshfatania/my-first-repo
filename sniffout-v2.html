@@ -1642,15 +1642,15 @@
     #walks-map-container {
       display: none;
       position: relative;
-      overflow: visible;
+      overflow: hidden;
       background: var(--bg);
     }
     body.night #walks-map-container { background: #1A1A1A; }
-    #walks-map-container.visible { display: block; }
+    #walks-map-container.visible { display: block; height: calc(100vh - 110px); }
     #walks-map {
       width: 100%;
+      height: 100%;
       min-height: 300px;
-      overflow: visible;
     }
     body.night #walks-map .leaflet-tile-pane { filter: brightness(0.75) contrast(1.05); }
     /* Pin centering wrapper - 44px tap target, visual pin centered inside */
@@ -13658,6 +13658,7 @@
   var _origLoadWeather = loadWeatherAndShow;
   loadWeatherAndShow = function(lat, lon, locationName) {
     _origLoadWeather(lat, lon, locationName);
+    nearbyHasFetched = false;
     renderNearbyTab(lat, lon, locationName);
   };
 
