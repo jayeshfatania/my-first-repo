@@ -178,8 +178,24 @@
     gap: 12px;
     padding: 10px 0;
     border-bottom: 0.5px solid rgba(0,0,0,0.055);
-    cursor: pointer;
+    cursor: default;
     transition: opacity 0.2s ease;
+  }
+
+  .item-filename {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-3);
+    font-family: monospace;
+    background: rgba(0,0,0,0.04);
+    border-radius: 4px;
+    padding: 2px 6px;
+    flex-shrink: 0;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    user-select: all;
   }
 
   .item-row:last-child { border-bottom: none; }
@@ -226,7 +242,6 @@
     color: var(--ink);
     line-height: 1.35;
     transition: color 0.15s ease;
-    user-select: none;
   }
 
   .item-row.is-done .item-name {
@@ -340,115 +355,126 @@
   // ---- Data ----
 
   var WALKS = [
-    // Done
-    { name: 'Richmond Park Deer Loop',          done: true  },
-    { name: 'Box Hill Summit Loop',             done: true  },
-    { name: 'Seven Sisters Cliffs',             done: true  },
-    { name: 'Hampstead Heath and Ponds',        done: true  },
-    { name: 'Burley Village and Forest Walks',  done: true  },
-    { name: 'Grasmere Lake Circuit',            done: true  },
-    { name: 'Malham Cove and Gordale Scar',     done: true  },
-    // Needed
-    { name: 'Isabella Plantation',                          done: false },
-    { name: 'Leith Hill and Coldharbour',                   done: false },
-    { name: 'Frensham Great Pond',                          done: false },
-    { name: 'Hindhead Common and Devils Punch Bowl',        done: false },
-    { name: 'Devils Dyke and South Downs',                  done: false },
-    { name: 'Ashridge Estate Bluebell Walk',                done: false },
-    { name: 'Wimbledon Common Loop',                        done: false },
-    { name: 'Newlands Corner and Albury Downs',             done: false },
-    { name: 'Ranmore Common and Denbies',                   done: false },
-    { name: 'Haytor and Hound Tor',                         done: false },
-    { name: 'Stanage Edge and Hathersage Moor',             done: false },
-    { name: 'Headley Heath and Nower Wood',                 done: false },
-    { name: 'Bookham Common and Fetcham Downs',             done: false },
-    { name: 'Holmwood Common',                              done: false },
-    { name: 'Thursley Common and Pudmore Pond',             done: false },
-    { name: 'Reigate Hill and Gatton Park',                 done: false },
-    { name: 'Hurtwood and Pitch Hill',                      done: false },
-    { name: 'Abinger Roughs and Crossways Farm',            done: false },
-    { name: 'Tilgate Forest',                               done: false },
-    { name: 'Cissbury Ring',                                done: false },
-    { name: 'Ditchling Beacon',                             done: false },
-    { name: 'Cuckmere Haven',                               done: false },
-    { name: 'Beachy Head and Birling Gap',                  done: false },
-    { name: 'Kingley Vale',                                 done: false },
-    { name: 'Butser Hill',                                  done: false },
-    { name: 'Queen Elizabeth Country Park',                 done: false },
-    { name: 'Waggoners Wells',                              done: false },
-    { name: 'Alice Holt Forest',                            done: false },
-    { name: 'Woolmer Forest',                               done: false },
-    { name: 'Brockenhurst and Lymington River',             done: false },
-    { name: 'Studland Bay and Old Harry Rocks',             done: false },
-    { name: 'Durlston Country Park',                        done: false },
-    { name: 'Golden Cap',                                   done: false },
-    { name: 'Dartmoor - Bellever Forest',                   done: false },
-    { name: 'Dartmoor - Wistmans Wood',                     done: false },
-    { name: 'Exmoor - Horner Wood',                         done: false },
-    { name: 'Exmoor - Dunkery Beacon',                      done: false },
-    { name: 'Quantock Hills',                               done: false },
-    { name: 'Mendip Hills - Cheddar Gorge',                 done: false },
-    { name: 'Bath Skyline Walk',                            done: false },
-    { name: 'Chipping Campden and Dovers Hill',             done: false },
-    { name: 'Bourton on the Water',                         done: false },
-    { name: 'Broadway Tower',                               done: false },
-    { name: 'Cleeve Hill',                                  done: false },
-    { name: 'Symonds Yat',                                  done: false },
-    { name: 'Malvern Hills',                                done: false },
-    { name: 'Stiperstones',                                 done: false },
-    { name: 'Long Mynd',                                    done: false },
-    { name: 'Wenlock Edge',                                 done: false },
-    { name: 'Clent Hills',                                  done: false },
-    { name: 'Cannock Chase',                                done: false },
-    { name: 'Sherwood Forest',                              done: false },
-    { name: 'Clumber Park',                                 done: false },
-    { name: 'Peak District - Dovedale',                     done: false },
-    { name: 'Peak District - Kinder Scout',                 done: false },
-    { name: 'Peak District - Mam Tor',                      done: false },
-    { name: 'Yorkshire Dales - Aysgarth Falls',             done: false },
-    { name: 'Yorkshire Dales - Hardraw Force',              done: false },
-    { name: 'North York Moors - Goathland',                 done: false },
-    { name: 'North York Moors - Roseberry Topping',         done: false },
-    { name: 'Flamborough Head',                             done: false },
-    { name: 'Filey Brigg',                                  done: false },
-    { name: 'Durham Cathedral and River Wear',              done: false },
-    { name: 'Hadrians Wall - Steel Rigg',                   done: false },
-    { name: 'Kielder Forest',                               done: false },
-    { name: 'Northumberland Coast',                         done: false },
-    { name: 'Bamburgh Castle Beach',                        done: false },
-    { name: 'Lake District - Coniston',                     done: false },
-    { name: 'Lake District - Ullswater',                    done: false },
-    { name: 'Lake District - Buttermere',                   done: false },
-    { name: 'Lake District - Wastwater',                    done: false },
-    { name: 'Yorkshire Three Peaks - Pen y Ghent',          done: false },
-    { name: 'Snowdonia - Aber Falls',                       done: false },
-    { name: 'Brecon Beacons - Pen y Fan',                   done: false },
-    { name: 'Pembrokeshire Coast',                          done: false },
-    { name: 'Gower Peninsula',                              done: false },
-    { name: 'Loch Lomond',                                  done: false },
-    { name: 'Glen Coe',                                     done: false },
-    { name: 'Ben Nevis Foothills',                          done: false },
-    { name: 'Isle of Arran Coastal Path',                   done: false },
-    { name: 'Cairngorms - Loch Morlich',                    done: false },
-    { name: 'Edinburgh - Arthurs Seat',                     done: false },
-    { name: 'Edinburgh - Pentland Hills',                   done: false }
+    { name: 'Richmond Park Deer Loop',                    filename: 'richmond-park.jpg',            done: true  },
+    { name: 'Box Hill Summit Loop',                       filename: 'box-hill.jpg',                 done: true  },
+    { name: 'Seven Sisters Cliffs',                       filename: 'seven-sisters.jpg',            done: true  },
+    { name: 'Hampstead Heath and Ponds',                  filename: 'hampstead-heath.jpg',          done: true  },
+    { name: 'Burley Village and Forest Walks',            filename: 'burley-new-forest.png',        done: true  },
+    { name: 'Grasmere Lake Circuit',                      filename: 'grasmere-lake.jpg',            done: true  },
+    { name: 'Malham Cove and Gordale Scar',               filename: 'malham-cove.jpg',              done: true  },
+    { name: 'Isabella Plantation',                        filename: 'isabella-plantation.jpg',      done: true  },
+    { name: 'Leith Hill and Coldharbour',                 filename: 'leith-hill.jpg',               done: true  },
+    { name: 'Frensham Great Pond',                        filename: 'frensham-great-pond.jpg',      done: true  },
+    { name: 'Hindhead Common and Devils Punch Bowl',      filename: 'hindhead-common.png',          done: true  },
+    { name: 'Wimbledon Common Loop',                      filename: 'wimbledon-common.jpg',         done: true  },
+    { name: 'Haytor and Hound Tor',                       filename: 'haytor-dartmoor.jpg',          done: true  },
+    { name: 'Stanage Edge and Hathersage Moor',           filename: 'stanage-edge.jpg',             done: true  },
+    { name: 'Devils Dyke and South Downs',                filename: 'devils-dyke.jpg',              done: false },
+    { name: 'Ashridge Estate Bluebell Walk',              filename: 'ashridge-estate.jpg',          done: false },
+    { name: 'Newlands Corner and Albury Downs',           filename: 'newlands-corner.jpg',          done: false },
+    { name: 'Ranmore Common and Denbies',                 filename: 'ranmore-common.jpg',           done: false },
+    { name: 'Headley Heath and Nower Wood',               filename: 'headley-heath.jpg',            done: false },
+    { name: 'Bookham Common and Fetcham Downs',           filename: 'bookham-common.jpg',           done: false },
+    { name: 'Holmwood Common',                            filename: 'holmwood-common.jpg',          done: false },
+    { name: 'Thursley Common and Pudmore Pond',           filename: 'thursley-common.jpg',          done: false },
+    { name: 'Reigate Hill and Gatton Park',               filename: 'reigate-hill.jpg',             done: false },
+    { name: 'Hurtwood and Pitch Hill',                    filename: 'hurtwood-pitch-hill.jpg',      done: false },
+    { name: 'Abinger Roughs and Crossways Farm',          filename: 'abinger-roughs.jpg',           done: false },
+    { name: 'Tilgate Forest',                             filename: 'tilgate-forest.jpg',           done: false },
+    { name: 'Cissbury Ring',                              filename: 'cissbury-ring.jpg',            done: false },
+    { name: 'Ditchling Beacon',                           filename: 'ditchling-beacon.jpg',         done: false },
+    { name: 'Cuckmere Haven',                             filename: 'cuckmere-haven.jpg',           done: false },
+    { name: 'Beachy Head and Birling Gap',                filename: 'beachy-head.jpg',              done: false },
+    { name: 'Kingley Vale',                               filename: 'kingley-vale.jpg',             done: false },
+    { name: 'Butser Hill',                                filename: 'butser-hill.jpg',              done: false },
+    { name: 'Queen Elizabeth Country Park',               filename: 'queen-elizabeth-country-park.jpg', done: false },
+    { name: 'Waggoners Wells',                            filename: 'waggoners-wells.jpg',          done: false },
+    { name: 'Alice Holt Forest',                          filename: 'alice-holt-forest.jpg',        done: false },
+    { name: 'Woolmer Forest',                             filename: 'woolmer-forest.jpg',           done: false },
+    { name: 'Brockenhurst and Lymington River',           filename: 'brockenhurst-lymington.jpg',   done: false },
+    { name: 'Studland Bay and Old Harry Rocks',           filename: 'studland-bay.jpg',             done: false },
+    { name: 'Durlston Country Park',                      filename: 'durlston-country-park.jpg',    done: false },
+    { name: 'Golden Cap',                                 filename: 'golden-cap.jpg',               done: false },
+    { name: 'Dartmoor - Bellever Forest',                 filename: 'dartmoor-bellever-forest.jpg', done: false },
+    { name: 'Dartmoor - Wistmans Wood',                   filename: 'dartmoor-wistmans-wood.jpg',   done: false },
+    { name: 'Exmoor - Horner Wood',                       filename: 'exmoor-horner-wood.jpg',       done: false },
+    { name: 'Exmoor - Dunkery Beacon',                    filename: 'exmoor-dunkery-beacon.jpg',    done: false },
+    { name: 'Quantock Hills',                             filename: 'quantock-hills.jpg',           done: false },
+    { name: 'Mendip Hills - Cheddar Gorge',               filename: 'mendip-cheddar-gorge.jpg',     done: false },
+    { name: 'Bath Skyline Walk',                          filename: 'bath-skyline.jpg',             done: false },
+    { name: 'Chipping Campden and Dovers Hill',           filename: 'chipping-campden.jpg',         done: false },
+    { name: 'Bourton on the Water',                       filename: 'bourton-on-the-water.jpg',     done: false },
+    { name: 'Broadway Tower',                             filename: 'broadway-tower.jpg',           done: false },
+    { name: 'Cleeve Hill',                                filename: 'cleeve-hill.jpg',              done: false },
+    { name: 'Symonds Yat',                                filename: 'symonds-yat.jpg',              done: false },
+    { name: 'Malvern Hills',                              filename: 'malvern-hills.jpg',            done: false },
+    { name: 'Stiperstones',                               filename: 'stiperstones.jpg',             done: false },
+    { name: 'Long Mynd',                                  filename: 'long-mynd.jpg',                done: false },
+    { name: 'Wenlock Edge',                               filename: 'wenlock-edge.jpg',             done: false },
+    { name: 'Clent Hills',                                filename: 'clent-hills.jpg',              done: false },
+    { name: 'Cannock Chase',                              filename: 'cannock-chase.jpg',            done: false },
+    { name: 'Sherwood Forest',                            filename: 'sherwood-forest.jpg',          done: false },
+    { name: 'Clumber Park',                               filename: 'clumber-park.jpg',             done: false },
+    { name: 'Peak District - Dovedale',                   filename: 'peak-dovedale.jpg',            done: false },
+    { name: 'Peak District - Kinder Scout',               filename: 'peak-kinder-scout.jpg',        done: false },
+    { name: 'Peak District - Mam Tor',                    filename: 'peak-mam-tor.jpg',             done: false },
+    { name: 'Yorkshire Dales - Aysgarth Falls',           filename: 'yorkshire-aysgarth-falls.jpg', done: false },
+    { name: 'Yorkshire Dales - Hardraw Force',            filename: 'yorkshire-hardraw-force.jpg',  done: false },
+    { name: 'North York Moors - Goathland',               filename: 'north-york-goathland.jpg',     done: false },
+    { name: 'North York Moors - Roseberry Topping',       filename: 'north-york-roseberry.jpg',     done: false },
+    { name: 'Flamborough Head',                           filename: 'flamborough-head.jpg',         done: false },
+    { name: 'Filey Brigg',                                filename: 'filey-brigg.jpg',              done: false },
+    { name: 'Durham Cathedral and River Wear',            filename: 'durham-cathedral.jpg',         done: false },
+    { name: 'Hadrians Wall - Steel Rigg',                 filename: 'hadrians-wall-steel-rigg.jpg', done: false },
+    { name: 'Kielder Forest',                             filename: 'kielder-forest.jpg',           done: false },
+    { name: 'Northumberland Coast',                       filename: 'northumberland-coast.jpg',     done: false },
+    { name: 'Bamburgh Castle Beach',                      filename: 'bamburgh-castle.jpg',          done: false },
+    { name: 'Lake District - Coniston',                   filename: 'lake-district-coniston.jpg',   done: false },
+    { name: 'Lake District - Ullswater',                  filename: 'lake-district-ullswater.jpg',  done: false },
+    { name: 'Lake District - Buttermere',                 filename: 'lake-district-buttermere.jpg', done: false },
+    { name: 'Lake District - Wastwater',                  filename: 'lake-district-wastwater.jpg',  done: false },
+    { name: 'Yorkshire Three Peaks - Pen y Ghent',        filename: 'yorkshire-pen-y-ghent.jpg',    done: false },
+    { name: 'Snowdonia - Aber Falls',                     filename: 'snowdonia-aber-falls.jpg',     done: false },
+    { name: 'Brecon Beacons - Pen y Fan',                 filename: 'brecon-pen-y-fan.jpg',         done: false },
+    { name: 'Pembrokeshire Coast',                        filename: 'pembrokeshire-coast.jpg',      done: false },
+    { name: 'Gower Peninsula',                            filename: 'gower-peninsula.jpg',          done: false },
+    { name: 'Loch Lomond',                                filename: 'loch-lomond.jpg',              done: false },
+    { name: 'Glen Coe',                                   filename: 'glen-coe.jpg',                 done: false },
+    { name: 'Ben Nevis Foothills',                        filename: 'ben-nevis-foothills.jpg',      done: false },
+    { name: 'Isle of Arran Coastal Path',                 filename: 'isle-of-arran.jpg',            done: false },
+    { name: 'Cairngorms - Loch Morlich',                  filename: 'cairngorms-loch-morlich.jpg',  done: false },
+    { name: 'Edinburgh - Arthurs Seat',                   filename: 'edinburgh-arthurs-seat.jpg',   done: false },
+    { name: 'Edinburgh - Pentland Hills',                 filename: 'edinburgh-pentland-hills.jpg', done: false }
   ];
 
   var GUIDES = [
-    // Done
-    { name: 'Ticks on dogs',                        done: true  },
-    { name: 'Heatstroke and hot weather walking',   done: true  },
-    { name: 'Alabama rot',                          done: true  },
-    { name: 'Autumn dog walks',                     done: true  },
-    { name: 'Brachycephalic breeds',                done: true  },
-    { name: 'Walking a Shar Pei',                   done: true  },
-    // Needed
-    { name: 'Blue-green algae guide',               done: false },
-    { name: 'Cattle and dog walkers guide',         done: false },
-    { name: 'Antifreeze guide',                     done: false },
-    { name: 'Senior dog walking guide',             done: false },
-    { name: 'Shar Pei skin fold care guide',        done: false },
-    { name: 'Shar Pei fever guide',                 done: false }
+    { name: 'Ticks on dogs - hero',                          filename: 'ticks-hero.jpg',                         done: true  },
+    { name: 'Heatstroke - hero',                             filename: 'heatstroke-hero.jpg',                    done: true  },
+    { name: 'Alabama rot - hero',                            filename: 'alabama-rot-hero.jpg',                   done: true  },
+    { name: 'Autumn dog walks - hero',                       filename: 'autumn-dog-walks-hero.jpg',              done: true  },
+    { name: 'Brachycephalic breeds - hero',                  filename: 'brachycephalic-hero.jpg',                done: true  },
+    { name: 'Walking a Shar Pei - hero',                     filename: 'shar-pei-hero.jpg',                      done: true  },
+    { name: 'Blue-green algae - hero',                       filename: 'blue-green-algae-hero.jpg',              done: true  },
+    { name: 'Cattle and dog walkers - hero',                 filename: 'cattle-hero.jpg',                        done: true  },
+    { name: 'Antifreeze - hero',                             filename: 'anti-freeze-hero.jpg',                   done: true  },
+    { name: 'Grass seeds - hero',                            filename: 'grass-seeds-hero.jpg',                   done: true  },
+    { name: 'Shar Pei skin fold care - hero',                filename: 'shar-pei-skin-fold-hero.jpg',            done: true  },
+    { name: 'Shar Pei fever - hero',                         filename: 'shar-pei-fever-hero.jpg',                done: true  },
+    { name: 'Senior dog walking - hero',                     filename: 'senior-dog-hero.jpg',                    done: false },
+    { name: 'Grass seeds - inline 1 (dog paw close-up)',     filename: 'grass-seeds-inline-1.jpg',               done: true  },
+    { name: 'Grass seeds - inline 2 (grass seed close-up)',  filename: 'grass-seeds-inline-2.jpg',               done: true  },
+    { name: 'Alabama rot - inline 1 (dog leg skin lesion)',  filename: 'alabama-rot-inline-1.jpg',               done: false },
+    { name: 'Alabama rot - inline 2 (muddy woodland path)',  filename: 'alabama-rot-inline-2.jpg',               done: false },
+    { name: 'Heatstroke - inline 1 (dog panting in heat)',   filename: 'heatstroke-inline-1.jpg',                done: false },
+    { name: 'Heatstroke - inline 2 (dog drinking water)',    filename: 'heatstroke-inline-2.jpg',                done: false },
+    { name: 'Antifreeze - inline 1 (puddle on driveway)',    filename: 'antifreeze-inline-1.jpg',                done: false },
+    { name: 'Antifreeze - inline 2 (dog near car/road)',     filename: 'antifreeze-inline-2.jpg',                done: false },
+    { name: 'Blue-green algae - inline 1 (algae bloom)',     filename: 'blue-green-algae-inline-1.jpg',          done: false },
+    { name: 'Blue-green algae - inline 2 (warning sign)',    filename: 'blue-green-algae-inline-2.jpg',          done: false },
+    { name: 'Cattle - inline 1 (footpath through field)',    filename: 'cattle-inline-1.jpg',                    done: false },
+    { name: 'Cattle - inline 2 (dog on lead near gate)',     filename: 'cattle-inline-2.jpg',                    done: false },
+    { name: 'Senior dog - inline 1 (older dog on lead)',     filename: 'senior-dog-inline-1.jpg',                done: false },
+    { name: 'Senior dog - inline 2 (dog resting on walk)',   filename: 'senior-dog-inline-2.jpg',                done: false }
   ];
 
   // ---- Slugify ----
@@ -549,13 +575,14 @@
       container.innerHTML = items.map(function(item) {
         var checked = !!state[item.id];
         return [
-          '<div class="item-row ' + (checked ? 'is-done' : '') + '" onclick="toggleItem(\'' + item.id + '\')">',
-          '  <div class="cb">',
+          '<div class="item-row ' + (checked ? 'is-done' : '') + '">',
+          '  <div class="cb" onclick="toggleItem(\'' + item.id + '\')" style="cursor:pointer;">',
           '    <svg class="cb-check" width="12" height="10" viewBox="0 0 12 10" fill="none">',
           '      <path d="M1.5 5l3 3 6-7" stroke="white" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>',
           '    </svg>',
           '  </div>',
           '  <span class="item-name">' + escHtml(item.name) + '</span>',
+          '  <span class="item-filename">' + (item.filename ? escHtml(item.filename) : '') + '</span>',
           '  <span class="status-pill ' + (checked ? 'done' : 'needed') + '">' + (checked ? 'Done' : 'Needed') + '</span>',
           '</div>'
         ].join('\n');
