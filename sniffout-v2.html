@@ -1366,14 +1366,38 @@
     .wx-tile-desc--bad     { color: var(--red); }
     .wx-tile-detail { font: 400 11px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-2); margin-top: auto; padding-top: 8px; }
 
-    /* Forecast card */
-    .wx-forecast-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
-    .wx-forecast-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-    .wx-forecast-day { font: 500 12px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-2); }
-    .wx-forecast-day--today { font-weight: 600; color: var(--brand); }
-    .wx-forecast-icon { width: 32px; height: 32px; }
-    .wx-forecast-high { font: 600 14px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink); }
-    .wx-forecast-low { font: 400 14px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-2); }
+    /* Forecast card - upgraded row layout */
+    .wx-forecast-rows { display: flex; flex-direction: column; }
+    .wx-forecast-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.04); }
+    .wx-forecast-row--last { border-bottom: none; padding-bottom: 0; }
+    .wx-forecast-day-name { width: 42px; font-size: 13px; font-weight: 600; color: var(--ink); flex-shrink: 0; }
+    .wx-forecast-day-name--today { color: var(--brand); }
+    .wx-forecast-lo { width: 24px; text-align: right; font-size: 12px; font-weight: 500; color: var(--ink-3); flex-shrink: 0; }
+    .wx-forecast-bar { flex: 1; height: 4px; background: #E8E4DC; border-radius: 2px; position: relative; margin: 0 8px; }
+    .wx-forecast-bar-fill { position: absolute; height: 100%; border-radius: 2px; }
+    .wx-forecast-hi { width: 24px; font-size: 12px; font-weight: 700; color: var(--ink); flex-shrink: 0; }
+    .wx-forecast-dot-wrap { width: 28px; text-align: center; flex-shrink: 0; }
+    .wx-forecast-dot-circle { width: 8px; height: 8px; border-radius: 50%; display: inline-block; vertical-align: middle; }
+    /* Sunrise arc card */
+    .wx-sunrise-card { margin: 0 16px 16px; background: var(--surface); border-radius: 20px; padding: 16px 20px; box-shadow: 0 2px 20px rgba(44,74,20,0.07); display: flex; align-items: center; gap: 16px; }
+    .wx-sunrise-data { display: flex; gap: 20px; }
+    .wx-sunrise-item { display: flex; flex-direction: column; gap: 3px; }
+    .wx-sunrise-label { font-size: 9px; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
+    .wx-sunrise-value { font-size: 14px; font-weight: 700; color: var(--ink); }
+    /* Conditional heat/paw alert cards */
+    .wx-heat-alert-card { border-radius: 18px; padding: 16px 18px; margin: 0 16px 12px; background: #C0392B; }
+    .wx-heat-alert-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .wx-heat-alert-icon { width: 32px; height: 32px; background: rgba(255,255,255,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .wx-heat-alert-title { font-size: 15px; font-weight: 700; color: #FFF; line-height: 1.2; }
+    .wx-heat-alert-subtitle { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+    .wx-heat-alert-body { font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.5; margin-bottom: 12px; }
+    .wx-heat-alert-tips { display: flex; gap: 8px; }
+    .wx-heat-alert-tip { flex: 1; background: rgba(255,255,255,0.12); border-radius: 12px; padding: 10px 12px; text-align: center; font-size: 11px; font-weight: 600; color: #FFF; line-height: 1.3; }
+    .wx-paw-alert-card { background: var(--surface); border: 2px solid #C0392B; border-radius: 18px; padding: 14px 18px; margin: 0 16px 12px; display: flex; gap: 12px; align-items: flex-start; }
+    .wx-paw-alert-icon { width: 36px; height: 36px; background: #FFECE9; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .wx-paw-alert-title { font-size: 14px; font-weight: 700; color: #C0392B; margin-bottom: 2px; }
+    .wx-paw-alert-body { font-size: 12px; color: var(--ink-2); line-height: 1.45; }
+    .wx-paw-alert-ground { font-size: 11px; font-weight: 700; color: #C0392B; margin-top: 6px; }
 
     /* Pollen card */
     .wx-pollen-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
@@ -3443,6 +3467,10 @@
     body.night .wx-alert-card-body { color: #C09070; }
     body.night .wx-alert-card-body strong { color: #E68A5C; }
     body.night .wx-section-label { color: rgba(108,155,74,0.55); }
+    body.night .wx-sunrise-card { box-shadow: 0 0 0 1px rgba(255,255,255,0.07); }
+    body.night .wx-forecast-row { border-bottom-color: rgba(255,255,255,0.05); }
+    body.night .wx-forecast-bar { background: rgba(255,255,255,0.08); }
+    body.night .wx-paw-alert-card { background: rgba(192,57,43,0.08); }
     body.night .portrait-card,
     body.night .trail-card,
     body.night .gs-card,
@@ -6274,7 +6302,7 @@
       + '&longitude=' + lon
       + '&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m,precipitation,relative_humidity_2m,is_day'
       + '&hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,uv_index,wind_direction_10m,relative_humidity_2m'
-      + '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset'
+      + '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,uv_index_max,precipitation_sum,sunrise,sunset'
       + '&timezone=auto'
       + '&forecast_days=7';
     fetch(url)
@@ -7313,6 +7341,52 @@
     '</div>';
   }
 
+  function buildSunriseCard(sunriseStr, sunsetStr) {
+    var srParts = (sunriseStr || '--:--').split(':');
+    var ssParts = (sunsetStr  || '--:--').split(':');
+    var srOk = srParts.length >= 2 && srParts[0] !== '--';
+    var ssOk = ssParts.length >= 2 && ssParts[0] !== '--';
+    var svgArc = '<svg width="64" height="40" viewBox="0 0 64 40" fill="none"><line x1="3" y1="36" x2="61" y2="36" stroke="#E8E4DC" stroke-width="1"/><path d="M 6,36 A 26,26 0 0 0 58,36" stroke="#E8E4DC" stroke-width="2" fill="none" opacity="0.5"/><circle cx="6" cy="36" r="2" fill="#E8E4DC"/><circle cx="58" cy="36" r="2" fill="#E8E4DC"/></svg>';
+    var daylightText = '--';
+    if (srOk && ssOk) {
+      var srMin = parseInt(srParts[0]) * 60 + parseInt(srParts[1] || 0);
+      var ssMin = parseInt(ssParts[0]) * 60 + parseInt(ssParts[1] || 0);
+      var now = new Date();
+      var nowMin = now.getHours() * 60 + now.getMinutes();
+      var totalMin = Math.max(1, ssMin - srMin);
+      var progress = Math.max(0, Math.min(1, (nowMin - srMin) / totalMin));
+      var angle = Math.PI * (1 - progress);
+      var cx = (32 + 26 * Math.cos(angle)).toFixed(1);
+      var cy = (36 - 26 * Math.sin(angle)).toFixed(1);
+      var isDaytime = nowMin >= srMin && nowMin <= ssMin;
+      var progressPath = progress > 0
+        ? '<path d="M 6,36 A 26,26 0 0 0 ' + cx + ',' + cy + '" stroke="#E6B44C" stroke-width="2" fill="none"/>'
+        : '';
+      var sunDot = isDaytime
+        ? '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="#E6B44C"/>'
+        : '';
+      svgArc =
+        '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
+          '<line x1="3" y1="36" x2="61" y2="36" stroke="#E8E4DC" stroke-width="1"/>' +
+          '<path d="M 6,36 A 26,26 0 0 0 58,36" stroke="#E8E4DC" stroke-width="2" fill="none" opacity="0.5"/>' +
+          progressPath + sunDot +
+          '<circle cx="6" cy="36" r="2" fill="#E8E4DC"/>' +
+          '<circle cx="58" cy="36" r="2" fill="#E8E4DC"/>' +
+        '</svg>';
+      var daylightH = Math.floor(totalMin / 60);
+      var daylightM = totalMin % 60;
+      daylightText = daylightH + 'h ' + daylightM + 'm';
+    }
+    return '<div class="wx-sunrise-card">' +
+      svgArc +
+      '<div class="wx-sunrise-data">' +
+        '<div class="wx-sunrise-item"><div class="wx-sunrise-label">Sunrise</div><div class="wx-sunrise-value">' + (sunriseStr || '--:--') + '</div></div>' +
+        '<div class="wx-sunrise-item"><div class="wx-sunrise-label">Sunset</div><div class="wx-sunrise-value">' + (sunsetStr || '--:--') + '</div></div>' +
+        '<div class="wx-sunrise-item"><div class="wx-sunrise-label">Daylight</div><div class="wx-sunrise-value">' + daylightText + '</div></div>' +
+      '</div>' +
+    '</div>';
+  }
+
   function getContextualAlert(weatherData, hourlyData) {
     var currentH = new Date().getHours();
     var windMph = Math.round((weatherData.windSpeed || 0) * 0.621371);
@@ -7508,8 +7582,42 @@
       sunsetTime = ssRaw.indexOf('T') !== -1 ? ssRaw.split('T')[1] : ssRaw;
     }
 
-    // Forecast (5-col including today)
+    // Forecast (row layout with gradient bars)
     var forecastHTML = buildForecastGrid(daily);
+
+    // Conditional heat / paw alerts
+    var condAlertsList = getConditionalAlerts({ temp: temp, feelsLike: feels, rainChance: maxRainProb, windSpeed: windKmh, uvIndex: currentUV, humidity: humidity, pollen: 0 }, dogProfile);
+    var alertCardsHTML = '';
+    condAlertsList.forEach(function(alert) {
+      if (alert.type === 'heat_danger') {
+        alertCardsHTML +=
+          '<div class="wx-heat-alert-card">' +
+            '<div class="wx-heat-alert-top">' +
+              '<div class="wx-heat-alert-icon">' +
+                '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
+              '</div>' +
+              '<div>' +
+                '<div class="wx-heat-alert-title">' + alert.title + '</div>' +
+                (alert.subtitle ? '<div class="wx-heat-alert-subtitle">' + alert.subtitle + '</div>' : '') +
+              '</div>' +
+            '</div>' +
+            '<div class="wx-heat-alert-body">' + alert.body + '</div>' +
+            (alert.tips && alert.tips.length ? '<div class="wx-heat-alert-tips">' + alert.tips.map(function(tip) { return '<div class="wx-heat-alert-tip">' + tip + '</div>'; }).join('') + '</div>' : '') +
+          '</div>';
+      } else if (alert.type === 'paw_burn') {
+        alertCardsHTML +=
+          '<div class="wx-paw-alert-card">' +
+            '<div class="wx-paw-alert-icon">' +
+              '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="6" cy="7" rx="2" ry="3"/><ellipse cx="18" cy="7" rx="2" ry="3"/><ellipse cx="10" cy="4" rx="2" ry="3"/><ellipse cx="14" cy="4" rx="2" ry="3"/><path d="M12 22c-4 0-7-2.69-7-7a5.5 5.5 0 0114 0c0 4.31-3 7-7 7z"/></svg>' +
+            '</div>' +
+            '<div style="flex:1">' +
+              '<div class="wx-paw-alert-title">' + alert.title + '</div>' +
+              '<div class="wx-paw-alert-body">' + alert.body + '</div>' +
+              (alert.groundTempEstimate ? '<div class="wx-paw-alert-ground">Ground temp estimate: ' + alert.groundTempEstimate + '</div>' : '') +
+            '</div>' +
+          '</div>';
+      }
+    });
 
     var html =
       // Location row
@@ -7520,6 +7628,9 @@
 
       // Verdict strip (replaces wx-hero)
       buildVerdictStrip(cur, hourly, daily, verdict) +
+
+      // Conditional heat / paw alert cards (only rendered when triggered)
+      alertCardsHTML +
 
       // Cards zone
       '<div class="wx-cards">' +
@@ -7586,22 +7697,7 @@
 
         contextualAlertHTML +
 
-        '<div class="wx-sun-row" style="margin-top:12px;">' +
-          '<div class="wx-sun-cell">' +
-            luIcon('sunrise', 20, 'color:var(--amber);flex-shrink:0;') +
-            '<div>' +
-              '<div class="wx-sun-time">' + sunriseTime + '</div>' +
-              '<div class="wx-sun-label">Sunrise</div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="wx-sun-cell">' +
-            luIcon('sunset', 20, 'color:var(--amber);flex-shrink:0;') +
-            '<div>' +
-              '<div class="wx-sun-time">' + sunsetTime + '</div>' +
-              '<div class="wx-sun-label">Sunset</div>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
+        buildSunriseCard(sunriseTime, sunsetTime) +
 
         // 5-day forecast card
         '<div class="wx-card">' +
@@ -7609,7 +7705,7 @@
             '<span class="wx-card-title">5-day forecast</span>' +
           '</div>' +
           '<div class="wx-card-divider"></div>' +
-          '<div class="wx-forecast-grid">' + forecastHTML + '</div>' +
+          '<div class="wx-forecast-rows">' + forecastHTML + '</div>' +
         '</div>' +
 
         // Pollen card
@@ -7697,24 +7793,66 @@
   }
 
   function buildForecastGrid(daily) {
+    if (!daily || !daily.time || !daily.temperature_2m_max || !daily.temperature_2m_min) return '';
     var dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    var html = '';
     var limit = Math.min(5, daily.time.length);
+    if (limit === 0) return '';
+
+    // Collect all lows/highs to calculate overall range for bar positioning
+    var allLows = [], allHighs = [];
     for (var i = 0; i < limit; i++) {
-      var date    = new Date(daily.time[i] + 'T12:00:00');
-      var dayLabel = i === 0 ? 'Today' : dayNames[date.getDay()];
-      var isToday  = i === 0;
-      var code    = daily.weather_code[i];
-      var hi      = Math.round(daily.temperature_2m_max[i]);
-      var lo      = Math.round(daily.temperature_2m_min[i]);
+      allLows.push(Math.round(daily.temperature_2m_min[i]));
+      allHighs.push(Math.round(daily.temperature_2m_max[i]));
+    }
+    var overallMin = Math.min.apply(null, allLows);
+    var overallMax = Math.max.apply(null, allHighs);
+    var tempRange = Math.max(1, overallMax - overallMin);
+
+    var html = '';
+    for (var j = 0; j < limit; j++) {
+      var date = new Date(daily.time[j] + 'T12:00:00');
+      var dayLabel = j === 0 ? 'Today' : dayNames[date.getDay()];
+      var isToday = j === 0;
+      var code = daily.weather_code[j];
+      var hi = allHighs[j];
+      var lo = allLows[j];
       var iconEntry = WMO_YR[code];
-      var iconName  = iconEntry ? iconEntry.day : '04';
+      var iconName = iconEntry ? iconEntry.day : '04';
+
+      // Day walk quality score using available daily fields
+      var avgTemp = (hi + lo) / 2;
+      var dayRain = daily.precipitation_probability_max ? (daily.precipitation_probability_max[j] || 0) : 0;
+      var dayWind = daily.wind_speed_10m_max ? (daily.wind_speed_10m_max[j] || 0) : 0;
+      var dayUV   = daily.uv_index_max ? (daily.uv_index_max[j] || 0) : 0;
+      var dayScore = getWalkQualityScore({ temp: avgTemp, rainChance: dayRain, windSpeed: dayWind, uvIndex: dayUV });
+
+      // Temperature bar: position fill within the overall range
+      var leftPct  = ((lo - overallMin) / tempRange) * 100;
+      var widthPct = ((hi - lo) / tempRange) * 100;
+      leftPct  = Math.max(0, Math.min(94, leftPct));
+      widthPct = Math.max(6, Math.min(100 - leftPct, widthPct));
+
+      // Bar fill gradient by quality
+      var fillGrad = dayScore >= 80 ? 'linear-gradient(90deg,#7CB342,#2C4A14)'
+                   : dayScore >= 60 ? 'linear-gradient(90deg,#7CB342,#E6B44C)'
+                   : dayScore >= 40 ? 'linear-gradient(90deg,#E6B44C,#DDD8CE)'
+                   :                  'linear-gradient(90deg,#DDD8CE,#DDD8CE)';
+
+      var dotColor = dayScore >= 80 ? '#2C4A14' : dayScore >= 60 ? '#7CB342' : dayScore >= 40 ? '#E6B44C' : '#DDD8CE';
+
+      var isLast = (j === limit - 1);
       html +=
-        '<div class="wx-forecast-col">' +
-          '<span class="wx-forecast-day' + (isToday ? ' wx-forecast-day--today' : '') + '">' + dayLabel + '</span>' +
-          '<img class="wx-forecast-icon" src="' + YR_BASE + iconName + '.svg" alt="' + (WMO_DESC[code] || '') + '" width="32" height="32">' +
-          '<span class="wx-forecast-high">' + hi + '&#176;</span>' +
-          '<span class="wx-forecast-low">' + lo + '&#176;</span>' +
+        '<div class="wx-forecast-row' + (isLast ? ' wx-forecast-row--last' : '') + '">' +
+          '<span class="wx-forecast-day-name' + (isToday ? ' wx-forecast-day-name--today' : '') + '">' + dayLabel + '</span>' +
+          '<img src="' + YR_BASE + iconName + '.svg" alt="" width="26" height="26" style="flex-shrink:0;margin:0 10px;">' +
+          '<span class="wx-forecast-lo">' + lo + '&#176;</span>' +
+          '<div class="wx-forecast-bar">' +
+            '<div class="wx-forecast-bar-fill" style="left:' + leftPct.toFixed(1) + '%;width:' + widthPct.toFixed(1) + '%;background:' + fillGrad + ';"></div>' +
+          '</div>' +
+          '<span class="wx-forecast-hi">' + hi + '&#176;</span>' +
+          '<div class="wx-forecast-dot-wrap">' +
+            '<span class="wx-forecast-dot-circle" style="background:' + dotColor + ';"></span>' +
+          '</div>' +
         '</div>';
     }
     return html;
