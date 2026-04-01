@@ -1261,6 +1261,33 @@
     .wx-walk-window-time { font: 700 15px/1 'Plus Jakarta Sans', sans-serif; color: var(--brand); }
     .wx-walk-footer { margin-top: 12px; font: 400 12px/1.4 'Plus Jakarta Sans', sans-serif; color: var(--ink-2); }
 
+    /* Verdict strip */
+    .weather-verdict-strip { margin: 0 16px 16px; border-radius: 20px; overflow: hidden; box-shadow: 0 2px 20px rgba(44,74,20,0.07); }
+    .verdict-bar { height: 4px; }
+    .verdict-inner { padding: 16px 20px; display: flex; align-items: center; gap: 14px; background: var(--surface); }
+    .verdict-temp { font-size: 42px; font-weight: 800; color: var(--brand); line-height: 1; letter-spacing: -2px; }
+    .verdict-temp sup { font-size: 18px; font-weight: 600; letter-spacing: 0; }
+    .verdict-divider { width: 1px; height: 40px; background: rgba(44,74,20,0.10); flex-shrink: 0; }
+    .verdict-body { flex: 1; min-width: 0; }
+    .verdict-condition { font-size: 12px; color: var(--ink-3); margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
+    .verdict-title { font-size: 15px; font-weight: 700; color: var(--ink); }
+    .verdict-sub { font-size: 12px; color: var(--ink-3); margin-top: 1px; }
+
+    /* Walk window bar chart */
+    .walk-window-card { margin: 0 16px 16px; background: var(--surface); border-radius: 20px; padding: 18px 18px 14px; box-shadow: 0 2px 20px rgba(44,74,20,0.07); }
+    .ww-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .ww-title { font-size: 15px; font-weight: 700; color: var(--ink); }
+    .ww-time-pill { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: var(--brand); color: #FFF; }
+    .ww-bars { display: flex; align-items: flex-end; gap: 4px; height: 72px; }
+    .ww-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+    .ww-bar { width: 100%; border-radius: 4px 4px 2px 2px; min-height: 4px; }
+    .ww-bar[data-quality="great"] { background: #2C4A14; }
+    .ww-bar[data-quality="good"]  { background: #7CB342; }
+    .ww-bar[data-quality="fair"]  { background: #E6B44C; }
+    .ww-bar[data-quality="poor"]  { background: #DDD8CE; }
+    .ww-bar[data-quality="danger"]{ background: #C0392B; }
+    .ww-bar-label { font-size: 9px; font-weight: 600; color: var(--ink-3); }
+
     /* Metric tiles */
     .wx-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .wx-sun-row {
@@ -3377,6 +3404,13 @@
     body.night .walk-card,
     body.night .venue-card-gp,
     body.night .wx-card { box-shadow: 0 0 0 1px rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.07); }
+    body.night .weather-verdict-strip { box-shadow: 0 0 0 1px rgba(255,255,255,0.07); }
+    body.night .verdict-divider { background: rgba(255,255,255,0.10); }
+    body.night .verdict-temp { color: #6A9B4A; }
+    body.night .verdict-temp.heat-alert { color: #E05050; }
+    body.night .verdict-title.heat-alert { color: #E05050; }
+    body.night .walk-window-card { box-shadow: 0 0 0 1px rgba(255,255,255,0.07); }
+    body.night .ww-bar[data-quality="poor"] { background: rgba(255,255,255,0.15); }
     body.night .portrait-card,
     body.night .trail-card,
     body.night .gs-card,
@@ -7017,6 +7051,191 @@
     return result;
   }
 
+  /* ─── Walk quality score and verdict helpers ─── */
+
+  function getWalkQualityScore(weatherData) {
+    var score = 100;
+    var temp = weatherData.temp;
+    if (temp < 0) score -= 40;
+    else if (temp < 5) score -= 20;
+    else if (temp > 30) score -= 50;
+    else if (temp > 25) score -= 20;
+    else if (temp > 20) score -= 5;
+    var rain = weatherData.rainChance;
+    if (rain > 80) score -= 35;
+    else if (rain > 60) score -= 25;
+    else if (rain > 40) score -= 15;
+    else if (rain > 20) score -= 5;
+    var wind = weatherData.windSpeed;
+    if (wind > 50) score -= 40;
+    else if (wind > 30) score -= 20;
+    else if (wind > 20) score -= 10;
+    var uv = weatherData.uvIndex;
+    if (uv > 8) score -= 15;
+    else if (uv > 6) score -= 5;
+    return Math.max(0, Math.min(100, score));
+  }
+
+  function getVerdictBarGradient(walkScore) {
+    if (walkScore >= 80) return 'linear-gradient(90deg, #2C4A14 0%, #7CB342 45%, #E6B44C 75%, #DDD8CE 100%)';
+    if (walkScore >= 60) return 'linear-gradient(90deg, #7CB342 0%, #E6B44C 50%, #DDD8CE 100%)';
+    if (walkScore >= 40) return 'linear-gradient(90deg, #E6B44C 0%, #DDD8CE 60%, #DDD8CE 100%)';
+    if (walkScore >= 20) return 'linear-gradient(90deg, #E6B44C 0%, #D4640A 50%, #DDD8CE 100%)';
+    return 'linear-gradient(90deg, #E6B44C 0%, #D4640A 40%, #C0392B 70%, #C0392B 100%)';
+  }
+
+  function getVerdictSubtext(weatherData, hourly) {
+    var currentH = new Date().getHours();
+    // Scan for rain start or clear window
+    var rainStart = -1;
+    var rainClear = -1;
+    if (hourly && hourly.precipitation_probability) {
+      var isRainingNow = (hourly.precipitation_probability[currentH] || 0) >= 40;
+      if (isRainingNow) {
+        // Find when rain clears
+        for (var i = currentH + 1; i < Math.min(24, hourly.precipitation_probability.length); i++) {
+          if ((hourly.precipitation_probability[i] || 0) < 30) { rainClear = i; break; }
+        }
+      } else {
+        // Find when rain starts
+        for (var i = currentH + 1; i < Math.min(24, hourly.precipitation_probability.length); i++) {
+          if ((hourly.precipitation_probability[i] || 0) >= 40) { rainStart = i; break; }
+        }
+      }
+    }
+    var windKmh = weatherData.windSpeed || 0;
+    var windNote = windKmh <= 15 ? 'Light breeze.' : windKmh <= 30 ? 'Moderate breeze.' : windKmh <= 50 ? 'Strong wind.' : 'Very strong wind.';
+    if (rainClear !== -1) {
+      return 'Showers clearing by ' + formatHour(rainClear) + '. ' + (rainClear <= currentH + 3 ? 'Afternoon looks good.' : windNote);
+    }
+    if (rainStart !== -1) {
+      if (rainStart <= currentH + 2) return 'Rain expected from ' + formatHour(rainStart) + '. Best to go now.';
+      return 'Dry until ' + formatHour(rainStart) + '. ' + windNote;
+    }
+    return 'Dry all day. ' + windNote;
+  }
+
+  function getBestWalkWindow(hourlyData) {
+    var scores = [];
+    for (var i = 0; i < hourlyData.length; i++) {
+      scores.push({ hour: hourlyData[i].hour, score: getWalkQualityScore(hourlyData[i]) });
+    }
+    function findBestRun(threshold) {
+      var bestStart = -1, bestLen = 0, curStart = -1, curLen = 0;
+      for (var i = 0; i < scores.length; i++) {
+        if (scores[i].score >= threshold) {
+          if (curStart === -1) curStart = i;
+          curLen++;
+          if (curLen > bestLen) { bestLen = curLen; bestStart = curStart; }
+        } else { curStart = -1; curLen = 0; }
+      }
+      if (bestStart === -1) return null;
+      return { start: scores[bestStart].hour, end: scores[bestStart + bestLen - 1].hour };
+    }
+    var result = findBestRun(70);
+    if (!result) result = findBestRun(50);
+    if (!result) {
+      var bestIdx = 0;
+      for (var i = 1; i < scores.length; i++) { if (scores[i].score > scores[bestIdx].score) bestIdx = i; }
+      result = { start: scores[bestIdx].hour, end: scores[bestIdx].hour };
+    }
+    return result;
+  }
+
+  function buildVerdictStrip(cur, hourly, daily, verdict) {
+    var currentH = new Date().getHours();
+    var isDay = currentH >= 6 && currentH < 21;
+    var temp = Math.round(cur.temperature_2m);
+    var todayHigh = daily && daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[0]) : temp;
+    var todayLow  = daily && daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[0]) : temp;
+    var windKmh = cur.wind_speed_10m || 0;
+    var maxRainProb = 0;
+    if (hourly && hourly.precipitation_probability) {
+      for (var i = currentH; i < Math.min(24, hourly.precipitation_probability.length); i++) {
+        var rp = hourly.precipitation_probability[i] || 0;
+        if (rp > maxRainProb) maxRainProb = rp;
+      }
+    }
+    var currentUV = hourly && hourly.uv_index ? Math.round(hourly.uv_index[currentH] || 0) : 0;
+    var walkData = { temp: cur.temperature_2m, rainChance: maxRainProb, windSpeed: windKmh, uvIndex: currentUV };
+    var score = getWalkQualityScore(walkData);
+    var gradient = getVerdictBarGradient(score);
+    // Check conditional heat alert
+    var dogProfile = getActiveDogProfile();
+    var condAlerts = getConditionalAlerts({ temp: cur.temperature_2m, feelsLike: cur.apparent_temperature, rainChance: maxRainProb, windSpeed: windKmh, uvIndex: currentUV, humidity: cur.relative_humidity_2m || 0, pollen: 0 }, dogProfile);
+    var isHeatAlert = condAlerts.some(function(a) { return a.type === 'heat_danger'; });
+    // Weather icon (18px)
+    var iconHtml = '';
+    if (WMO_YR[cur.weather_code]) {
+      var entry = WMO_YR[cur.weather_code];
+      var iconName = isDay ? entry.day : entry.night;
+      iconHtml = '<img src="' + YR_BASE + iconName + '.svg" width="18" height="18" alt="" style="flex-shrink:0;">';
+    }
+    var conditionText = WMO_DESC[cur.weather_code] || '';
+    var verdictTitle = verdict ? verdict.title : '';
+    var subText = getVerdictSubtext({ windSpeed: windKmh }, hourly);
+    var tempColor = isHeatAlert ? '#C0392B' : '';
+    var titleColor = isHeatAlert ? '#C0392B' : '';
+    return '<div class="weather-verdict-strip">' +
+      '<div class="verdict-bar" style="background:' + gradient + '"></div>' +
+      '<div class="verdict-inner">' +
+        '<div class="verdict-temp' + (isHeatAlert ? ' heat-alert' : '') + '" style="' + (tempColor ? 'color:' + tempColor + ';' : '') + '">' +
+          temp + '<sup>&#176;</sup>' +
+        '</div>' +
+        '<div class="verdict-divider"></div>' +
+        '<div class="verdict-body">' +
+          '<div class="verdict-condition">' +
+            iconHtml +
+            '<span>' + conditionText + '</span>' +
+            '<span style="opacity:0.6;">H ' + todayHigh + ' L ' + todayLow + '</span>' +
+          '</div>' +
+          '<div class="verdict-title' + (isHeatAlert ? ' heat-alert' : '') + '" style="' + (titleColor ? 'color:' + titleColor + ';' : '') + '">' + verdictTitle + '</div>' +
+          '<div class="verdict-sub">' + subText + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function buildWalkWindowCard(hourly) {
+    var currentH = new Date().getHours();
+    // Build per-hour data objects for 6am-5pm (12 hours)
+    var hourlyItems = [];
+    for (var h = 6; h <= 17; h++) {
+      if (!hourly.time || h >= hourly.time.length) break;
+      var temp = hourly.temperature_2m ? (hourly.temperature_2m[h] || 10) : 10;
+      var rain = hourly.precipitation_probability ? (hourly.precipitation_probability[h] || 0) : 0;
+      var wind = hourly.wind_speed_10m ? (hourly.wind_speed_10m[h] || 0) : 0;
+      var uv   = hourly.uv_index ? (hourly.uv_index[h] || 0) : 0;
+      hourlyItems.push({ hour: h, temp: temp, rainChance: rain, windSpeed: wind, uvIndex: uv });
+    }
+    var window = getBestWalkWindow(hourlyItems);
+    var pillText = window.start === window.end
+      ? formatHour(window.start)
+      : formatHour(window.start) + ' - ' + formatHour(window.end + 1 > 23 ? window.end : window.end);
+    // Build bars
+    var barsHtml = '';
+    var showLabelHours = [6, 8, 10, 12, 14, 16];
+    for (var idx = 0; idx < hourlyItems.length; idx++) {
+      var item = hourlyItems[idx];
+      var score = getWalkQualityScore(item);
+      var barH = Math.max(4, Math.round(score * 0.72));
+      var quality = score >= 80 ? 'great' : score >= 60 ? 'good' : score >= 40 ? 'fair' : score >= 20 ? 'poor' : 'danger';
+      var showLabel = showLabelHours.indexOf(item.hour) !== -1;
+      barsHtml +=
+        '<div class="ww-bar-col">' +
+          '<div class="ww-bar" data-quality="' + quality + '" style="height:' + barH + 'px"></div>' +
+          '<div class="ww-bar-label">' + (showLabel ? formatHour(item.hour) : '') + '</div>' +
+        '</div>';
+    }
+    return '<div class="walk-window-card">' +
+      '<div class="ww-header">' +
+        '<div class="ww-title">Best walk window</div>' +
+        '<div class="ww-time-pill">' + pillText + '</div>' +
+      '</div>' +
+      '<div class="ww-bars">' + barsHtml + '</div>' +
+    '</div>';
+  }
+
   /* ─── Render: Weather tab ─── */
 
   function renderWeatherTab(cur, hourly, daily, locationName, verdict, hazards, paw) {
@@ -7132,15 +7351,6 @@
     var monNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var dateStr = dayNames[now.getDay()] + ', ' + now.getDate() + ' ' + monNames[now.getMonth()];
 
-    // Daily high/low for today
-    var todayHigh = daily && daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[0]) : temp;
-    var todayLow  = daily && daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[0]) : temp;
-
-    // Walk window time
-    var walkWindowResult = getBestWindowTime(hourly);
-    var walkWindowTime = walkWindowResult.time;
-    var walkWindowTomorrow = walkWindowResult.isTomorrow;
-
     var sunriseTime = '--:--';
     var sunsetTime  = '--:--';
     if (daily && daily.sunrise && daily.sunrise[0]) {
@@ -7152,38 +7362,18 @@
       sunsetTime = ssRaw.indexOf('T') !== -1 ? ssRaw.split('T')[1] : ssRaw;
     }
 
-    // Yr.no icon HTML for hero (72px)
-    var heroIconSrc = '';
-    if (WMO_YR[cur.weather_code]) {
-      var entry = WMO_YR[cur.weather_code];
-      var iconName = isDay ? entry.day : entry.night;
-      heroIconSrc = YR_BASE + iconName + '.svg';
-    }
-
-    // Hour bar for walk window card
-    var barHTML = buildHourBar(hourly);
-    var rainSum = getRainSummary(hourly);
-
     // Forecast (5-col including today)
     var forecastHTML = buildForecastGrid(daily);
 
     var html =
-      // Hero
-      '<section class="wx-hero">' +
-        '<div class="wx-hero-location">' +
-          '<span>' + locationName + '</span>' +
-          '<span>' + dateStr + '</span>' +
-        '</div>' +
-        '<div class="wx-hero-main">' +
-          '<div class="wx-hero-temp-block">' +
-            '<span class="wx-hero-temp">' + temp + '</span>' +
-            '<span class="wx-hero-unit">&#176;C</span>' +
-          '</div>' +
-          (heroIconSrc ? '<img class="wx-hero-icon" src="' + heroIconSrc + '" alt="' + (WMO_DESC[cur.weather_code] || 'Weather') + '" width="96" height="96">' : '') +
-        '</div>' +
-        '<div class="wx-hero-condition">' + (WMO_DESC[cur.weather_code] || '') + '</div>' +
-        '<div class="wx-hero-sub">Feels like ' + feels + '&#176; &nbsp;&#183;&nbsp; H ' + todayHigh + '&#176; &nbsp; L ' + todayLow + '&#176;</div>' +
-      '</section>' +
+      // Location row
+      '<div class="wx-hero-location" style="padding:12px 16px 8px;display:flex;justify-content:space-between;align-items:center;">' +
+        '<span style="font:600 14px/1 \'Plus Jakarta Sans\',sans-serif;color:var(--ink);">' + locationName + '</span>' +
+        '<span style="font:400 12px/1 \'Plus Jakarta Sans\',sans-serif;color:var(--ink-2);">' + dateStr + '</span>' +
+      '</div>' +
+
+      // Verdict strip (replaces wx-hero)
+      buildVerdictStrip(cur, hourly, daily, verdict) +
 
       // Cards zone
       '<div class="wx-cards">' +
@@ -7192,21 +7382,8 @@
         (hazardHTML ? '<div>' + hazardHTML + '</div>' : '') +
         (pawHTML || '') +
 
-        // Walk window card
-        '<div class="wx-card">' +
-          '<div class="wx-card-header">' +
-            '<span class="wx-card-title">' + (walkWindowTomorrow ? 'Best walk window - Tomorrow' : 'Best walk window') + '</span>' +
-            '<span class="wx-walk-window-time">' + walkWindowTime + '</span>' +
-          '</div>' +
-          '<div class="wx-card-divider"></div>' +
-          barHTML +
-          '<div class="wx-window-legend">' +
-            '<div class="wx-window-legend-item"><div class="wx-window-legend-dot" style="background:var(--brand)"></div>Good</div>' +
-            '<div class="wx-window-legend-item"><div class="wx-window-legend-dot" style="background:var(--amber)"></div>Marginal</div>' +
-            '<div class="wx-window-legend-item"><div class="wx-window-legend-dot" style="background:var(--border)"></div>Poor</div>' +
-          '</div>' +
-          '<div class="wx-walk-footer">' + rainSum.replace(/<\/?strong>/g, '') + '</div>' +
-        '</div>' +
+        // Walk window bar chart (replaces old wx-card walk window)
+        buildWalkWindowCard(hourly) +
 
         // Hour by hour card
         buildHourlyCard(hourly) +
