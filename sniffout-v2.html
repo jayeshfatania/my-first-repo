@@ -1894,32 +1894,38 @@
     /* ═══════════════════════════════
        NEARBY TAB — extra styles
     ═══════════════════════════════ */
-    .nearby-filters {
+    .nearby-cat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      padding: 10px 16px 16px;
+    }
+    .nearby-cat-tile {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 16px 12px 14px;
       display: flex;
+      flex-direction: column;
+      align-items: center;
       gap: 8px;
-      padding: 10px 16px 12px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent 100%);
-      mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent 100%);
-      background: var(--bg);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      text-align: center;
+      box-shadow: 0 1px 8px rgba(44,74,20,0.06);
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s ease;
     }
-    .nearby-filters::-webkit-scrollbar { display: none; }
-    body.night .nearby-filters {
-      background: var(--bg);
-    }
+    .nearby-cat-tile:active { transform: scale(0.97); }
+    .nearby-cat-tile--active { border-color: #2C4A14; }
+    .nearby-cat-tile-name { font-size: 11px; font-weight: 700; color: var(--ink); }
+    .nearby-cat-tile-count { font-size: 10px; font-weight: 600; color: var(--ink-2); }
     .nearby-toggle-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px 12px;
+      padding: 4px 20px 10px;
     }
-    .nearby-count { font-size: 13px; color: var(--ink-2); }
+    .nearby-section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(44,74,20,0.45); }
+    .nearby-count { font-size: 11px; font-weight: 600; color: var(--ink-2); letter-spacing: 0; text-transform: none; }
     #nearby-map {
       width: 100%;
       height: 300px;
@@ -3543,42 +3549,38 @@
 
     /* ── Nearby venue cards (Google Places) ── */
     .venue-card-gp {
-      position: relative;
       display: flex;
-      flex-direction: column;
-      gap: 0;
+      flex-direction: row;
+      align-items: center;
+      gap: 14px;
       background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
+      border-radius: 16px;
+      padding: 14px;
       margin: 0 16px 10px;
       text-decoration: none;
       color: inherit;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
-      transition: transform 150ms cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow: 0 2px 12px rgba(44,74,20,0.06);
+      cursor: pointer;
+      transition: transform 0.15s ease;
     }
     .venue-card-gp:active { transform: scale(0.97); }
     .venue-fav-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.88);
-      border: none;
+      background: var(--surface);
+      border: 1px solid rgba(0,0,0,0.06);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
-      z-index: 1;
       flex-shrink: 0;
     }
-    .venue-card-gp:active { opacity: 0.8; }
     .venue-card-photo-gp {
-      width: 100%;
-      height: 160px;
+      width: 76px;
+      height: 76px;
+      border-radius: 14px;
       background: var(--brand);
       overflow: hidden;
       flex-shrink: 0;
@@ -3589,21 +3591,36 @@
       object-fit: cover;
       display: block;
     }
-    .venue-card-body-gp { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 4px; }
-    .venue-card-name-gp { font-size: 15px; font-weight: 600; color: var(--ink); }
+    .venue-card-body-gp { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .venue-card-name-gp { font-size: 14px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+    .venue-card-type-gp { font-size: 11px; color: var(--ink-2); margin-bottom: 6px; }
     .venue-card-meta-gp {
-      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-      font-size: 13px; color: var(--ink-2); margin-top: 2px;
+      display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+      font-size: 11px; font-weight: 600; color: var(--ink-2);
     }
+    .venue-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: #CCC; flex-shrink: 0; }
+    .venue-rating-row { display: flex; align-items: center; gap: 3px; margin-top: 4px; }
+    .venue-rating-stars { font-size: 10px; color: #D4940A; letter-spacing: 1px; }
+    .venue-rating-text { font-size: 10px; font-weight: 600; color: var(--ink-2); }
     .venue-rating-gp { color: #B07A28; font-weight: 500; }
-    .venue-open-gp  { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 99px; }
-    .venue-open-gp.open   { background: rgba(59,92,42,0.1); color: var(--brand); }
-    .venue-open-gp.closed { background: rgba(220,38,38,0.08); color: var(--red); }
-    .venue-address-gp { font-size: 12px; color: var(--ink-2); }
-    .venue-maps-link-gp { font-size: 13px; color: var(--brand); font-weight: 500; margin-top: 4px; }
+    .venue-open-gp { font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 20px; color: #fff; }
+    .venue-open-gp.open   { background: #2C4A14; }
+    .venue-open-gp.closed { background: #C0392B; }
+    .venue-address-gp { display: none; }
+    .venue-maps-link-gp { display: none; }
+    .venue-card-right { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; color: var(--ink-2); }
     .venue-cat-tip {
-      display: none;
+      margin: 0 16px 14px;
+      background: #EBF2E4;
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
     }
+    .venue-cat-tip-text { font-size: 12px; color: #2C4A14; line-height: 1.4; font-weight: 500; }
+    body.night .venue-cat-tip { background: rgba(44,74,20,0.18); }
+    body.night .venue-cat-tip-text { color: #A8D874; }
     .venue-info-pill {
       display: flex;
       align-items: center;
@@ -14014,17 +14031,32 @@
     }
   }
 
+  var NEARBY_SECTION_LABELS = { pub: 'Dog-friendly pubs', cafe: 'Dog-friendly cafes', shop: 'Pet shops', vet: 'Vets', saved: 'Saved places' };
+  var NEARBY_TIP_TEXT = {
+    pub:   'Dog-friendly means dogs are welcome inside, not just in outdoor areas.',
+    cafe:  'Many cafes welcome dogs inside. Look for a water bowl by the door.',
+    shop:  'Most pet shops welcome dogs. A good place to pick up treats after a walk.',
+    vet:   'Saved here for emergencies when away from home. Call ahead if possible.',
+    saved: 'Your saved places from any category. Tap the heart on any venue to save it.'
+  };
+
   function setNearbyCategory(cat) {
     if (isFetching) return; // debounce — 500ms minimum between API calls
     nearbyCategory = cat;
-    // Update tab-level chips
-    document.querySelectorAll('[data-nearby-cat]').forEach(function(b) {
-      b.classList.toggle('active', b.getAttribute('data-nearby-cat') === cat);
+    // Update tab-level tiles
+    document.querySelectorAll('.nearby-cat-tile[data-nearby-cat]').forEach(function(b) {
+      b.classList.toggle('nearby-cat-tile--active', b.getAttribute('data-nearby-cat') === cat);
     });
     // Update bottom bar chips
     document.querySelectorAll('.nearby-cat-bar-chip').forEach(function(b) {
       b.classList.toggle('active', b.getAttribute('data-nearby-cat') === cat);
     });
+    // Update section label
+    var labelEl = document.getElementById('nearby-section-label');
+    if (labelEl) labelEl.textContent = NEARBY_SECTION_LABELS[cat] || '';
+    // Update tip text
+    var tipEl = document.getElementById('nearby-tip-card');
+    if (tipEl) { var tipText = tipEl.querySelector('.venue-cat-tip-text'); if (tipText) tipText.textContent = NEARBY_TIP_TEXT[cat] || ''; }
     var venuesEl = document.getElementById('nearby-venues');
     var countEl  = document.getElementById('nearby-count');
     if (cat === 'saved') {
@@ -14053,27 +14085,35 @@
     if (nearbyLocName && locationName) nearbyLocName.textContent = locationName;
     if (nearbyLocLine && locationName) nearbyLocLine.style.display = '';
 
+    var TILE_CONFIG = {
+      pub:   { iconBg: '#FEF5E4', iconStroke: '#B07A28', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B07A28" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h12l-1.5 14H6.5L5 3z"/><path d="M8 3V2M12 3V2M16 3V2"/><path d="M17 8h2a2 2 0 0 1 0 4h-2"/></svg>' },
+      cafe:  { iconBg: '#FEF0E8', iconStroke: '#B85C2C', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B85C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>' },
+      shop:  { iconBg: '#EBF2E4', iconStroke: '#2C4A14', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="17" r="1.5" fill="#2C4A14"/><circle cx="17" cy="17" r="1.5" fill="#2C4A14"/><circle cx="9" cy="7" r="1.5" fill="#2C4A14"/><circle cx="17" cy="7" r="1.5" fill="#2C4A14"/><circle cx="13" cy="12" r="2" fill="#2C4A14"/></svg>' },
+      vet:   { iconBg: '#EDE8F5', iconStroke: '#7B5EA7', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7B5EA7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>' },
+      saved: { iconBg: '#FEF5E4', iconStroke: '#B07A28', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B07A28" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' }
+    };
     var content = document.getElementById('nearby-content');
     if (content) {
       content.innerHTML =
-        '<div class="nearby-filters" id="nearby-filter-row">' +
+        '<div class="nearby-cat-grid" id="nearby-filter-row">' +
           CATEGORIES.map(function(c) {
-            return '<button class="chip' + (c.id === nearbyCategory ? ' active' : '') + '" data-nearby-cat="' + c.id + '">' + (CATEGORY_CHIP_ICON[c.id] || '') + c.label + '</button>';
+            var tc = TILE_CONFIG[c.id] || TILE_CONFIG.pub;
+            return '<div class="nearby-cat-tile' + (c.id === nearbyCategory ? ' nearby-cat-tile--active' : '') + '" data-nearby-cat="' + c.id + '" onclick="setNearbyCategory(\'' + c.id + '\')">' +
+              '<div style="width:44px;height:44px;border-radius:14px;background:' + tc.iconBg + ';display:flex;align-items:center;justify-content:center;">' + tc.icon + '</div>' +
+              '<div class="nearby-cat-tile-name">' + c.label + '</div>' +
+              '<div class="nearby-cat-tile-count" id="nearby-tile-count-' + c.id + '"></div>' +
+            '</div>';
           }).join('') +
         '</div>' +
         '<div class="nearby-toggle-row" id="nearby-toggle-row">' +
-          '<span class="nearby-count" id="nearby-count">Loading…</span>' +
+          '<span class="nearby-section-label" id="nearby-section-label">Dog-friendly pubs</span>' +
+          '<span class="nearby-count" id="nearby-count">Loading...</span>' +
         '</div>' +
-        '<div id="nearby-venues"><div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding places near you…</div></div></div>';
+        '<div id="nearby-venues"><div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding places near you...</div></div></div>';
     }
     syncIcons();
 
-    // Bind category chips - delegate to setNearbyCategory so bottom bar stays in sync
-    document.querySelectorAll('[data-nearby-cat]').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        setNearbyCategory(this.getAttribute('data-nearby-cat'));
-      });
-    });
+    // Category tiles use inline onclick - no additional listener needed
 
     // Initial load — skip fetch if already fetched for this location (tab switch)
     if (nearbyCategory === 'saved') {
@@ -14123,8 +14163,15 @@
         : venues.length + ' place' + (venues.length !== 1 ? 's' : '') + ' found';
     }
 
-    var tip = (CAT_GOOGLE_CONFIG[nearbyCategory] || {}).tip || '';
-    var tipHtml = tip ? '<div class="venue-cat-tip">' + tip + '</div>' : '';
+    // Update tile count for active category
+    var tileCountEl = document.getElementById('nearby-tile-count-' + nearbyCategory);
+    if (tileCountEl) tileCountEl.textContent = venues.length + ' nearby';
+
+    var tipText = NEARBY_TIP_TEXT[nearbyCategory] || '';
+    var infoIconSVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(44,74,20,0.1)" stroke="#2C4A14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+    var tipHtml = tipText
+      ? '<div class="venue-cat-tip" id="nearby-tip-card"><div style="width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">' + infoIconSVG + '</div><span class="venue-cat-tip-text">' + tipText + '</span></div>'
+      : '';
     el.innerHTML = tipHtml + visibleVenues.map(renderVenueCard).join('') +
       '<div class="nearby-disclaimer">Results may not always be up to date. We recommend calling ahead or checking official sources to confirm dogs are welcome and to verify opening times.</div>';
 
@@ -14182,28 +14229,37 @@
       ? '<div class="venue-card-photo-gp"><img data-photo-meta="' + venue.photoUrl + '" alt="" loading="lazy"></div>'
       : '<div class="venue-card-photo-gp" style="background-image:url(\'' + venuePlaceholder + '\');background-size:cover;background-position:center;"></div>';
 
+    var typeLabel = CATEGORY_LABEL[venue.cat] || '';
+    var starsHtml = venue.rating
+      ? '<div class="venue-rating-row"><span class="venue-rating-stars">★★★★★</span><span class="venue-rating-text">' + venue.rating.toFixed(1) + ' (' + venue.ratingCount + ')</span></div>'
+      : '';
+
     var isFaved   = venue.placeId ? isPlaceFavourited(venue.placeId) : false;
-    var heartHtml = venue.placeId
+    var favBtn = venue.placeId
       ? '<button class="venue-fav-btn" ' +
         'onclick="event.preventDefault();event.stopPropagation();togglePlaceFavourite(\'' + venue.placeId.replace(/'/g, "\\'") + '\')" ' +
         'aria-label="' + (isFaved ? 'Remove from saved places' : 'Save place') + '">' +
         luIcon('heart', 16, isFaved ? 'fill:var(--red);stroke:var(--red);' : 'stroke:var(--ink-2);') +
         '</button>'
-      : '';
+      : '<div style="width:32px;height:32px;flex-shrink:0;"></div>';
+    var chevronSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CCC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
 
     return (
       '<a class="venue-card-gp" href="' + (venue.mapsUrl || '#') + '" target="_blank" rel="noopener">' +
-        heartHtml +
         photoHtml +
         '<div class="venue-card-body-gp">' +
           '<div class="venue-card-name-gp">' + escHtml(venue.name) + '</div>' +
+          (typeLabel ? '<div class="venue-card-type-gp">' + typeLabel + '</div>' : '') +
           '<div class="venue-card-meta-gp">' +
             (distStr ? '<span>' + distStr + '</span>' : '') +
-            ratingHtml +
+            (distStr && openHtml ? '<span class="venue-meta-dot"></span>' : '') +
             openHtml +
           '</div>' +
-          (venue.address ? '<div class="venue-address-gp">' + escHtml(venue.address) + '</div>' : '') +
-          '<div class="venue-maps-link-gp">View on Google Maps -></div>' +
+          starsHtml +
+        '</div>' +
+        '<div class="venue-card-right">' +
+          favBtn +
+          chevronSVG +
         '</div>' +
       '</a>'
     );
