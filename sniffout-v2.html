@@ -43,7 +43,7 @@
       --radius-pill: 100px;
 
       /* Layer backgrounds */
-      --bg:            #F0EDE6;
+      --bg:            #F4EFE6;
       --surface:       #FFFFFF;
       --surface-2:     #F7F4EF;
 
@@ -112,20 +112,18 @@
     /* ─── Bottom nav ─── */
     nav {
       height: var(--nav-h);
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      border-top: 1px solid rgba(0,0,0,0.06);
+      background: #1B3009;
+      border-top: none;
       display: flex;
       align-items: stretch;
       flex-shrink: 0;
       position: relative;
       z-index: 100;
-      padding-bottom: env(safe-area-inset-bottom);
+      padding-bottom: env(safe-area-inset-bottom, 8px);
     }
     body.night nav {
-      background: rgba(20,20,20,0.92);
-      border-top-color: rgba(255,255,255,0.07);
+      background: #1B3009;
+      border-top: none;
     }
     .nav-item {
       flex: 1;
@@ -151,16 +149,26 @@
       border-radius: 16px;
       transition: background 0.2s ease;
     }
-    .nav-item.active .nav-icon {
-      background: var(--brand-tint);
-    }
+    .nav-item.active .nav-icon { background: rgba(255,255,255,0.10); }
     .nav-item .nav-label { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
-    .nav-item.active .nav-label { color: var(--brand); }
-    .nav-item:not(.active) .nav-label { color: var(--ink-3); }
-    .nav-item.active svg { color: var(--brand); }
-    .nav-item:not(.active) svg { color: var(--ink-3); }
+    .nav-item.active .nav-label { color: #FFFFFF; }
+    .nav-item:not(.active) .nav-label { color: rgba(255,255,255,0.35); }
+    .nav-item.active svg { color: #FFFFFF; }
+    .nav-item:not(.active) svg { color: rgba(255,255,255,0.35); }
     .nav-item.active { opacity: 1; }
     .nav-item:not(.active) { opacity: 1; }
+    /* Sage green dot above active icon */
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      top: 7px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #A8D874;
+    }
     /* State A: dim non-Today tabs */
     nav.state-a .nav-item:not([data-tab="today"]) {
       opacity: 0.50;
@@ -490,10 +498,10 @@
     /* ─── Card base ─── */
     .card {
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: none;
       border-radius: var(--radius-lg);
       overflow: hidden;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 16px rgba(44,74,20,0.07), 0 1px 4px rgba(44,74,20,0.04);
     }
 
     /* ═══════════════════════════════
@@ -986,46 +994,45 @@
       width: 160px;
       flex-shrink: 0;
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: none;
       border-radius: var(--radius-lg);
       overflow: hidden;
       cursor: pointer;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 16px rgba(44,74,20,0.08), 0 1px 4px rgba(44,74,20,0.05);
       transition: transform 0.15s ease;
     }
     .portrait-card:active { transform: scale(0.97); }
     .portrait-photo {
-      height: 168px;
+      height: 210px;
       position: relative;
       background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
       overflow: hidden;
     }
     .portrait-badge {
       position: absolute;
-      bottom: 8px;
+      top: 8px;
       left: 8px;
       background: rgba(0,0,0,0.55);
       color: #fff;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       border-radius: var(--radius-pill);
-      padding: 3px 8px;
-      letter-spacing: 0.03em;
+      padding: 4px 10px;
+      letter-spacing: 0.02em;
     }
-    /* Sniffout Pick badge on portrait/trail cards */
+    /* Sniffout Pick badge - Pill Style B */
     .portrait-badge.badge-pick,
     .trail-card-badge.badge-pick,
     .walk-badge.badge-pick {
-      background: var(--brand-tint);
-      color: var(--brand);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      background: #2C4A14;
+      color: #FFFFFF;
     }
-    /* Hidden gem badge */
+    /* Hidden gem badge - Pill Style B */
     .portrait-badge.badge-gem,
     .trail-card-badge.badge-gem,
     .walk-badge.badge-gem {
-      background: #F5ECD7;
-      color: #7A5200;
+      background: #B85C2C;
+      color: #FFFFFF;
     }
     .portrait-heart {
       position: absolute;
@@ -1252,7 +1259,7 @@
 
     /* Cards zone */
     .wx-cards { display: flex; flex-direction: column; gap: 12px; padding: 0 16px 32px; }
-    .wx-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05); }
+    .wx-card { background: var(--surface); border: none; border-radius: var(--radius-lg); padding: 16px; box-shadow: 0 1px 6px rgba(44,74,20,0.06); }
     .wx-card-header { display: flex; align-items: center; justify-content: space-between; }
     .wx-card-title { font: 600 15px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink); }
     .wx-card-divider { height: 1px; background: var(--border); margin: 12px 0; }
@@ -1294,7 +1301,7 @@
 
     /* Conditions grid - dog-specific redesign */
     .wx-conditions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 16px 14px; }
-    .wx-cond-card { background: var(--surface); border-radius: 16px; padding: 14px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.15s ease; -webkit-tap-highlight-color: transparent; }
+    .wx-cond-card { background: var(--surface); border: none; border-radius: 16px; padding: 14px; box-shadow: 0 1px 6px rgba(44,74,20,0.06); cursor: pointer; transition: transform 0.15s ease; -webkit-tap-highlight-color: transparent; }
     .wx-cond-card:active { transform: scale(0.97); }
     .wx-cond-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .wx-cond-value { font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1; }
@@ -1319,8 +1326,8 @@
       display: flex;
       background: var(--surface);
       border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+      border: none;
+      box-shadow: 0 1px 6px rgba(44,74,20,0.06);
       overflow: hidden;
       margin: 0 16px;
     }
@@ -1348,11 +1355,11 @@
       margin-top: 3px;
     }
     .wx-tile {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      background: var(--surface); border: none; border-radius: var(--radius-lg);
       padding: 14px; min-height: 130px; display: flex; flex-direction: column;
       cursor: pointer; -webkit-tap-highlight-color: transparent;
       transition: opacity 100ms ease;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 6px rgba(44,74,20,0.06);
     }
     .wx-tile:active { opacity: 0.82; }
     .wx-tile-label { display: flex; align-items: center; gap: 6px; }
@@ -1385,7 +1392,7 @@
     .wx-forecast-pill--fair  { background: #D4940A; }
     .wx-forecast-pill--poor  { background: #C0392B; }
     /* Sunrise arc card */
-    .wx-sunrise-card { margin: 0 16px 16px; background: var(--surface); border-radius: 20px; padding: 16px 20px; box-shadow: 0 2px 20px rgba(44,74,20,0.07); display: flex; align-items: center; gap: 16px; }
+    .wx-sunrise-card { margin: 0 16px 16px; background: var(--surface); border: none; border-radius: 20px; padding: 16px 20px; box-shadow: 0 1px 6px rgba(44,74,20,0.06); display: flex; align-items: center; }
     .wx-sunrise-data { display: flex; gap: 20px; }
     .wx-sunrise-item { display: flex; flex-direction: column; gap: 3px; }
     .wx-sunrise-label { font-size: 9px; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
@@ -1564,11 +1571,11 @@
     .walk-card {
       margin: 0 16px 12px;
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: none;
       border-radius: var(--radius-lg);
       overflow: hidden;
       cursor: pointer;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 16px rgba(44,74,20,0.07), 0 1px 4px rgba(44,74,20,0.04);
       transition: transform 150ms cubic-bezier(0.34,1.56,0.64,1);
     }
     .walk-card:active { transform: scale(0.97); }
@@ -2805,7 +2812,7 @@
     .me-dog-card {
       margin: 16px 16px 12px;
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: none;
       border-radius: var(--radius-xl);
       padding: 20px;
       display: flex;
@@ -2814,7 +2821,7 @@
       gap: 12px;
       cursor: pointer;
       transition: transform 0.15s ease;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 16px rgba(44,74,20,0.07), 0 1px 4px rgba(44,74,20,0.04);
       position: relative;
     }
     .me-dog-card:active { transform: scale(0.97); }
@@ -2888,11 +2895,11 @@
     .me-stats-dashboard {
       margin: 0 16px 16px;
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: none;
       border-radius: var(--radius-lg);
       display: flex;
       flex-direction: row;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 16px rgba(44,74,20,0.07), 0 1px 4px rgba(44,74,20,0.04);
     }
     .me-stats-row {
       display: contents;
@@ -2946,8 +2953,8 @@
       flex-direction: column;
       background: var(--surface);
       border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+      border: none;
+      box-shadow: 0 2px 16px rgba(44,74,20,0.07), 0 1px 4px rgba(44,74,20,0.04);
       overflow: hidden;
     }
     .me-entries { padding-bottom: 0; margin-bottom: 96px; }
@@ -3458,7 +3465,7 @@
     body.night .me-entry-label { color: #6A9B4A; }
     body.night .walk-card,
     body.night .venue-card-gp,
-    body.night .wx-card { box-shadow: 0 0 0 1px rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.07); }
+    body.night .wx-card { box-shadow: 0 0 0 1px rgba(255,255,255,0.07); }
     body.night .weather-verdict-strip { box-shadow: 0 0 0 1px rgba(255,255,255,0.07); }
     body.night .verdict-divider { background: rgba(255,255,255,0.10); }
     body.night .verdict-temp { color: #6A9B4A; }
@@ -7354,64 +7361,52 @@
     var ssParts = (sunsetStr  || '--:--').split(':');
     var srOk = srParts.length >= 2 && srParts[0] !== '--';
     var ssOk = ssParts.length >= 2 && ssParts[0] !== '--';
-
-    // SVG constants
-    // sweep-flag=1 draws the upper arc (above horizon y=36) from (6,36) to (58,36)
-    var TRACK = '<line x1="3" y1="36" x2="61" y2="36" stroke="#E8E4DC" stroke-width="1"/>' +
-      '<path d="M 6,36 A 26,26 0 0 1 58,36" stroke="#E8E4DC" stroke-width="2" fill="none" opacity="0.3"/>';
-    var ENDS  = '<circle cx="6" cy="36" r="2" fill="#E8E4DC"/><circle cx="58" cy="36" r="2" fill="#E8E4DC"/>';
-    var ARC_LEN = 81.68; // Math.PI * 26
-
-    var svgArc = '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' + TRACK + ENDS + '</svg>';
     var daylightText = '--';
-
     if (srOk && ssOk) {
       var srMin = parseInt(srParts[0]) * 60 + parseInt(srParts[1] || 0);
       var ssMin = parseInt(ssParts[0]) * 60 + parseInt(ssParts[1] || 0);
-      var now = new Date();
-      var nowMin = now.getHours() * 60 + now.getMinutes();
-      var totalMin = Math.max(1, ssMin - srMin);
-      var daylightH = Math.floor(totalMin / 60);
-      var daylightM = totalMin % 60;
-      daylightText = daylightH + 'h ' + daylightM + 'm';
-
-      if (nowMin < srMin) {
-        // Before sunrise: track + dim sun at left endpoint
-        svgArc = '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
-          TRACK +
-          '<circle cx="6" cy="36" r="4" fill="#E6B44C" opacity="0.4"/>' +
-          ENDS +
-        '</svg>';
-      } else if (nowMin <= ssMin) {
-        // During daylight: dasharray progress arc + glow dot at current position
-        var progress = Math.min(1, (nowMin - srMin) / totalMin);
-        var progressLen = (ARC_LEN * progress).toFixed(1);
-        var angle = Math.PI * (1 - progress);
-        var cx = (32 + 26 * Math.cos(angle)).toFixed(1);
-        var cy = (36 - 26 * Math.sin(angle)).toFixed(1);
-        svgArc = '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
-          TRACK +
-          '<path d="M 6,36 A 26,26 0 0 1 58,36" stroke="#E6B44C" stroke-width="2" fill="none"' +
-            ' stroke-dasharray="' + progressLen + ' ' + ARC_LEN.toFixed(1) + '"/>' +
-          '<circle cx="' + cx + '" cy="' + cy + '" r="8" fill="#E6B44C" opacity="0.25"/>' +
-          '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="#E6B44C"/>' +
-          ENDS +
-        '</svg>';
-      } else {
-        // After sunset: full amber arc at reduced opacity, no dot
-        svgArc = '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
-          TRACK +
-          '<path d="M 6,36 A 26,26 0 0 1 58,36" stroke="#E6B44C" stroke-width="2" fill="none" opacity="0.6"/>' +
-          ENDS +
-        '</svg>';
-      }
+      var totalMin = Math.max(0, ssMin - srMin);
+      daylightText = Math.floor(totalMin / 60) + 'h ' + (totalMin % 60) + 'm';
     }
-    return '<div class="wx-sunrise-card">' +
-      '<div style="width:64px;height:40px;flex-shrink:0;">' + svgArc + '</div>' +
-      '<div class="wx-sunrise-data">' +
-        '<div class="wx-sunrise-item"><div class="wx-sunrise-label">Sunrise</div><div class="wx-sunrise-value">' + (sunriseStr || '--:--') + '</div></div>' +
-        '<div class="wx-sunrise-item"><div class="wx-sunrise-label">Sunset</div><div class="wx-sunrise-value">' + (sunsetStr || '--:--') + '</div></div>' +
-        '<div class="wx-sunrise-item"><div class="wx-sunrise-label">Daylight</div><div class="wx-sunrise-value">' + daylightText + '</div></div>' +
+
+    var SUN_COLOUR = '#E6A817';
+    // Sunrise icon: sun with upward arrow rays
+    var iconSunrise = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="' + SUN_COLOUR + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M17 12h2m-14 0H3m3.22-5.78L5.1 5.1m12.9 1.12-1.12 1.12M12 3v2"/>' +
+      '<circle cx="12" cy="12" r="4"/>' +
+      '<path d="M12 19v2M5 19l1.5-1.5m11-0L19 19"/>' +
+    '</svg>';
+    // Sunset icon: sun going down
+    var iconSunset = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="' + SUN_COLOUR + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M17 12h2m-14 0H3m3.22-5.78L5.1 5.1m12.9 1.12-1.12 1.12M12 3v2"/>' +
+      '<circle cx="12" cy="12" r="4"/>' +
+      '<path d="M12 22v-1M5 21l1.5-1.5m11 0L19 21m-7-2v-2"/>' +
+    '</svg>';
+    // Daylight icon: sun with horizontal lines (duration)
+    var iconDaylight = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="' + SUN_COLOUR + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+      '<circle cx="12" cy="12" r="4"/>' +
+      '<path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M18.36 5.64l1.41-1.41"/>' +
+    '</svg>';
+
+    var colStyle = 'flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;';
+    var labelStyle = 'font-size:9px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.04em;';
+    var valueStyle = 'font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-0.3px;';
+
+    return '<div class="wx-sunrise-card" style="justify-content:space-around;">' +
+      '<div style="' + colStyle + '">' +
+        iconSunrise +
+        '<div style="' + labelStyle + '">Sunrise</div>' +
+        '<div style="' + valueStyle + '">' + (sunriseStr || '--:--') + '</div>' +
+      '</div>' +
+      '<div style="' + colStyle + '">' +
+        iconSunset +
+        '<div style="' + labelStyle + '">Sunset</div>' +
+        '<div style="' + valueStyle + '">' + (sunsetStr || '--:--') + '</div>' +
+      '</div>' +
+      '<div style="' + colStyle + '">' +
+        iconDaylight +
+        '<div style="' + labelStyle + '">Daylight</div>' +
+        '<div style="' + valueStyle + '">' + daylightText + '</div>' +
       '</div>' +
     '</div>';
   }
@@ -12675,19 +12670,24 @@
 
   function renderPortraitCard(walk) {
     var fav = isFavourited(walk.id);
-    var photoStyle = '';
     var photoInner = walk.imageUrl
       ? '<img src="' + escHtml(walk.imageUrl) + '" alt="' + escHtml(walk.name) + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">'
       : '';
-    var badgeCls2  = walk.badge === 'Sniffout Pick' ? ' badge-pick' : walk.badge === 'Hidden gem' ? ' badge-gem' : '';
-    var badgeHTML  = walk.badge ? '<div class="portrait-badge' + badgeCls2 + '">' + walk.badge + '</div>' : '';
+    var badgeCls2 = walk.badge === 'Sniffout Pick' ? ' badge-pick' : walk.badge === 'Hidden gem' ? ' badge-gem' : '';
+    var badgeHTML = walk.badge ? '<div class="portrait-badge' + badgeCls2 + '">' + walk.badge + '</div>' : '';
+
+    var ol = offLeadLabel(walk.offLead);
+    var olBg  = ol.cls === 'full' ? '#2C4A14' : ol.cls === 'partial' ? 'rgba(176,122,40,0.85)' : 'rgba(0,0,0,0.45)';
+    var olText = ol.cls === 'full' ? 'Off-lead' : ol.cls === 'partial' ? 'Partial' : 'On-lead';
+    var olPill = '<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;color:#fff;background:' + olBg + ';flex-shrink:0;">' + olText + '</span>';
+    var diffBg = walk.difficulty === 'easy' ? '#2C4A14' : walk.difficulty === 'moderate' ? '#D4940A' : walk.difficulty === 'hard' ? '#C0392B' : '';
+    var diffPill = diffBg ? '<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;color:#fff;background:' + diffBg + ';flex-shrink:0;">' + difficultyLabel(walk.difficulty) + '</span>' : '';
 
     return (
       '<div class="portrait-card" onclick="onWalkTap(\'' + walk.id + '\')">' +
-        '<div class="portrait-photo" style="' + photoStyle + '">' +
+        '<div class="portrait-photo">' +
           photoInner +
-          '<div style="position:absolute;bottom:0;left:0;right:0;height:70px;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));border-radius:0;pointer-events:none;"></div>' +
-          '<div style="position:absolute;bottom:' + (walk.badge ? '32px' : '8px') + ';left:10px;right:44px;font-size:13px;font-weight:700;color:#fff;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escHtml(walk.name) + '</div>' +
+          '<div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 35%,rgba(0,0,0,0.72) 100%);pointer-events:none;"></div>' +
           badgeHTML +
           '<button class="portrait-heart' + (fav ? ' fav-active' : '') + '" ' +
             'data-heart="' + walk.id + '" ' +
@@ -12695,9 +12695,13 @@
             'onclick="event.stopPropagation();toggleFavourite(\'' + walk.id + '\')">' +
             heartSVG(fav) +
           '</button>' +
-        '</div>' +
-        '<div class="portrait-body">' +
-          '<div class="portrait-meta">' + formatDist(walk.distance) + (walk.difficulty ? ' · <span style="color:var(--brand);font-weight:600;">' + walk.difficulty.charAt(0).toUpperCase() + walk.difficulty.slice(1) + '</span>' : '') + '</div>' +
+          '<div style="position:absolute;bottom:10px;left:10px;right:10px;">' +
+            '<div style="font-size:13px;font-weight:700;color:#fff;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:5px;">' + escHtml(walk.name) + '</div>' +
+            '<div style="display:flex;gap:4px;align-items:center;">' +
+              '<span style="font-size:10px;color:rgba(255,255,255,0.65);flex-shrink:0;">' + formatDist(walk.distance) + '</span>' +
+              olPill + diffPill +
+            '</div>' +
+          '</div>' +
         '</div>' +
       '</div>'
     );
