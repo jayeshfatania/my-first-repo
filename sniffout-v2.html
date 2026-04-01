@@ -7130,7 +7130,8 @@
         } else { curStart = -1; curLen = 0; }
       }
       if (bestStart === -1) return null;
-      return { start: scores[bestStart].hour, end: scores[bestStart + bestLen - 1].hour };
+      var cappedLen = Math.min(bestLen, 4);
+      return { start: scores[bestStart].hour, end: scores[bestStart + cappedLen - 1].hour };
     }
     var result = findBestRun(70);
     if (!result) result = findBestRun(50);
@@ -7202,7 +7203,7 @@
     var hourlyItems = [];
     for (var h = 6; h <= 17; h++) {
       if (!hourly.time || h >= hourly.time.length) break;
-      var temp = hourly.temperature_2m ? (hourly.temperature_2m[h] || 10) : 10;
+      var temp = hourly.temperature_2m && hourly.temperature_2m[h] != null ? hourly.temperature_2m[h] : 10;
       var rain = hourly.precipitation_probability ? (hourly.precipitation_probability[h] || 0) : 0;
       var wind = hourly.wind_speed_10m ? (hourly.wind_speed_10m[h] || 0) : 0;
       var uv   = hourly.uv_index ? (hourly.uv_index[h] || 0) : 0;
@@ -7211,7 +7212,7 @@
     var window = getBestWalkWindow(hourlyItems);
     var pillText = window.start === window.end
       ? formatHour(window.start)
-      : formatHour(window.start) + ' - ' + formatHour(window.end + 1 > 23 ? window.end : window.end);
+      : formatHour(window.start) + ' - ' + formatHour(window.end + 1 > 23 ? window.end : window.end + 1);
     // Build bars
     var barsHtml = '';
     var showLabelHours = [6, 8, 10, 12, 14, 16];
@@ -7323,6 +7324,13 @@
     var ul = uvLabel(currentUV);
     var hl = humidityLabel(humidity);
 
+    var dogProfile = getActiveDogProfile();
+    var dogNotes = getDogWeatherNotes({ temp: temp, feelsLike: feels, rainChance: maxRainProb, windSpeed: windKmh, uvIndex: currentUV, humidity: humidity, pollen: 0 }, dogProfile);
+
+    function dogNoteClass(status) {
+      return status === 'good' ? 'wx-tile-desc--good' : status === 'moderate' ? 'wx-tile-desc--caution' : 'wx-tile-desc--bad';
+    }
+
     var rainDetail = (totalPrecip > 0) ? totalPrecip + 'mm expected' : '';
     var uvDetail   = (peakUVHour > currentH && peakUV > currentUV)
       ? 'Peak at ' + formatHour(peakUVHour % 24) + ': UV ' + peakUV
@@ -7399,8 +7407,8 @@
               '<span class="wx-tile-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></span>' +
             '</div>' +
             '<div class="wx-tile-value">' + maxRainProb + '<small>%</small></div>' +
-            '<div class="wx-tile-desc ' + rl.cls + '">' + rl.text + '</div>' +
-            (rainDetail ? '<div class="wx-tile-detail">' + rainDetail + '</div>' : '') +
+            '<div class="wx-tile-desc ' + dogNoteClass(dogNotes.rain.status) + '">' + dogNotes.rain.label + '</div>' +
+            '<div class="wx-tile-detail">' + (dogNotes.rain.note || rainDetail || '') + '</div>' +
           '</div>' +
 
           // Wind
@@ -7411,8 +7419,8 @@
               '<span class="wx-tile-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></span>' +
             '</div>' +
             '<div class="wx-tile-value">' + windMph + '<small> mph</small></div>' +
-            '<div class="wx-tile-desc ' + wl.cls + '">' + wl.text + '</div>' +
-            (windDir ? '<div class="wx-tile-detail">' + windDir + '</div>' : '') +
+            '<div class="wx-tile-desc ' + dogNoteClass(dogNotes.wind.status) + '">' + dogNotes.wind.label + '</div>' +
+            '<div class="wx-tile-detail">' + (dogNotes.wind.note || windDir || '') + '</div>' +
           '</div>' +
 
           // UV index
@@ -7423,8 +7431,8 @@
               '<span class="wx-tile-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></span>' +
             '</div>' +
             '<div class="wx-tile-value">' + currentUV + '</div>' +
-            '<div class="wx-tile-desc ' + ul.cls + '">' + ul.text + '</div>' +
-            (uvDetail ? '<div class="wx-tile-detail">' + uvDetail + '</div>' : '') +
+            '<div class="wx-tile-desc ' + dogNoteClass(dogNotes.uv.status) + '">' + dogNotes.uv.label + '</div>' +
+            '<div class="wx-tile-detail">' + (dogNotes.uv.note || uvDetail || '') + '</div>' +
           '</div>' +
 
           // Humidity
@@ -7435,7 +7443,8 @@
               '<span class="wx-tile-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></span>' +
             '</div>' +
             '<div class="wx-tile-value">' + humidity + '<small>%</small></div>' +
-            '<div class="wx-tile-desc ' + hl.cls + '">' + hl.text + '</div>' +
+            '<div class="wx-tile-desc ' + dogNoteClass(dogNotes.humidity.status) + '">' + dogNotes.humidity.label + '</div>' +
+            '<div class="wx-tile-detail">' + (dogNotes.humidity.note || '') + '</div>' +
           '</div>' +
 
         '</div>' +
