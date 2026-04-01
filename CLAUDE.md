@@ -33,7 +33,7 @@ Closest competitor is PlayDogs (France/Switzerland, 170k downloads), but it reli
 Mobile-first, uncluttered, modern and slick. **v2 uses a clean card-based design — glassmorphism has been removed.** Key decisions locked:
 - Brand colour: `#2C4A14` (Woodland green)
 - Background: `#F7F5F0` (warm off-white)
-- Typography: Inter 400/500/600/700 only
+- Typography: Plus Jakarta Sans 400/500/600/700/800 only
 - Cards: `border-radius: 16px`, `1px solid var(--border)`, no blur or translucent surfaces
 - Dark mode: `body.night` class, toggled manually via Settings ("Auto" option). Not automatic based on weather.
 - Me tab primary stat card (`me-stat-card--primary`): number colour is `var(--brand)` in light mode and `#6A9B4A` in dark mode. Secondary stat numbers remain `var(--ink)`.
@@ -148,6 +148,23 @@ No build tools, no package manager, no test framework. Development is:
 `sniffout-v2.html` must be built entirely from scratch. It must not copy or reuse code or structure from `dog-walk-dashboard.html`. The only carry-overs from the original app are:
 - The API integrations (Open-Meteo for weather, Google Places for venues, Nominatim/postcodes.io for geocoding) — implemented fresh, same endpoints and API key
 - The curated walks data from `WALKS_DB` — content carries over, extended with v2 schema fields
+
+## Process Rules (Developer briefs — website and PWA)
+
+### Browser-verify-first
+Any CSS visual change must be tested live in the browser using JavaScript before a Developer brief is written. Use the browser console to apply the change and confirm it looks correct before writing any brief. No briefs based on assumptions about how a rule will render.
+
+### One CSS change per brief
+Write one CSS change per Developer brief. This makes it trivial to diagnose what went wrong if something breaks and trivial to rollback. Multiple CSS changes in one brief make root-cause analysis harder.
+
+### Rollback preference
+When multiple things break, prefer rollback to the last known good state over fixing forward. Fixing forward compounds complexity. Roll back, confirm the baseline, then re-apply changes one at a time.
+
+### Grep before writing CSS rules
+Always confirm the current state of a CSS rule by searching the file before writing a new rule. Do not write rules based on what the last brief said - the file may have changed.
+
+### Website CSS discipline
+When working on the sniffout-website Hugo project, always grep `themes/sniffout/static/css/main.css` before writing any CSS rule to confirm the exact current selector, value, and line context. Conflicting rules and media query overrides are the most common source of visual bugs.
 
 ## Architecture
 
