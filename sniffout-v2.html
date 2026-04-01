@@ -1294,7 +1294,8 @@
 
     /* Conditions grid - dog-specific redesign */
     .wx-conditions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 16px 14px; }
-    .wx-cond-card { background: var(--surface); border-radius: 16px; padding: 14px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+    .wx-cond-card { background: var(--surface); border-radius: 16px; padding: 14px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.15s ease; -webkit-tap-highlight-color: transparent; }
+    .wx-cond-card:active { transform: scale(0.97); }
     .wx-cond-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .wx-cond-value { font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1; }
     .wx-cond-value span { font-size: 13px; font-weight: 600; }
@@ -1376,8 +1377,13 @@
     .wx-forecast-bar { flex: 1; height: 4px; background: #E8E4DC; border-radius: 2px; position: relative; margin: 0 8px; }
     .wx-forecast-bar-fill { position: absolute; height: 100%; border-radius: 2px; }
     .wx-forecast-hi { width: 24px; font-size: 12px; font-weight: 700; color: var(--ink); flex-shrink: 0; }
-    .wx-forecast-dot-wrap { width: 28px; text-align: center; flex-shrink: 0; }
+    .wx-forecast-dot-wrap { min-width: 40px; text-align: right; flex-shrink: 0; }
     .wx-forecast-dot-circle { width: 8px; height: 8px; border-radius: 50%; display: inline-block; vertical-align: middle; }
+    .wx-forecast-pill { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 20px; color: #FFF; white-space: nowrap; display: inline-block; }
+    .wx-forecast-pill--great { background: #2C4A14; }
+    .wx-forecast-pill--good  { background: #7CB342; }
+    .wx-forecast-pill--fair  { background: #D4940A; }
+    .wx-forecast-pill--poor  { background: #C0392B; }
     /* Sunrise arc card */
     .wx-sunrise-card { margin: 0 16px 16px; background: var(--surface); border-radius: 20px; padding: 16px 20px; box-shadow: 0 2px 20px rgba(44,74,20,0.07); display: flex; align-items: center; gap: 16px; }
     .wx-sunrise-data { display: flex; gap: 20px; }
@@ -1471,6 +1477,7 @@
     .wx-hour-dot--good     { background: var(--brand); }
     .wx-hour-dot--marginal { background: var(--amber); }
     .wx-hour-dot--poor     { background: rgba(0,0,0,0.12); }
+    .wx-hour-day { font-size: 8px; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 1px; }
 
     /* Dark mode weather overrides */
     body.night .wx-hero-temp      { color: #fff; }
@@ -7346,7 +7353,13 @@
     var ssParts = (sunsetStr  || '--:--').split(':');
     var srOk = srParts.length >= 2 && srParts[0] !== '--';
     var ssOk = ssParts.length >= 2 && ssParts[0] !== '--';
-    var svgArc = '<svg width="64" height="40" viewBox="0 0 64 40" fill="none"><line x1="3" y1="36" x2="61" y2="36" stroke="#E8E4DC" stroke-width="1"/><path d="M 6,36 A 26,26 0 0 0 58,36" stroke="#E8E4DC" stroke-width="2" fill="none" opacity="0.5"/><circle cx="6" cy="36" r="2" fill="#E8E4DC"/><circle cx="58" cy="36" r="2" fill="#E8E4DC"/></svg>';
+    // Fallback: track only, sun at left endpoint
+    var svgArc = '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
+      '<line x1="3" y1="36" x2="61" y2="36" stroke="#E8E4DC" stroke-width="1"/>' +
+      '<path d="M 6,36 A 26,26 0 0 0 58,36" stroke="#E8E4DC" stroke-width="2" fill="none" opacity="0.5"/>' +
+      '<circle cx="6" cy="36" r="2" fill="#E8E4DC"/>' +
+      '<circle cx="58" cy="36" r="2" fill="#E8E4DC"/>' +
+    '</svg>';
     var daylightText = '--';
     if (srOk && ssOk) {
       var srMin = parseInt(srParts[0]) * 60 + parseInt(srParts[1] || 0);
@@ -7354,28 +7367,50 @@
       var now = new Date();
       var nowMin = now.getHours() * 60 + now.getMinutes();
       var totalMin = Math.max(1, ssMin - srMin);
-      var progress = Math.max(0, Math.min(1, (nowMin - srMin) / totalMin));
-      var angle = Math.PI * (1 - progress);
-      var cx = (32 + 26 * Math.cos(angle)).toFixed(1);
-      var cy = (36 - 26 * Math.sin(angle)).toFixed(1);
-      var isDaytime = nowMin >= srMin && nowMin <= ssMin;
-      var progressPath = progress > 0
-        ? '<path d="M 6,36 A 26,26 0 0 0 ' + cx + ',' + cy + '" stroke="#E6B44C" stroke-width="2" fill="none"/>'
-        : '';
-      var sunDot = isDaytime
-        ? '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="#E6B44C"/>'
-        : '';
-      svgArc =
-        '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
-          '<line x1="3" y1="36" x2="61" y2="36" stroke="#E8E4DC" stroke-width="1"/>' +
-          '<path d="M 6,36 A 26,26 0 0 0 58,36" stroke="#E8E4DC" stroke-width="2" fill="none" opacity="0.5"/>' +
-          progressPath + sunDot +
-          '<circle cx="6" cy="36" r="2" fill="#E8E4DC"/>' +
-          '<circle cx="58" cy="36" r="2" fill="#E8E4DC"/>' +
-        '</svg>';
       var daylightH = Math.floor(totalMin / 60);
       var daylightM = totalMin % 60;
       daylightText = daylightH + 'h ' + daylightM + 'm';
+
+      var BASE_TRACK =
+        '<line x1="3" y1="36" x2="61" y2="36" stroke="#E8E4DC" stroke-width="1"/>' +
+        '<path d="M 6,36 A 26,26 0 0 0 58,36" stroke="#E8E4DC" stroke-width="2" fill="none" opacity="0.5"/>';
+      var END_DOTS =
+        '<circle cx="6" cy="36" r="2" fill="#E8E4DC"/>' +
+        '<circle cx="58" cy="36" r="2" fill="#E8E4DC"/>';
+
+      if (nowMin < srMin) {
+        // Before sunrise: track only, small dot at left (sunrise) endpoint
+        svgArc =
+          '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
+            BASE_TRACK +
+            '<circle cx="6" cy="36" r="4" fill="#E6B44C" opacity="0.5"/>' +
+            END_DOTS +
+          '</svg>';
+      } else if (nowMin <= ssMin) {
+        // During daylight: partial amber arc + sun dot at current position
+        var progress = Math.min(1, (nowMin - srMin) / totalMin);
+        var angle = Math.PI * (1 - progress);
+        var cx = (32 + 26 * Math.cos(angle)).toFixed(1);
+        var cy = (36 - 26 * Math.sin(angle)).toFixed(1);
+        // Use large-arc-flag=0 for progress < 0.5, large-arc-flag=1 for progress >= 0.5
+        // But we always sweep from left (6,36) to current point going counterclockwise (sweep-flag=0)
+        var largeArc = progress >= 0.5 ? 1 : 0;
+        svgArc =
+          '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
+            BASE_TRACK +
+            '<path d="M 6,36 A 26,26 0 ' + largeArc + ' 0 ' + cx + ',' + cy + '" stroke="#E6B44C" stroke-width="2" fill="none"/>' +
+            '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="#E6B44C"/>' +
+            END_DOTS +
+          '</svg>';
+      } else {
+        // After sunset: full amber arc, no dot
+        svgArc =
+          '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
+            BASE_TRACK +
+            '<path d="M 6,36 A 26,26 0 1 0 58,36" stroke="#E6B44C" stroke-width="2" fill="none"/>' +
+            END_DOTS +
+          '</svg>';
+      }
     }
     return '<div class="wx-sunrise-card">' +
       svgArc +
@@ -7653,7 +7688,10 @@
           '<div class="wx-cond-card">' +
             '<div class="wx-cond-top">' +
               '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B9BD5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>' +
-              '<span class="wx-cond-pill wx-cond-pill--' + dogNotes.rain.status + '">' + dogNotes.rain.label + '</span>' +
+              '<div style="display:flex;align-items:center;gap:5px;">' +
+                '<span class="wx-cond-pill wx-cond-pill--' + dogNotes.rain.status + '">' + dogNotes.rain.label + '</span>' +
+                '<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="var(--ink-2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+              '</div>' +
             '</div>' +
             '<div class="wx-cond-value">' + maxRainProb + '<span>%</span></div>' +
             '<div class="wx-cond-name">Rain chance</div>' +
@@ -7664,7 +7702,10 @@
           '<div class="wx-cond-card">' +
             '<div class="wx-cond-top">' +
               '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8A8577" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1111 8H2m10.59 11.41A2 2 0 1014 16H2m15.73-8.27A2.5 2.5 0 1119.5 12H2"/></svg>' +
-              '<span class="wx-cond-pill wx-cond-pill--' + dogNotes.wind.status + '">' + dogNotes.wind.label + '</span>' +
+              '<div style="display:flex;align-items:center;gap:5px;">' +
+                '<span class="wx-cond-pill wx-cond-pill--' + dogNotes.wind.status + '">' + dogNotes.wind.label + '</span>' +
+                '<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="var(--ink-2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+              '</div>' +
             '</div>' +
             '<div class="wx-cond-value">' + windMph + '<span> mph</span></div>' +
             '<div class="wx-cond-name">Wind</div>' +
@@ -7675,7 +7716,10 @@
           '<div class="wx-cond-card">' +
             '<div class="wx-cond-top">' +
               '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E6A817" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' +
-              '<span class="wx-cond-pill wx-cond-pill--' + dogNotes.uv.status + '">' + dogNotes.uv.label + '</span>' +
+              '<div style="display:flex;align-items:center;gap:5px;">' +
+                '<span class="wx-cond-pill wx-cond-pill--' + dogNotes.uv.status + '">' + dogNotes.uv.label + '</span>' +
+                '<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="var(--ink-2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+              '</div>' +
             '</div>' +
             '<div class="wx-cond-value">' + currentUV + '</div>' +
             '<div class="wx-cond-name">UV index</div>' +
@@ -7686,7 +7730,10 @@
           '<div class="wx-cond-card">' +
             '<div class="wx-cond-top">' +
               '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7CB342" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>' +
-              '<span class="wx-cond-pill wx-cond-pill--' + dogNotes.humidity.status + '">' + dogNotes.humidity.label + '</span>' +
+              '<div style="display:flex;align-items:center;gap:5px;">' +
+                '<span class="wx-cond-pill wx-cond-pill--' + dogNotes.humidity.status + '">' + dogNotes.humidity.label + '</span>' +
+                '<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="var(--ink-2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+              '</div>' +
             '</div>' +
             '<div class="wx-cond-value">' + humidity + '<span>%</span></div>' +
             '<div class="wx-cond-name">Humidity</div>' +
@@ -7746,18 +7793,21 @@
 
   function buildHourlyCard(hourly) {
     var h = new Date().getHours();
-    var limit = Math.min(24, hourly.time ? hourly.time.length : 0);
+    var dataLen = hourly.time ? hourly.time.length : 0;
+    var limit = Math.min(h + 20, dataLen);
     var cards = '';
+    var midnightMarked = false;
     for (var i = h; i < limit; i++) {
       var t    = Math.round(hourly.temperature_2m[i] || 0);
       var prob = hourly.precipitation_probability ? (hourly.precipitation_probability[i] || 0) : 0;
       var wind = hourly.wind_speed_10m ? (hourly.wind_speed_10m[i] || 0) : 0;
       var uv   = hourly.uv_index ? (hourly.uv_index[i] || 0) : 0;
       var code = hourly.weather_code ? (hourly.weather_code[i] || 0) : 0;
-      var isDay = (i >= 6 && i < 21) ? 1 : 0;
+      var hr24 = i % 24;
+      var isDay = (hr24 >= 6 && hr24 < 21) ? 1 : 0;
       var entry = WMO_YR[code];
       var iconName = entry ? (isDay ? entry.day : entry.night) : '04';
-      var timeLabel = (i === h) ? 'Now' : formatHour(i);
+      var timeLabel = (i === h) ? 'Now' : formatBarHour(i);
       var quality = prob >= 60 ? 'poor' : (prob >= 30 ? 'marginal' : 'good');
       var qScore = getWalkQualityScore({ temp: hourly.temperature_2m[i] || 0, rainChance: prob, windSpeed: wind, uvIndex: uv, hour: i });
       var qColor = qScore >= 80 ? '#2C4A14' : qScore >= 60 ? '#7CB342' : qScore >= 40 ? '#E6B44C' : qScore >= 20 ? '#DDD8CE' : '#C0392B';
@@ -7770,9 +7820,15 @@
       var cardCls = 'wx-hour-card' +
         (i === h ? ' wx-hour-card--now' : '') +
         (quality !== 'poor' ? ' wx-hour-card--' + quality : '');
+      var dayTag = '';
+      if (hr24 === 0 && !midnightMarked) {
+        midnightMarked = true;
+        dayTag = '<span class="wx-hour-day">Tmrw</span>';
+      }
       cards +=
         '<div class="' + cardCls + '">' +
           '<span class="wx-hour-time">' + timeLabel + '</span>' +
+          dayTag +
           '<img class="wx-hour-icon" src="' + YR_BASE + iconName + '.svg" width="28" height="28" alt="">' +
           '<span class="wx-hour-temp" style="color:' + tempColor + '">' + t + '\u00b0</span>' +
           '<div class="wx-hour-quality" style="background:' + qColor + '"></div>' +
@@ -7832,13 +7888,8 @@
       leftPct  = Math.max(0, Math.min(94, leftPct));
       widthPct = Math.max(6, Math.min(100 - leftPct, widthPct));
 
-      // Bar fill gradient by quality
-      var fillGrad = dayScore >= 80 ? 'linear-gradient(90deg,#7CB342,#2C4A14)'
-                   : dayScore >= 60 ? 'linear-gradient(90deg,#7CB342,#E6B44C)'
-                   : dayScore >= 40 ? 'linear-gradient(90deg,#E6B44C,#DDD8CE)'
-                   :                  'linear-gradient(90deg,#DDD8CE,#DDD8CE)';
-
-      var dotColor = dayScore >= 80 ? '#2C4A14' : dayScore >= 60 ? '#7CB342' : dayScore >= 40 ? '#E6B44C' : '#DDD8CE';
+      var pillLabel = dayScore >= 80 ? 'Great' : dayScore >= 60 ? 'Good' : dayScore >= 40 ? 'Fair' : 'Poor';
+      var pillClass = dayScore >= 80 ? 'great' : dayScore >= 60 ? 'good' : dayScore >= 40 ? 'fair' : 'poor';
 
       var isLast = (j === limit - 1);
       html +=
@@ -7847,11 +7898,11 @@
           '<img src="' + YR_BASE + iconName + '.svg" alt="" width="26" height="26" style="flex-shrink:0;margin:0 10px;">' +
           '<span class="wx-forecast-lo">' + lo + '&#176;</span>' +
           '<div class="wx-forecast-bar">' +
-            '<div class="wx-forecast-bar-fill" style="left:' + leftPct.toFixed(1) + '%;width:' + widthPct.toFixed(1) + '%;background:' + fillGrad + ';"></div>' +
+            '<div class="wx-forecast-bar-fill" style="left:' + leftPct.toFixed(1) + '%;width:' + widthPct.toFixed(1) + '%;background:rgba(44,74,20,0.5);"></div>' +
           '</div>' +
           '<span class="wx-forecast-hi">' + hi + '&#176;</span>' +
           '<div class="wx-forecast-dot-wrap">' +
-            '<span class="wx-forecast-dot-circle" style="background:' + dotColor + ';"></span>' +
+            '<span class="wx-forecast-pill wx-forecast-pill--' + pillClass + '">' + pillLabel + '</span>' +
           '</div>' +
         '</div>';
     }
