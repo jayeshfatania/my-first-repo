@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sniffout - Weather Tab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --brand:       #2C4A14;
+    --brand-deep:  #1B3009;
+    --brand-mid:   #4A7C3A;
+    --sage-pale:   #EDF4E7;
+    --sienna:      #B85C2C;
+    --amber-bg:    #FEF5E4;
+    --amber:       #D4940A;
+    --bg:          #F4EFE6;
+    --surface:     #FFFFFF;
+    --ink:         #1C1A16;
+    --ink-2:       #5C5A55;
+    --ink-3:       #9E9C98;
+    --shadow-sm:   0 1px 6px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
+    --shadow:      0 2px 20px rgba(44,74,20,0.09), 0 1px 6px rgba(0,0,0,0.05);
+    --r:    16px;
+    --r-lg: 22px;
+  }
+
+  body {
+    background: #DDD8CE;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 64px 40px 80px;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .showcase-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(27,48,9,0.45);
+    margin-bottom: 28px;
+  }
+  .phone-outer {
+    filter: drop-shadow(0 48px 80px rgba(0,0,0,0.28)) drop-shadow(0 16px 30px rgba(0,0,0,0.16));
+  }
+  .phone-frame {
+    width: 375px; height: 812px; background: var(--bg);
+    border-radius: 52px; overflow: hidden; position: relative;
+    outline: 10px solid #18150F;
+  }
+  .status-bar {
+    height: 44px; padding: 14px 22px 0;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg); position: relative; z-index: 20;
+  }
+  .status-time { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+  .status-icons { display: flex; align-items: center; gap: 5px; }
+
+  /* Tab header */
+  .tab-header {
+    height: 52px; padding: 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg);
+  }
+  .tab-title {
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -0.03em;
+  }
+  .header-btn {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--surface); display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-sm); cursor: pointer; transition: transform 0.15s ease;
+    min-width: 44px; min-height: 44px;
+  }
+  .header-btn:active { transform: scale(0.95); }
+
+  .screen-content {
+    position: absolute; top: 96px; bottom: 80px; left: 0; right: 0;
+    overflow-y: auto; overflow-x: hidden; scrollbar-width: none;
+  }
+  .screen-content::-webkit-scrollbar { display: none; }
+  .content-pad { padding: 0 0 20px; }
+
+  /* Main conditions card */
+  .main-card {
+    margin: 0 14px 14px;
+    background: linear-gradient(150deg, #2A4A1A 0%, #1B3009 55%, #0F1E06 100%);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    position: relative;
+    min-height: 200px;
+  }
+  .main-card-texture {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 130% 70% at 85% 10%, rgba(100,180,60,0.1) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .main-card-inner {
+    position: relative; z-index: 2;
+    padding: 22px 20px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .main-card-left {}
+  .main-card-label {
+    font-size: 11px; font-weight: 600;
+    color: rgba(255,255,255,0.45); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .main-temp {
+    font-family: 'Lora', serif;
+    font-size: 72px; font-weight: 700; color: #FFFFFF;
+    letter-spacing: -5px; line-height: 1;
+  }
+  .main-temp-unit {
+    font-family: 'Lora', serif;
+    font-size: 26px; font-weight: 400; color: rgba(255,255,255,0.55);
+  }
+  .main-condition {
+    font-family: 'Lora', serif;
+    font-size: 16px; font-style: italic;
+    color: rgba(255,255,255,0.78);
+    margin-top: 5px; margin-bottom: 14px;
+  }
+  .range-bar-wrap {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .range-lo {
+    font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5);
+  }
+  .range-track {
+    flex: 1; height: 4px; background: rgba(255,255,255,0.18); border-radius: 4px;
+    position: relative;
+  }
+  .range-fill {
+    position: absolute; top: 0; left: 30%; right: 20%;
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, #7ABD4A 0%, #A8D874 100%);
+  }
+  .range-dot {
+    position: absolute; top: 50%; right: calc(20% + 2px);
+    transform: translate(50%, -50%);
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #FFFFFF; border: 2px solid #7ABD4A;
+  }
+  .range-hi {
+    font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.75);
+  }
+
+  /* Weather illustration placeholder */
+  .main-card-right {
+    flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .wx-icon-large {
+    width: 72px; height: 72px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Best walk window card */
+  .window-card {
+    margin: 0 14px 14px;
+    background: var(--surface);
+    border-radius: var(--r);
+    padding: 16px 16px 14px;
+    box-shadow: var(--shadow);
+    border-left: 3px solid var(--sienna);
+  }
+  .window-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .window-title {
+    font-family: 'Lora', serif;
+    font-size: 15px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em;
+  }
+  .window-time {
+    font-family: 'Lora', serif;
+    font-size: 16px; font-weight: 700; color: var(--sienna);
+  }
+
+  /* Bar chart for walk window */
+  .bar-chart {
+    display: flex; align-items: flex-end; gap: 3px;
+    height: 44px; margin-bottom: 6px;
+  }
+  .bar {
+    flex: 1; background: #E8E3DC; border-radius: 3px 3px 0 0;
+    transition: background 0.2s ease;
+    min-width: 14px;
+  }
+  .bar.ok   { background: #A8C898; height: 55% !important; }
+  .bar.good { background: #6AAD5A; height: 75% !important; }
+  .bar.peak { background: var(--brand); height: 100% !important; }
+  .bar-h-10 { height: 10%; }
+  .bar-h-15 { height: 15%; }
+  .bar-h-25 { height: 25%; }
+  .bar-h-40 { height: 40%; }
+  .bar-h-55 { height: 55%; }
+  .bar-h-65 { height: 65%; }
+  .bar-h-75 { height: 75%; }
+
+  .bar-times {
+    display: flex; justify-content: space-between;
+    font-size: 10px; font-weight: 500; color: var(--ink-3);
+    padding: 0 1px;
+  }
+
+  /* Hourly strip */
+  .hourly-section { margin-bottom: 14px; }
+  .section-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px 10px;
+  }
+  .section-title {
+    font-family: 'Lora', serif;
+    font-size: 17px; font-weight: 600; color: var(--ink); letter-spacing: -0.02em;
+  }
+  .hourly-scroll {
+    overflow-x: auto; scrollbar-width: none; padding: 0 14px 2px;
+  }
+  .hourly-scroll::-webkit-scrollbar { display: none; }
+  .hourly-inner { display: flex; gap: 8px; width: max-content; }
+  .hour-block {
+    width: 56px; background: var(--surface); border-radius: 12px;
+    padding: 10px 6px; text-align: center;
+    box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    flex-shrink: 0; cursor: pointer; transition: transform 0.15s ease;
+    min-height: 44px;
+  }
+  .hour-block:active { transform: scale(0.97); }
+  .hour-block.peak { background: var(--sage-pale); }
+  .hour-time { font-size: 10px; font-weight: 600; color: var(--ink-3); }
+  .hour-block.peak .hour-time { color: var(--brand); }
+  .hour-temp {
+    font-family: 'Lora', serif;
+    font-size: 16px; font-weight: 700; color: var(--ink);
+  }
+  .hour-bar {
+    width: 28px; height: 3px; border-radius: 2px;
+    background: var(--sage-pale);
+  }
+  .hour-block.peak .hour-bar { background: var(--brand-mid); }
+
+  /* Metric grid */
+  .metric-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; padding: 0 14px; margin-bottom: 14px;
+  }
+  .metric-tile {
+    background: var(--surface); border-radius: var(--r);
+    padding: 14px 14px 14px;
+    box-shadow: var(--shadow);
+    cursor: pointer; transition: transform 0.15s ease;
+  }
+  .metric-tile:active { transform: scale(0.97); }
+  .metric-icon-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .metric-icon-box {
+    width: 34px; height: 34px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mi-rain  { background: #EBF3FF; }
+  .mi-wind  { background: #FEF8E8; }
+  .mi-uv    { background: var(--sage-pale); }
+  .mi-hum   { background: #F4EFF8; }
+
+  .metric-status {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 6px;
+  }
+  .ms-good  { background: var(--sage-pale); color: var(--brand); }
+  .ms-ok    { background: #FEF8E8; color: #7A6000; }
+  .ms-low   { background: #F0EEF8; color: #5A4A8A; }
+
+  .metric-val {
+    font-family: 'Lora', serif;
+    font-size: 32px; font-weight: 700; color: var(--ink);
+    letter-spacing: -1px; line-height: 1;
+    margin-bottom: 3px;
+  }
+  .metric-unit { font-size: 13px; font-weight: 600; color: var(--ink-3); }
+  .metric-label { font-size: 12px; font-weight: 500; color: var(--ink-2); }
+
+  /* 7-day forecast */
+  .forecast-card {
+    margin: 0 14px 14px;
+    background: var(--surface);
+    border-radius: var(--r);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .forecast-row {
+    display: flex; align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    cursor: pointer; transition: background 0.15s ease;
+    min-height: 44px;
+  }
+  .forecast-row:last-child { border-bottom: none; }
+  .forecast-row:hover { background: var(--bg); }
+  .forecast-row.today { background: var(--sage-pale); }
+  .forecast-day { font-size: 13px; font-weight: 600; color: var(--ink); width: 38px; }
+  .forecast-row.today .forecast-day { color: var(--brand); }
+  .forecast-cond { flex: 1; margin-left: 10px; }
+  .forecast-cond-label { font-size: 12px; font-weight: 500; color: var(--ink-2); }
+  .forecast-rain-chance {
+    font-size: 11px; font-weight: 600; color: #4A7ABA;
+    margin-left: 8px;
+  }
+  .forecast-temps { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+  .f-hi {
+    font-family: 'Lora', serif;
+    font-size: 15px; font-weight: 700; color: var(--ink);
+  }
+  .f-lo {
+    font-family: 'Lora', serif;
+    font-size: 14px; font-weight: 400; color: var(--ink-3);
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+    background: var(--brand-deep); border-radius: 26px 26px 0 0;
+    display: flex; align-items: flex-start; justify-content: space-around;
+    padding-top: 12px; z-index: 100;
+  }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    min-width: 44px; min-height: 44px; cursor: pointer;
+    transition: transform 0.15s ease; position: relative;
+    padding-top: 2px;
+  }
+  .nav-item:active { transform: scale(0.90); }
+  .nav-icon { color: rgba(255,255,255,0.35); }
+  .nav-item.active .nav-icon { color: #FFFFFF; }
+  .nav-lbl { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.35); }
+  .nav-item.active .nav-lbl { color: #FFFFFF; font-weight: 600; }
+  .nav-dot {
+    position: absolute; top: -5px; left: 50%; transform: translateX(-50%);
+    width: 4px; height: 4px; background: #A8D874; border-radius: 50%; display: none;
+  }
+  .nav-item.active .nav-dot { display: block; }
+</style>
+</head>
+<body>
+
+<p class="showcase-label">Sniffout &nbsp;&middot;&nbsp; Design Exploration &nbsp;&middot;&nbsp; Weather Tab</p>
+
+<div class="phone-outer">
+  <div class="phone-frame">
+
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="rgba(28,26,22,0.8)"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="rgba(28,26,22,0.8)"/><rect x="8" y="2" width="3" height="9" rx="0.5" fill="rgba(28,26,22,0.8)"/><rect x="12" y="0" width="3" height="11" rx="0.5" fill="rgba(28,26,22,0.4)"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true"><rect x="0.5" y="0.5" width="20" height="11" rx="3.5" stroke="rgba(28,26,22,0.35)" stroke-width="1"/><rect x="2" y="2" width="15" height="8" rx="2" fill="rgba(28,26,22,0.8)"/><path d="M22 4v4a2 2 0 0 0 0-4z" fill="rgba(28,26,22,0.4)"/></svg>
+      </div>
+    </div>
+
+    <div class="tab-header">
+      <span class="tab-title">Weather</span>
+      <div class="header-btn" role="button" aria-label="Change location">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="screen-content">
+      <div class="content-pad">
+
+        <!-- Main conditions card -->
+        <div class="main-card" aria-label="Today: 14 degrees, mostly sunny, high 16, low 8">
+          <div class="main-card-texture" aria-hidden="true"></div>
+          <div class="main-card-inner">
+            <div class="main-card-left">
+              <div class="main-card-label">Today &nbsp;&middot;&nbsp; Dorking</div>
+              <div style="display:flex;align-items:flex-start;">
+                <span class="main-temp">14</span>
+                <span class="main-temp-unit">°C</span>
+              </div>
+              <p class="main-condition">Mostly sunny, gentle breeze</p>
+              <div class="range-bar-wrap">
+                <span class="range-lo">8°</span>
+                <div class="range-track">
+                  <div class="range-fill"></div>
+                  <div class="range-dot"></div>
+                </div>
+                <span class="range-hi">16°</span>
+              </div>
+            </div>
+            <div class="main-card-right">
+              <div class="wx-icon-large" aria-hidden="true">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="4" fill="rgba(255,220,80,0.4)" stroke="rgba(255,220,80,0.8)"/>
+                  <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Best walk window -->
+        <div class="window-card" aria-label="Best walk window: 10am to 1pm">
+          <div class="window-head">
+            <span class="window-title">Best walk window</span>
+            <span class="window-time">10am - 1pm</span>
+          </div>
+          <div class="bar-chart" role="img" aria-label="Walk conditions bar chart showing peak window 10am to 1pm">
+            <div class="bar bar-h-10" style="height:10%;" title="5am"></div>
+            <div class="bar bar-h-10" style="height:12%;" title="6am"></div>
+            <div class="bar bar-h-15" style="height:18%;" title="7am"></div>
+            <div class="bar bar-h-25" style="height:30%;" title="8am"></div>
+            <div class="bar ok"       title="9am"></div>
+            <div class="bar peak"     title="10am"></div>
+            <div class="bar peak"     title="11am"></div>
+            <div class="bar peak"     title="12pm"></div>
+            <div class="bar good"     title="1pm"></div>
+            <div class="bar ok"       title="2pm"></div>
+            <div class="bar bar-h-40" style="height:40%;" title="3pm"></div>
+            <div class="bar bar-h-25" style="height:25%;" title="4pm"></div>
+            <div class="bar bar-h-15" style="height:15%;" title="5pm"></div>
+            <div class="bar bar-h-10" style="height:10%;" title="6pm"></div>
+          </div>
+          <div class="bar-times" aria-hidden="true">
+            <span>5am</span>
+            <span>8am</span>
+            <span>11am</span>
+            <span>2pm</span>
+            <span>5pm</span>
+          </div>
+        </div>
+
+        <!-- Hourly breakdown -->
+        <div class="hourly-section">
+          <div class="section-row">
+            <span class="section-title">Hourly</span>
+          </div>
+          <div class="hourly-scroll">
+            <div class="hourly-inner">
+              <div class="hour-block" aria-label="8am, 9 degrees">
+                <span class="hour-time">8am</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+                <span class="hour-temp">9°</span>
+                <div class="hour-bar"></div>
+              </div>
+              <div class="hour-block" aria-label="9am, 11 degrees">
+                <span class="hour-time">9am</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+                <span class="hour-temp">11°</span>
+                <div class="hour-bar"></div>
+              </div>
+              <div class="hour-block peak" aria-label="10am, 13 degrees, peak window">
+                <span class="hour-time">10am</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A7C3A" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="4" fill="rgba(74,124,58,0.3)"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+                <span class="hour-temp">13°</span>
+                <div class="hour-bar"></div>
+              </div>
+              <div class="hour-block peak" aria-label="11am, 14 degrees, peak window">
+                <span class="hour-time">11am</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A7C3A" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="4" fill="rgba(74,124,58,0.3)"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+                <span class="hour-temp">14°</span>
+                <div class="hour-bar"></div>
+              </div>
+              <div class="hour-block peak" aria-label="12pm, 15 degrees, peak window">
+                <span class="hour-time">12pm</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A7C3A" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="4" fill="rgba(74,124,58,0.3)"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+                <span class="hour-temp">15°</span>
+                <div class="hour-bar"></div>
+              </div>
+              <div class="hour-block" aria-label="1pm, 15 degrees">
+                <span class="hour-time">1pm</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="rgba(100,100,80,0.15)"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                <span class="hour-temp">15°</span>
+                <div class="hour-bar"></div>
+              </div>
+              <div class="hour-block" aria-label="2pm, 14 degrees">
+                <span class="hour-time">2pm</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+                <span class="hour-temp">14°</span>
+                <div class="hour-bar"></div>
+              </div>
+              <div class="hour-block" aria-label="3pm, 13 degrees">
+                <span class="hour-time">3pm</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A7ABA" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/><path d="M8 20v2M12 22v2M16 20v2" stroke="#4A7ABA" stroke-width="1.5"/></svg>
+                <span class="hour-temp">13°</span>
+                <div class="hour-bar" style="background:#DDEEFF;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metric tiles -->
+        <div class="section-row" style="padding-bottom:10px;">
+          <span class="section-title">Conditions</span>
+        </div>
+        <div class="metric-grid">
+
+          <div class="metric-tile" aria-label="Rain chance: 5 percent, Good">
+            <div class="metric-icon-row">
+              <div class="metric-icon-box mi-rain">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A7ABA" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                  <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/><path d="M8 19v2M12 21v2M16 19v2"/>
+                </svg>
+              </div>
+              <span class="metric-status ms-good">Good</span>
+            </div>
+            <div class="metric-val">5<span class="metric-unit">%</span></div>
+            <div class="metric-label">Rain chance</div>
+          </div>
+
+          <div class="metric-tile" aria-label="Wind: 14 km/h, OK">
+            <div class="metric-icon-row">
+              <div class="metric-icon-box mi-wind">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4940A" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                  <path d="M9.59 4.59A2 2 0 1 1 11 8H2M12.59 19.41A2 2 0 1 0 14 16H2M17.73 7.73A2.5 2.5 0 1 1 19.5 12H2"/>
+                </svg>
+              </div>
+              <span class="metric-status ms-ok">Breezy</span>
+            </div>
+            <div class="metric-val">14<span class="metric-unit"> km/h</span></div>
+            <div class="metric-label">Wind</div>
+          </div>
+
+          <div class="metric-tile" aria-label="UV Index: 2, Low">
+            <div class="metric-icon-row">
+              <div class="metric-icon-box mi-uv">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A7C3A" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+              </div>
+              <span class="metric-status ms-good">Low</span>
+            </div>
+            <div class="metric-val">2</div>
+            <div class="metric-label">UV Index</div>
+          </div>
+
+          <div class="metric-tile" aria-label="Humidity: 68 percent">
+            <div class="metric-icon-row">
+              <div class="metric-icon-box mi-hum">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A60B0" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                  <path d="M12 2C6 9.5 6 14 12 18c6-4 6-8.5 0-16z"/>
+                </svg>
+              </div>
+              <span class="metric-status ms-low">Moderate</span>
+            </div>
+            <div class="metric-val">68<span class="metric-unit">%</span></div>
+            <div class="metric-label">Humidity</div>
+          </div>
+
+        </div>
+
+        <!-- 7-day forecast -->
+        <div class="section-row">
+          <span class="section-title">7-day forecast</span>
+        </div>
+        <div class="forecast-card" role="table" aria-label="7 day weather forecast">
+          <div class="forecast-row today" role="row">
+            <span class="forecast-day">Today</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A7C3A" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="rgba(74,124,58,0.2)"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <span class="forecast-cond"><span class="forecast-cond-label">Mostly sunny</span></span>
+            <div class="forecast-temps"><span class="f-hi">16°</span><span class="f-lo">8°</span></div>
+          </div>
+          <div class="forecast-row" role="row">
+            <span class="forecast-day">Wed</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+            <span class="forecast-cond"><span class="forecast-cond-label">Partly cloudy</span></span>
+            <div class="forecast-temps"><span class="f-hi">14°</span><span class="f-lo">7°</span></div>
+          </div>
+          <div class="forecast-row" role="row">
+            <span class="forecast-day">Thu</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A7ABA" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/><path d="M8 19v1.5M12 21v1.5M16 19v1.5"/></svg>
+            <span class="forecast-cond"><span class="forecast-cond-label">Light rain</span><span class="forecast-rain-chance">60%</span></span>
+            <div class="forecast-temps"><span class="f-hi">11°</span><span class="f-lo">6°</span></div>
+          </div>
+          <div class="forecast-row" role="row">
+            <span class="forecast-day">Fri</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+            <span class="forecast-cond"><span class="forecast-cond-label">Cloudy</span><span class="forecast-rain-chance">20%</span></span>
+            <div class="forecast-temps"><span class="f-hi">13°</span><span class="f-lo">7°</span></div>
+          </div>
+          <div class="forecast-row" role="row">
+            <span class="forecast-day">Sat</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A7C3A" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="rgba(74,124,58,0.2)"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <span class="forecast-cond"><span class="forecast-cond-label">Sunny spells</span></span>
+            <div class="forecast-temps"><span class="f-hi">15°</span><span class="f-lo">6°</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Bottom navigation -->
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <div class="nav-item" role="button" aria-label="Today">
+        <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <span class="nav-lbl">Today</span>
+      </div>
+      <div class="nav-item active" role="button" aria-label="Weather" aria-current="page">
+        <div class="nav-dot" aria-hidden="true"></div>
+        <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+        <span class="nav-lbl">Weather</span>
+      </div>
+      <div class="nav-item" role="button" aria-label="Walks">
+        <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/></svg>
+        <span class="nav-lbl">Walks</span>
+      </div>
+      <div class="nav-item" role="button" aria-label="Nearby">
+        <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        <span class="nav-lbl">Nearby</span>
+      </div>
+      <div class="nav-item" role="button" aria-label="Me">
+        <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <span class="nav-lbl">Me</span>
+      </div>
+    </nav>
+
+  </div>
+</div>
+</body>
+</html>

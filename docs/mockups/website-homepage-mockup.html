@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sniffout - Website Homepage Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand:      #2C4A14;
+    --brand-deep: #1B3009;
+    --brand-mid:  #4A7C3A;
+    --sienna:     #B85C2C;
+    --sage-pale:  #EDF4E7;
+    --amber:      #D4940A;
+    --bg:         #F4EFE6;
+    --surface:    #FFFFFF;
+    --ink:        #1C1A16;
+    --ink-2:      #5C5A55;
+    --ink-3:      #9E9C98;
+    --shadow-sm:  0 1px 6px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
+    --shadow:     0 2px 20px rgba(44,74,20,0.09), 0 1px 6px rgba(0,0,0,0.05);
+    --shadow-lg:  0 8px 40px rgba(44,74,20,0.14), 0 3px 12px rgba(0,0,0,0.07);
+  }
+
+  body {
+    background: #CCCAB8;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 48px 32px 64px;
+    color: var(--ink);
+  }
+
+  .showcase-label {
+    text-align: center;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(27,48,9,0.5);
+    margin-bottom: 28px;
+  }
+
+  /* Browser chrome frame */
+  .browser-frame {
+    max-width: 1240px;
+    margin: 0 auto;
+    background: var(--surface);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.28), 0 10px 30px rgba(0,0,0,0.15);
+  }
+  .browser-bar {
+    height: 44px; background: #F0EDE8;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    display: flex; align-items: center; padding: 0 16px; gap: 10px;
+  }
+  .browser-dots { display: flex; gap: 6px; }
+  .browser-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .bd-red   { background: #FF5F57; }
+  .bd-amber { background: #FEBC2E; }
+  .bd-green { background: #28C840; }
+  .browser-url {
+    flex: 1; height: 26px; background: #FFFFFF; border-radius: 6px;
+    display: flex; align-items: center; padding: 0 12px; gap: 6px;
+    margin: 0 40px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+  }
+  .url-text { font-size: 12px; color: var(--ink-2); }
+
+  /* ============ SITE CONTENT ============ */
+
+  /* Navbar */
+  .navbar {
+    height: 68px; background: rgba(244,239,230,0.95);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center;
+    padding: 0 48px; gap: 40px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-logo {
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 700; color: var(--brand);
+    letter-spacing: -0.03em;
+    display: flex; align-items: center;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .nav-logo-dot {
+    width: 6px; height: 6px; background: var(--sienna);
+    border-radius: 50%; margin-left: 2px; margin-bottom: 3px;
+    display: inline-block;
+  }
+  .nav-links {
+    display: flex; gap: 28px; align-items: center; flex: 1;
+  }
+  .nav-link {
+    font-size: 14px; font-weight: 500; color: var(--ink-2);
+    cursor: pointer; transition: color 0.15s ease;
+    white-space: nowrap;
+  }
+  .nav-link:hover { color: var(--brand); }
+  .nav-link.active { color: var(--brand); font-weight: 600; }
+  .nav-cta {
+    background: var(--brand); color: #FFFFFF;
+    font-size: 13px; font-weight: 700;
+    padding: 10px 20px; border-radius: 10px;
+    cursor: pointer; transition: transform 0.15s ease, background 0.15s ease;
+    white-space: nowrap;
+  }
+  .nav-cta:hover { background: var(--brand-deep); transform: translateY(-1px); }
+  .nav-cta:active { transform: scale(0.97); }
+
+  /* Hero section */
+  .hero {
+    height: 640px; position: relative; overflow: hidden;
+    background: linear-gradient(155deg, #3A6428 0%, #234A18 40%, #1B3009 80%, #0F1E06 100%);
+  }
+  .hero-texture {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 20%, rgba(120,200,80,0.12) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 80% at 20% 80%, rgba(10,30,5,0.5) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative; z-index: 2;
+    max-width: 1140px; margin: 0 auto;
+    padding: 0 48px;
+    height: 100%; display: flex; flex-direction: column; justify-content: center;
+  }
+  .hero-chapter {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: rgba(168,216,116,0.75);
+    margin-bottom: 18px;
+  }
+  .hero-headline {
+    font-family: 'Lora', serif;
+    font-size: 62px; font-weight: 700; color: #FFFFFF;
+    line-height: 1.05; letter-spacing: -0.03em;
+    max-width: 620px; margin-bottom: 20px;
+  }
+  .hero-headline em {
+    font-style: italic; font-weight: 400; color: rgba(168,216,116,0.9);
+  }
+  .hero-sub {
+    font-size: 18px; font-weight: 400; color: rgba(255,255,255,0.7);
+    max-width: 480px; line-height: 1.6; margin-bottom: 32px;
+  }
+  .hero-actions { display: flex; gap: 12px; align-items: center; }
+  .hero-btn-primary {
+    background: var(--sienna); color: #FFFFFF;
+    font-size: 15px; font-weight: 700;
+    padding: 14px 28px; border-radius: 12px;
+    cursor: pointer; transition: transform 0.15s ease, background 0.15s ease;
+    box-shadow: 0 4px 16px rgba(184,92,44,0.4);
+  }
+  .hero-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(184,92,44,0.45); }
+  .hero-btn-primary:active { transform: scale(0.97); }
+  .hero-btn-secondary {
+    background: rgba(255,255,255,0.14); color: rgba(255,255,255,0.9);
+    font-size: 15px; font-weight: 600;
+    padding: 14px 24px; border-radius: 12px;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    cursor: pointer; transition: background 0.15s ease;
+  }
+  .hero-btn-secondary:hover { background: rgba(255,255,255,0.2); }
+
+  /* Floating stats panel in hero */
+  .hero-stats-panel {
+    position: absolute; top: 50%; right: 80px; transform: translateY(-50%);
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+    backdrop-filter: blur(12px);
+    border-radius: 20px; padding: 24px 28px;
+    z-index: 3; min-width: 200px;
+  }
+  .panel-stat { margin-bottom: 20px; }
+  .panel-stat:last-child { margin-bottom: 0; }
+  .panel-stat-val {
+    font-family: 'Lora', serif;
+    font-size: 38px; font-weight: 700; color: #FFFFFF;
+    line-height: 1; letter-spacing: -2px;
+  }
+  .panel-stat-label {
+    font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.6);
+    margin-top: 2px;
+  }
+  .panel-divider {
+    height: 1px; background: rgba(255,255,255,0.12); margin: 12px 0;
+  }
+
+  /* Walks section */
+  .site-section { max-width: 1140px; margin: 0 auto; padding: 64px 48px 0; }
+  .section-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; }
+  .section-kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(44,74,20,0.5);
+    margin-bottom: 8px;
+  }
+  .section-headline {
+    font-family: 'Lora', serif;
+    font-size: 34px; font-weight: 700; color: var(--ink);
+    letter-spacing: -0.03em; line-height: 1.1;
+  }
+  .section-headline em { font-style: italic; font-weight: 400; color: var(--brand-mid); }
+  .section-more {
+    font-size: 13px; font-weight: 700; color: var(--brand-mid);
+    display: flex; align-items: center; gap: 5px;
+    cursor: pointer; transition: color 0.15s ease; white-space: nowrap;
+  }
+  .section-more:hover { color: var(--brand); }
+
+  /* Walk cards grid */
+  .walks-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  }
+  .walk-card-web {
+    background: var(--surface); border-radius: 20px;
+    overflow: hidden; box-shadow: var(--shadow);
+    cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .walk-card-web:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .walk-card-web:active { transform: scale(0.98); }
+  .walk-photo-web {
+    width: 100%; height: 220px; position: relative; overflow: hidden;
+  }
+  .walk-photo-web-bg { position: absolute; inset: 0; }
+  .walk-photo-web-fade {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 60%;
+    background: linear-gradient(to top, rgba(10,24,6,0.85) 0%, transparent 100%);
+  }
+  .walk-badge-web {
+    position: absolute; top: 14px; left: 14px;
+    background: var(--sienna); color: #FFFFFF;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 6px;
+  }
+  .walk-diff-web {
+    position: absolute; top: 14px; right: 14px;
+    background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.9);
+    font-size: 10px; font-weight: 600; border: 1px solid rgba(255,255,255,0.22);
+    padding: 4px 10px; border-radius: 6px;
+  }
+  .walk-card-name-web {
+    position: absolute; bottom: 12px; left: 14px; right: 14px;
+    font-family: 'Lora', serif;
+    font-size: 18px; font-weight: 700; font-style: italic; color: #FFFFFF;
+    line-height: 1.2;
+  }
+  .walk-card-body-web { padding: 16px 16px 18px; }
+  .walk-location-web {
+    font-size: 11px; font-weight: 600; color: var(--ink-3);
+    letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .walk-meta-web { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .walk-meta-item-web {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 13px; font-weight: 500; color: var(--ink-2);
+  }
+  .walk-tags-web { display: flex; gap: 6px; flex-wrap: wrap; }
+  .walk-tag-web {
+    font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 7px;
+    background: var(--sage-pale); color: var(--brand);
+  }
+
+  /* Feature strip: weather intelligence */
+  .feature-strip {
+    background: var(--brand-deep);
+    margin-top: 64px;
+    padding: 0;
+    position: relative; overflow: hidden;
+  }
+  .feature-strip-texture {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 90% 20%, rgba(74,124,58,0.2) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 80% at 10% 80%, rgba(10,30,5,0.6) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .feature-strip-inner {
+    max-width: 1140px; margin: 0 auto; padding: 60px 48px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    position: relative; z-index: 2;
+  }
+  .feature-strip-text {}
+  .feature-kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(168,216,116,0.7); margin-bottom: 14px;
+  }
+  .feature-headline {
+    font-family: 'Lora', serif;
+    font-size: 40px; font-weight: 700; color: #FFFFFF;
+    letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 18px;
+  }
+  .feature-headline em { font-style: italic; font-weight: 400; }
+  .feature-body {
+    font-size: 16px; font-weight: 400; color: rgba(255,255,255,0.65);
+    line-height: 1.7; margin-bottom: 28px;
+  }
+  .feature-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 700; color: #A8D874;
+    cursor: pointer; transition: gap 0.15s ease;
+  }
+  .feature-link:hover { gap: 12px; }
+
+  /* Weather card in feature strip */
+  .weather-card-strip {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px; padding: 24px; overflow: hidden;
+  }
+  .wcstrip-top { margin-bottom: 20px; }
+  .wcstrip-location { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.45); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .wcstrip-temp { font-family: 'Lora', serif; font-size: 56px; font-weight: 700; color: #FFFFFF; letter-spacing: -4px; line-height: 1; }
+  .wcstrip-verdict { font-family: 'Lora', serif; font-size: 17px; font-style: italic; color: rgba(255,255,255,0.75); margin-top: 6px; }
+  .wcstrip-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 16px; }
+  .wcstrip-tile {
+    background: rgba(255,255,255,0.07); border-radius: 12px;
+    padding: 12px; display: flex; align-items: center; gap: 10px;
+  }
+  .wcstrip-tile-icon {
+    width: 32px; height: 32px; border-radius: 9px;
+    background: rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .wcstrip-tile-info {}
+  .wcstrip-tile-val { font-family: 'Lora', serif; font-size: 18px; font-weight: 700; color: #FFFFFF; line-height: 1; }
+  .wcstrip-tile-label { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.5); }
+
+  /* Area grid */
+  .area-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .area-card {
+    border-radius: 16px; overflow: hidden; position: relative;
+    height: 160px; cursor: pointer; transition: transform 0.2s ease;
+    box-shadow: var(--shadow);
+  }
+  .area-card:hover { transform: translateY(-3px); }
+  .area-card:active { transform: scale(0.98); }
+  .area-photo-bg { position: absolute; inset: 0; }
+  .area-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 20%, rgba(10,24,6,0.75) 100%);
+  }
+  .area-name {
+    position: absolute; bottom: 12px; left: 12px; right: 12px;
+    font-family: 'Lora', serif;
+    font-size: 16px; font-weight: 600; font-style: italic; color: #FFFFFF;
+    line-height: 1.2;
+  }
+  .area-count {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(0,0,0,0.35); color: rgba(255,255,255,0.8);
+    font-size: 10px; font-weight: 600; border-radius: 20px; padding: 3px 8px;
+  }
+
+  /* App download section */
+  .app-section {
+    background: var(--sage-pale);
+    margin-top: 64px;
+  }
+  .app-section-inner {
+    max-width: 1140px; margin: 0 auto; padding: 56px 48px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+  }
+  .app-kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(44,74,20,0.5); margin-bottom: 12px; }
+  .app-headline { font-family: 'Lora', serif; font-size: 38px; font-weight: 700; color: var(--ink); letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; }
+  .app-headline em { font-style: italic; color: var(--brand-mid); }
+  .app-body { font-size: 16px; color: var(--ink-2); line-height: 1.7; margin-bottom: 28px; }
+  .store-badges { display: flex; gap: 12px; }
+  .store-badge {
+    background: var(--brand); color: #FFFFFF;
+    border-radius: 10px; padding: 10px 18px;
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer; transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .store-badge:hover { background: var(--brand-deep); transform: translateY(-2px); }
+  .store-badge:active { transform: scale(0.97); }
+  .store-badge-text {}
+  .store-badge-sup { font-size: 10px; font-weight: 500; opacity: 0.8; display: block; }
+  .store-badge-name { font-size: 15px; font-weight: 700; }
+  .app-phone-preview {
+    background: linear-gradient(150deg, #3A6428 0%, #1B3009 100%);
+    border-radius: 28px; padding: 28px 24px;
+    position: relative; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(27,48,9,0.35);
+  }
+  .app-preview-temp { font-family: 'Lora', serif; font-size: 56px; font-weight: 700; color: #FFFFFF; letter-spacing: -4px; line-height: 1; }
+  .app-preview-verdict { font-family: 'Lora', serif; font-size: 16px; font-style: italic; color: rgba(255,255,255,0.7); margin-top: 6px; margin-bottom: 16px; }
+  .app-preview-chip { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18); border-radius: 20px; padding: 5px 12px; font-size: 12px; color: rgba(255,255,255,0.8); font-weight: 500; }
+
+  /* Guides section */
+  .guides-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .guide-card {
+    background: var(--surface); border-radius: 16px;
+    border-left: 3px solid var(--brand); overflow: hidden;
+    box-shadow: var(--shadow);
+    cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .guide-card:hover { transform: translateX(4px); box-shadow: var(--shadow-lg); }
+  .guide-card:active { transform: scale(0.98); }
+  .guide-card-inner { padding: 20px; }
+  .guide-category {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--sienna); margin-bottom: 8px;
+  }
+  .guide-title {
+    font-family: 'Lora', serif;
+    font-size: 18px; font-weight: 600; color: var(--ink);
+    letter-spacing: -0.02em; line-height: 1.3; margin-bottom: 10px;
+  }
+  .guide-excerpt {
+    font-size: 13px; font-weight: 400; color: var(--ink-2);
+    line-height: 1.6; margin-bottom: 14px;
+  }
+  .guide-read-link {
+    font-size: 12px; font-weight: 700; color: var(--brand-mid);
+    display: flex; align-items: center; gap: 5px;
+    cursor: pointer; transition: gap 0.15s ease;
+  }
+  .guide-read-link:hover { gap: 8px; }
+
+  /* Footer */
+  .site-footer {
+    background: var(--brand-deep);
+    padding: 40px 48px;
+    margin-top: 0;
+  }
+  .footer-inner {
+    max-width: 1140px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-logo { font-family: 'Lora', serif; font-size: 18px; font-weight: 700; color: rgba(255,255,255,0.6); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-link { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.4); cursor: pointer; transition: color 0.15s ease; }
+  .footer-link:hover { color: rgba(255,255,255,0.7); }
+  .footer-copy { font-size: 12px; font-weight: 400; color: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+
+<p class="showcase-label">Sniffout &nbsp;&middot;&nbsp; Design Exploration &nbsp;&middot;&nbsp; Website Homepage</p>
+
+<div class="browser-frame">
+  <!-- Browser chrome -->
+  <div class="browser-bar">
+    <div class="browser-dots">
+      <div class="browser-dot bd-red"></div>
+      <div class="browser-dot bd-amber"></div>
+      <div class="browser-dot bd-green"></div>
+    </div>
+    <div class="browser-url">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span class="url-text">sniffout.co.uk</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" aria-label="Site navigation">
+    <span class="nav-logo" role="link" aria-label="Sniffout home">sniffout<span class="nav-logo-dot"></span></span>
+    <div class="nav-links">
+      <a class="nav-link active" role="link">Walks</a>
+      <a class="nav-link" role="link">Areas</a>
+      <a class="nav-link" role="link">Weather</a>
+      <a class="nav-link" role="link">Safety guides</a>
+      <a class="nav-link" role="link">About</a>
+    </div>
+    <div class="nav-cta" role="button" aria-label="Get the app">Get the app</div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" aria-label="Hero section">
+    <div class="hero-texture" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <p class="hero-chapter">Dog walks across the UK</p>
+      <h1 class="hero-headline">Find your next great walk, <em>planned around the weather.</em></h1>
+      <p class="hero-sub">Curated routes, live weather intelligence, and dog-friendly places. Know before you go.</p>
+      <div class="hero-actions">
+        <div class="hero-btn-primary" role="button" aria-label="Browse walks">Browse walks</div>
+        <div class="hero-btn-secondary" role="button" aria-label="Get the app">Get the app</div>
+      </div>
+    </div>
+
+    <!-- Floating stats panel -->
+    <div class="hero-stats-panel" aria-label="App statistics">
+      <div class="panel-stat">
+        <div class="panel-stat-val">100+</div>
+        <div class="panel-stat-label">Curated UK walks</div>
+      </div>
+      <div class="panel-divider"></div>
+      <div class="panel-stat">
+        <div class="panel-stat-val">Live</div>
+        <div class="panel-stat-label">Weather for your route</div>
+      </div>
+      <div class="panel-divider"></div>
+      <div class="panel-stat">
+        <div class="panel-stat-val">Free</div>
+        <div class="panel-stat-label">No account needed</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured walks section -->
+  <div class="site-section">
+    <div class="section-head">
+      <div>
+        <p class="section-kicker">Good walks near you</p>
+        <h2 class="section-headline">Walks worth <em>every muddy boot</em></h2>
+      </div>
+      <a class="section-more" role="link">
+        Browse all walks
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <div class="walks-grid" role="list">
+
+      <div class="walk-card-web" role="listitem button" aria-label="Box Hill North Face, 7.2 km, Moderate">
+        <div class="walk-photo-web">
+          <div class="walk-photo-web-bg" style="background:linear-gradient(155deg,#3D7030 0%,#1B3009 100%);"></div>
+          <div class="walk-photo-web-fade"></div>
+          <span class="walk-badge-web">Sniffout Pick</span>
+          <span class="walk-diff-web">Moderate</span>
+          <div class="walk-card-name-web">Box Hill North Face</div>
+        </div>
+        <div class="walk-card-body-web">
+          <div class="walk-location-web">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+            Dorking, Surrey
+          </div>
+          <div class="walk-meta-web">
+            <span class="walk-meta-item-web"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3"/></svg> 1h 45m</span>
+            <span class="walk-meta-item-web"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/></svg> 7.2 km</span>
+          </div>
+          <div class="walk-tags-web">
+            <span class="walk-tag-web">Full off-lead</span>
+            <span class="walk-tag-web">Views</span>
+            <span class="walk-tag-web" style="background:#FEF5E4;color:#B85C2C;">Pub nearby</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="walk-card-web" role="listitem button" aria-label="Holmbury Hill Loop, 4.2 km, Easy">
+        <div class="walk-photo-web">
+          <div class="walk-photo-web-bg" style="background:linear-gradient(155deg,#4A7C3A 0%,#1E3A14 100%);"></div>
+          <div class="walk-photo-web-fade"></div>
+          <span class="walk-diff-web">Easy</span>
+          <div class="walk-card-name-web">Holmbury Hill Loop</div>
+        </div>
+        <div class="walk-card-body-web">
+          <div class="walk-location-web">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+            Holmbury St Mary, Surrey
+          </div>
+          <div class="walk-meta-web">
+            <span class="walk-meta-item-web"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3"/></svg> 1h 5m</span>
+            <span class="walk-meta-item-web"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/></svg> 4.2 km</span>
+          </div>
+          <div class="walk-tags-web">
+            <span class="walk-tag-web">Full off-lead</span>
+            <span class="walk-tag-web">Woodland</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="walk-card-web" role="listitem button" aria-label="Ranmore Common, 3.8 km, Easy">
+        <div class="walk-photo-web">
+          <div class="walk-photo-web-bg" style="background:linear-gradient(155deg,#6A7C30 0%,#2A3A12 100%);"></div>
+          <div class="walk-photo-web-fade"></div>
+          <span class="walk-badge-web" style="background:#B85C2C;">Hidden Gem</span>
+          <span class="walk-diff-web">Easy</span>
+          <div class="walk-card-name-web">Ranmore Common</div>
+        </div>
+        <div class="walk-card-body-web">
+          <div class="walk-location-web">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+            Ranmore Common, Surrey
+          </div>
+          <div class="walk-meta-web">
+            <span class="walk-meta-item-web"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3"/></svg> 55m</span>
+            <span class="walk-meta-item-web"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/></svg> 3.8 km</span>
+          </div>
+          <div class="walk-tags-web">
+            <span class="walk-tag-web">Partial off-lead</span>
+            <span class="walk-tag-web">Quiet trails</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Weather intelligence strip -->
+  <div class="feature-strip" style="margin-top:64px;" aria-label="Weather intelligence feature">
+    <div class="feature-strip-texture" aria-hidden="true"></div>
+    <div class="feature-strip-inner">
+      <div class="feature-strip-text">
+        <p class="feature-kicker">Live weather intelligence</p>
+        <h2 class="feature-headline">Know the forecast. <em>Plan with confidence.</em></h2>
+        <p class="feature-body">Sniffout reads live weather data for your exact location and tells you whether it is a good time to walk. Best window, UV index, wind, rain chance, and a 7-day view so you can plan ahead.</p>
+        <a class="feature-link" role="link">
+          Learn how it works
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <div class="weather-card-strip" aria-label="Sample weather card showing 14 degrees, good conditions">
+        <div class="wcstrip-top">
+          <div class="wcstrip-location">Dorking, Surrey &nbsp;&middot;&nbsp; Today</div>
+          <div style="display:flex;align-items:flex-start;gap:0;">
+            <span class="wcstrip-temp">14</span>
+            <span style="font-family:'Lora',serif;font-size:24px;color:rgba(255,255,255,0.5);margin-top:10px;">°C</span>
+          </div>
+          <div class="wcstrip-verdict">A lovely morning for a long walk</div>
+        </div>
+        <div class="wcstrip-tiles">
+          <div class="wcstrip-tile" aria-label="Rain chance: 5 percent">
+            <div class="wcstrip-tile-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(120,180,255,0.8)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+            </div>
+            <div class="wcstrip-tile-info">
+              <div class="wcstrip-tile-val">5%</div>
+              <div class="wcstrip-tile-label">Rain chance</div>
+            </div>
+          </div>
+          <div class="wcstrip-tile" aria-label="Wind: 14 km/h">
+            <div class="wcstrip-tile-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(220,180,80,0.8)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M9.59 4.59A2 2 0 1 1 11 8H2M12.59 19.41A2 2 0 1 0 14 16H2M17.73 7.73A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+            </div>
+            <div class="wcstrip-tile-info">
+              <div class="wcstrip-tile-val">14</div>
+              <div class="wcstrip-tile-label">km/h wind</div>
+            </div>
+          </div>
+          <div class="wcstrip-tile" aria-label="UV index: 2">
+            <div class="wcstrip-tile-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(168,216,116,0.8)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+            </div>
+            <div class="wcstrip-tile-info">
+              <div class="wcstrip-tile-val">2</div>
+              <div class="wcstrip-tile-label">UV index</div>
+            </div>
+          </div>
+          <div class="wcstrip-tile" aria-label="Walk score: 8">
+            <div class="wcstrip-tile-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(168,216,116,0.8)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="wcstrip-tile-info">
+              <div class="wcstrip-tile-val">8/10</div>
+              <div class="wcstrip-tile-label">Walk score</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Areas section -->
+  <div class="site-section" style="padding-bottom:0;">
+    <div class="section-head">
+      <div>
+        <p class="section-kicker">Explore by area</p>
+        <h2 class="section-headline">Find walks in your <em>patch of the UK</em></h2>
+      </div>
+    </div>
+    <div class="area-grid" role="list">
+      <div class="area-card" role="listitem button" aria-label="Surrey Hills, 18 walks">
+        <div class="area-photo-bg" style="background:linear-gradient(155deg,#3D6B2C 0%,#1B3009 100%);"></div>
+        <div class="area-overlay"></div>
+        <span class="area-count">18 walks</span>
+        <div class="area-name">Surrey Hills</div>
+      </div>
+      <div class="area-card" role="listitem button" aria-label="Peak District, 14 walks">
+        <div class="area-photo-bg" style="background:linear-gradient(155deg,#6B7C3A 0%,#2A3A12 100%);"></div>
+        <div class="area-overlay"></div>
+        <span class="area-count">14 walks</span>
+        <div class="area-name">Peak District</div>
+      </div>
+      <div class="area-card" role="listitem button" aria-label="South Downs, 22 walks">
+        <div class="area-photo-bg" style="background:linear-gradient(155deg,#4A7C4A 0%,#1E3A1E 100%);"></div>
+        <div class="area-overlay"></div>
+        <span class="area-count">22 walks</span>
+        <div class="area-name">South Downs</div>
+      </div>
+      <div class="area-card" role="listitem button" aria-label="Cotswolds, 11 walks">
+        <div class="area-photo-bg" style="background:linear-gradient(155deg,#8B7A3A 0%,#3A3010 100%);"></div>
+        <div class="area-overlay"></div>
+        <span class="area-count">11 walks</span>
+        <div class="area-name">Cotswolds</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App download section -->
+  <div class="app-section" style="margin-top:64px;">
+    <div class="app-section-inner">
+      <div>
+        <p class="app-kicker">Download the app</p>
+        <h2 class="app-headline">The walk planner that <em>knows the weather.</em></h2>
+        <p class="app-body">Get live walk conditions, curated route suggestions, dog-friendly places, and a personal walk journal. All in one app, no account needed to get started.</p>
+        <div class="store-badges">
+          <div class="store-badge" role="button" aria-label="Download on the App Store">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 20.94l1.5 2.06a2 2 0 0 0 3 0l4-5.5"/><path d="M12 20.94l-1.5 2.06a2 2 0 0 1-3 0l-4-5.5"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+            <div class="store-badge-text">
+              <span class="store-badge-sup">Download on the</span>
+              <span class="store-badge-name">App Store</span>
+            </div>
+          </div>
+          <div class="store-badge" role="button" aria-label="Get it on Google Play">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,0.8)" stroke="none" aria-hidden="true"><path d="M5 3l14 9-14 9V3z"/></svg>
+            <div class="store-badge-text">
+              <span class="store-badge-sup">Get it on</span>
+              <span class="store-badge-name">Google Play</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="app-phone-preview" aria-hidden="true">
+        <div class="app-preview-temp">14°</div>
+        <div class="app-preview-verdict">A lovely morning for a long walk</div>
+        <div class="app-preview-chip">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Walk score 8/10
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Safety guides section -->
+  <div class="site-section" style="padding-bottom:64px;">
+    <div class="section-head">
+      <div>
+        <p class="section-kicker">Safety and health guides</p>
+        <h2 class="section-headline">Good to know <em>before you head out</em></h2>
+      </div>
+      <a class="section-more" role="link">All guides <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    </div>
+    <div class="guides-grid" role="list">
+      <div class="guide-card" role="listitem button" aria-label="Ticks on dogs: what you need to know">
+        <div class="guide-card-inner">
+          <div class="guide-category">Health</div>
+          <div class="guide-title">Ticks on dogs: what you need to know</div>
+          <div class="guide-excerpt">Where to check after woodland walks, how to remove safely, and what signs to watch for in the days after.</div>
+          <a class="guide-read-link" role="link">Read guide <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+      <div class="guide-card" role="listitem button" aria-label="Walking in hot weather with your dog">
+        <div class="guide-card-inner">
+          <div class="guide-category">Hot weather</div>
+          <div class="guide-title">Walking in hot weather with your dog</div>
+          <div class="guide-excerpt">When to avoid midday walks, how to spot early heat stress, and what to bring on warm days.</div>
+          <a class="guide-read-link" role="link">Read guide <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+      <div class="guide-card" role="listitem button" aria-label="Blue-green algae: what dog owners should know">
+        <div class="guide-card-inner">
+          <div class="guide-category">Water safety</div>
+          <div class="guide-title">Blue-green algae: what dog owners should know</div>
+          <div class="guide-excerpt">Which water bodies to watch for summer blooms, why it is dangerous, and how to tell if your dog has been exposed.</div>
+          <a class="guide-read-link" role="link">Read guide <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer" aria-label="Site footer">
+    <div class="footer-inner">
+      <span class="footer-logo">sniffout</span>
+      <div class="footer-links">
+        <a class="footer-link" role="link">Walks</a>
+        <a class="footer-link" role="link">Areas</a>
+        <a class="footer-link" role="link">Guides</a>
+        <a class="footer-link" role="link">Privacy</a>
+      </div>
+      <span class="footer-copy">sniffout.co.uk &nbsp;&middot;&nbsp; Made in the UK</span>
+    </div>
+  </footer>
+
+</div><!-- browser-frame -->
+</body>
+</html>

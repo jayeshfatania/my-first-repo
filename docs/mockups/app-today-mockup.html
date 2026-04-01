@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sniffout - Today Tab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --brand:       #2C4A14;
+    --brand-deep:  #1B3009;
+    --brand-mid:   #4A7C3A;
+    --brand-light: #7AB563;
+    --sage-pale:   #EDF4E7;
+    --sienna:      #B85C2C;
+    --amber-bg:    #FEF5E4;
+    --amber:       #D4940A;
+    --bg:          #F4EFE6;
+    --surface:     #FFFFFF;
+    --surface-warm:#F9F5EE;
+    --ink:         #1C1A16;
+    --ink-2:       #5C5A55;
+    --ink-3:       #9E9C98;
+    --shadow-sm:   0 1px 6px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
+    --shadow:      0 2px 20px rgba(44,74,20,0.09), 0 1px 6px rgba(0,0,0,0.05);
+    --r:    16px;
+    --r-lg: 22px;
+  }
+
+  body {
+    background: #DDD8CE;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 64px 40px 80px;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .showcase-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(27,48,9,0.45);
+    margin-bottom: 28px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* Phone frame */
+  .phone-outer {
+    filter:
+      drop-shadow(0 48px 80px rgba(0,0,0,0.28))
+      drop-shadow(0 16px 30px rgba(0,0,0,0.16));
+    transform: rotate(-0.5deg);
+  }
+  .phone-frame {
+    width: 375px;
+    height: 812px;
+    background: var(--bg);
+    border-radius: 52px;
+    overflow: hidden;
+    position: relative;
+    outline: 10px solid #18150F;
+    outline-offset: 0;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 44px;
+    padding: 14px 22px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg);
+    position: relative;
+    z-index: 20;
+  }
+  .status-time {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .status-icons {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* App header */
+  .app-header {
+    height: 52px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg);
+    position: relative;
+    z-index: 10;
+  }
+  .app-logo {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--brand);
+    letter-spacing: -0.03em;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+  }
+  .logo-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--sienna);
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 2px;
+    margin-bottom: 3px;
+    flex-shrink: 0;
+  }
+  .location-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 7px 11px 7px 9px;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+    min-height: 44px;
+  }
+  .location-pill:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+  .location-pill:active { transform: scale(0.97); }
+  .location-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  /* Scrollable content area */
+  .screen-content {
+    position: absolute;
+    top: 96px;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+  }
+  .screen-content::-webkit-scrollbar { display: none; }
+  .content-pad { padding-bottom: 20px; }
+
+  /* Weather hero */
+  .weather-hero {
+    margin: 0 14px 20px;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: linear-gradient(155deg, #3A6428 0%, #234A18 40%, #1B3009 75%, #0F1E06 100%);
+    position: relative;
+    min-height: 228px;
+  }
+  .hero-texture {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 120% 80% at 80% 0%, rgba(120,200,80,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 120% at 0% 100%, rgba(20,60,10,0.4) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    padding: 20px 18px 18px;
+  }
+  .hero-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .hero-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 20px;
+    padding: 5px 12px;
+  }
+  .hero-badge-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.88);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .hero-date {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* Walk score ring - floats top-right */
+  .walk-score-ring {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 72px;
+    height: 72px;
+    z-index: 3;
+  }
+
+  .hero-temp-line {
+    display: flex;
+    align-items: flex-start;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .hero-temp {
+    font-family: 'Lora', serif;
+    font-size: 84px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -6px;
+    line-height: 0.9;
+  }
+  .hero-temp-unit {
+    font-family: 'Lora', serif;
+    font-size: 30px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.6);
+    margin-top: 10px;
+    letter-spacing: 0;
+  }
+  .hero-verdict {
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    font-weight: 400;
+    font-style: italic;
+    color: rgba(255,255,255,0.88);
+    line-height: 1.3;
+    margin-bottom: 14px;
+  }
+  .hero-chips {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  .hero-chip {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 20px;
+    padding: 4px 11px;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.82);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* Section */
+  .section-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px 13px;
+  }
+  .section-title {
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .section-link {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand-mid);
+    cursor: pointer;
+    transition: color 0.15s ease;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Walk cards */
+  .walks-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0 14px;
+    margin-bottom: 24px;
+  }
+  .walk-card {
+    background: var(--surface);
+    border-radius: var(--r);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .walk-card:hover { box-shadow: 0 6px 28px rgba(44,74,20,0.14), 0 2px 8px rgba(0,0,0,0.06); }
+  .walk-card:active { transform: scale(0.97); box-shadow: var(--shadow-sm); }
+
+  .walk-photo {
+    width: 100%;
+    aspect-ratio: 2/3;
+    position: relative;
+    overflow: hidden;
+  }
+  .walk-photo-bg {
+    position: absolute;
+    inset: 0;
+  }
+  .walk-photo-fade {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 65%;
+    background: linear-gradient(to top, rgba(10,24,6,0.88) 0%, transparent 100%);
+  }
+  .walk-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    background: var(--sienna);
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .walk-name-overlay {
+    position: absolute;
+    bottom: 9px;
+    left: 10px;
+    right: 10px;
+    font-family: 'Lora', serif;
+    font-size: 14px;
+    font-weight: 600;
+    font-style: italic;
+    color: #FFFFFF;
+    line-height: 1.25;
+  }
+  .walk-body {
+    padding: 10px 11px;
+  }
+  .walk-meta {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-2);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .diff-pill {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .diff-easy     { background: var(--sage-pale); color: var(--brand); }
+  .diff-moderate { background: var(--amber-bg);  color: #7A5A00; }
+
+  /* Nearby strip */
+  .nearby-scroll {
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 14px 4px;
+  }
+  .nearby-scroll::-webkit-scrollbar { display: none; }
+  .nearby-inner {
+    display: flex;
+    gap: 10px;
+    width: max-content;
+  }
+  .nearby-card {
+    width: 116px;
+    background: var(--surface);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  .nearby-card:active { transform: scale(0.97); }
+  .nearby-photo {
+    height: 76px;
+    position: relative;
+  }
+  .nearby-body {
+    padding: 8px 10px 10px;
+  }
+  .nearby-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 2px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .nearby-type {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--ink-3);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 80px;
+    background: var(--brand-deep);
+    border-radius: 26px 26px 0 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    padding-top: 12px;
+    z-index: 100;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 44px;
+    min-height: 44px;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+    position: relative;
+    justify-content: flex-start;
+    padding-top: 2px;
+  }
+  .nav-item:active { transform: scale(0.90); }
+  .nav-icon { color: rgba(255,255,255,0.35); }
+  .nav-item.active .nav-icon { color: #FFFFFF; }
+  .nav-lbl {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.01em;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .nav-item.active .nav-lbl { color: #FFFFFF; font-weight: 600; }
+  .nav-dot {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: #A8D874;
+    border-radius: 50%;
+    display: none;
+  }
+  .nav-item.active .nav-dot { display: block; }
+</style>
+</head>
+<body>
+
+<p class="showcase-label">Sniffout &nbsp;&middot;&nbsp; Design Exploration &nbsp;&middot;&nbsp; Today Tab</p>
+
+<div class="phone-outer">
+  <div class="phone-frame">
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none" aria-hidden="true">
+          <rect x="0" y="7" width="3" height="4" rx="0.5" fill="rgba(28,26,22,0.8)"/>
+          <rect x="4" y="5" width="3" height="6" rx="0.5" fill="rgba(28,26,22,0.8)"/>
+          <rect x="8" y="2" width="3" height="9" rx="0.5" fill="rgba(28,26,22,0.8)"/>
+          <rect x="12" y="0" width="3" height="11" rx="0.5" fill="rgba(28,26,22,0.4)"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+          <path d="M8 3C5.8 3 3.8 3.9 2.3 5.4L1 4.1C2.8 2.3 5.3 1.2 8 1.2s5.2 1.1 7 2.9L13.7 5.4C12.2 3.9 10.2 3 8 3z" fill="rgba(28,26,22,0.8)"/>
+          <path d="M8 6c-1.4 0-2.7.6-3.6 1.5L3 6.1C4.2 4.8 6 4 8 4s3.8.8 5 2.1L11.6 7.5C10.7 6.6 9.4 6 8 6z" fill="rgba(28,26,22,0.8)"/>
+          <circle cx="8" cy="10" r="1.5" fill="rgba(28,26,22,0.8)"/>
+        </svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+          <rect x="0.5" y="0.5" width="20" height="11" rx="3.5" stroke="rgba(28,26,22,0.35)" stroke-width="1"/>
+          <rect x="2" y="2" width="15" height="8" rx="2" fill="rgba(28,26,22,0.8)"/>
+          <path d="M22 4v4a2 2 0 0 0 0-4z" fill="rgba(28,26,22,0.4)"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- App header -->
+    <div class="app-header">
+      <div class="app-logo">sniffout<span class="logo-dot"></span></div>
+      <div class="location-pill" role="button" aria-label="Change location: currently Dorking, Surrey">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B85C2C" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/>
+        </svg>
+        <span class="location-text">Dorking, Surrey</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="screen-content" role="main">
+      <div class="content-pad">
+
+        <!-- Weather hero -->
+        <div class="weather-hero" aria-label="Current conditions: 14 degrees, mostly sunny, walk score 8 out of 10">
+          <div class="hero-texture" aria-hidden="true"></div>
+
+          <!-- Walk score SVG ring (top-right) -->
+          <svg class="walk-score-ring" viewBox="0 0 72 72" aria-label="Walk score 8 out of 10">
+            <circle cx="36" cy="36" r="28" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="4"/>
+            <circle cx="36" cy="36" r="28" fill="none" stroke="#A8D874" stroke-width="4"
+              stroke-linecap="round"
+              stroke-dasharray="175.9"
+              stroke-dashoffset="35.2"
+              transform="rotate(-90 36 36)"/>
+            <text x="36" y="33" font-family="Lora,serif" font-size="17" font-weight="700" fill="#FFFFFF" text-anchor="middle" dominant-baseline="middle">8</text>
+            <text x="36" y="46" font-family="Plus Jakarta Sans,sans-serif" font-size="8" font-weight="600" fill="rgba(255,255,255,0.55)" text-anchor="middle" dominant-baseline="middle" letter-spacing="0.06em">WALK</text>
+          </svg>
+
+          <div class="hero-inner">
+            <div class="hero-top-row">
+              <div class="hero-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F4DF80" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="4" fill="#F4DF80" stroke="none"/>
+                  <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+                <span class="hero-badge-text">Mostly sunny</span>
+              </div>
+              <span class="hero-date">Tue 1 Apr</span>
+            </div>
+
+            <div class="hero-temp-line">
+              <span class="hero-temp">14</span>
+              <span class="hero-temp-unit">°C</span>
+            </div>
+
+            <p class="hero-verdict">A lovely morning for a long walk</p>
+
+            <div class="hero-chips">
+              <span class="hero-chip">Light breeze</span>
+              <span class="hero-chip">Low UV</span>
+              <span class="hero-chip">Dry until 4pm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: walks -->
+        <div class="section-row">
+          <span class="section-title">Good walks near you</span>
+          <span class="section-link" role="button">See all</span>
+        </div>
+
+        <div class="walks-grid">
+
+          <div class="walk-card" role="button" aria-label="Holmbury Hill Loop, 4.2 km, Easy">
+            <div class="walk-photo">
+              <div class="walk-photo-bg" style="background: linear-gradient(155deg,#3D6B2C 0%,#2C4A14 55%,#1A2E0A 100%);"></div>
+              <div class="walk-photo-fade"></div>
+              <span class="walk-badge">Pick</span>
+              <span class="walk-name-overlay">Holmbury Hill Loop</span>
+            </div>
+            <div class="walk-body">
+              <div class="walk-meta">
+                <span class="meta-item">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3"/></svg>
+                  1h 5m
+                </span>
+                <span class="meta-item">4.2 km</span>
+                <span class="diff-pill diff-easy">Easy</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="walk-card" role="button" aria-label="Box Hill Ridge, 6.8 km, Moderate">
+            <div class="walk-photo">
+              <div class="walk-photo-bg" style="background: linear-gradient(155deg,#7B8C3A 0%,#4A5520 55%,#2A3010 100%);"></div>
+              <div class="walk-photo-fade"></div>
+              <span class="walk-name-overlay">Box Hill Ridge</span>
+            </div>
+            <div class="walk-body">
+              <div class="walk-meta">
+                <span class="meta-item">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3"/></svg>
+                  1h 40m
+                </span>
+                <span class="meta-item">6.8 km</span>
+                <span class="diff-pill diff-moderate">Moderate</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="walk-card" role="button" aria-label="Ranmore Common, 3.8 km, Easy">
+            <div class="walk-photo">
+              <div class="walk-photo-bg" style="background: linear-gradient(155deg,#4A7C3A 0%,#2A5020 55%,#162810 100%);"></div>
+              <div class="walk-photo-fade"></div>
+              <span class="walk-badge" style="background:#B85C2C;">Gem</span>
+              <span class="walk-name-overlay">Ranmore Common</span>
+            </div>
+            <div class="walk-body">
+              <div class="walk-meta">
+                <span class="meta-item">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3"/></svg>
+                  55m
+                </span>
+                <span class="meta-item">3.8 km</span>
+                <span class="diff-pill diff-easy">Easy</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="walk-card" role="button" aria-label="Leith Hill, 5.1 km, Easy">
+            <div class="walk-photo">
+              <div class="walk-photo-bg" style="background: linear-gradient(155deg,#5A6B2C 0%,#3A4A1A 55%,#202810 100%);"></div>
+              <div class="walk-photo-fade"></div>
+              <span class="walk-name-overlay">Leith Hill Tower</span>
+            </div>
+            <div class="walk-body">
+              <div class="walk-meta">
+                <span class="meta-item">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3"/></svg>
+                  1h 20m
+                </span>
+                <span class="meta-item">5.1 km</span>
+                <span class="diff-pill diff-easy">Easy</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Section: nearby spots -->
+        <div class="section-row">
+          <span class="section-title">Spots near you</span>
+          <span class="section-link" role="button">Nearby tab</span>
+        </div>
+
+        <div class="nearby-scroll">
+          <div class="nearby-inner">
+
+            <div class="nearby-card" role="button" aria-label="The Plough Inn, dog-friendly pub">
+              <div class="nearby-photo" style="background:linear-gradient(160deg,#8B6120 0%,#5C4010 100%);"></div>
+              <div class="nearby-body">
+                <div class="nearby-name">The Plough Inn</div>
+                <div class="nearby-type">Dog-friendly pub</div>
+              </div>
+            </div>
+
+            <div class="nearby-card" role="button" aria-label="Dorking Park, green space">
+              <div class="nearby-photo" style="background:linear-gradient(160deg,#4A8A3A 0%,#2A5A1A 100%);"></div>
+              <div class="nearby-body">
+                <div class="nearby-name">Dorking Park</div>
+                <div class="nearby-type">Green space</div>
+              </div>
+            </div>
+
+            <div class="nearby-card" role="button" aria-label="Bean and Leaf cafe">
+              <div class="nearby-photo" style="background:linear-gradient(160deg,#7B5A3A 0%,#4A3020 100%);"></div>
+              <div class="nearby-body">
+                <div class="nearby-name">Bean &amp; Leaf</div>
+                <div class="nearby-type">Dog-friendly cafe</div>
+              </div>
+            </div>
+
+            <div class="nearby-card" role="button" aria-label="Mole Valley Vets">
+              <div class="nearby-photo" style="background:linear-gradient(160deg,#3A6B7B 0%,#1E3B4A 100%);"></div>
+              <div class="nearby-body">
+                <div class="nearby-name">Mole Valley Vets</div>
+                <div class="nearby-type">Veterinary</div>
+              </div>
+            </div>
+
+            <div class="nearby-card" role="button" aria-label="Nower Wood nature reserve">
+              <div class="nearby-photo" style="background:linear-gradient(160deg,#3A6B3A 0%,#1E4A1E 100%);"></div>
+              <div class="nearby-body">
+                <div class="nearby-name">Nower Wood</div>
+                <div class="nearby-type">Nature reserve</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- content-pad -->
+    </div><!-- screen-content -->
+
+    <!-- Bottom navigation -->
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <div class="nav-item active" role="button" aria-label="Today" aria-current="page">
+        <div class="nav-dot" aria-hidden="true"></div>
+        <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/>
+          <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+        <span class="nav-lbl">Today</span>
+      </div>
+      <div class="nav-item" role="button" aria-label="Weather">
+        <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+        </svg>
+        <span class="nav-lbl">Weather</span>
+      </div>
+      <div class="nav-item" role="button" aria-label="Walks">
+        <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/>
+        </svg>
+        <span class="nav-lbl">Walks</span>
+      </div>
+      <div class="nav-item" role="button" aria-label="Nearby">
+        <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/>
+        </svg>
+        <span class="nav-lbl">Nearby</span>
+      </div>
+      <div class="nav-item" role="button" aria-label="Me">
+        <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+        <span class="nav-lbl">Me</span>
+      </div>
+    </nav>
+
+  </div><!-- phone-frame -->
+</div><!-- phone-outer -->
+
+</body>
+</html>

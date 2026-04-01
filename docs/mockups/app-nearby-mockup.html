@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sniffout - Nearby Tab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand:       #2C4A14;
+    --brand-deep:  #1B3009;
+    --brand-mid:   #4A7C3A;
+    --sage-pale:   #EDF4E7;
+    --sienna:      #B85C2C;
+    --amber-bg:    #FEF5E4;
+    --bg:          #F4EFE6;
+    --surface:     #FFFFFF;
+    --ink:         #1C1A16;
+    --ink-2:       #5C5A55;
+    --ink-3:       #9E9C98;
+    --shadow-sm:   0 1px 6px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
+    --shadow:      0 2px 20px rgba(44,74,20,0.09), 0 1px 6px rgba(0,0,0,0.05);
+    --r: 16px; --r-lg: 22px;
+  }
+  body {
+    background: #DDD8CE; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 64px 40px 80px;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .showcase-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(27,48,9,0.45); margin-bottom: 28px;
+  }
+  .phone-outer {
+    filter: drop-shadow(0 48px 80px rgba(0,0,0,0.28)) drop-shadow(0 16px 30px rgba(0,0,0,0.16));
+  }
+  .phone-frame {
+    width: 375px; height: 812px; background: var(--bg);
+    border-radius: 52px; overflow: hidden; position: relative; outline: 10px solid #18150F;
+  }
+  .status-bar {
+    height: 44px; padding: 14px 22px 0;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg); z-index: 20; position: relative;
+  }
+  .status-time { font-size: 13px; font-weight: 700; color: var(--ink); }
+  .status-icons { display: flex; align-items: center; gap: 5px; }
+
+  /* Tab header */
+  .tab-header {
+    height: 52px; padding: 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg);
+  }
+  .tab-title {
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -0.03em;
+  }
+  .header-actions { display: flex; gap: 8px; }
+  .header-btn {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--surface); display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-sm); cursor: pointer; transition: transform 0.15s ease;
+  }
+  .header-btn:active { transform: scale(0.95); }
+
+  /* Category tiles */
+  .category-strip {
+    background: var(--surface);
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .category-strip::-webkit-scrollbar { display: none; }
+  .category-inner { display: flex; gap: 8px; width: max-content; }
+  .cat-tile {
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    width: 60px; cursor: pointer; transition: transform 0.15s ease;
+    padding: 6px 0;
+    min-height: 44px;
+  }
+  .cat-tile:active { transform: scale(0.93); }
+  .cat-icon-box {
+    width: 44px; height: 44px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg); border: 2px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .cat-tile.active .cat-icon-box {
+    background: var(--sage-pale); border-color: var(--brand);
+  }
+  .cat-label {
+    font-size: 10px; font-weight: 600; color: var(--ink-3);
+    text-align: center; line-height: 1.2;
+  }
+  .cat-tile.active .cat-label { color: var(--brand); }
+
+  /* Location banner */
+  .location-banner {
+    background: var(--brand-deep);
+    padding: 10px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .location-banner-text {
+    font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.75);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .location-radius {
+    font-size: 11px; font-weight: 600;
+    background: rgba(255,255,255,0.14); border-radius: 20px;
+    padding: 3px 10px; color: rgba(255,255,255,0.85); cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.18);
+    transition: background 0.15s ease;
+    min-height: 28px; display: flex; align-items: center;
+  }
+  .location-radius:hover { background: rgba(255,255,255,0.2); }
+
+  /* Map block */
+  .map-block {
+    width: 100%; height: 200px;
+    position: relative; overflow: hidden;
+    background: #E8E4D8;
+    cursor: pointer;
+  }
+  .map-block:active { opacity: 0.9; }
+  .map-topo {
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(44,74,20,0.06) 0px, transparent 1px, transparent 20px, rgba(44,74,20,0.06) 20px),
+      repeating-linear-gradient(90deg, rgba(44,74,20,0.06) 0px, transparent 1px, transparent 20px, rgba(44,74,20,0.06) 20px),
+      repeating-linear-gradient(30deg, rgba(44,74,20,0.025) 0px, transparent 1px, transparent 60px, rgba(44,74,20,0.025) 60px),
+      repeating-linear-gradient(-30deg, rgba(44,74,20,0.025) 0px, transparent 1px, transparent 60px, rgba(44,74,20,0.025) 60px);
+  }
+  .map-road-h { position: absolute; left: 0; right: 0; height: 5px; background: rgba(255,255,255,0.92); border-top: 0.5px solid rgba(180,160,120,0.3); }
+  .map-road-v { position: absolute; top: 0; bottom: 0; width: 4px; background: rgba(255,255,255,0.92); }
+  .map-green-block { position: absolute; background: rgba(74,124,58,0.2); border-radius: 40%; }
+  .map-water-block { position: absolute; background: rgba(74,144,200,0.18); border-radius: 30%; }
+  .map-pin {
+    position: absolute; width: 20px; height: 20px;
+    background: var(--brand); border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg); border: 2px solid #FFFFFF;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  }
+  .map-pin::after { content: ''; position: absolute; inset: 3px; background: #FFFFFF; border-radius: 50%; }
+  .map-pin-sienna { background: var(--sienna) !important; }
+  .map-label-bubble {
+    position: absolute; background: #FFFFFF;
+    border-radius: 8px; padding: 3px 7px;
+    font-size: 10px; font-weight: 700; color: var(--ink);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.15);
+    white-space: nowrap;
+  }
+  .map-user-dot {
+    position: absolute; width: 14px; height: 14px;
+    background: #4A90E2; border-radius: 50%; border: 2.5px solid #FFFFFF;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  }
+  .map-user-dot::before {
+    content: ''; position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 28px; height: 28px; background: rgba(74,144,226,0.18); border-radius: 50%;
+  }
+  .map-zoom-btns {
+    position: absolute; bottom: 12px; right: 12px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .map-zoom-btn {
+    width: 32px; height: 32px; background: #FFFFFF;
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.15); cursor: pointer;
+    font-size: 18px; font-weight: 300; color: var(--ink);
+    transition: background 0.15s ease;
+    min-width: 44px; min-height: 44px; width: 36px; height: 36px;
+  }
+  .map-zoom-btn:hover { background: var(--bg); }
+
+  /* Content area */
+  .screen-content {
+    position: absolute; top: 344px; bottom: 80px; left: 0; right: 0;
+    overflow-y: auto; overflow-x: hidden; scrollbar-width: none;
+  }
+  .screen-content::-webkit-scrollbar { display: none; }
+
+  .section-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px 10px;
+  }
+  .section-title {
+    font-family: 'Lora', serif;
+    font-size: 17px; font-weight: 600; color: var(--ink); letter-spacing: -0.02em;
+  }
+  .section-count {
+    font-size: 12px; font-weight: 600; color: var(--ink-3);
+  }
+
+  /* Place cards */
+  .place-list { padding: 0 14px; }
+  .place-card {
+    background: var(--surface); border-radius: var(--r);
+    margin-bottom: 10px; padding: 14px;
+    box-shadow: var(--shadow);
+    display: flex; gap: 12px; align-items: flex-start;
+    cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease;
+    min-height: 44px;
+  }
+  .place-card:hover { box-shadow: 0 4px 24px rgba(44,74,20,0.12); }
+  .place-card:active { transform: scale(0.98); box-shadow: var(--shadow-sm); }
+  .place-photo {
+    width: 72px; height: 72px; border-radius: 11px;
+    flex-shrink: 0; overflow: hidden; position: relative;
+  }
+  .place-photo-bg { position: absolute; inset: 0; }
+  .place-body { flex: 1; min-width: 0; }
+  .place-type-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--sage-pale); color: var(--brand);
+    font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 6px;
+    margin-bottom: 4px;
+  }
+  .place-name {
+    font-family: 'Lora', serif;
+    font-size: 16px; font-weight: 600; color: var(--ink);
+    letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 4px;
+  }
+  .place-address {
+    font-size: 12px; font-weight: 400; color: var(--ink-3);
+    margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .place-meta-row {
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap;
+  }
+  .place-dist {
+    font-size: 12px; font-weight: 600; color: var(--brand-mid);
+    display: flex; align-items: center; gap: 3px;
+  }
+  .star-row { display: flex; align-items: center; gap: 3px; }
+  .star-val { font-size: 12px; font-weight: 700; color: var(--ink); }
+  .place-open-pill {
+    background: #EDFCE8; color: #2A6A28;
+    font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 6px;
+  }
+  .place-save-btn {
+    width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+    background: var(--bg); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform 0.15s ease, background 0.15s ease;
+    min-width: 44px; min-height: 44px;
+  }
+  .place-save-btn:hover { background: var(--sage-pale); }
+  .place-save-btn:active { transform: scale(0.92); }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+    background: var(--brand-deep); border-radius: 26px 26px 0 0;
+    display: flex; align-items: flex-start; justify-content: space-around;
+    padding-top: 12px; z-index: 100;
+  }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    min-width: 44px; min-height: 44px; cursor: pointer;
+    transition: transform 0.15s ease; position: relative; padding-top: 2px;
+  }
+  .nav-item:active { transform: scale(0.90); }
+  .nav-icon { color: rgba(255,255,255,0.35); }
+  .nav-item.active .nav-icon { color: #FFFFFF; }
+  .nav-lbl { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.35); }
+  .nav-item.active .nav-lbl { color: #FFFFFF; font-weight: 600; }
+  .nav-dot { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #A8D874; border-radius: 50%; display: none; }
+  .nav-item.active .nav-dot { display: block; }
+</style>
+</head>
+<body>
+
+<p class="showcase-label">Sniffout &nbsp;&middot;&nbsp; Design Exploration &nbsp;&middot;&nbsp; Nearby Tab</p>
+
+<div class="phone-outer">
+  <div class="phone-frame">
+
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="rgba(28,26,22,0.8)"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="rgba(28,26,22,0.8)"/><rect x="8" y="2" width="3" height="9" rx="0.5" fill="rgba(28,26,22,0.8)"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true"><rect x="0.5" y="0.5" width="20" height="11" rx="3.5" stroke="rgba(28,26,22,0.35)" stroke-width="1"/><rect x="2" y="2" width="15" height="8" rx="2" fill="rgba(28,26,22,0.8)"/></svg>
+      </div>
+    </div>
+
+    <!-- Tab header -->
+    <div class="tab-header">
+      <span class="tab-title">Nearby</span>
+      <div class="header-actions">
+        <div class="header-btn" role="button" aria-label="Search places">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category tiles -->
+    <div class="category-strip" role="tablist" aria-label="Place categories">
+      <div class="category-inner">
+
+        <div class="cat-tile active" role="tab" aria-selected="true" aria-label="Parks" tabindex="0">
+          <div class="cat-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M12 22v-7M5 22v-4M19 22v-4M3 10l9-8 9 8"/><path d="M5 18c0-3.3 3.1-6 7-6s7 2.7 7 6"/>
+            </svg>
+          </div>
+          <span class="cat-label">Parks</span>
+        </div>
+
+        <div class="cat-tile" role="tab" aria-selected="false" aria-label="Pubs" tabindex="0">
+          <div class="cat-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/>
+            </svg>
+          </div>
+          <span class="cat-label">Pubs</span>
+        </div>
+
+        <div class="cat-tile" role="tab" aria-selected="false" aria-label="Cafes" tabindex="0">
+          <div class="cat-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M17 8h1a4 4 0 0 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/>
+            </svg>
+          </div>
+          <span class="cat-label">Cafes</span>
+        </div>
+
+        <div class="cat-tile" role="tab" aria-selected="false" aria-label="Vets" tabindex="0">
+          <div class="cat-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+          <span class="cat-label">Vets</span>
+        </div>
+
+        <div class="cat-tile" role="tab" aria-selected="false" aria-label="Car parks" tabindex="0">
+          <div class="cat-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 8h4a2 2 0 0 1 0 4H9V8zM9 12v4"/>
+            </svg>
+          </div>
+          <span class="cat-label">Parking</span>
+        </div>
+
+        <div class="cat-tile" role="tab" aria-selected="false" aria-label="Dog groomers" tabindex="0">
+          <div class="cat-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+          <span class="cat-label">Groomers</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Location radius banner -->
+    <div class="location-banner">
+      <span class="location-banner-text">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+        Dorking, Surrey &nbsp;&middot;&nbsp; Parks
+      </span>
+      <span class="location-radius" role="button" aria-label="Change radius, currently 3 miles">3 miles</span>
+    </div>
+
+    <!-- CSS Map -->
+    <div class="map-block" role="img" aria-label="Map showing nearby parks and places around Dorking">
+      <div class="map-topo" aria-hidden="true"></div>
+      <div class="map-road-h" style="top:80px;" aria-hidden="true"></div>
+      <div class="map-road-h" style="top:140px; height:3px; opacity:0.7;" aria-hidden="true"></div>
+      <div class="map-road-v" style="left:100px;" aria-hidden="true"></div>
+      <div class="map-road-v" style="left:240px; width:3px; opacity:0.7;" aria-hidden="true"></div>
+      <div class="map-green-block" style="width:130px;height:90px;top:10px;left:160px;" aria-hidden="true"></div>
+      <div class="map-green-block" style="width:80px;height:60px;top:100px;left:30px;" aria-hidden="true"></div>
+      <div class="map-water-block" style="width:50px;height:35px;top:155px;left:200px;" aria-hidden="true"></div>
+      <div class="map-pin" style="top:28px;left:175px;transform:rotate(-45deg);" aria-hidden="true"></div>
+      <div class="map-label-bubble" style="top:14px;left:198px;" aria-hidden="true">Nower Wood</div>
+      <div class="map-pin map-pin-sienna" style="top:60px;left:115px;transform:rotate(-45deg);" aria-hidden="true"></div>
+      <div class="map-label-bubble" style="top:48px;left:138px;" aria-hidden="true">The Plough</div>
+      <div class="map-pin" style="top:100px;left:260px;transform:rotate(-45deg);" aria-hidden="true"></div>
+      <div class="map-user-dot" style="top:88px;left:165px;" aria-label="Your location"></div>
+      <div class="map-zoom-btns" aria-hidden="true">
+        <div class="map-zoom-btn" title="Zoom in">+</div>
+        <div class="map-zoom-btn" title="Zoom out">-</div>
+      </div>
+    </div>
+
+    <!-- Place list -->
+    <div class="screen-content" role="main">
+      <div class="section-row">
+        <span class="section-title">Parks near you</span>
+        <span class="section-count">8 found</span>
+      </div>
+
+      <div class="place-list" role="list">
+
+        <div class="place-card" role="listitem button" aria-label="Nower Wood, nature reserve, 0.4 miles, 4.7 stars, open now">
+          <div class="place-photo">
+            <div class="place-photo-bg" style="background:linear-gradient(150deg,#4A8A3A 0%,#2A5A1A 100%);"></div>
+          </div>
+          <div class="place-body">
+            <span class="place-type-chip">
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M12 22v-7M5 22v-4M19 22v-4M3 10l9-8 9 8"/></svg>
+              Nature Reserve
+            </span>
+            <div class="place-name">Nower Wood</div>
+            <div class="place-address">Leatherhead, Surrey</div>
+            <div class="place-meta-row">
+              <span class="place-dist">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4A7C3A" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+                0.4 mi
+              </span>
+              <div class="star-row" aria-label="Rating: 4.7 stars">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="#D4940A" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <span class="star-val">4.7</span>
+              </div>
+              <span class="place-open-pill">Open</span>
+            </div>
+          </div>
+          <div class="place-save-btn" role="button" aria-label="Save Nower Wood">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="place-card" role="listitem button" aria-label="Dorking Recreation Ground, park, 0.7 miles, 4.4 stars, open now">
+          <div class="place-photo">
+            <div class="place-photo-bg" style="background:linear-gradient(150deg,#5A9A4A 0%,#2C5A1A 100%);"></div>
+          </div>
+          <div class="place-body">
+            <span class="place-type-chip">Park</span>
+            <div class="place-name">Dorking Recreation Ground</div>
+            <div class="place-address">Dorking, Surrey</div>
+            <div class="place-meta-row">
+              <span class="place-dist">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4A7C3A" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+                0.7 mi
+              </span>
+              <div class="star-row" aria-label="Rating: 4.4 stars">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="#D4940A" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <span class="star-val">4.4</span>
+              </div>
+              <span class="place-open-pill">Open</span>
+            </div>
+          </div>
+          <div class="place-save-btn" role="button" aria-label="Save Dorking Recreation Ground">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="place-card" role="listitem button" aria-label="Denbies Wine Estate, vineyard walk, 1.2 miles, 4.6 stars">
+          <div class="place-photo">
+            <div class="place-photo-bg" style="background:linear-gradient(150deg,#8B7A3A 0%,#5A4A1A 100%);"></div>
+          </div>
+          <div class="place-body">
+            <span class="place-type-chip" style="background:#FEF5E4;color:#B85C2C;">Vineyard Walk</span>
+            <div class="place-name">Denbies Wine Estate</div>
+            <div class="place-address">Ranmore Rd, Dorking</div>
+            <div class="place-meta-row">
+              <span class="place-dist">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4A7C3A" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+                1.2 mi
+              </span>
+              <div class="star-row" aria-label="Rating: 4.6 stars">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="#D4940A" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <span class="star-val">4.6</span>
+              </div>
+            </div>
+          </div>
+          <div class="place-save-btn" role="button" aria-label="Save Denbies Wine Estate">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <div class="nav-item" role="button" aria-label="Today"><svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><span class="nav-lbl">Today</span></div>
+      <div class="nav-item" role="button" aria-label="Weather"><svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg><span class="nav-lbl">Weather</span></div>
+      <div class="nav-item" role="button" aria-label="Walks"><svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/></svg><span class="nav-lbl">Walks</span></div>
+      <div class="nav-item active" role="button" aria-label="Nearby" aria-current="page">
+        <div class="nav-dot" aria-hidden="true"></div>
+        <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        <span class="nav-lbl">Nearby</span>
+      </div>
+      <div class="nav-item" role="button" aria-label="Me"><svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span class="nav-lbl">Me</span></div>
+    </nav>
+
+  </div>
+</div>
+</body>
+</html>

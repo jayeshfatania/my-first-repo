@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sniffout - Walk Page Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand:      #2C4A14;
+    --brand-deep: #1B3009;
+    --brand-mid:  #4A7C3A;
+    --sienna:     #B85C2C;
+    --sage-pale:  #EDF4E7;
+    --amber-bg:   #FEF5E4;
+    --amber:      #D4940A;
+    --bg:         #F4EFE6;
+    --surface:    #FFFFFF;
+    --ink:        #1C1A16;
+    --ink-2:      #5C5A55;
+    --ink-3:      #9E9C98;
+    --shadow-sm:  0 1px 6px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
+    --shadow:     0 2px 20px rgba(44,74,20,0.09), 0 1px 6px rgba(0,0,0,0.05);
+    --shadow-lg:  0 8px 40px rgba(44,74,20,0.14), 0 3px 12px rgba(0,0,0,0.07);
+  }
+  body {
+    background: #CCCAB8;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 48px 32px 64px;
+    color: var(--ink);
+  }
+  .showcase-label {
+    text-align: center;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(27,48,9,0.5);
+    margin-bottom: 28px;
+  }
+  .browser-frame {
+    max-width: 1240px; margin: 0 auto;
+    background: var(--bg); border-radius: 14px; overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.28), 0 10px 30px rgba(0,0,0,0.15);
+  }
+  .browser-bar {
+    height: 44px; background: #F0EDE8;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    display: flex; align-items: center; padding: 0 16px; gap: 10px;
+  }
+  .browser-dots { display: flex; gap: 6px; }
+  .browser-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .bd-red { background: #FF5F57; } .bd-amber { background: #FEBC2E; } .bd-green { background: #28C840; }
+  .browser-url {
+    flex: 1; height: 26px; background: #FFFFFF; border-radius: 6px;
+    display: flex; align-items: center; padding: 0 12px; gap: 6px;
+    margin: 0 40px; box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+  }
+  .url-text { font-size: 12px; color: var(--ink-2); }
+
+  /* Site nav */
+  .navbar {
+    height: 68px; background: rgba(244,239,230,0.97);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    display: flex; align-items: center;
+    padding: 0 48px; gap: 40px;
+  }
+  .nav-logo {
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 700; color: var(--brand); letter-spacing: -0.03em;
+    display: flex; align-items: center; flex-shrink: 0; cursor: pointer;
+  }
+  .nav-logo-dot { width: 6px; height: 6px; background: var(--sienna); border-radius: 50%; margin-left: 2px; margin-bottom: 3px; display: inline-block; }
+  .nav-links { display: flex; gap: 28px; align-items: center; flex: 1; }
+  .nav-link { font-size: 14px; font-weight: 500; color: var(--ink-2); cursor: pointer; transition: color 0.15s ease; }
+  .nav-link:hover { color: var(--brand); }
+  .nav-link.active { color: var(--brand); font-weight: 600; }
+  .nav-cta { background: var(--brand); color: #FFFFFF; font-size: 13px; font-weight: 700; padding: 10px 20px; border-radius: 10px; cursor: pointer; transition: transform 0.15s ease; white-space: nowrap; }
+  .nav-cta:hover { background: var(--brand-deep); }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    background: var(--surface);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 12px 48px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .bc-item { font-size: 13px; font-weight: 500; color: var(--ink-3); cursor: pointer; transition: color 0.15s ease; }
+  .bc-item:hover { color: var(--brand); }
+  .bc-sep { color: var(--ink-3); font-size: 12px; }
+  .bc-current { font-size: 13px; font-weight: 600; color: var(--ink); }
+
+  /* Hero */
+  .walk-hero {
+    height: 500px; position: relative; overflow: hidden;
+    background: linear-gradient(155deg, #3A6428 0%, #234A18 40%, #1B3009 80%, #0F1E06 100%);
+  }
+  .hero-texture {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 20%, rgba(120,200,80,0.1) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .hero-bottom-fade {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 60%;
+    background: linear-gradient(to top, rgba(10,24,6,0.92) 0%, transparent 100%);
+  }
+  .hero-inner {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 36px 48px;
+    z-index: 2;
+  }
+  .hero-location {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55); margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .hero-title {
+    font-family: 'Lora', serif;
+    font-size: 50px; font-weight: 700; color: #FFFFFF;
+    letter-spacing: -0.03em; line-height: 1.05; max-width: 700px; margin-bottom: 18px;
+  }
+  .hero-badges { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; }
+  .hero-badge-pick {
+    background: var(--sienna); color: #FFFFFF;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 7px;
+  }
+  .hero-badge-diff {
+    background: rgba(255,255,255,0.16); color: rgba(255,255,255,0.9);
+    font-size: 11px; font-weight: 600; border: 1px solid rgba(255,255,255,0.22);
+    padding: 5px 12px; border-radius: 7px;
+  }
+  .hero-actions { display: flex; gap: 10px; }
+  .hero-action-btn {
+    background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600;
+    padding: 10px 18px; border-radius: 10px;
+    cursor: pointer; transition: background 0.15s ease;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .hero-action-btn:hover { background: rgba(255,255,255,0.22); }
+  .hero-action-btn:active { transform: scale(0.97); }
+
+  /* Stat strip */
+  .stat-strip {
+    background: var(--surface);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    divide-x: 1px solid rgba(0,0,0,0.06);
+  }
+  .stat-tile {
+    padding: 20px 28px; display: flex; align-items: center; gap: 14px;
+    border-right: 1px solid rgba(0,0,0,0.06);
+  }
+  .stat-tile:last-child { border-right: none; }
+  .stat-icon-box {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: var(--sage-pale); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .stat-info {}
+  .stat-val {
+    font-family: 'Lora', serif;
+    font-size: 18px; font-weight: 700; color: var(--ink);
+    line-height: 1; margin-bottom: 3px;
+  }
+  .stat-val-green { color: var(--brand); }
+  .stat-label { font-size: 12px; font-weight: 500; color: var(--ink-3); }
+
+  /* Two-column layout */
+  .walk-layout {
+    display: grid; grid-template-columns: 1fr 340px; gap: 0;
+    max-width: 1240px; align-items: flex-start;
+  }
+  .walk-body-col { padding: 40px 48px 64px; }
+  .walk-sidebar { padding: 32px 28px 32px 0; position: sticky; top: 68px; }
+
+  /* Walk body */
+  .walk-body-text {
+    font-size: 17px; font-weight: 400; color: var(--ink-2);
+    line-height: 1.8; margin-bottom: 28px;
+    max-width: 600px;
+  }
+  .walk-body-text strong { color: var(--ink); font-weight: 600; }
+
+  /* Pull quote */
+  .pull-quote {
+    border-left: 3px solid var(--sienna);
+    padding: 6px 0 6px 20px; margin: 28px 0;
+    max-width: 540px;
+  }
+  .pull-quote p {
+    font-family: 'Lora', serif;
+    font-size: 20px; font-style: italic; font-weight: 400; color: var(--ink);
+    line-height: 1.55;
+  }
+
+  /* Section sub-head */
+  .body-section-head {
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 600; color: var(--ink);
+    letter-spacing: -0.02em; margin-bottom: 14px; margin-top: 36px;
+  }
+
+  /* Trail info grid */
+  .trail-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px;
+    max-width: 560px;
+  }
+  .trail-tile {
+    background: var(--surface); border-radius: 14px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .trail-tile-icon {
+    width: 36px; height: 36px; border-radius: 10px; background: var(--sage-pale);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .trail-tile-label { font-size: 11px; font-weight: 500; color: var(--ink-3); margin-bottom: 2px; }
+  .trail-tile-val { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .trail-tile-val-brand { color: var(--brand); }
+
+  /* Hazard pills */
+  .hazard-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+  .hazard-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #FEF8EE; border: 1px solid rgba(212,148,10,0.25);
+    color: #8A6000; font-size: 12px; font-weight: 600;
+    padding: 6px 12px; border-radius: 20px;
+  }
+
+  /* CSS map in body */
+  .body-map {
+    width: 100%; height: 220px; border-radius: 16px; overflow: hidden; position: relative;
+    background: #E8E4D8; margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    cursor: pointer; transition: transform 0.15s ease;
+    max-width: 600px;
+  }
+  .body-map:active { transform: scale(0.99); }
+  .map-topo {
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(44,74,20,0.06) 0px, transparent 1px, transparent 22px, rgba(44,74,20,0.06) 22px),
+      repeating-linear-gradient(90deg, rgba(44,74,20,0.06) 0px, transparent 1px, transparent 22px, rgba(44,74,20,0.06) 22px),
+      repeating-linear-gradient(25deg, rgba(44,74,20,0.03) 0px, transparent 1px, transparent 80px, rgba(44,74,20,0.03) 80px);
+  }
+  .map-road-h { position: absolute; left: 0; right: 0; height: 5px; background: rgba(255,255,255,0.9); }
+  .map-road-v { position: absolute; top: 0; bottom: 0; width: 4px; background: rgba(255,255,255,0.9); }
+  .map-green-block { position: absolute; background: rgba(74,124,58,0.2); border-radius: 40%; }
+  .map-walk-route {
+    position: absolute; inset: 0; pointer-events: none;
+  }
+  .map-pin-walk {
+    position: absolute; width: 22px; height: 22px;
+    background: var(--brand); border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg); border: 2.5px solid #FFFFFF;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+  .map-pin-walk::after { content: ''; position: absolute; inset: 3px; background: #FFFFFF; border-radius: 50%; }
+  .map-pin-end {
+    position: absolute; width: 20px; height: 20px;
+    background: var(--sienna); border-radius: 50%; border: 2.5px solid #FFFFFF;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+  }
+  .map-expand-btn {
+    position: absolute; bottom: 12px; right: 12px;
+    background: var(--brand); color: #FFFFFF;
+    border-radius: 10px; padding: 8px 14px;
+    font-size: 12px; font-weight: 700;
+    box-shadow: 0 2px 10px rgba(44,74,20,0.4);
+  }
+
+  /* Sidebar */
+  .sidebar-weather {
+    background: var(--brand-deep); border-radius: 20px;
+    padding: 22px; margin-bottom: 14px; position: relative; overflow: hidden;
+  }
+  .sw-texture {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 100% 60% at 90% 10%, rgba(100,180,60,0.12) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .sw-inner { position: relative; z-index: 2; }
+  .sw-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 8px; }
+  .sw-temp { font-family: 'Lora', serif; font-size: 44px; font-weight: 700; color: #FFFFFF; letter-spacing: -3px; line-height: 1; }
+  .sw-verdict { font-family: 'Lora', serif; font-size: 14px; font-style: italic; color: rgba(255,255,255,0.7); margin-top: 5px; margin-bottom: 16px; }
+  .sw-walk-score {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 12px;
+  }
+  .sw-score-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.65); }
+  .sw-score-val { font-family: 'Lora', serif; font-size: 20px; font-weight: 700; color: #FFFFFF; margin-left: auto; }
+  .sw-score-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow: hidden; }
+  .sw-score-fill { height: 100%; background: #A8D874; width: 80%; border-radius: 4px; }
+
+  /* Sidebar: practical info */
+  .sidebar-card {
+    background: var(--surface); border-radius: 16px;
+    box-shadow: var(--shadow); margin-bottom: 12px; overflow: hidden;
+  }
+  .sidebar-card-head {
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .sidebar-card-title {
+    font-family: 'Lora', serif;
+    font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em;
+  }
+  .sidebar-info-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    min-height: 44px;
+  }
+  .sidebar-info-row:last-child { border-bottom: none; }
+  .sidebar-info-label { font-size: 13px; font-weight: 500; color: var(--ink-2); display: flex; align-items: center; gap: 7px; }
+  .sidebar-info-val { font-size: 13px; font-weight: 700; color: var(--ink); }
+  .sidebar-info-val-green { color: var(--brand); }
+  .sidebar-pill {
+    font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 6px;
+    background: var(--sage-pale); color: var(--brand);
+  }
+  .sidebar-pill-amber { background: var(--amber-bg); color: #7A5A00; }
+
+  /* Guide cards in body */
+  .guide-cards-row { display: flex; flex-direction: column; gap: 10px; max-width: 600px; }
+  .guide-card-body {
+    background: var(--surface); border-radius: 14px;
+    border-left: 3px solid var(--brand); padding: 16px;
+    box-shadow: var(--shadow-sm); cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .guide-card-body:hover { transform: translateX(4px); box-shadow: var(--shadow); }
+  .guide-card-body:active { transform: scale(0.98); }
+  .guide-card-info { flex: 1; }
+  .guide-card-cat { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sienna); margin-bottom: 4px; }
+  .guide-card-title { font-family: 'Lora', serif; font-size: 15px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+
+  /* App CTA strip */
+  .app-cta-strip {
+    background: var(--sage-pale); border-radius: 16px; padding: 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  }
+  .app-cta-text { font-family: 'Lora', serif; font-size: 15px; font-weight: 600; color: var(--brand); line-height: 1.3; }
+  .app-cta-btn {
+    background: var(--brand); color: #FFFFFF;
+    font-size: 13px; font-weight: 700; padding: 10px 16px; border-radius: 10px;
+    cursor: pointer; transition: transform 0.15s ease; white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .app-cta-btn:active { transform: scale(0.97); }
+</style>
+</head>
+<body>
+
+<p class="showcase-label">Sniffout &nbsp;&middot;&nbsp; Design Exploration &nbsp;&middot;&nbsp; Website Walk Page</p>
+
+<div class="browser-frame">
+  <!-- Browser chrome -->
+  <div class="browser-bar">
+    <div class="browser-dots">
+      <div class="browser-dot bd-red"></div>
+      <div class="browser-dot bd-amber"></div>
+      <div class="browser-dot bd-green"></div>
+    </div>
+    <div class="browser-url">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span class="url-text">sniffout.co.uk/walks/surrey/box-hill-north-face</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" aria-label="Site navigation">
+    <span class="nav-logo" role="link">sniffout<span class="nav-logo-dot"></span></span>
+    <div class="nav-links">
+      <a class="nav-link active" role="link">Walks</a>
+      <a class="nav-link" role="link">Areas</a>
+      <a class="nav-link" role="link">Weather</a>
+      <a class="nav-link" role="link">Safety guides</a>
+      <a class="nav-link" role="link">About</a>
+    </div>
+    <div class="nav-cta" role="button">Get the app</div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb" aria-label="Breadcrumb">
+    <a class="bc-item" role="link">Walks</a>
+    <span class="bc-sep" aria-hidden="true">›</span>
+    <a class="bc-item" role="link">Surrey</a>
+    <span class="bc-sep" aria-hidden="true">›</span>
+    <a class="bc-item" role="link">Surrey Hills</a>
+    <span class="bc-sep" aria-hidden="true">›</span>
+    <span class="bc-current">Box Hill North Face</span>
+  </div>
+
+  <!-- Walk hero -->
+  <div class="walk-hero" aria-label="Walk hero image: Box Hill North Face">
+    <div class="hero-texture" aria-hidden="true"></div>
+    <div class="hero-bottom-fade" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <div class="hero-location">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+        Dorking, Surrey Hills
+      </div>
+      <h1 class="hero-title">Box Hill North Face</h1>
+      <div class="hero-badges">
+        <span class="hero-badge-pick">Sniffout Pick</span>
+        <span class="hero-badge-diff">Moderate</span>
+      </div>
+      <div class="hero-actions">
+        <div class="hero-action-btn" role="button" aria-label="Save this walk">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Save this walk
+        </div>
+        <div class="hero-action-btn" role="button" aria-label="Share">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Share
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stat strip -->
+  <div class="stat-strip" role="list" aria-label="Walk statistics">
+    <div class="stat-tile" role="listitem">
+      <div class="stat-icon-box">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/></svg>
+      </div>
+      <div class="stat-info">
+        <div class="stat-val">7.2 km</div>
+        <div class="stat-label">Distance</div>
+      </div>
+    </div>
+    <div class="stat-tile" role="listitem">
+      <div class="stat-icon-box">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3"/></svg>
+      </div>
+      <div class="stat-info">
+        <div class="stat-val">1h 45m</div>
+        <div class="stat-label">Approx. duration</div>
+      </div>
+    </div>
+    <div class="stat-tile" role="listitem">
+      <div class="stat-icon-box">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      </div>
+      <div class="stat-info">
+        <div class="stat-val">280 m</div>
+        <div class="stat-label">Elevation gain</div>
+      </div>
+    </div>
+    <div class="stat-tile" role="listitem">
+      <div class="stat-icon-box">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+      <div class="stat-info">
+        <div class="stat-val stat-val-green">Full off-lead</div>
+        <div class="stat-label">Off-lead access</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two-column layout -->
+  <div class="walk-layout">
+
+    <!-- Body column -->
+    <div class="walk-body-col">
+
+      <p class="walk-body-text">Box Hill's north face offers one of the most rewarding ridge walks in Surrey. The route climbs steadily through mixed woodland before breaking out onto an open chalk ridge with views stretching south across the Weald and north toward the Thames corridor.</p>
+
+      <p class="walk-body-text">It is a walk that rewards patience. The first kilometre asks for effort, following a well-worn chalk track that can be slippery after rain. But once the tree line opens up, the gradient eases and the path follows the ridge edge for a long, airy stretch that dogs and people tend to walk with equal enthusiasm.</p>
+
+      <div class="pull-quote" aria-label="Pull quote">
+        <p>When the ridge opens up and the whole Weald spreads out below you, it is hard not to stop and just look for a while.</p>
+      </div>
+
+      <p class="walk-body-text">The descent back through Juniper Bottom is shaded and quieter than the main trail, passing a small stream crossing that most dogs will wade into regardless of the season. The loop closes through farmland at the southern edge of the National Trust estate, returning to the main car park via the stepping stones crossing.</p>
+
+      <h2 class="body-section-head">Trail conditions</h2>
+      <div class="trail-grid" role="list">
+        <div class="trail-tile" role="listitem">
+          <div class="trail-tile-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/></svg>
+          </div>
+          <div>
+            <div class="trail-tile-label">Terrain</div>
+            <div class="trail-tile-val">Mixed</div>
+          </div>
+        </div>
+        <div class="trail-tile" role="listitem">
+          <div class="trail-tile-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3"/></svg>
+          </div>
+          <div>
+            <div class="trail-tile-label">Stiles</div>
+            <div class="trail-tile-val">None</div>
+          </div>
+        </div>
+        <div class="trail-tile" role="listitem">
+          <div class="trail-tile-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8l5 2v4l-5 2"/></svg>
+          </div>
+          <div>
+            <div class="trail-tile-label">Parking</div>
+            <div class="trail-tile-val">Free on site</div>
+          </div>
+        </div>
+        <div class="trail-tile" role="listitem">
+          <div class="trail-tile-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B85C2C" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/></svg>
+          </div>
+          <div>
+            <div class="trail-tile-label">Nearby pub</div>
+            <div class="trail-tile-val trail-tile-val-brand">The Stepping Stones</div>
+          </div>
+        </div>
+        <div class="trail-tile" role="listitem">
+          <div class="trail-tile-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+          </div>
+          <div>
+            <div class="trail-tile-label">Livestock</div>
+            <div class="trail-tile-val">None on route</div>
+          </div>
+        </div>
+        <div class="trail-tile" role="listitem">
+          <div class="trail-tile-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+          </div>
+          <div>
+            <div class="trail-tile-label">Water</div>
+            <div class="trail-tile-val">Stream crossing</div>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="body-section-head">Things to be aware of</h2>
+      <div class="hazard-row" role="list">
+        <span class="hazard-pill" role="listitem">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Ticks in woodland (Mar-Oct)
+        </span>
+        <span class="hazard-pill" role="listitem">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Chalk path slippery when wet
+        </span>
+      </div>
+
+      <!-- Route map -->
+      <h2 class="body-section-head">Route map</h2>
+      <div class="body-map" role="img" aria-label="Route map for Box Hill North Face walk">
+        <div class="map-topo" aria-hidden="true"></div>
+        <div class="map-road-h" style="top:90px;" aria-hidden="true"></div>
+        <div class="map-road-h" style="top:160px; height:3px; opacity:0.7;" aria-hidden="true"></div>
+        <div class="map-road-v" style="left:130px;" aria-hidden="true"></div>
+        <div class="map-road-v" style="left:350px; width:3px; opacity:0.65;" aria-hidden="true"></div>
+        <div class="map-green-block" style="width:220px;height:130px;top:20px;left:200px;" aria-hidden="true"></div>
+        <div class="map-green-block" style="width:100px;height:80px;top:100px;left:40px;" aria-hidden="true"></div>
+        <!-- Route SVG line -->
+        <svg class="map-walk-route" viewBox="0 0 600 220" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M 80 160 Q 160 150 220 110 Q 300 70 380 60 Q 450 55 520 80 Q 500 120 480 160 Q 420 180 340 175 Q 250 170 180 180 Q 120 185 80 160Z" fill="rgba(44,74,20,0.12)" stroke="#2C4A14" stroke-width="2.5" stroke-dasharray="none" fill-rule="evenodd"/>
+        </svg>
+        <div class="map-pin-walk" style="top:148px;left:68px;transform:rotate(-45deg);" aria-hidden="true"></div>
+        <div class="map-pin-end" style="top:64px;left:370px;" aria-hidden="true"></div>
+        <div class="map-expand-btn" aria-hidden="true">Open full map</div>
+      </div>
+
+      <!-- Related guides -->
+      <h2 class="body-section-head">Useful guides for this walk</h2>
+      <div class="guide-cards-row" role="list">
+        <div class="guide-card-body" role="listitem button" aria-label="Ticks on dogs: what you need to know">
+          <div class="guide-card-info">
+            <div class="guide-card-cat">Health guide</div>
+            <div class="guide-card-title">Ticks on dogs: what you need to know</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A7C3A" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <div class="guide-card-body" role="listitem button" aria-label="Walking in hot weather with your dog">
+          <div class="guide-card-info">
+            <div class="guide-card-cat">Hot weather</div>
+            <div class="guide-card-title">Walking in hot weather with your dog</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A7C3A" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </div>
+
+    </div><!-- walk-body-col -->
+
+    <!-- Sidebar -->
+    <div class="walk-sidebar">
+
+      <!-- Weather card -->
+      <div class="sidebar-weather" aria-label="Current weather conditions">
+        <div class="sw-texture" aria-hidden="true"></div>
+        <div class="sw-inner">
+          <div class="sw-label">Today &nbsp;&middot;&nbsp; Dorking</div>
+          <div style="display:flex;align-items:flex-start;">
+            <span class="sw-temp">14</span>
+            <span style="font-family:'Lora',serif;font-size:22px;color:rgba(255,255,255,0.5);margin-top:8px;">°C</span>
+          </div>
+          <div class="sw-verdict">Good conditions for this route</div>
+          <div class="sw-walk-score">
+            <span class="sw-score-label">Walk score</span>
+            <div class="sw-score-bar"><div class="sw-score-fill"></div></div>
+            <span class="sw-score-val">8/10</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Practical info -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-head">
+          <span class="sidebar-card-title">Practical info</span>
+        </div>
+        <div class="sidebar-info-row">
+          <span class="sidebar-info-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            Start point
+          </span>
+          <span class="sidebar-info-val">Box Hill car park</span>
+        </div>
+        <div class="sidebar-info-row">
+          <span class="sidebar-info-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8l5 2v4l-5 2"/></svg>
+            Parking
+          </span>
+          <span class="sidebar-info-val sidebar-info-val-green">Free</span>
+        </div>
+        <div class="sidebar-info-row">
+          <span class="sidebar-info-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/></svg>
+            Pub
+          </span>
+          <span class="sidebar-info-val">The Stepping Stones</span>
+        </div>
+        <div class="sidebar-info-row">
+          <span class="sidebar-info-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9E9C98" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/></svg>
+            Route type
+          </span>
+          <span class="sidebar-pill">Circular</span>
+        </div>
+      </div>
+
+      <!-- Dog info -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-head">
+          <span class="sidebar-card-title">For your dog</span>
+        </div>
+        <div class="sidebar-info-row">
+          <span class="sidebar-info-label">Off-lead access</span>
+          <span class="sidebar-pill">Full off-lead</span>
+        </div>
+        <div class="sidebar-info-row">
+          <span class="sidebar-info-label">Livestock on route</span>
+          <span class="sidebar-pill">None</span>
+        </div>
+        <div class="sidebar-info-row">
+          <span class="sidebar-info-label">Difficulty for dogs</span>
+          <span class="sidebar-pill sidebar-pill-amber">Moderate climb</span>
+        </div>
+        <div class="sidebar-info-row">
+          <span class="sidebar-info-label">Water on route</span>
+          <span class="sidebar-pill">Stream crossing</span>
+        </div>
+      </div>
+
+      <!-- App CTA -->
+      <div class="app-cta-strip" aria-label="Download the app to save this walk">
+        <span class="app-cta-text">Save this walk in the Sniffout app</span>
+        <div class="app-cta-btn" role="button">Get the app</div>
+      </div>
+
+    </div><!-- walk-sidebar -->
+
+  </div><!-- walk-layout -->
+
+</div><!-- browser-frame -->
+</body>
+</html>

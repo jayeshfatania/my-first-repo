@@ -355,7 +355,15 @@
       "WebFetch(domain:www.agriland.co.uk)",
       "Bash(curl -s http://localhost:1313/get/)",
       "Bash(curl -s http://localhost:1313/walks/richmond-park-dog-walk/)",
-      "Bash(curl -s http://localhost:1313/guides/grass-seeds-dogs-uk/)"
+      "Bash(curl -s http://localhost:1313/guides/grass-seeds-dogs-uk/)",
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "Bash(ls:*)",
+      "Bash(hugo --gc --minify)",
+      "Bash(for f:*)",
+      "Bash(node --check /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html 2>&1 || true)",
+      "Bash(node -e \"\nvar fs = require\\('fs'\\);\nvar html = fs.readFileSync\\('/Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html', 'utf8'\\);\nvar m = html.match\\(/<script[\\\\s\\\\S]*?<\\\\/script>/g\\);\nvar errors = [];\nif \\(m\\) {\n  m.forEach\\(function\\(s, i\\) {\n    var code = s.replace\\(/<script[^>]*>/,''\\).replace\\(/<\\\\/script>/,''\\);\n    try { new Function\\(code\\); } catch\\(e\\) { errors.push\\('Script block ' + i + ': ' + e.message\\); }\n  }\\);\n}\nif \\(errors.length\\) { console.log\\('ERRORS:\\\\n' + errors.join\\('\\\\n'\\)\\); } else { console.log\\('OK - no syntax errors'\\); }\n\" 2>&1)",
+      "Bash(grep -n \"\\\\-\\\\-bg:\" /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html | head -5\ngrep -n \"1B3009\\\\|A8D874\\\\|nav-item.active::before\" /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html | head -10\ngrep -n \"badge-pick\\\\|badge-gem\" /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html | head -6\ngrep -n \"function renderPortraitCard\\\\|portrait-body\\\\|portrait-photo\" /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html | head -8\ngrep -n \"function buildSunriseCard\\\\|justify-content:space-around\\\\|iconSunrise\" /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html | head -5)"
     ]
   }
 }

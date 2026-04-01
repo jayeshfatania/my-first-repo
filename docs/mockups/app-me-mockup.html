@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sniffout - Me Tab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand:       #2C4A14;
+    --brand-deep:  #1B3009;
+    --brand-mid:   #4A7C3A;
+    --sage-pale:   #EDF4E7;
+    --sienna:      #B85C2C;
+    --amber-bg:    #FEF5E4;
+    --amber:       #D4940A;
+    --bg:          #F4EFE6;
+    --surface:     #FFFFFF;
+    --ink:         #1C1A16;
+    --ink-2:       #5C5A55;
+    --ink-3:       #9E9C98;
+    --shadow-sm:   0 1px 6px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
+    --shadow:      0 2px 20px rgba(44,74,20,0.09), 0 1px 6px rgba(0,0,0,0.05);
+    --r: 16px; --r-lg: 22px;
+  }
+  body {
+    background: #DDD8CE; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 64px 40px 80px;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .showcase-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(27,48,9,0.45); margin-bottom: 28px;
+  }
+  .phone-outer {
+    filter: drop-shadow(0 48px 80px rgba(0,0,0,0.28)) drop-shadow(0 16px 30px rgba(0,0,0,0.16));
+  }
+  .phone-frame {
+    width: 375px; height: 812px; background: var(--bg);
+    border-radius: 52px; overflow: hidden; position: relative; outline: 10px solid #18150F;
+  }
+  .status-bar {
+    height: 44px; padding: 14px 22px 0;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg); z-index: 20; position: relative;
+  }
+  .status-time { font-size: 13px; font-weight: 700; color: var(--ink); }
+  .status-icons { display: flex; align-items: center; gap: 5px; }
+
+  /* Tab header */
+  .tab-header {
+    height: 52px; padding: 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg);
+  }
+  .tab-title {
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -0.03em;
+  }
+  .settings-btn {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--surface); display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-sm); cursor: pointer; transition: transform 0.15s ease;
+  }
+  .settings-btn:active { transform: scale(0.95); }
+
+  /* Scrollable content */
+  .screen-content {
+    position: absolute; top: 96px; bottom: 80px; left: 0; right: 0;
+    overflow-y: auto; overflow-x: hidden; scrollbar-width: none;
+  }
+  .screen-content::-webkit-scrollbar { display: none; }
+
+  /* Dog hero card */
+  .dog-hero {
+    margin: 0 14px 14px;
+    background: linear-gradient(145deg, #4A7C3A 0%, #2C4A14 60%, #1B3009 100%);
+    border-radius: var(--r-lg);
+    padding: 22px 20px 20px;
+    position: relative; overflow: hidden;
+  }
+  .dog-hero-texture {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 100% 80% at 95% 5%, rgba(120,200,80,0.12) 0%, transparent 55%),
+      radial-gradient(ellipse 80% 100% at 5% 95%, rgba(10,30,5,0.4) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .dog-hero-inner { position: relative; z-index: 2; }
+  .dog-hero-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+  .dog-avatar-wrap { position: relative; flex-shrink: 0; }
+  .dog-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(145deg, #C8904A 0%, #8B5A14 100%);
+    border: 3px solid rgba(255,255,255,0.35);
+    overflow: hidden; position: relative;
+  }
+  .dog-avatar::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.15) 0%, transparent 60%);
+  }
+  .dog-online-dot {
+    position: absolute; bottom: 3px; right: 3px;
+    width: 14px; height: 14px; background: #A8D874;
+    border-radius: 50%; border: 2.5px solid #2C4A14;
+  }
+  .dog-info { flex: 1; }
+  .dog-name {
+    font-family: 'Lora', serif;
+    font-size: 26px; font-weight: 700; color: #FFFFFF;
+    letter-spacing: -0.02em; line-height: 1;
+    margin-bottom: 3px;
+  }
+  .dog-breed {
+    font-family: 'Lora', serif;
+    font-size: 14px; font-weight: 400; font-style: italic;
+    color: rgba(255,255,255,0.65); margin-bottom: 10px;
+  }
+  .dog-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .dog-chip {
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px; padding: 4px 10px;
+    font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.85);
+  }
+  /* Stats row inside hero */
+  .hero-stats {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px; background: rgba(255,255,255,0.12);
+    border-radius: 12px; overflow: hidden;
+  }
+  .hero-stat {
+    background: rgba(255,255,255,0.08);
+    padding: 12px 10px; text-align: center;
+  }
+  .hero-stat-val {
+    font-family: 'Lora', serif;
+    font-size: 24px; font-weight: 700; color: #FFFFFF;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .hero-stat-label {
+    font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.5);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* Card wrapper */
+  .card {
+    margin: 0 14px 12px;
+    background: var(--surface);
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .card-head {
+    padding: 14px 16px 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .card-title {
+    font-family: 'Lora', serif;
+    font-size: 15px; font-weight: 600; color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .card-link {
+    font-size: 12px; font-weight: 600; color: var(--brand-mid);
+    cursor: pointer; transition: color 0.15s ease;
+  }
+
+  /* Saved walks list */
+  .saved-walk-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    cursor: pointer; transition: background 0.15s ease;
+    min-height: 44px;
+  }
+  .saved-walk-row:last-child { border-bottom: none; }
+  .saved-walk-row:hover { background: var(--bg); }
+  .saved-walk-row:active { background: var(--sage-pale); }
+  .saved-walk-thumb {
+    width: 44px; height: 44px; border-radius: 9px;
+    flex-shrink: 0; overflow: hidden; position: relative;
+  }
+  .sw-thumb-bg { position: absolute; inset: 0; }
+  .saved-walk-info { flex: 1; min-width: 0; }
+  .sw-name {
+    font-family: 'Lora', serif;
+    font-size: 14px; font-weight: 600; color: var(--ink);
+    line-height: 1.2; margin-bottom: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .sw-meta {
+    font-size: 11px; font-weight: 500; color: var(--ink-3);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .sw-chevron { color: var(--ink-3); flex-shrink: 0; }
+
+  /* Walk log */
+  .log-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 11px 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    min-height: 44px;
+    cursor: pointer; transition: background 0.15s ease;
+  }
+  .log-row:last-child { border-bottom: none; }
+  .log-row:hover { background: var(--bg); }
+  .log-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--brand); flex-shrink: 0; margin-top: 4px;
+  }
+  .log-dot-sienna { background: var(--sienna); }
+  .log-info { flex: 1; }
+  .log-name {
+    font-family: 'Lora', serif;
+    font-size: 14px; font-weight: 600; color: var(--ink);
+    line-height: 1.2; margin-bottom: 2px;
+  }
+  .log-note {
+    font-family: 'Lora', serif;
+    font-size: 12px; font-weight: 400; font-style: italic;
+    color: var(--ink-3); line-height: 1.4; margin-bottom: 3px;
+  }
+  .log-date { font-size: 10px; font-weight: 500; color: var(--ink-3); }
+
+  /* Settings rows */
+  .settings-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    cursor: pointer; transition: background 0.15s ease;
+    min-height: 52px;
+  }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row:hover { background: var(--bg); }
+  .settings-row:active { background: var(--sage-pale); }
+  .settings-icon-box {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .si-green  { background: var(--sage-pale); }
+  .si-blue   { background: #EBF3FF; }
+  .si-amber  { background: var(--amber-bg); }
+  .si-red    { background: #FEE8E8; }
+  .si-slate  { background: #F0EDF8; }
+  .settings-label {
+    flex: 1; font-size: 14px; font-weight: 500; color: var(--ink);
+  }
+  .settings-val {
+    font-size: 13px; font-weight: 500; color: var(--ink-3);
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  /* CSS Toggle switch */
+  .toggle-track {
+    width: 44px; height: 26px; background: #D8D4CC;
+    border-radius: 13px; position: relative; cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .toggle-track.on { background: var(--brand); }
+  .toggle-thumb {
+    position: absolute; top: 3px; left: 3px;
+    width: 20px; height: 20px; background: #FFFFFF;
+    border-radius: 50%; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease;
+  }
+  .toggle-track.on .toggle-thumb { transform: translateX(18px); }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+    background: var(--brand-deep); border-radius: 26px 26px 0 0;
+    display: flex; align-items: flex-start; justify-content: space-around;
+    padding-top: 12px; z-index: 100;
+  }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    min-width: 44px; min-height: 44px; cursor: pointer;
+    transition: transform 0.15s ease; position: relative; padding-top: 2px;
+  }
+  .nav-item:active { transform: scale(0.90); }
+  .nav-icon { color: rgba(255,255,255,0.35); }
+  .nav-item.active .nav-icon { color: #FFFFFF; }
+  .nav-lbl { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.35); }
+  .nav-item.active .nav-lbl { color: #FFFFFF; font-weight: 600; }
+  .nav-dot { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #A8D874; border-radius: 50%; display: none; }
+  .nav-item.active .nav-dot { display: block; }
+</style>
+</head>
+<body>
+
+<p class="showcase-label">Sniffout &nbsp;&middot;&nbsp; Design Exploration &nbsp;&middot;&nbsp; Me Tab</p>
+
+<div class="phone-outer">
+  <div class="phone-frame">
+
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="0.5" fill="rgba(28,26,22,0.8)"/><rect x="4" y="5" width="3" height="6" rx="0.5" fill="rgba(28,26,22,0.8)"/><rect x="8" y="2" width="3" height="9" rx="0.5" fill="rgba(28,26,22,0.8)"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true"><rect x="0.5" y="0.5" width="20" height="11" rx="3.5" stroke="rgba(28,26,22,0.35)" stroke-width="1"/><rect x="2" y="2" width="15" height="8" rx="2" fill="rgba(28,26,22,0.8)"/></svg>
+      </div>
+    </div>
+
+    <!-- Tab header -->
+    <div class="tab-header">
+      <span class="tab-title">Me</span>
+      <div class="settings-btn" role="button" aria-label="Settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="screen-content" role="main">
+
+      <!-- Dog hero card -->
+      <div class="dog-hero" aria-label="Dog profile: Bramble, 4 year old Golden Retriever">
+        <div class="dog-hero-texture" aria-hidden="true"></div>
+        <div class="dog-hero-inner">
+          <div class="dog-hero-top">
+            <div class="dog-avatar-wrap">
+              <div class="dog-avatar" aria-hidden="true"></div>
+              <div class="dog-online-dot" aria-hidden="true"></div>
+            </div>
+            <div class="dog-info">
+              <div class="dog-name">Bramble</div>
+              <div class="dog-breed">Golden Retriever</div>
+              <div class="dog-chips">
+                <span class="dog-chip">4 years</span>
+                <span class="dog-chip">Male</span>
+                <span class="dog-chip">Good with dogs</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-stats" role="list">
+            <div class="hero-stat" role="listitem">
+              <div class="hero-stat-val">24</div>
+              <div class="hero-stat-label">Walks</div>
+            </div>
+            <div class="hero-stat" role="listitem">
+              <div class="hero-stat-val">87</div>
+              <div class="hero-stat-label">km logged</div>
+            </div>
+            <div class="hero-stat" role="listitem">
+              <div class="hero-stat-val">9</div>
+              <div class="hero-stat-label">Saved</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saved walks -->
+      <div class="card" aria-label="Saved walks">
+        <div class="card-head">
+          <span class="card-title">Saved walks</span>
+          <span class="card-link" role="button">View all</span>
+        </div>
+
+        <div class="saved-walk-row" role="button" aria-label="Box Hill Ridge, 6.8 km">
+          <div class="saved-walk-thumb">
+            <div class="sw-thumb-bg" style="background:linear-gradient(150deg,#3D7030 0%,#1B3009 100%);"></div>
+          </div>
+          <div class="saved-walk-info">
+            <div class="sw-name">Box Hill Ridge</div>
+            <div class="sw-meta">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/></svg>
+              6.8 km &nbsp;&middot;&nbsp; Moderate
+            </div>
+          </div>
+          <svg class="sw-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+
+        <div class="saved-walk-row" role="button" aria-label="Holmbury Hill Loop, 4.2 km">
+          <div class="saved-walk-thumb">
+            <div class="sw-thumb-bg" style="background:linear-gradient(150deg,#4A7C3A 0%,#1E3A14 100%);"></div>
+          </div>
+          <div class="saved-walk-info">
+            <div class="sw-name">Holmbury Hill Loop</div>
+            <div class="sw-meta">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/></svg>
+              4.2 km &nbsp;&middot;&nbsp; Easy
+            </div>
+          </div>
+          <svg class="sw-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+
+        <div class="saved-walk-row" role="button" aria-label="Ranmore Common, 3.8 km">
+          <div class="saved-walk-thumb">
+            <div class="sw-thumb-bg" style="background:linear-gradient(150deg,#5A8A4A 0%,#2A4A1A 100%);"></div>
+          </div>
+          <div class="saved-walk-info">
+            <div class="sw-name">Ranmore Common</div>
+            <div class="sw-meta">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/></svg>
+              3.8 km &nbsp;&middot;&nbsp; Easy
+            </div>
+          </div>
+          <svg class="sw-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+
+      </div>
+
+      <!-- Walk journal -->
+      <div class="card" aria-label="Walk journal">
+        <div class="card-head">
+          <span class="card-title">Walk journal</span>
+          <span class="card-link" role="button">Add walk</span>
+        </div>
+
+        <div class="log-row" role="button" aria-label="Box Hill Ridge, 30 March">
+          <div class="log-dot"></div>
+          <div class="log-info">
+            <div class="log-name">Box Hill Ridge</div>
+            <div class="log-note">Bramble absolutely loved the ridge views. Tried the new path by the stream.</div>
+            <div class="log-date">30 Mar &nbsp;&middot;&nbsp; 1h 38m &nbsp;&middot;&nbsp; 6.8 km</div>
+          </div>
+        </div>
+
+        <div class="log-row" role="button" aria-label="Morning local circuit, 28 March">
+          <div class="log-dot log-dot-sienna"></div>
+          <div class="log-info">
+            <div class="log-name">Morning local circuit</div>
+            <div class="log-note">Quick one before work. Muddy near the gate.</div>
+            <div class="log-date">28 Mar &nbsp;&middot;&nbsp; 45m</div>
+          </div>
+        </div>
+
+        <div class="log-row" role="button" aria-label="Holmbury Hill Loop, 24 March">
+          <div class="log-dot"></div>
+          <div class="log-info">
+            <div class="log-name">Holmbury Hill Loop</div>
+            <div class="log-date">24 Mar &nbsp;&middot;&nbsp; 1h 10m &nbsp;&middot;&nbsp; 4.2 km</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Settings -->
+      <div class="card" aria-label="Settings">
+        <div class="card-head">
+          <span class="card-title">Settings</span>
+        </div>
+
+        <div class="settings-row" role="button" aria-label="Edit dog profile: Bramble">
+          <div class="settings-icon-box si-green">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          </div>
+          <span class="settings-label">Dog profile</span>
+          <span class="settings-val">Bramble <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span>
+        </div>
+
+        <div class="settings-row" role="button" aria-label="Units: kilometres">
+          <div class="settings-icon-box si-blue">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3A7ABA" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/></svg>
+          </div>
+          <span class="settings-label">Units</span>
+          <span class="settings-val">km <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span>
+        </div>
+
+        <div class="settings-row" aria-label="Dark mode toggle">
+          <div class="settings-icon-box si-slate">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5A4A8A" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </div>
+          <span class="settings-label">Dark mode</span>
+          <div class="toggle-track" role="switch" aria-checked="false" aria-label="Dark mode toggle">
+            <div class="toggle-thumb"></div>
+          </div>
+        </div>
+
+        <div class="settings-row" role="button" aria-label="Notifications">
+          <div class="settings-icon-box si-amber">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4940A" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <span class="settings-label">Notifications</span>
+          <span class="settings-val">On <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span>
+        </div>
+
+        <div class="settings-row" role="button" aria-label="Search radius">
+          <div class="settings-icon-box si-green">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          </div>
+          <span class="settings-label">Search radius</span>
+          <span class="settings-val">3 miles <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span>
+        </div>
+
+      </div>
+
+    </div><!-- screen-content -->
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <div class="nav-item" role="button" aria-label="Today"><svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><span class="nav-lbl">Today</span></div>
+      <div class="nav-item" role="button" aria-label="Weather"><svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg><span class="nav-lbl">Weather</span></div>
+      <div class="nav-item" role="button" aria-label="Walks"><svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 6l6 3 6-3 6 3v12l-6-3-6 3-6-3V6z"/></svg><span class="nav-lbl">Walks</span></div>
+      <div class="nav-item" role="button" aria-label="Nearby"><svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg><span class="nav-lbl">Nearby</span></div>
+      <div class="nav-item active" role="button" aria-label="Me" aria-current="page">
+        <div class="nav-dot" aria-hidden="true"></div>
+        <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <span class="nav-lbl">Me</span>
+      </div>
+    </nav>
+
+  </div>
+</div>
+</body>
+</html>
