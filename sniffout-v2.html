@@ -6537,19 +6537,6 @@
     return false;
   }
 
-  /* ─── Seasonal hazard triggers ─── */
-
-  function getSeasonalHazards(currentTemp) {
-    var month   = new Date().getMonth() + 1;
-    var hazards = [];
-    if (month >= 5 && month <= 9 && currentTemp >= 20) hazards.push('algae');
-    if (month >= 4 && month <= 6)                      hazards.push('adder');
-    if (month >= 6 && month <= 8)                      hazards.push('grassseeds');
-    if (month >= 8 && month <= 10)                     hazards.push('harvestmites');
-    if (month >= 11 || month <= 3)                     hazards.push('rocksalt');
-    return hazards;
-  }
-
   /* ─── Hazard detection (Section 9 titles) ─── */
 
   function detectHazards(cur) {
@@ -6656,22 +6643,6 @@
       hazards.push({ key: 'cold-dog', title: dogName + '\'s coat handles the cold well', body: 'Double-coated breeds are well insulated in cold weather. Just watch for ice on paws.' + DISC });
     }
 
-    // Seasonal hazards
-    var seasonal = getSeasonalHazards(temp);
-    seasonal.forEach(function(key) {
-      if (key === 'algae') {
-        hazards.push({ key: 'seasonal', title: 'Algae alert', body: 'Hot weather brings the risk of toxic algae in still water. If water looks blue-green or murky, keep ' + dogName + ' out. If they get in and seem unwell, call your vet straight away.' });
-      } else if (key === 'adder') {
-        hazards.push({ key: 'seasonal', title: 'Adder season', body: 'Adders are active in spring. Stick to clear paths and give long grass, heathland, and sunny banks some space.' });
-      } else if (key === 'grassseeds') {
-        hazards.push({ key: 'seasonal', title: 'Grass seed season', body: 'After walks in long grass, check ' + dogName + '\'s paws, ears, and coat for seeds. Small but they can cause real problems if they burrow in.' });
-      } else if (key === 'harvestmites') {
-        hazards.push({ key: 'seasonal', title: 'Harvest mite season', body: 'Tiny orange larvae in long grass can make dogs very itchy, especially around the paws and belly. A quick paw rinse after walks helps.' });
-      } else if (key === 'rocksalt' && temp < 3) {
-        hazards.push({ key: 'seasonal', title: 'Rock salt on paths', body: 'Paths may have grit and rock salt today. Rinse ' + dogName + '\'s paws when you get home and check they are not licking them.' });
-      }
-    });
-
     return hazards;
   }
 
@@ -6773,7 +6744,6 @@
     if (key === 'heat-generic' || key === 'heat-dog' || key === 'heat-paw' || key === 'heat-caution') return 'thermometer';
     if (key === 'storm') return 'cloud-lightning';
     if (key === 'cold-generic' || key === 'cold-dog' || key === 'cold-freeze') return 'thermometer-snowflake';
-    if (key === 'seasonal') return 'alert-triangle';
     return 'alert-triangle';
   }
   function hazardIsRed(key) {
