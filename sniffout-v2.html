@@ -9875,6 +9875,226 @@
     }
   ];
 
+  /* ─── Breed sensitivity data and contextual weather copy ─── */
+
+  var BREED_SENSITIVITY = {
+    brachycephalic: {
+      breeds: ["french bulldog", "english bulldog", "pug", "boston terrier", "cavalier king charles spaniel", "shih tzu", "pekingese", "boxer", "bullmastiff", "dogue de bordeaux", "japanese chin", "lhasa apso", "affenpinscher", "brussels griffon", "tibetan spaniel"],
+      heatThreshold: 24,
+      coldThreshold: 3,
+      flags: ["heat_sensitive", "breathing_compromised"]
+    },
+    thick_coated: {
+      breeds: ["husky", "siberian husky", "alaskan malamute", "samoyed", "chow chow", "bernese mountain dog", "newfoundland", "saint bernard", "great pyrenees", "tibetan mastiff", "leonberger", "keeshond", "akita", "shar pei", "bearcoat shar pei"],
+      heatThreshold: 22,
+      coldThreshold: -5,
+      flags: ["heat_sensitive", "thick_coat"]
+    },
+    thin_coated: {
+      breeds: ["whippet", "greyhound", "italian greyhound", "chinese crested", "xoloitzcuintli", "basenji", "pharaoh hound", "ibizan hound", "weimaraner", "vizsla", "dalmatian", "doberman", "miniature pinscher"],
+      heatThreshold: 30,
+      coldThreshold: 5,
+      flags: ["cold_sensitive", "thin_coat", "uv_sensitive"]
+    },
+    giant: {
+      breeds: ["great dane", "irish wolfhound", "scottish deerhound", "mastiff", "english mastiff", "neapolitan mastiff", "great pyrenees", "leonberger", "newfoundland", "saint bernard"],
+      heatThreshold: 24,
+      coldThreshold: 0,
+      flags: ["heat_sensitive", "joint_sensitive"]
+    },
+    small: {
+      breeds: ["chihuahua", "yorkshire terrier", "toy poodle", "maltese", "papillon", "pomeranian", "havanese", "bichon frise", "miniature dachshund", "jack russell terrier"],
+      heatThreshold: 30,
+      coldThreshold: 5,
+      flags: ["cold_sensitive", "small_body"]
+    },
+    general: {
+      breeds: [],
+      heatThreshold: 28,
+      coldThreshold: 0,
+      flags: []
+    }
+  };
+
+  function getBreedGroup(breedName) {
+    if (!breedName) return BREED_SENSITIVITY.general;
+    var lower = breedName.toLowerCase().trim();
+    for (var group in BREED_SENSITIVITY) {
+      if (group === 'general') continue;
+      for (var i = 0; i < BREED_SENSITIVITY[group].breeds.length; i++) {
+        if (lower.indexOf(BREED_SENSITIVITY[group].breeds[i]) !== -1 || BREED_SENSITIVITY[group].breeds[i].indexOf(lower) !== -1) {
+          return BREED_SENSITIVITY[group];
+        }
+      }
+    }
+    return BREED_SENSITIVITY.general;
+  }
+
+  function getActiveDogProfile() {
+    try {
+      var dogs = JSON.parse(localStorage.getItem('sniffout_dogs'));
+      if (dogs && dogs.length > 0) return dogs[0];
+    } catch(e) {}
+    return null;
+  }
+
+  function getDogWeatherNotes(weatherData, dogProfile) {
+    var dogName    = (dogProfile && dogProfile.name) ? dogProfile.name : 'your dog';
+    var breedGroup = (dogProfile && dogProfile.breed) ? getBreedGroup(dogProfile.breed) : BREED_SENSITIVITY.general;
+    var isGeneral  = (breedGroup === BREED_SENSITIVITY.general);
+    var tier       = dogProfile ? (isGeneral ? 2 : 1) : 3;
+    var flags      = breedGroup.flags;
+
+    var rain      = weatherData.rainChance  || 0;
+    var wind      = weatherData.windSpeed   || 0;
+    var uv        = weatherData.uvIndex     || 0;
+    var humidity  = weatherData.humidity    || 0;
+    var pollen    = weatherData.pollen      || 0;
+
+    // RAIN
+    var rainResult;
+    if (rain <= 10) {
+      rainResult = { status: 'good', label: 'Good', note: 'Dry right now. No rain expected.' };
+    } else if (rain <= 40) {
+      rainResult = { status: 'good', label: 'Good', note: 'Slight chance of a shower. Probably fine without a coat.' };
+    } else if (rain <= 70) {
+      rainResult = { status: 'moderate', label: 'Likely', note: 'Rain is likely. Pack a coat for both of you.' };
+    } else {
+      rainResult = { status: 'poor', label: 'Heavy', note: 'Heavy rain expected. Keep it short or wait for a break.' };
+    }
+
+    // WIND
+    var windResult;
+    if (wind <= 15) {
+      windResult = { status: 'good', label: 'Calm', note: 'Light breeze. Fine for all breeds and ear types.' };
+    } else if (wind <= 30) {
+      var windNote = (flags.indexOf('small_body') !== -1)
+        ? 'Noticeable wind. ' + dogName + ' may find it uncomfortable.'
+        : 'Noticeable wind. Small dogs may find it uncomfortable.';
+      windResult = { status: 'moderate', label: 'Breezy', note: windNote };
+    } else if (wind <= 50) {
+      windResult = { status: 'moderate', label: 'Strong', note: 'Strong gusts. Keep to sheltered paths and avoid woodland.' };
+    } else {
+      windResult = { status: 'poor', label: 'Dangerous', note: 'Dangerous winds. Do not walk in woodland or exposed areas.' };
+    }
+
+    // UV
+    var uvResult;
+    if (uv <= 2) {
+      uvResult = { status: 'good', label: 'Low', note: 'No UV concerns today.' };
+    } else if (uv <= 5) {
+      var uvNote3to5;
+      if (tier === 1 && (flags.indexOf('uv_sensitive') !== -1 || flags.indexOf('thin_coat') !== -1)) {
+        uvNote3to5 = dogName + "'s thin coat means they burn easily. Apply pet sun cream.";
+      } else if (tier <= 2) {
+        uvNote3to5 = 'Moderate UV. ' + dogName + ' may need sun cream if light-coloured or thin-coated.';
+      } else {
+        uvNote3to5 = 'Moderate UV. Light-coloured and thin-coated dogs may need sun cream.';
+      }
+      uvResult = { status: 'moderate', label: 'Moderate', note: uvNote3to5 };
+    } else if (uv <= 7) {
+      var uvNote6to7;
+      if (tier === 1 && (flags.indexOf('uv_sensitive') !== -1 || flags.indexOf('heat_sensitive') !== -1)) {
+        uvNote6to7 = 'High UV. ' + dogName + ' should avoid prolonged direct sun.';
+      } else if (tier <= 2) {
+        uvNote6to7 = 'High UV. ' + dogName + ' should seek shade on longer walks.';
+      } else {
+        uvNote6to7 = 'High UV. Seek shade on longer walks.';
+      }
+      uvResult = { status: 'moderate', label: 'High', note: uvNote6to7 };
+    } else {
+      var uvNote8plus = (tier === 1 || tier === 2)
+        ? 'Very high UV. ' + dogName + "'s skin is at risk. Avoid direct sun entirely."
+        : 'Very high UV. Avoid direct sun entirely. Light-coloured dogs are at greatest risk.';
+      uvResult = { status: 'poor', label: 'Very high', note: uvNote8plus };
+    }
+
+    // HUMIDITY
+    var humidityResult;
+    if (humidity <= 40) {
+      humidityResult = { status: 'good', label: 'Low', note: 'Low humidity. Comfortable for walking.' };
+    } else if (humidity <= 60) {
+      humidityResult = { status: 'good', label: 'Comfortable', note: 'Comfortable. Good drying conditions for muddy paws.' };
+    } else if (humidity <= 75) {
+      var humidNote = (tier === 1 && (flags.indexOf('heat_sensitive') !== -1 || flags.indexOf('breathing_compromised') !== -1))
+        ? 'Humid air makes it harder for ' + dogName + ' to cool down. Keep walks shorter.'
+        : 'Humid but manageable. Bring water.';
+      humidityResult = { status: 'moderate', label: 'Humid', note: humidNote };
+    } else {
+      humidityResult = { status: 'poor', label: 'Muggy', note: 'Very muggy. Harder for dogs to pant-cool. Keep walks very short.' };
+    }
+
+    // POLLEN
+    var pollenResult;
+    if (pollen <= 2) {
+      pollenResult = { status: 'good', label: 'Low', note: 'All clear. No issues for sensitive breeds today.' };
+    } else if (pollen <= 5) {
+      var pollenNote3to5 = (tier === 1 || tier === 2)
+        ? 'Moderate pollen. Wipe ' + dogName + "'s paws and face after the walk."
+        : "Moderate pollen. Wipe your dog's paws and face after the walk.";
+      pollenResult = { status: 'moderate', label: 'Medium', note: pollenNote3to5 };
+    } else {
+      var pollenNote6plus = (tier === 1 || tier === 2)
+        ? 'High pollen. Consider shorter walks for ' + dogName + ' and wipe down afterwards.'
+        : 'High pollen. Consider shorter walks and wipe down afterwards.';
+      pollenResult = { status: 'poor', label: 'High', note: pollenNote6plus };
+    }
+
+    return { rain: rainResult, wind: windResult, uv: uvResult, humidity: humidityResult, pollen: pollenResult };
+  }
+
+  function getConditionalAlerts(weatherData, dogProfile) {
+    var dogName    = (dogProfile && dogProfile.name) ? dogProfile.name : 'your dog';
+    var breedGroup = (dogProfile && dogProfile.breed) ? getBreedGroup(dogProfile.breed) : BREED_SENSITIVITY.general;
+    var isGeneral  = (breedGroup === BREED_SENSITIVITY.general);
+    var tier       = dogProfile ? (isGeneral ? 2 : 1) : 3;
+
+    var temp      = weatherData.temp      || 0;
+    var feelsLike = weatherData.feelsLike || 0;
+    var alerts    = [];
+    var hour      = new Date().getHours();
+
+    // HEAT DANGER
+    if (temp >= breedGroup.heatThreshold || feelsLike >= breedGroup.heatThreshold + 2) {
+      var aboveThreshold = temp - breedGroup.heatThreshold;
+      var severity = (aboveThreshold <= 3) ? 'warning' : 'danger';
+      var subtitle;
+      if (tier === 1) {
+        subtitle = 'Especially for ' + dogName + ' - ' + dogProfile.breed + 's overheat quickly';
+      } else if (tier === 2) {
+        subtitle = 'Keep an eye on ' + dogName + ' in this heat';
+      } else {
+        subtitle = 'All dogs are at risk in this heat';
+      }
+      var body = (severity === 'warning')
+        ? 'It is getting warm for dogs. Watch for heavy panting, drooling, or lethargy. Take water and keep to shade.'
+        : "Dogs can't cool down as effectively as humans. Heatstroke can happen within minutes at these temperatures. Flat-faced and thick-coated breeds are at highest risk.";
+      alerts.push({
+        type: 'heat_danger',
+        severity: severity,
+        title: 'Heat danger for dogs',
+        subtitle: subtitle,
+        body: body,
+        tips: ['Walk before 8am or after 7pm', 'Bring water for both of you', 'Stick to shade and grass']
+      });
+    }
+
+    // PAW BURN
+    if (temp >= 25 && hour >= 10 && hour <= 17) {
+      alerts.push({
+        type: 'paw_burn',
+        severity: 'danger',
+        title: 'Pavement too hot for paws',
+        subtitle: '',
+        body: 'Tarmac and paving can reach 60°C+ in direct sun. Walk on grass only, or use paw protection.',
+        tips: [],
+        groundTempEstimate: Math.round(temp * 1.7) + '\u00b0C'
+      });
+    }
+
+    return alerts;
+  }
+
   /* ─── Distance helper (Haversine) ─── */
 
   function haversineKm(lat1, lon1, lat2, lon2) {
