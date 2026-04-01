@@ -7046,7 +7046,8 @@
 
   /* ─── Weather tab helpers ─── */
 
-  var wxHourlyData = null; // Set by renderWeatherTab, read by openWxSheet
+  var wxHourlyData    = null; // Set by renderWeatherTab, read by openWxSheet
+  var wxWeatherContext = null; // Set by renderWeatherTab, used for dog notes in sheets
 
   function kmhToMph(kmh) { return Math.round(kmh * 0.6214); }
 
@@ -7353,14 +7354,17 @@
     var ssParts = (sunsetStr  || '--:--').split(':');
     var srOk = srParts.length >= 2 && srParts[0] !== '--';
     var ssOk = ssParts.length >= 2 && ssParts[0] !== '--';
-    // Fallback: track only, sun at left endpoint
-    var svgArc = '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
-      '<line x1="3" y1="36" x2="61" y2="36" stroke="#E8E4DC" stroke-width="1"/>' +
-      '<path d="M 6,36 A 26,26 0 0 0 58,36" stroke="#E8E4DC" stroke-width="2" fill="none" opacity="0.5"/>' +
-      '<circle cx="6" cy="36" r="2" fill="#E8E4DC"/>' +
-      '<circle cx="58" cy="36" r="2" fill="#E8E4DC"/>' +
-    '</svg>';
+
+    // SVG constants
+    // sweep-flag=1 draws the upper arc (above horizon y=36) from (6,36) to (58,36)
+    var TRACK = '<line x1="3" y1="36" x2="61" y2="36" stroke="#E8E4DC" stroke-width="1"/>' +
+      '<path d="M 6,36 A 26,26 0 0 1 58,36" stroke="#E8E4DC" stroke-width="2" fill="none" opacity="0.3"/>';
+    var ENDS  = '<circle cx="6" cy="36" r="2" fill="#E8E4DC"/><circle cx="58" cy="36" r="2" fill="#E8E4DC"/>';
+    var ARC_LEN = 81.68; // Math.PI * 26
+
+    var svgArc = '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' + TRACK + ENDS + '</svg>';
     var daylightText = '--';
+
     if (srOk && ssOk) {
       var srMin = parseInt(srParts[0]) * 60 + parseInt(srParts[1] || 0);
       var ssMin = parseInt(ssParts[0]) * 60 + parseInt(ssParts[1] || 0);
@@ -7371,49 +7375,39 @@
       var daylightM = totalMin % 60;
       daylightText = daylightH + 'h ' + daylightM + 'm';
 
-      var BASE_TRACK =
-        '<line x1="3" y1="36" x2="61" y2="36" stroke="#E8E4DC" stroke-width="1"/>' +
-        '<path d="M 6,36 A 26,26 0 0 0 58,36" stroke="#E8E4DC" stroke-width="2" fill="none" opacity="0.5"/>';
-      var END_DOTS =
-        '<circle cx="6" cy="36" r="2" fill="#E8E4DC"/>' +
-        '<circle cx="58" cy="36" r="2" fill="#E8E4DC"/>';
-
       if (nowMin < srMin) {
-        // Before sunrise: track only, small dot at left (sunrise) endpoint
-        svgArc =
-          '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
-            BASE_TRACK +
-            '<circle cx="6" cy="36" r="4" fill="#E6B44C" opacity="0.5"/>' +
-            END_DOTS +
-          '</svg>';
+        // Before sunrise: track + dim sun at left endpoint
+        svgArc = '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
+          TRACK +
+          '<circle cx="6" cy="36" r="4" fill="#E6B44C" opacity="0.4"/>' +
+          ENDS +
+        '</svg>';
       } else if (nowMin <= ssMin) {
-        // During daylight: partial amber arc + sun dot at current position
+        // During daylight: dasharray progress arc + glow dot at current position
         var progress = Math.min(1, (nowMin - srMin) / totalMin);
+        var progressLen = (ARC_LEN * progress).toFixed(1);
         var angle = Math.PI * (1 - progress);
         var cx = (32 + 26 * Math.cos(angle)).toFixed(1);
         var cy = (36 - 26 * Math.sin(angle)).toFixed(1);
-        // Use large-arc-flag=0 for progress < 0.5, large-arc-flag=1 for progress >= 0.5
-        // But we always sweep from left (6,36) to current point going counterclockwise (sweep-flag=0)
-        var largeArc = progress >= 0.5 ? 1 : 0;
-        svgArc =
-          '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
-            BASE_TRACK +
-            '<path d="M 6,36 A 26,26 0 ' + largeArc + ' 0 ' + cx + ',' + cy + '" stroke="#E6B44C" stroke-width="2" fill="none"/>' +
-            '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="#E6B44C"/>' +
-            END_DOTS +
-          '</svg>';
+        svgArc = '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
+          TRACK +
+          '<path d="M 6,36 A 26,26 0 0 1 58,36" stroke="#E6B44C" stroke-width="2" fill="none"' +
+            ' stroke-dasharray="' + progressLen + ' ' + ARC_LEN.toFixed(1) + '"/>' +
+          '<circle cx="' + cx + '" cy="' + cy + '" r="8" fill="#E6B44C" opacity="0.25"/>' +
+          '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="#E6B44C"/>' +
+          ENDS +
+        '</svg>';
       } else {
-        // After sunset: full amber arc, no dot
-        svgArc =
-          '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
-            BASE_TRACK +
-            '<path d="M 6,36 A 26,26 0 1 0 58,36" stroke="#E6B44C" stroke-width="2" fill="none"/>' +
-            END_DOTS +
-          '</svg>';
+        // After sunset: full amber arc at reduced opacity, no dot
+        svgArc = '<svg width="64" height="40" viewBox="0 0 64 40" fill="none">' +
+          TRACK +
+          '<path d="M 6,36 A 26,26 0 0 1 58,36" stroke="#E6B44C" stroke-width="2" fill="none" opacity="0.6"/>' +
+          ENDS +
+        '</svg>';
       }
     }
     return '<div class="wx-sunrise-card">' +
-      svgArc +
+      '<div style="width:64px;height:40px;flex-shrink:0;">' + svgArc + '</div>' +
       '<div class="wx-sunrise-data">' +
         '<div class="wx-sunrise-item"><div class="wx-sunrise-label">Sunrise</div><div class="wx-sunrise-value">' + (sunriseStr || '--:--') + '</div></div>' +
         '<div class="wx-sunrise-item"><div class="wx-sunrise-label">Sunset</div><div class="wx-sunrise-value">' + (sunsetStr || '--:--') + '</div></div>' +
@@ -7559,6 +7553,7 @@
 
     var dogProfile = getActiveDogProfile();
     var dogNotes = getDogWeatherNotes({ temp: temp, feelsLike: feels, rainChance: maxRainProb, windSpeed: windKmh, uvIndex: currentUV, humidity: humidity, pollen: 0 }, dogProfile);
+    wxWeatherContext = { temp: temp, feelsLike: feels, rainChance: maxRainProb, windSpeed: windKmh, uvIndex: currentUV, humidity: humidity, pollen: 0 };
 
     function buildCondNote(note, status) {
       if (!note) return '';
@@ -7685,7 +7680,7 @@
         '<div class="wx-conditions-grid">' +
 
           // Rain
-          '<div class="wx-cond-card">' +
+          '<div class="wx-cond-card" data-sheet="rain">' +
             '<div class="wx-cond-top">' +
               '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B9BD5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>' +
               '<div style="display:flex;align-items:center;gap:5px;">' +
@@ -7699,7 +7694,7 @@
           '</div>' +
 
           // Wind
-          '<div class="wx-cond-card">' +
+          '<div class="wx-cond-card" data-sheet="wind">' +
             '<div class="wx-cond-top">' +
               '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8A8577" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1111 8H2m10.59 11.41A2 2 0 1014 16H2m15.73-8.27A2.5 2.5 0 1119.5 12H2"/></svg>' +
               '<div style="display:flex;align-items:center;gap:5px;">' +
@@ -7713,7 +7708,7 @@
           '</div>' +
 
           // UV
-          '<div class="wx-cond-card">' +
+          '<div class="wx-cond-card" data-sheet="uv">' +
             '<div class="wx-cond-top">' +
               '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E6A817" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' +
               '<div style="display:flex;align-items:center;gap:5px;">' +
@@ -7727,7 +7722,7 @@
           '</div>' +
 
           // Humidity
-          '<div class="wx-cond-card">' +
+          '<div class="wx-cond-card" data-sheet="humidity">' +
             '<div class="wx-cond-top">' +
               '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7CB342" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>' +
               '<div style="display:flex;align-items:center;gap:5px;">' +
@@ -7772,6 +7767,11 @@
     // Wire up tile tap handlers
     content.querySelectorAll('.wx-tile[data-sheet]').forEach(function(tile) {
       tile.addEventListener('click', function() { openWxSheet(tile.dataset.sheet); });
+    });
+
+    // Wire up condition card tap handlers
+    content.querySelectorAll('.wx-cond-card[data-sheet]').forEach(function(card) {
+      card.addEventListener('click', function() { openWxSheet(card.dataset.sheet); });
     });
 
     syncIcons();
@@ -7922,14 +7922,44 @@
     var hourly = wxHourlyData;
     if (!hourly) return;
 
-    var rows = getHourlyFromNow(hourly);
-    rowsEl.innerHTML = '';
-    noteEl.textContent = '';
-
-    var titles = { rain: 'Rain chance - today', wind: 'Wind - today', uv: 'UV index - today', humidity: 'Humidity - today' };
+    var titles = { rain: 'Rain chance', wind: 'Wind', uv: 'UV index', humidity: 'Humidity' };
     titleEl.textContent = titles[type] || '';
 
-    rows.forEach(function(h) {
+    // Build extended 20-hour rows, crossing into tomorrow if needed
+    rowsEl.innerHTML = '';
+    noteEl.innerHTML = '';
+
+    var curH = new Date().getHours();
+    var dataLen = hourly.time ? hourly.time.length : 0;
+    var limit = Math.min(curH + 20, dataLen);
+    var midnightAdded = false;
+    var tomorrowNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    var tomorrowDate = new Date(); tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+    var tomorrowLabel = tomorrowNames[tomorrowDate.getDay()];
+
+    for (var i = curH; i < limit; i++) {
+      var hr24 = i % 24;
+
+      // Insert day separator on first midnight crossing
+      if (hr24 === 0 && !midnightAdded) {
+        midnightAdded = true;
+        var sep = document.createElement('div');
+        sep.style.cssText = 'font:700 10px/1 \'Plus Jakarta Sans\',sans-serif;color:var(--brand);text-transform:uppercase;letter-spacing:0.06em;padding:10px 0 4px;';
+        sep.textContent = tomorrowLabel;
+        rowsEl.appendChild(sep);
+      }
+
+      var uvVal   = (hourly.uv_index && hourly.uv_index[i] !== null) ? Math.round(hourly.uv_index[i] || 0) : 0;
+      var windDir = (hourly.wind_direction_10m && hourly.wind_direction_10m[i] !== null) ? degreesToCompass(hourly.wind_direction_10m[i] || 0) : '';
+      var h = {
+        label:      (i === curH) ? 'Now' : formatBarHour(i),
+        precipProb: hourly.precipitation_probability ? (hourly.precipitation_probability[i] || 0) : 0,
+        windSpeed:  hourly.wind_speed_10m ? kmhToMph(hourly.wind_speed_10m[i] || 0) : 0,
+        windDir:    windDir,
+        uvIndex:    uvVal,
+        humidity:   hourly.relative_humidity_2m ? (hourly.relative_humidity_2m[i] || 0) : 0
+      };
+
       var row = document.createElement('div');
       row.className = 'wx-sheet-row';
 
@@ -7960,7 +7990,7 @@
         row.appendChild(track2);
         if (h.windDir) {
           var dirEl = document.createElement('span');
-          dirEl.style.cssText = 'font:500 12px/1 Inter,sans-serif;color:var(--ink-2);width:24px;flex-shrink:0;text-align:right;';
+          dirEl.style.cssText = 'font:500 12px/1 \'Plus Jakarta Sans\',sans-serif;color:var(--ink-2);width:24px;flex-shrink:0;text-align:right;';
           dirEl.textContent = h.windDir;
           row.appendChild(dirEl);
         }
@@ -7976,19 +8006,27 @@
         valEl.textContent = h.humidity + '%';
         var humLbl = h.humidity > 80 ? 'Very humid' : h.humidity > 65 ? 'Humid' : h.humidity > 50 ? 'Moderate' : h.humidity > 30 ? 'Comfortable' : 'Very dry';
         var lbl = document.createElement('span');
-        lbl.style.cssText = 'font:400 13px/1 Inter,sans-serif;color:var(--ink-2);flex:1;';
+        lbl.style.cssText = 'font:400 13px/1 \'Plus Jakarta Sans\',sans-serif;color:var(--ink-2);flex:1;';
         lbl.textContent = humLbl;
         row.appendChild(lbl);
       }
 
       rowsEl.appendChild(row);
-    });
+    }
 
-    var notes = {
-      uv: 'UV above 3 - consider sun protection for long outdoor sessions.',
-      humidity: 'High humidity can make dogs overheat faster on longer walks.'
-    };
-    if (notes[type]) noteEl.textContent = notes[type];
+    // Dog-specific note from getDogWeatherNotes
+    if (wxWeatherContext) {
+      var dp = getActiveDogProfile();
+      var dn = getDogWeatherNotes(wxWeatherContext, dp);
+      var noteText = dn[type] ? dn[type].note : '';
+      if (noteText) {
+        var pts = noteText.split('. ');
+        var boldFirst = pts.length > 1
+          ? '<strong style="color:var(--brand);">' + pts[0] + '.</strong> ' + pts.slice(1).join('. ')
+          : '<strong style="color:var(--brand);">' + noteText + '</strong>';
+        noteEl.innerHTML = boldFirst;
+      }
+    }
 
     overlay.hidden = false;
     sheet.hidden = false;
