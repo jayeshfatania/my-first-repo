@@ -1290,8 +1290,10 @@
     .ww-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .ww-title { font-size: 15px; font-weight: 700; color: var(--ink); }
     .ww-time-pill { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: var(--brand); color: #FFF; }
-    .ww-bars { display: flex; align-items: stretch; gap: 3px; height: 88px; }
+    .ww-bars { display: flex; align-items: stretch; gap: 3px; height: 108px; }
     .ww-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; }
+    .ww-bar-icon { height: 16px; width: 100%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ww-bar-icon svg { width: 12px; height: 12px; }
     .ww-bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; }
     .ww-bar { width: 100%; border-radius: 4px 4px 2px 2px; min-height: 4px; }
     .ww-bar[data-quality="great"] { background: #2C4A14; }
@@ -7370,6 +7372,28 @@
     return Math.max(0, Math.min(100, score));
   }
 
+  var REASON_ICONS = {
+    rain:  '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2C5.5 5 4 7.5 4 9.5a4 4 0 008 0C12 7.5 10.5 5 8 2z" fill="#5B9BD5" opacity="0.7"/></svg>',
+    heat:  '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3.5" fill="#C0392B" opacity="0.3"/><path d="M8 2v2M8 12v2M2 8h2M12 8h2" stroke="#C0392B" stroke-width="1.2" stroke-linecap="round"/></svg>',
+    wind:  '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 6h7M11 6a2 2 0 100-4M2 10h5M9 10a1.5 1.5 0 100-3" stroke="#8A8577" stroke-width="1.2" stroke-linecap="round"/></svg>',
+    cold:  '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M4 4l4 4 4-4M4 12l4-4 4 4M1 8h14" stroke="#5B9BD5" stroke-width="1" stroke-linecap="round"/></svg>',
+    storm: '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M9 1L5 8h4l-2 7 6-8H9l2-6z" fill="#E6B44C" opacity="0.7"/></svg>'
+  };
+
+  function getDominantReason(hourWeather) {
+    if (hourWeather.temp > 28) return 'heat';
+    if (hourWeather.temp < 1) return 'cold';
+    if (hourWeather.windSpeed > 40 && hourWeather.rainChance > 30) return 'storm';
+    if (hourWeather.rainChance > 60) return 'rain';
+    if (hourWeather.windSpeed > 30) return 'wind';
+    if (hourWeather.rainChance > 30) return 'rain';
+    if (hourWeather.temp > 24) return 'heat';
+    if (hourWeather.temp < 5) return 'cold';
+    if (hourWeather.windSpeed > 20) return 'wind';
+    if (hourWeather.rainChance > 15) return 'rain';
+    return null;
+  }
+
   function getVerdictBarGradient(walkScore) {
     if (walkScore >= 80) return 'linear-gradient(90deg, #2C4A14 0%, #7CB342 45%, #E6B44C 75%, #DDD8CE 100%)';
     if (walkScore >= 60) return 'linear-gradient(90deg, #7CB342 0%, #E6B44C 50%, #DDD8CE 100%)';
@@ -7525,8 +7549,11 @@
       var score = getWalkQualityScore(item);
       var barH = Math.max(4, Math.round(score * 0.68));
       var quality = score >= 80 ? 'great' : score >= 60 ? 'good' : score >= 40 ? 'fair' : score >= 20 ? 'poor' : 'danger';
+      var reason = quality !== 'great' ? getDominantReason(item) : null;
+      var iconHtml = reason && REASON_ICONS[reason] ? REASON_ICONS[reason] : '';
       barsHtml +=
         '<div class="ww-bar-col">' +
+          '<div class="ww-bar-icon">' + iconHtml + '</div>' +
           '<div class="ww-bar-wrap">' +
             '<div class="ww-bar" data-quality="' + quality + '" style="height:' + barH + 'px"></div>' +
           '</div>' +
