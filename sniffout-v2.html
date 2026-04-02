@@ -1286,12 +1286,12 @@
     .verdict-sub { font-size: 12px; color: var(--ink-3); margin-top: 1px; }
 
     /* Walk window bar chart */
-    .walk-window-card { margin: 0 16px 16px; background: var(--surface); border-radius: 20px; padding: 18px 18px 14px; box-shadow: 0 2px 20px rgba(44,74,20,0.07); }
+    .walk-window-card { margin: 0 16px 16px; background: var(--surface); border-radius: 20px; padding: 16px 12px 12px; box-shadow: 0 2px 20px rgba(44,74,20,0.07); }
     .ww-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .ww-title { font-size: 15px; font-weight: 700; color: var(--ink); }
     .ww-time-pill { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: var(--brand); color: #FFF; }
-    .ww-bars { display: flex; align-items: stretch; gap: 3px; height: 108px; }
-    .ww-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; }
+    .ww-bars { display: flex; align-items: stretch; gap: 2px; height: 108px; width: 100%; box-sizing: border-box; overflow: hidden; }
+    .ww-bar-col { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; }
     .ww-bar-icon { height: 16px; width: 100%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .ww-bar-icon svg { width: 12px; height: 12px; }
     .ww-bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; }
@@ -1301,7 +1301,7 @@
     .ww-bar[data-quality="fair"]  { background: #E6B44C; }
     .ww-bar[data-quality="poor"]  { background: #DDD8CE; }
     .ww-bar[data-quality="danger"]{ background: #C0392B; }
-    .ww-bar-label { font-size: 9px; font-weight: 600; color: var(--ink-3); margin-top: 3px; line-height: 1; text-align: center; overflow: hidden; }
+    .ww-bar-label { font-size: 8px; font-weight: 600; color: var(--ink-3); margin-top: 3px; line-height: 1; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     /* Metric tiles (kept for bottom sheet tap handlers) */
     .wx-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -7342,10 +7342,10 @@
     var rainChance = hourWeather.rainChance || 0;
     var weatherCode = hourWeather.weatherCode || 0;
     if (weatherCode === 95 || weatherCode === 96 || weatherCode === 99) {
-      score -= 60;
-    } else if (precipMM > 4 && rainChance > 50) {
+      score -= 80;
+    } else if (precipMM >= 4 && rainChance > 50) {
       score -= 40;
-    } else if (precipMM > 0.5 && rainChance > 40) {
+    } else if (precipMM >= 0.5 && rainChance > 40) {
       score -= 15;
     }
     var wind = hourWeather.windSpeed || 0;
