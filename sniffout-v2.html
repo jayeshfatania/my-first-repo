@@ -7324,51 +7324,49 @@
 
   /* ─── Walk quality score and verdict helpers ─── */
 
-  function getWalkQualityScore(weatherData) {
+  function getWalkQualityScore(h) {
     var score = 100;
-    var temp = weatherData.temp;
-    if (temp < -5) score -= 50;
-    else if (temp < 0) score -= 35;
-    else if (temp < 5) score -= 25;
-    else if (temp < 8) score -= 15;
-    else if (temp < 10) score -= 8;
-    else if (temp < 12) score -= 3;
-    else if (temp > 32) score -= 60;
-    else if (temp > 28) score -= 40;
-    else if (temp > 25) score -= 25;
-    else if (temp > 22) score -= 12;
-    else if (temp > 20) score -= 5;
-    else if (temp > 18) score -= 2;
-    var rain = weatherData.rainChance || 0;
-    if (rain > 90) score -= 40;
-    else if (rain > 75) score -= 30;
-    else if (rain > 60) score -= 22;
-    else if (rain > 45) score -= 15;
-    else if (rain > 30) score -= 10;
-    else if (rain > 15) score -= 5;
-    else if (rain > 5) score -= 2;
-    var wind = weatherData.windSpeed || 0;
-    if (wind > 60) score -= 45;
-    else if (wind > 45) score -= 35;
-    else if (wind > 35) score -= 25;
-    else if (wind > 25) score -= 15;
-    else if (wind > 15) score -= 8;
-    else if (wind > 10) score -= 3;
-    var uv = weatherData.uvIndex || 0;
-    if (uv > 10) score -= 20;
-    else if (uv > 8) score -= 15;
-    else if (uv > 6) score -= 8;
-    else if (uv > 4) score -= 3;
-    if (typeof weatherData.hour === 'number') {
-      var h = weatherData.hour % 24;
-      if (h < 6) score -= 20;
-      else if (h < 7) score -= 10;
-      else if (h < 8) score -= 5;
-      else if (h >= 21) score -= 15;
-      else if (h >= 20) score -= 10;
-      else if (h >= 19) score -= 5;
-      else if (h >= 18) score -= 3;
+    // Apparent temperature (feels-like)
+    var at = h.apparentTemp != null ? h.apparentTemp : (h.temp != null ? h.temp : 14);
+    if (at < -5) score -= 65;
+    else if (at < 0) score -= 50;
+    else if (at < 5) score -= 30;
+    else if (at < 8) score -= 18;
+    else if (at < 10) score -= 8;
+    else if (at > 32) score -= 80;
+    else if (at > 28) score -= 65;
+    else if (at > 25) score -= 40;
+    else if (at > 22) score -= 20;
+    // Humidity amplification on hot days
+    var hum = h.humidity || 0;
+    if (at > 20) {
+      if (hum > 85) score -= 20;
+      else if (hum > 70) score -= 12;
+      else if (hum > 55) score -= 5;
     }
+    // Actual precipitation (mm) - evidence-based, not probability
+    var p = h.precipMM || 0;
+    if (p > 5)   score -= 50;
+    else if (p > 2)   score -= 38;
+    else if (p > 1)   score -= 28;
+    else if (p > 0.5) score -= 18;
+    else if (p > 0.2) score -= 8;
+    else if (p > 0)   score -= 2;
+    // WMO weather code
+    var wc = h.weatherCode || 0;
+    if (wc >= 95)      score -= 35;  // thunderstorm
+    else if (wc >= 80) score -= 25;  // showers
+    else if (wc >= 71) score -= 25;  // snow
+    else if (wc >= 61) score -= 20;  // rain
+    else if (wc >= 51) score -= 10;  // drizzle
+    else if (wc >= 45) score -= 8;   // fog
+    // Wind
+    var wind = h.windSpeed || 0;
+    if (wind > 60)      score -= 40;
+    else if (wind > 45) score -= 28;
+    else if (wind > 35) score -= 18;
+    else if (wind > 25) score -= 10;
+    else if (wind > 15) score -= 4;
     return Math.max(0, Math.min(100, score));
   }
 
@@ -7380,17 +7378,21 @@
     storm: '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M9 1L5 8h4l-2 7 6-8H9l2-6z" fill="#E6B44C" opacity="0.7"/></svg>'
   };
 
-  function getDominantReason(hourWeather) {
-    if (hourWeather.temp > 28) return 'heat';
-    if (hourWeather.temp < 1) return 'cold';
-    if (hourWeather.windSpeed > 40 && hourWeather.rainChance > 30) return 'storm';
-    if (hourWeather.rainChance > 60) return 'rain';
-    if (hourWeather.windSpeed > 30) return 'wind';
-    if (hourWeather.rainChance > 30) return 'rain';
-    if (hourWeather.temp > 24) return 'heat';
-    if (hourWeather.temp < 5) return 'cold';
-    if (hourWeather.windSpeed > 20) return 'wind';
-    if (hourWeather.rainChance > 15) return 'rain';
+  function getDominantReason(h) {
+    var at = h.apparentTemp != null ? h.apparentTemp : (h.temp || 14);
+    var wc = h.weatherCode || 0;
+    var p  = h.precipMM || 0;
+    var w  = h.windSpeed || 0;
+    if (at > 28) return 'heat';
+    if (at < 1) return 'cold';
+    if (wc >= 95) return 'storm';
+    if (p > 1 || wc >= 61) return 'rain';
+    if (w > 35) return 'wind';
+    if (p > 0.2 || wc >= 51) return 'rain';
+    if (at > 24) return 'heat';
+    if (at < 5) return 'cold';
+    if (w > 20) return 'wind';
+    if (p > 0) return 'rain';
     return null;
   }
 
@@ -7517,26 +7519,30 @@
 
   function buildWalkWindowCard(hourly) {
     var currentH = new Date().getHours();
-    // Build 13 hours forward from current hour, wrapping into tomorrow (indices 24-47)
-    var numBars = 13;
+    // Show 6am-8pm (15 bars). Use today if before 6pm, tomorrow otherwise.
+    var useToday = currentH < 18;
+    var startIdx = useToday ? 6 : 30;  // 6am today (idx 6) or 6am tomorrow (idx 30)
+    var numBars = 15;  // 6am to 8pm inclusive
     var hourlyItems = [];
     for (var k = 0; k < numBars; k++) {
-      var absIdx = currentH + k;
+      var absIdx = startIdx + k;
       if (!hourly.time || absIdx >= hourly.time.length) break;
-      var temp = hourly.temperature_2m && hourly.temperature_2m[absIdx] != null ? hourly.temperature_2m[absIdx] : 10;
-      var rain = hourly.precipitation_probability ? (hourly.precipitation_probability[absIdx] || 0) : 0;
+      var apparentTemp = hourly.apparent_temperature && hourly.apparent_temperature[absIdx] != null ? hourly.apparent_temperature[absIdx] : 10;
+      var humidity = hourly.relative_humidity_2m ? (hourly.relative_humidity_2m[absIdx] || 0) : 0;
+      var precipMM = hourly.precipitation ? (hourly.precipitation[absIdx] || 0) : 0;
+      var weatherCode = hourly.weather_code ? (hourly.weather_code[absIdx] || 0) : 0;
       var wind = hourly.wind_speed_10m ? (hourly.wind_speed_10m[absIdx] || 0) : 0;
-      var uv   = hourly.uv_index ? (hourly.uv_index[absIdx] || 0) : 0;
-      hourlyItems.push({ hour: absIdx, temp: temp, rainChance: rain, windSpeed: wind, uvIndex: uv });
+      hourlyItems.push({ hour: absIdx % 24, apparentTemp: apparentTemp, humidity: humidity, precipMM: precipMM, weatherCode: weatherCode, windSpeed: wind });
     }
     if (!hourlyItems.length) return '';
     var bestWindow = getBestWalkWindow(hourlyItems);
     var pillText, pillStyle = '';
     if (bestWindow) {
+      var prefix = useToday ? '' : 'Tomorrow ';
       if (bestWindow.start === bestWindow.end) {
-        pillText = formatBarHour(bestWindow.start);
+        pillText = prefix + formatBarHour(bestWindow.start);
       } else {
-        pillText = formatBarHour(bestWindow.start) + ' - ' + formatBarHour(bestWindow.end + 1);
+        pillText = prefix + formatBarHour(bestWindow.start) + ' - ' + formatBarHour(bestWindow.end + 1);
       }
     } else {
       pillText = 'No ideal window';
@@ -7547,7 +7553,7 @@
     for (var idx = 0; idx < hourlyItems.length; idx++) {
       var item = hourlyItems[idx];
       var score = getWalkQualityScore(item);
-      var barH = Math.max(4, Math.round(score * 0.68));
+      var barH = Math.max(4, Math.round(score * 0.72));
       var quality = score >= 80 ? 'great' : score >= 60 ? 'good' : score >= 40 ? 'fair' : score >= 20 ? 'poor' : 'danger';
       var reason = quality !== 'great' ? getDominantReason(item) : null;
       var iconHtml = reason && REASON_ICONS[reason] ? REASON_ICONS[reason] : '';
