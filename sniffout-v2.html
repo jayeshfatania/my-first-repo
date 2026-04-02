@@ -2815,61 +2815,56 @@
       object-fit: cover; border-radius: 50%;
     }
     /* Dog profile card (Me tab top) */
-    .me-dog-card {
-      margin: 16px 16px 12px;
-      background: var(--surface);
-      border: none;
-      border-radius: var(--radius-xl);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
+    /* Dog hero card */
+    .me-hero-card {
+      background: #2C4A14;
+      border-radius: 22px;
+      padding: 24px 20px 20px;
+      margin: 6px 16px 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(44,74,20,0.18);
       cursor: pointer;
       transition: transform 0.15s ease;
-      box-shadow: 0 2px 16px rgba(44,74,20,0.07), 0 1px 4px rgba(44,74,20,0.04);
-      position: relative;
     }
-    .me-dog-card:active { transform: scale(0.97); }
-    .me-dog-card-avatar {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: var(--brand-tint);
-      border: 2px solid var(--brand);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--brand);
-      flex-shrink: 0;
-      overflow: hidden;
+    .me-hero-card:active { transform: scale(0.97); }
+    .me-hero-card::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -30px;
+      width: 140px; height: 140px;
+      background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 65%);
+      pointer-events: none;
     }
-    .me-dog-card-avatar img {
-      width: 100%; height: 100%;
-      object-fit: cover; border-radius: 50%;
+    .me-hero-cog {
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 32px; height: 32px;
+      background: rgba(255,255,255,0.10);
+      border: none;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.15s ease;
     }
-    .me-dog-card-info { width: 100%; text-align: center; }
-    .me-dog-card-name {
-      font-family: var(--font-display);
-      font-size: 48px;
-      font-weight: 800;
-      color: var(--ink);
-      letter-spacing: -1.5px;
-      line-height: 1.1;
-      display: block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      max-width: 100%;
+    .me-hero-cog:active { opacity: 0.7; }
+    .me-hero-top-row { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+    .me-hero-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 2px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; overflow: hidden;
     }
-    .me-dog-card-meta {
-      font: 400 13px/1.4 'Plus Jakarta Sans', sans-serif;
-      color: var(--ink-2);
-      display: block;
-      margin-top: 4px;
-    }
-    body.night .me-dog-card { border-color: rgba(255,255,255,0.08); }
-    body.night .me-dog-card-name { color: var(--ink); }
+    .me-hero-info { flex: 1; min-width: 0; }
+    .me-hero-name { font-size: 22px; font-weight: 800; color: #fff; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
+    .me-hero-breed { font-size: 12px; color: rgba(255,255,255,0.55); font-style: italic; display: block; margin-top: 2px; }
+    .me-hero-owner { font-size: 11px; color: rgba(255,255,255,0.4); display: block; margin-top: 3px; }
+    .me-hero-stats-row { display: flex; gap: 8px; }
+    .me-hero-stat { flex: 1; background: rgba(255,255,255,0.10); border-radius: 14px; padding: 12px 10px; text-align: center; }
+    .me-hero-stat-val { font-size: 20px; font-weight: 800; color: #fff; display: block; line-height: 1; }
+    .me-hero-stat-lbl { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.45); display: block; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.04em; }
 
     /* FAB - Log a walk (Me tab only) */
     .me-log-fab {
@@ -2897,43 +2892,74 @@
     .me-log-fab.fab-hidden { opacity: 0; pointer-events: none; transform: translateX(-50%) scale(0.88); }
     body.night .me-log-fab { background: #3D6B22; box-shadow: 0 4px 12px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); }
 
-    /* Stats dashboard */
-    .me-stats-dashboard {
-      margin: 0 16px 16px;
+    /* Month summary card */
+    .me-month-card {
+      margin: 0 16px 12px;
       background: var(--surface);
-      border: none;
       border-radius: var(--radius-lg);
-      display: flex;
-      flex-direction: row;
+      border: 1px solid var(--border);
+      padding: 16px;
       box-shadow: 0 2px 16px rgba(44,74,20,0.07), 0 1px 4px rgba(44,74,20,0.04);
     }
-    .me-stats-row {
-      display: contents;
-    }
-    .me-stat-card {
-      flex: 1;
-      padding: 16px 12px;
+    .me-month-header {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 5px;
-      position: relative;
+      justify-content: space-between;
+      margin-bottom: 12px;
     }
-    .me-stat-card + .me-stat-card::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 12px;
-      bottom: 12px;
-      width: 1px;
-      background: var(--border);
+    .me-month-title {
+      font: 600 13px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink);
     }
-    .me-stat-card--secondary {
-      flex-direction: column;
+    .me-month-period {
+      font: 400 12px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-2);
+    }
+    .me-month-stats-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .me-month-stat {
+      flex: 1;
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .me-month-stat-val {
+      font: 700 18px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--brand);
+      display: block;
+      letter-spacing: -0.5px;
+    }
+    .me-month-stat-lbl {
+      font: 400 10px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-2);
+      display: block;
+      margin-top: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .me-month-note {
+      display: flex;
       align-items: center;
-      gap: 5px;
-      padding: 16px 12px;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--bg);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
     }
+    .me-month-note:active { transform: scale(0.97); }
+    .me-month-note-text {
+      flex: 1;
+      font: 400 13px/1.4 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-2);
+      font-style: italic;
+    }
+    /* Legacy stat classes kept for compatibility */
     .me-stat-number {
       font-family: var(--font-display);
       font-size: 28px;
@@ -2951,19 +2977,36 @@
       font: 400 12px/1 'Plus Jakarta Sans', sans-serif;
       color: var(--ink-2);
     }
-    /* Entry rows */
-    .me-entries {
+    /* Section labels */
+    .me-section-label {
+      font: 600 11px/1 'Plus Jakarta Sans', sans-serif;
+      color: rgba(44,74,20,0.55);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 4px 0 8px;
+      margin: 16px 16px 0;
+    }
+    /* Group cards */
+    .me-group-card {
       margin: 0 16px;
-      padding: 0 0 96px;
-      display: flex;
-      flex-direction: column;
       background: var(--surface);
       border-radius: var(--radius-lg);
-      border: none;
+      border: 1px solid var(--border);
       box-shadow: 0 2px 16px rgba(44,74,20,0.07), 0 1px 4px rgba(44,74,20,0.04);
       overflow: hidden;
     }
-    .me-entries { padding-bottom: 0; margin-bottom: 96px; }
+    .me-group-card .me-entry-row { border-radius: 0; }
+    .me-group-card .me-entry-row:first-child { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    .me-group-card .me-entry-row:last-child { border-bottom: none; border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+    .me-group-card .me-entry-row:only-child { border-radius: var(--radius-lg); }
+    /* Groups container */
+    .me-groups {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding-bottom: 96px;
+    }
+    /* Entry rows */
     .me-entry-row {
       display: flex;
       align-items: center;
@@ -5087,37 +5130,34 @@
         </div>
       </header>
 
-      <!-- Dog profile card -->
-      <div class="me-dog-card" id="meDogCard" onclick="openMeSubpage('dog')" style="position:relative;">
-        <button class="me-gear-btn" id="meGearBtn" aria-label="Settings" style="position:absolute;top:12px;right:12px;" onclick="event.stopPropagation();openMeSettingsSheet()">
+      <!-- Hero card -->
+      <div class="me-hero-card" id="meDogCard" onclick="openMeSubpage('dog')">
+        <button class="me-hero-cog" id="meDogCogBtn" aria-label="Settings" onclick="event.stopPropagation();openMeSettingsSheet()">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </button>
-        <div class="me-dog-card-avatar" id="meDogCardAvatar">
-          <!-- populated by renderMeTab() — img tag for Phase 3 photo swap -->
+        <div class="me-hero-top-row">
+          <div class="me-hero-avatar" id="meDogCardAvatar">
+            <!-- populated by renderMeTab() -->
+          </div>
+          <div class="me-hero-info">
+            <span class="me-hero-name" id="meDogCardName">Add your dog</span>
+            <span class="me-hero-breed" id="meDogCardBreed"></span>
+            <span class="me-hero-owner" id="meDogCardOwner"></span>
+          </div>
         </div>
-        <div class="me-dog-card-info">
-          <span class="me-dog-card-name" id="meDogCardName">Add your dog</span>
-          <span class="me-dog-card-meta" id="meDogCardMeta">So we can make every walk personal.</span>
-        </div>
-      </div>
-
-      <!-- Stats dashboard -->
-      <div class="me-stats-dashboard" id="meStatsDashboard">
-        <div class="me-stat-card">
-          <span class="me-stat-number" id="statMiles">-</span>
-          <span class="me-stat-label" id="statMilesLabel">miles walked</span>
-        </div>
-        <div class="me-stat-card">
-          <span class="me-stat-number" id="statWalks">-</span>
-          <span class="me-stat-label" id="statWalksLabel">walks logged</span>
-        </div>
-        <div class="me-stat-card me-stat-card--secondary">
-          <span class="me-stat-number" id="statContribs">-</span>
-          <span class="me-stat-label">reports</span>
+        <div class="me-hero-stats-row">
+          <div class="me-hero-stat">
+            <span class="me-hero-stat-val" id="heroStatDist">-</span>
+            <span class="me-hero-stat-lbl">km walked</span>
+          </div>
+          <div class="me-hero-stat">
+            <span class="me-hero-stat-val" id="heroStatWalks">-</span>
+            <span class="me-hero-stat-lbl" id="heroStatWalksLbl">walks logged</span>
+          </div>
         </div>
       </div>
 
-      <!-- Dog profile prompt (superseded by me-dog-card above) -->
+      <!-- Dog profile prompt (shown when no dog set up) -->
       <div class="me-dog-prompt" id="meDogPrompt" style="display:none" hidden>
         <div class="me-dog-prompt-icon">
           <i data-lucide="paw-print" style="width:24px;height:24px;" aria-hidden="true"></i>
@@ -5131,110 +5171,161 @@
         </button>
       </div>
 
-      <!-- Entry rows -->
-      <div class="me-entries" id="meEntries">
+      <!-- This month card -->
+      <div class="me-month-card">
+        <div class="me-month-header">
+          <span class="me-month-title">This month</span>
+          <span class="me-month-period" id="meMonthPeriod"></span>
+        </div>
+        <div class="me-month-stats-row">
+          <div class="me-month-stat">
+            <span class="me-month-stat-val" id="meMonthWalks">0</span>
+            <span class="me-month-stat-lbl">walks</span>
+          </div>
+          <div class="me-month-stat">
+            <span class="me-month-stat-val" id="meMonthKm">0</span>
+            <span class="me-month-stat-lbl">km</span>
+          </div>
+          <div class="me-month-stat">
+            <span class="me-month-stat-val" id="meMonthPlaces">0</span>
+            <span class="me-month-stat-lbl">places saved</span>
+          </div>
+        </div>
+        <div class="me-month-note" id="meMonthNote" onclick="openWalkLogSheet()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;color:var(--ink-2);opacity:0.5;" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span class="me-month-note-text" id="meMonthNoteText">No walks logged this month</span>
+        </div>
+      </div>
 
-        <!-- Your Dog -->
-        <button class="me-entry-row" onclick="openMeSubpage('dog')" id="entryDog">
-          <div class="me-entry-icon" style="background:#EDF2E8;">
-            <i data-lucide="paw-print" style="width:24px;height:24px;color:#2C4A14;" aria-hidden="true"></i>
-          </div>
-          <div class="me-entry-text">
-            <span class="me-entry-label">Your Dog</span>
-            <span class="me-entry-preview" id="dogEntryPreview">Add your dog</span>
-          </div>
-          <div class="me-entry-right">
-            <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-        </button>
+      <!-- Grouped entry rows -->
+      <div class="me-groups" id="meEntries">
 
-        <!-- Walk Journal -->
-        <button class="me-entry-row" onclick="openMeSubpage('journal')" id="entryJournal">
-          <div class="me-entry-icon" style="background:#EDF2E8;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-              <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-              <line x1="8" y1="7" x2="16" y2="7"/>
-              <line x1="8" y1="11" x2="14" y2="11"/>
-            </svg>
-          </div>
-          <div class="me-entry-text">
-            <span class="me-entry-label">Walk Journal</span>
-            <span class="me-entry-preview" id="journalPreview">No walks logged yet</span>
-          </div>
-          <div class="me-entry-right">
-            <span class="me-entry-count" id="journalCount"></span>
-            <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-        </button>
+        <!-- Group 1: Your walks -->
+        <p class="me-section-label">Your walks</p>
+        <div class="me-group-card">
 
-        <!-- Recently Viewed -->
-        <button class="me-entry-row" onclick="openMeSubpage('recentlyviewed')" id="entryRecentlyViewed">
-          <div class="me-entry-icon" style="background:#F3F3F1;">
-            <i data-lucide="clock" style="width:20px;height:20px;color:#6B7280;"></i>
-          </div>
-          <div class="me-entry-text">
-            <span class="me-entry-label">Recently Viewed</span>
-            <span class="me-entry-preview" id="recentlyViewedPreview">No walks viewed yet</span>
-          </div>
-          <div class="me-entry-right">
-            <span class="me-entry-count" id="recentlyViewedCount"></span>
-            <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-        </button>
+          <button class="me-entry-row" onclick="openMeSubpage('journal')" id="entryJournal">
+            <div class="me-entry-icon" style="background:#EDF2E8;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+                <line x1="8" y1="7" x2="16" y2="7"/>
+                <line x1="8" y1="11" x2="14" y2="11"/>
+              </svg>
+            </div>
+            <div class="me-entry-text">
+              <span class="me-entry-label">Walk Journal</span>
+              <span class="me-entry-preview" id="journalPreview">No walks logged yet</span>
+            </div>
+            <div class="me-entry-right">
+              <span class="me-entry-count" id="journalCount"></span>
+              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
 
-        <!-- Badges — hidden until first badge earned -->
-        <button class="me-entry-row" onclick="openMeSubpage('badges')" id="entryBadges" hidden>
-          <div class="me-entry-icon" style="background:#FEF3E2;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-              <circle cx="12" cy="8" r="6"/>
-              <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
-            </svg>
-          </div>
-          <div class="me-entry-text">
-            <span class="me-entry-label">Badges</span>
-            <span class="me-entry-preview" id="badgesPreview"></span>
-          </div>
-          <div class="me-entry-right">
-            <span class="me-entry-count" id="badgesCount"></span>
-            <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-        </button>
+          <button class="me-entry-row" onclick="openMeSubpage('explored')" id="entryExplored">
+            <div class="me-entry-icon" style="background:#EDF2E8;">
+              <i data-lucide="map" style="width:20px;height:20px;color:#2C4A14;" aria-hidden="true"></i>
+            </div>
+            <div class="me-entry-text">
+              <span class="me-entry-label">Walks Explored</span>
+              <span class="me-entry-preview" id="exploredPreview">None yet</span>
+            </div>
+            <div class="me-entry-right">
+              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
 
-        <!-- Saved Walks -->
-        <button class="me-entry-row" onclick="openMeSubpage('savedwalks')" id="entrySavedWalks">
-          <div class="me-entry-icon" style="background:#EDF2E8;">
-            <i data-lucide="bookmark" style="width:20px;height:20px;color:#2C4A14;"></i>
-          </div>
-          <div class="me-entry-text">
-            <span class="me-entry-label">Saved Walks</span>
-            <span class="me-entry-preview" id="savedWalksPreview">None saved yet</span>
-          </div>
-          <div class="me-entry-right">
-            <span class="me-entry-count" id="savedWalksCount"></span>
-            <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-        </button>
+          <button class="me-entry-row" onclick="openMeSubpage('savedwalks')" id="entrySavedWalks">
+            <div class="me-entry-icon" style="background:#EDF2E8;">
+              <i data-lucide="bookmark" style="width:20px;height:20px;color:#2C4A14;"></i>
+            </div>
+            <div class="me-entry-text">
+              <span class="me-entry-label">Saved Walks</span>
+              <span class="me-entry-preview" id="savedWalksPreview">None saved yet</span>
+            </div>
+            <div class="me-entry-right">
+              <span class="me-entry-count" id="savedWalksCount"></span>
+              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
 
-        <!-- Saved Places -->
-        <button class="me-entry-row" onclick="openMeSubpage('savedplaces')" id="entrySavedPlaces">
-          <div class="me-entry-icon" style="background:#EDF2E8;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-              <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-          </div>
-          <div class="me-entry-text">
-            <span class="me-entry-label">Saved Places</span>
-            <span class="me-entry-preview" id="savedPlacesPreview">None saved yet</span>
-          </div>
-          <div class="me-entry-right">
-            <span class="me-entry-count" id="savedPlacesCount"></span>
-            <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-        </button>
+          <button class="me-entry-row" onclick="openMeSubpage('recentlyviewed')" id="entryRecentlyViewed">
+            <div class="me-entry-icon" style="background:#F3F3F1;">
+              <i data-lucide="clock" style="width:20px;height:20px;color:#6B7280;"></i>
+            </div>
+            <div class="me-entry-text">
+              <span class="me-entry-label">Recently Viewed</span>
+              <span class="me-entry-preview" id="recentlyViewedPreview">No walks viewed yet</span>
+            </div>
+            <div class="me-entry-right">
+              <span class="me-entry-count" id="recentlyViewedCount"></span>
+              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
 
-      </div><!-- /me-entries -->
+        </div><!-- /group 1 -->
+
+        <!-- Group 2: Achievements -->
+        <p class="me-section-label">Achievements</p>
+        <div class="me-group-card">
+
+          <button class="me-entry-row" onclick="openMeSubpage('badges')" id="entryBadges">
+            <div class="me-entry-icon" style="background:#FEF3E2;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                <circle cx="12" cy="8" r="6"/>
+                <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+              </svg>
+            </div>
+            <div class="me-entry-text">
+              <span class="me-entry-label">Badges</span>
+              <span class="me-entry-preview" id="badgesPreview">None yet</span>
+            </div>
+            <div class="me-entry-right">
+              <span class="me-entry-count" id="badgesCount"></span>
+              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
+
+        </div><!-- /group 2 -->
+
+        <!-- Group 3: Dog profile -->
+        <p class="me-section-label" id="meProfileSectionLabel">Dog profile</p>
+        <div class="me-group-card">
+
+          <button class="me-entry-row" onclick="openMeSubpage('dog')" id="entryDog">
+            <div class="me-entry-icon" style="background:#EDF2E8;">
+              <i data-lucide="paw-print" style="width:24px;height:24px;color:#2C4A14;" aria-hidden="true"></i>
+            </div>
+            <div class="me-entry-text">
+              <span class="me-entry-label">Your Dog</span>
+              <span class="me-entry-preview" id="dogEntryPreview">Add your dog</span>
+            </div>
+            <div class="me-entry-right">
+              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
+
+          <button class="me-entry-row" onclick="openMeSubpage('savedplaces')" id="entrySavedPlaces">
+            <div class="me-entry-icon" style="background:#EDF2E8;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <div class="me-entry-text">
+              <span class="me-entry-label">Saved Places</span>
+              <span class="me-entry-preview" id="savedPlacesPreview">None saved yet</span>
+            </div>
+            <div class="me-entry-right">
+              <span class="me-entry-count" id="savedPlacesCount"></span>
+              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
+
+        </div><!-- /group 3 -->
+
+      </div><!-- /me-groups -->
 
       <!-- Install prompt card (shown by JS when installable and not dismissed) -->
       <div class="me-install-prompt" id="meInstallPrompt" style="display:none">
@@ -11479,82 +11570,121 @@
     var name = getSavedUsername();
     var dog  = getDog();
 
-    // Dog profile card
-    var cardAvatarEl = document.getElementById('meDogCardAvatar');
-    var cardNameEl   = document.getElementById('meDogCardName');
-    var cardMetaEl   = document.getElementById('meDogCardMeta');
-    if (cardAvatarEl && cardNameEl && cardMetaEl) {
-      if (dog && dog.name) {
-        // Future Phase 3: swap in dog.photoUrl as <img> here
-        cardAvatarEl.innerHTML = luIcon('dog', 28);
-        cardNameEl.textContent = dog.name;
-        var metaParts = [];
-        if (dog.breed) metaParts.push(dog.breed);
-        if (dog.age)   metaParts.push(dog.age + ' year' + (dog.age !== 1 ? 's' : '') + ' old');
-        cardMetaEl.textContent = metaParts.length ? metaParts.join(' \u00b7 ') : 'Edit profile';
-      } else {
-        cardAvatarEl.innerHTML = luIcon('dog', 28);
-        cardNameEl.textContent = 'Add your dog';
-        cardMetaEl.textContent = 'So we can make every walk personal.';
-      }
+    // Build walk lookup
+    var walkById = {};
+    WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
+
+    // Hero card
+    var heroAvatarEl = document.getElementById('meDogCardAvatar');
+    var heroNameEl   = document.getElementById('meDogCardName');
+    var heroBreedEl  = document.getElementById('meDogCardBreed');
+    var heroOwnerEl  = document.getElementById('meDogCardOwner');
+    if (heroAvatarEl) heroAvatarEl.innerHTML = luIcon('dog', 28);
+    if (heroNameEl)  heroNameEl.textContent  = (dog && dog.name) ? dog.name : 'Add your dog';
+    if (heroBreedEl) heroBreedEl.textContent = (dog && dog.breed) ? dog.breed : '';
+    if (heroOwnerEl) heroOwnerEl.textContent = name ? name + '\u2019s dog' : '';
+
+    // Hero stats (all-time)
+    var heroStatDistEl  = document.getElementById('heroStatDist');
+    var heroStatWalksEl = document.getElementById('heroStatWalks');
+    var heroStatWalksLblEl = document.getElementById('heroStatWalksLbl');
+    var totalKm = getTotalDistanceMi() * 1.60934;
+    if (heroStatDistEl)  heroStatDistEl.textContent  = log.length > 0 ? (Math.round(totalKm * 10) / 10).toFixed(1) : '-';
+    if (heroStatWalksEl) heroStatWalksEl.textContent = log.length > 0 ? log.length : '-';
+    if (heroStatWalksLblEl) heroStatWalksLblEl.textContent = log.length === 1 ? 'walk logged' : 'walks logged';
+
+    // Dog prompt (show when no dog set up and not dismissed)
+    var promptEl = document.getElementById('meDogPrompt');
+    if (promptEl) {
+      var dismissed = localStorage.getItem('sniffout_dog_prompt_dismissed') === 'true';
+      promptEl.style.display = (!dog || !dog.name) && !dismissed ? 'flex' : 'none';
     }
 
     // Settings sheet name
     var settingsNameEl = document.getElementById('meSettingsNameValue');
     if (settingsNameEl) settingsNameEl.textContent = name || 'Not set';
 
-    // Stats
-    updateMeStats();
+    // This month card
+    var now = new Date();
+    var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var periodEl = document.getElementById('meMonthPeriod');
+    if (periodEl) periodEl.textContent = monthNames[now.getMonth()] + ' ' + now.getFullYear();
 
-    // Entry rows: previews and counts
-    var walkLog = log;
-    var badges  = getEarnedBadges();
-    var favs    = getFavourites();
-    var savedPlaces = getPlaceFavourites();
+    var thisMonthLog = log.filter(function(e) {
+      var d = new Date(e.date || e.ts);
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    });
+    var monthWalks = thisMonthLog.length;
+    var monthKm = 0;
+    thisMonthLog.forEach(function(e) {
+      if (e.type !== 'custom' && walkById[e.id]) monthKm += (walkById[e.id].distance || 0) * 1.60934;
+    });
+
+    var monthWalksEl = document.getElementById('meMonthWalks');
+    var monthKmEl    = document.getElementById('meMonthKm');
+    var monthPlacesEl = document.getElementById('meMonthPlaces');
+    var monthNoteEl   = document.getElementById('meMonthNoteText');
+    if (monthWalksEl) monthWalksEl.textContent = monthWalks;
+    if (monthKmEl)    monthKmEl.textContent    = monthKm > 0 ? (Math.round(monthKm * 10) / 10).toFixed(1) : '0';
+    if (monthPlacesEl) monthPlacesEl.textContent = getPlaceFavourites().length;
+    if (monthNoteEl) {
+      if (monthWalks === 0) {
+        monthNoteEl.textContent = 'No walks logged this month';
+      } else {
+        var lastThisMonth = thisMonthLog[0];
+        var lname = (lastThisMonth.type === 'custom')
+          ? (lastThisMonth.name || 'Custom walk')
+          : (walkById[lastThisMonth.id] ? walkById[lastThisMonth.id].name : 'Walk');
+        monthNoteEl.textContent = 'Last: ' + lname + ' \u00b7 ' + formatRelativeDate(lastThisMonth.date || lastThisMonth.ts);
+      }
+    }
 
     // Walk Journal row
-    var journalCount   = document.getElementById('journalCount');
-    var journalPreview = document.getElementById('journalPreview');
-    if (journalCount && journalPreview) {
-      if (walkLog.length > 0) {
-        var lastEntry = walkLog[0]; // log is stored most-recent first (unshift)
-        var walkById = {};
-        WALKS_DB.forEach(function(w) { walkById[w.id] = w; });
+    var journalCountEl   = document.getElementById('journalCount');
+    var journalPreviewEl = document.getElementById('journalPreview');
+    if (journalCountEl && journalPreviewEl) {
+      if (log.length > 0) {
+        var lastEntry = log[0];
         var lastName = (lastEntry.type === 'custom')
           ? (lastEntry.name || 'Custom walk')
           : (walkById[lastEntry.id] ? walkById[lastEntry.id].name : (lastEntry.id || 'Walk'));
-        journalCount.textContent = walkLog.length;
-        journalPreview.textContent = lastName + ' \u00b7 ' + formatRelativeDate(lastEntry.date || lastEntry.ts);
+        journalCountEl.textContent   = log.length;
+        journalPreviewEl.textContent = lastName + ' \u00b7 ' + formatRelativeDate(lastEntry.date || lastEntry.ts);
       }
     }
 
-    // Badges row — hidden until first badge earned
-    var entryBadges   = document.getElementById('entryBadges');
-    var badgesCount   = document.getElementById('badgesCount');
-    var badgesPreview = document.getElementById('badgesPreview');
-    if (entryBadges) {
-      if (badges.length > 0) {
-        entryBadges.hidden = false;
-        if (badgesCount) badgesCount.textContent = badges.length;
-        if (badgesPreview) {
-          var latestBadge = badges[badges.length - 1];
-          badgesPreview.textContent = (latestBadge.label || latestBadge.name || '') + ' earned';
-        }
-      } else {
-        entryBadges.hidden = true;
-      }
+    // Walks Explored row
+    var exploredPreviewEl = document.getElementById('exploredPreview');
+    var exploredCnt = getExploredCount();
+    if (exploredPreviewEl) {
+      exploredPreviewEl.textContent = exploredCnt > 0
+        ? exploredCnt + ' of ' + WALKS_DB.length + ' Sniffout walks'
+        : 'None yet';
+    }
+
+    // Badges row — always shown, "None yet" if no badges
+    var badges = getEarnedBadges();
+    var badgesCountEl   = document.getElementById('badgesCount');
+    var badgesPreviewEl = document.getElementById('badgesPreview');
+    if (badges.length > 0) {
+      if (badgesCountEl)   badgesCountEl.textContent   = badges.length;
+      if (badgesPreviewEl) badgesPreviewEl.textContent = (badges[badges.length - 1].label || badges[badges.length - 1].name || '') + ' earned';
+    } else {
+      if (badgesCountEl)   badgesCountEl.textContent   = '';
+      if (badgesPreviewEl) badgesPreviewEl.textContent = 'None yet';
     }
 
     // Saved Walks row
-    var savedWalksCount   = document.getElementById('savedWalksCount');
-    var savedWalksPreview = document.getElementById('savedWalksPreview');
-    if (savedWalksCount && savedWalksPreview) {
+    var favs = getFavourites();
+    var savedWalksCountEl   = document.getElementById('savedWalksCount');
+    var savedWalksPreviewEl = document.getElementById('savedWalksPreview');
+    if (savedWalksCountEl && savedWalksPreviewEl) {
       if (favs.length > 0) {
-        savedWalksCount.textContent = favs.length;
-        savedWalksPreview.textContent = favs.length + ' walk' + (favs.length !== 1 ? 's' : '') + ' saved';
+        savedWalksCountEl.textContent   = favs.length;
+        savedWalksPreviewEl.textContent = favs.length + ' walk' + (favs.length !== 1 ? 's' : '') + ' saved';
       } else {
-        savedWalksCount.textContent = '';
-        savedWalksPreview.textContent = 'None saved yet';
+        savedWalksCountEl.textContent   = '';
+        savedWalksPreviewEl.textContent = 'None saved yet';
       }
     }
 
@@ -11562,33 +11692,34 @@
     renderRecentlyViewedMe();
 
     // Saved Places row
-    var savedPlacesCount   = document.getElementById('savedPlacesCount');
-    var savedPlacesPreview = document.getElementById('savedPlacesPreview');
-    if (savedPlacesCount && savedPlacesPreview) {
+    var savedPlaces = getPlaceFavourites();
+    var savedPlacesCountEl   = document.getElementById('savedPlacesCount');
+    var savedPlacesPreviewEl = document.getElementById('savedPlacesPreview');
+    if (savedPlacesCountEl && savedPlacesPreviewEl) {
       if (savedPlaces.length > 0) {
-        savedPlacesCount.textContent = savedPlaces.length;
-        savedPlacesPreview.textContent = savedPlaces.length + ' place' + (savedPlaces.length !== 1 ? 's' : '') + ' saved';
+        savedPlacesCountEl.textContent   = savedPlaces.length;
+        savedPlacesPreviewEl.textContent = savedPlaces.length + ' place' + (savedPlaces.length !== 1 ? 's' : '') + ' saved';
       } else {
-        savedPlacesCount.textContent = '';
-        savedPlacesPreview.textContent = 'None saved yet';
+        savedPlacesCountEl.textContent   = '';
+        savedPlacesPreviewEl.textContent = 'None saved yet';
       }
     }
 
     // Your Dog entry row preview
-    var dogEntryPreview = document.getElementById('dogEntryPreview');
-    if (dogEntryPreview) {
-      if (dog && dog.name) {
-        dogEntryPreview.textContent = dog.name + (dog.breed ? ' \u00b7 ' + dog.breed : '');
-      } else {
-        dogEntryPreview.textContent = 'Add your dog';
-      }
+    var dogEntryPreviewEl = document.getElementById('dogEntryPreview');
+    if (dogEntryPreviewEl) {
+      dogEntryPreviewEl.textContent = (dog && dog.name)
+        ? dog.name + (dog.breed ? ' \u00b7 ' + dog.breed : '')
+        : 'Add your dog';
     }
 
-    // Dog profile prompt (superseded by me-dog-card - always hidden)
-    var promptEl = document.getElementById('meDogPrompt');
-    if (promptEl) promptEl.style.display = 'none';
+    // Profile section label
+    var profileLabelEl = document.getElementById('meProfileSectionLabel');
+    if (profileLabelEl) {
+      profileLabelEl.textContent = (dog && dog.name) ? dog.name + '\u2019s profile' : 'Dog profile';
+    }
 
-    // Check for newly earned badges (badge logic)
+    // Check for newly earned badges
     checkBadgeEarned();
     renderFavouritesList();
   }
