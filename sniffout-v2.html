@@ -5504,10 +5504,6 @@
         <div class="filter-radio selected" id="walks-sort-distance"></div>
         <span class="filter-sort-label">Distance</span>
       </div>
-      <div class="filter-sort-row" data-sort="rating">
-        <div class="filter-radio" id="walks-sort-rating"></div>
-        <span class="filter-sort-label">Rating</span>
-      </div>
     </div>
 
     <div class="filter-section">
@@ -13355,13 +13351,9 @@
       fetchGreenSpacesForWalks(lat, lon, locationName, function(greenSpaces) {
         // Apply the same sort to green spaces
         var sorted = greenSpaces.slice();
-        if (activeSort === 'rating') {
-          sorted.sort(function(a, b) { return (b.rating || 0) - (a.rating || 0); });
-        } else {
-          sorted.sort(function(a, b) {
-            return haversineKm(lat, lon, a.lat, a.lon) - haversineKm(lat, lon, b.lat, b.lon);
-          });
-        }
+        sorted.sort(function(a, b) {
+          return haversineKm(lat, lon, a.lat, a.lon) - haversineKm(lat, lon, b.lat, b.lon);
+        });
         var gsList = document.getElementById('gs-list');
         var gsEl   = document.getElementById('gs-section');
         if (!gsList) return;
@@ -15752,9 +15744,7 @@
     if (activeOffLead !== 'any')    result = result.filter(function(w) { return w.offLead === activeOffLead; });
     if (activeDifficulty !== 'any') result = result.filter(function(w) { return w.difficulty === activeDifficulty; });
 
-    if (activeSort === 'rating') {
-      result.sort(function(a, b) { return b.rating - a.rating; });
-    } else if (lat && lon) {
+    if (lat && lon) {
       result.sort(function(a, b) {
         return haversineKm(lat, lon, a.lat, a.lon) - haversineKm(lat, lon, b.lat, b.lon);
       });
