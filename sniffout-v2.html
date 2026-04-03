@@ -7431,6 +7431,8 @@
     for (var i = 0; i < hourlyData.length; i++) {
       scores.push({ hour: hourlyData[i].hour, score: getWalkQualityScore(hourlyData[i]) });
     }
+    var allGood = scores.every(function(s) { return s.score >= 60; });
+    if (allGood) return { allDay: true };
     function findBestRun(threshold) {
       var bestStart = -1, bestLen = 0, curStart = -1, curLen = 0;
       for (var i = 0; i < scores.length; i++) {
@@ -7531,7 +7533,9 @@
     if (!hourlyItems.length) return '';
     var bestWindow = getBestWalkWindow(hourlyItems);
     var pillText, pillStyle = '';
-    if (bestWindow) {
+    if (bestWindow && bestWindow.allDay) {
+      pillText = showTomorrow ? 'Tomorrow - all day' : 'All day';
+    } else if (bestWindow) {
       var prefix = showTomorrow ? 'Tomorrow ' : '';
       if (bestWindow.start === bestWindow.end) {
         pillText = prefix + formatBarHour(bestWindow.start);
