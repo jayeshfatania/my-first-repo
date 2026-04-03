@@ -32,7 +32,7 @@ Closest competitor is PlayDogs (France/Switzerland, 170k downloads), but it reli
 
 Mobile-first, uncluttered, modern and slick. **v2 uses a clean card-based design — glassmorphism has been removed.** Key decisions locked:
 - Brand colour: `#2C4A14` (Woodland green)
-- Background: `#F7F5F0` (warm off-white)
+- Background: `#F4EFE6` (warm linen)
 - Typography: Plus Jakarta Sans 400/500/600/700/800 only
 - Cards: `border-radius: 16px`, `1px solid var(--border)`, no blur or translucent surfaces
 - Dark mode: `body.night` class, toggled manually via Settings ("Auto" option). Not automatic based on weather.
@@ -104,6 +104,21 @@ The companion website is a Hugo static site in a separate repo: github.com/jayes
 - Fully redesigned — CSS classes use ga- prefix throughout
 - Spec at docs/design/guide-article-spec-march-30.md
 - Frontmatter supports: pullQuote (rendered as styled pull quote), heroImage, relatedWalks
+
+### Area pages
+- 7 area pages live: Surrey, London, New Forest, Yorkshire, Sussex, Lake District, Dartmoor
+- Files at content/areas/ (flat structure: e.g. content/areas/surrey.md, not subdirectories)
+- Area pills: horizontal scroll on mobile
+- Intros written by Saoirse persona (50-80 words each)
+
+### Walk pages
+- 14 walk pages live with FAQ blocks and schema.org FAQ markup
+- FAQ blocks improve rich result eligibility in Google search
+
+### SEO research
+- Content gap analysis at docs/research/seo-content-gap-analysis-april-2.md
+- 90-day content calendar in that file
+- Top priorities: breed guides, temperature guide, area index pages
 
 ### Developer push verification (mandatory)
 Every Developer brief for sniffout-website must end with:
@@ -278,7 +293,9 @@ Dark mode is toggled manually by the user via Settings. "Auto" option uses `pref
 
 ### Key Function Groups (v2)
 
-- **Weather**: `fetchWeather(lat, lon)`, `renderWeather(data)` — hazard detection for rain/heat/wind/UV; hourly forecast bar on Weather tab
+- **Weather**: `fetchWeather(lat, lon)`, `renderWeather(data)` — hazard detection for rain/heat/wind/UV; hourly forecast bar on Weather tab. Includes smart walk window bar chart with evidence-based per-hour scoring. Five reason icons: rain, heat, wind, cold, storm. Info disclaimer pill on Weather tab. "All day" pill when all bars are green.
+- **Smart weather scoring**: `scoreHour(hour, dogProfile)` — per-hour quality score using evidence-based thresholds. Heat threshold 22C (product decision), 28C = POOR. Rain scored as amount x probability. Humidity multipliers 1.3x (70-79%) and 1.6x (80%+). Scoring spec: docs/smart-weather-scoring-spec.md. Fact check: ~/Desktop/sniffout-website/docs/reviews/scoring-thresholds-fact-check-april-2.md.
+- **Breed sensitivity engine**: `BREED_SENSITIVITY` constant, `getBreedGroup()`, `getActiveDogProfile()`, `getDogWeatherNotes()`, `getConditionalAlerts()` — drives breed-specific notes on Weather tab condition tiles.
 - **Walk verdict**: `getWalkVerdict(weatherData)` — shared pure function returning approved verdict strings; used by Today and Weather tabs
 - **Walks**: `renderWalks()` — filtering by offLead/livestock/terrain/distance, map view, favourites
 - **Walk log**: `getWalkLog()`, `saveWalkLog(entry)` — manages `sniffout_walk_log`. Handles both `"curated"` and `"custom"` entry types.
@@ -290,6 +307,52 @@ Dark mode is toggled manually by the user via Settings. "Auto" option uses `pref
 - **Silent refresh**: `silentWeatherRefresh()` — triggers on `visibilitychange` event and on tab switch; re-fetches weather if data is older than 5 minutes. Does not block UI. Runs silently in background.
 - **Firebase helpers**: `fsWriteWalkLogEntry(entry)`, `fsUpdateWalkNote(entryId, note)`, `fsWriteSavedWalk(walkId)`, `fsWriteUserProfile(profileData)` — write-only helpers for Firestore dual-write. All are fire-and-forget; failures are silent and do not affect UI. localStorage remains source of truth.
 - **Geocoding**: `geocodePostcode(pc)` — postcodes.io lookup
+
+### Smart Weather Scoring - Key Decisions (LOCKED)
+
+These decisions are locked and must not be changed without explicit PO sign-off.
+
+| Decision | Value | Notes |
+|----------|-------|-------|
+| Heat threshold | 22C | Product decision - higher than some generic guidance (20C). Verified against canine research. |
+| POOR verdict threshold | 28C | |
+| Rain scoring method | Amount x probability | Not raw precipitation amount |
+| Humidity multiplier (70-79%) | 1.3x | Estimate - note in methodology |
+| Humidity multiplier (80%+) | 1.6x | Estimate - note in methodology |
+| Info disclaimer | Required | Must appear on all scoring displays |
+| "All day" pill | Required | Renders when all hourly bars are green |
+
+Scoring spec (full): docs/smart-weather-scoring-spec.md
+Scoring fact check: ~/Desktop/sniffout-website/docs/reviews/scoring-thresholds-fact-check-april-2.md
+
+A website methodology page citing the scoring sources is required before go-live. This is a liability protection measure - do not launch without it.
+
+### Backlog and Pending Items
+
+These items are not yet implemented. Do not start any of these without an explicit PO brief.
+
+**Pre-launch blockers:**
+- Fake walk card ratings removal - ratings are not real, must be removed before go-live
+- Open/closed venue status goes stale after 24h cache - needs recalculation from schedule
+- Website methodology page (scoring sources) - required before go-live
+
+**PWA backlog:**
+- Push notifications spec
+- B2 beforeunload handler - deferred, manual test on Android needed
+- OS Maps Leisure tiles not activating
+- Firebase Phase 3 migration - authenticated accounts, server-side walk log, full Firestore
+
+**Website backlog:**
+- Website weather preview card on walk pages (contextual walk-level forecast)
+- Breed walking guides: French Bulldog, Cockapoo, Labrador (SEO priority)
+- "How far should I walk my dog" guide (5,000-10,000 monthly searches)
+- "Is it too hot to walk my dog" temperature guide - mid-May deadline for summer peak
+- Walk route maps (Phase 2)
+- Community features scoping - Researcher round needed before any spec work
+- Ailsa walk descriptions for all live walk pages
+
+**Content in pipeline:**
+- Senior dog walking article - Fact Checker review pending, then commit
 
 ### Em Dash Rule
 
