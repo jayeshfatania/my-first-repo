@@ -1299,6 +1299,7 @@
     .ww-bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; }
     .ww-bar { width: 100%; border-radius: 4px 4px 2px 2px; min-height: 4px; }
     .ww-bar[data-quality="great"] { background: #2C4A14; }
+    .ww-bar[data-quality="great-warm"] { background: #5A8A2E; }
     .ww-bar[data-quality="good"]  { background: #7CB342; }
     .ww-bar[data-quality="fair"]  { background: #E6B44C; }
     .ww-bar[data-quality="poor"]  { background: #DDD8CE; }
@@ -7548,8 +7549,10 @@
       var item = hourlyItems[idx];
       var score = getWalkQualityScore(item);
       var barH = Math.max(4, Math.round(score * 0.72));
-      var quality = score >= 80 ? 'great' : score >= 60 ? 'good' : score >= 40 ? 'fair' : score >= 20 ? 'poor' : 'danger';
-      var reason = quality !== 'great' ? getDominantReason(item) : null;
+      var quality = score >= 80
+        ? (item.apparentTemp >= 20 && item.apparentTemp < 22 ? 'great-warm' : 'great')
+        : score >= 60 ? 'good' : score >= 40 ? 'fair' : score >= 20 ? 'poor' : 'danger';
+      var reason = (quality !== 'great' && quality !== 'great-warm') ? getDominantReason(item) : null;
       var iconHtml = reason && REASON_ICONS[reason] ? REASON_ICONS[reason] : '';
       barsHtml +=
         '<div class="ww-bar-col">' +
