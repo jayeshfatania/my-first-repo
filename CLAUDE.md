@@ -28,6 +28,20 @@ The community features (user-submitted walks, ratings, reviews) are planned but 
 
 Closest competitor is PlayDogs (France/Switzerland, 170k downloads), but it relies on community-generated content so is empty in new regions. Sniffout differentiates with curated content from day one plus live weather integration. No UK competitor combines walk discovery + live weather + dog-specific hazard context in a single no-login product.
 
+## Monetisation Strategy
+
+Researched and validated April 2026. Full research: ~/Desktop/sniffout-website/docs/research/monetisation-research-april-4.md. Summary: ~/Desktop/sniffout-website/docs/monetisation-strategy.md
+
+**Phase 1 - Affiliates (start now, pre-launch):** Join AWIN (Everypaw pet insurance CPA £20/policy, Zooplus, Purina Direct, Tailster). Join Amazon Associates UK (approximately 8% pet category - verify in Associates Central). Join Webgains (Rover UK - 15% per sale). Contact Booking.com affiliate for walk page accommodation links. Pet insurance CPAs £20-40/sale - highest-value category. Target 2,000-3,000 monthly visitors to monetised guides for self-sufficiency. New opportunity: dog-friendly accommodation affiliates on walk pages (Booking.com 3.75-6% per booking, Canopy and Stars, Cool Camping).
+
+**Phase 2 - Sniffout+ subscription (12-18 months post-launch):** £29.99/year or £3.99/month. Launch trigger: 5,000+ MAU with retention. Never paywall existing free features (Komoot backlash lesson - disproportionate and persistent reputation damage). Gate only new features: offline maps, 7-day detailed weather scoring, cross-device sync.
+
+**Phase 3 - Sponsored venue listings (18-24 months post-launch):** £59 + VAT per year per Featured listing. Self-serve model only. Validated by DogFriendly.co.uk (£54.95 Featured, confirmed). Launch only after venues see demonstrable traffic from Nearby tab.
+
+**Hard affiliate rules (locked):** Zero affiliate links on Alabama rot, blue-green algae, cattle, antifreeze articles. Walk pages: maximum 1 contextual link. No links on homepage or install page.
+
+**Infrastructure warning:** Google Maps Platform is primary scaling cost risk. At 50,000 MAU could be £200-600/month for interactive map loads. Mitigation: static map images on walk overview pages; load interactive map on navigate/start walk only.
+
 ## Design Principles
 
 Mobile-first, uncluttered, modern and slick. **v2 uses a clean card-based design — glassmorphism has been removed.** Key decisions locked:
@@ -261,6 +275,13 @@ Do not add WALKS_DB schema fields without PO sign-off.
 
 **Phase 3 additions (not yet implemented):** Open-Meteo `uv_index` parameter; Open-Meteo `european_aqi` endpoint for pollen; full authenticated Firebase migration.
 
+### Infrastructure and Monitoring
+
+- **Circuit breaker (Cloudflare Worker):** Live at places-proxy.sniffout.app. 500 requests/hour threshold, KV-backed rate limiting, email alert to hello@sniffout.app on trigger, auto-reset after 60 minutes. Admin endpoints: /admin/stats (view usage) and /admin/reset?key=SNIFFOUT_ADMIN_2026 (manual reset).
+- **GA4 tracking:** Live on app and website. Measurement ID: G-B1GQG1KWD3. Custom events: tab_view, walk_card_tap, walk_detail_open, weather_check, nearby_search, app_install_prompt, app_installed. Beta source tracking via ?src= URL parameter.
+- **Email routing:** hello@sniffout.app forwards to personal email via Cloudflare Email Routing.
+- **Google Maps cost risk:** Primary scaling cost. At 50,000 MAU, interactive map loads could be £200-600/month. Mitigation: static map images on overview pages; interactive map only on navigate/start walk view.
+
 ### CSS
 
 All inline. Light mode token set:
@@ -331,10 +352,18 @@ A website methodology page citing the scoring sources is required before go-live
 
 These items are not yet implemented. Do not start any of these without an explicit PO brief.
 
-**Pre-launch blockers:**
-- Fake walk card ratings removal - ratings are not real, must be removed before go-live
-- Open/closed venue status goes stale after 24h cache - needs recalculation from schedule
-- Website methodology page (scoring sources) - required before go-live
+**Pre-launch blockers (remaining):**
+- L5: T&C consent screen - needs solicitor first
+- T12: Pen test - not started
+- T16: Full end-to-end test pass - not started
+- T17: Firebase security review - not started
+
+**Resolved pre-launch blockers:**
+- Fake walk card ratings: removed (pre-launch blocker resolved)
+- Open/closed venue status: fixed via isVenueOpenNow() at line 14250 - recalculates from schedule data at render time, openNow field discarded at parse time
+- Website methodology page: live at /methodology/
+- Lighter green #5A8A2E treatment for 20-22C awareness range: shipped
+- Reason icons replaced with simpler bolder versions: shipped
 
 **PWA backlog:**
 - Push notifications spec
@@ -344,15 +373,17 @@ These items are not yet implemented. Do not start any of these without an explic
 
 **Website backlog:**
 - Website weather preview card on walk pages (contextual walk-level forecast)
-- Breed walking guides: French Bulldog, Cockapoo, Labrador (SEO priority)
+- Labrador walking guide (SEO priority)
+- "Is it too hot to walk my dog" temperature guide - mid-May deadline, research complete
 - "How far should I walk my dog" guide (5,000-10,000 monthly searches)
-- "Is it too hot to walk my dog" temperature guide - mid-May deadline for summer peak
 - Walk route maps (Phase 2)
 - Community features scoping - Researcher round needed before any spec work
-- Ailsa walk descriptions for all live walk pages
 
-**Content in pipeline:**
-- Senior dog walking article - Fact Checker review pending, then commit
+**Content complete (April 2026):**
+- Senior dog walking article: fact-checked PASS, committed and live
+- French Bulldog walking guide: fact-checked PASS, live
+- Cockapoo walking guide: fact-checked PASS with one correction applied, live
+- Ailsa walk descriptions for all 14 live walk pages: complete at docs/copy/ailsa-walk-descriptions-april-3.md (pending Developer commit to walk pages)
 
 ### Em Dash Rule
 
