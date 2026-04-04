@@ -4878,6 +4878,28 @@
     body.night .detail-tag--warning     { color: var(--amber); background: rgba(217,119,6,0.08); border-color: rgba(217,119,6,0.18); }
     body.night .detail-tag--neutral     { color: var(--ink-2); background: var(--bg); border-color: var(--border); }
   </style>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B1GQG1KWD3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-B1GQG1KWD3');
+  // Beta source tracking
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    var src = params.get('src');
+    if (src) {
+      gtag('set', 'user_properties', { 'traffic_source': src });
+      try { sessionStorage.setItem('sniffout_src', src); } catch(e) {}
+    } else {
+      try {
+        var stored = sessionStorage.getItem('sniffout_src');
+        if (stored) { gtag('set', 'user_properties', { 'traffic_source': stored }); }
+      } catch(e) {}
+    }
+  })();
+</script>
 </head>
 <body>
 
@@ -6071,6 +6093,7 @@
 
     currentTab = id;
     try { localStorage.setItem(ACTIVE_TAB_KEY, id); } catch(e) {}
+    if (typeof gtag === 'function') { gtag('event', 'tab_view', { 'tab_name': id }); }
 
     // Hide picks anchor pill and disconnect observer when leaving Walks tab
     var anchorBtn = document.getElementById('picks-anchor-btn');
@@ -6477,6 +6500,7 @@
         saveSession(lat, lon, locationName, data);
         renderWeather(data, locationName);
         showStateB(locationName);
+        if (typeof gtag === 'function') { gtag('event', 'weather_check'); }
         if (typeof renderWalksNearby === 'function') renderWalksNearby(lat, lon);
         // Pollen (FIX 14.8) — fetch and render after weather
         fetchPollen(lat, lon).then(function(pollenData) {
@@ -8844,6 +8868,10 @@
     if (!walk) return;
     _wishlistPromptDismissed = false;
     currentDetailWalkId = id;
+    if (typeof gtag === 'function') {
+      gtag('event', 'walk_card_tap', { 'walk_name': walk.name });
+      gtag('event', 'walk_detail_open', { 'walk_name': walk.name });
+    }
     populateWalkDetail(walk);
     history.pushState(null, '', location.href);
     var overlay = document.getElementById('walk-detail-overlay');
@@ -11930,6 +11958,7 @@
     e.preventDefault();
     deferredPrompt = e;
     updateInstallPromptVisibility();
+    if (typeof gtag === 'function') { gtag('event', 'app_install_prompt'); }
   });
 
   window.addEventListener('appinstalled', function() {
@@ -11937,6 +11966,7 @@
     try { localStorage.setItem('sniffout_hide_install_prompt', 'true'); } catch(e) {}
     var el = document.getElementById('meInstallPrompt');
     if (el) el.style.display = 'none';
+    if (typeof gtag === 'function') { gtag('event', 'app_installed'); }
   });
 
   /* ─── Dog setup card functions ─── */
@@ -14361,6 +14391,7 @@
     } else {
       isFetching = true;
       setTimeout(function() { isFetching = false; }, 500);
+      if (typeof gtag === 'function') { gtag('event', 'nearby_search', { 'category': cat }); }
       if (venuesEl) venuesEl.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding ' + ((CATEGORIES.find(function(c){return c.id===cat;})||{}).label||'places').toLowerCase() + ' near you...</div></div>';
       if (countEl) countEl.textContent = 'Loading...';
       fetchNearbyPlaces(cat, nearbyUserLat, nearbyUserLon, nearbyLocationName, function(venues) {
