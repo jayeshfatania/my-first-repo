@@ -71,10 +71,12 @@ export default {
       });
     }
 
-    // --- EXISTING REFERER CHECK (unchanged) ---
-    const referer = request.headers.get('Referer') || '';
-    if (!referer.startsWith('https://sniffout.app')) {
-      return new Response('Forbidden', { status: 403 });
+    // --- REFERER CHECK (skipped for /admin/ routes) ---
+    if (!url.pathname.startsWith('/admin/')) {
+      const referer = request.headers.get('Referer') || '';
+      if (!referer.startsWith('https://sniffout.app')) {
+        return new Response('Forbidden', { status: 403 });
+      }
     }
 
     // Handle CORS preflight
