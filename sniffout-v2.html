@@ -4822,6 +4822,19 @@
       height: 32px;
       flex-shrink: 0;
     }
+    .walk-notice { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; }
+    .walk-notice--warning { background: #FFF3E0; border: 1px solid #FFB74D; }
+    .walk-notice--danger { background: #FFEBEE; border: 1px solid #EF5350; }
+    .walk-notice--info { background: #E8F5E9; border: 1px solid #66BB6A; }
+    .walk-notice-content { flex: 1; }
+    .walk-notice-title { font-size: 13px; font-weight: 600; color: #1C1A16; margin-bottom: 2px; }
+    .walk-notice-text { font-size: 12px; color: #555; line-height: 1.4; }
+    .walk-notice-dismiss { background: none; border: none; font-size: 16px; color: #999; cursor: pointer; padding: 0 4px; flex-shrink: 0; line-height: 1; }
+    body.night .walk-notice--warning { background: #3A2800; border-color: #C07820; }
+    body.night .walk-notice--danger { background: #3A0000; border-color: #C04040; }
+    body.night .walk-notice--info { background: #0A2A10; border-color: #3A8A46; }
+    body.night .walk-notice-title { color: var(--ink); }
+    body.night .walk-notice-text { color: var(--ink-2); }
     .walk-detail-close-btn {
       display: block;
       width: calc(100% - 32px);
@@ -5775,6 +5788,7 @@
       </div>
     </div>
     <div class="walk-detail-tags-section" id="walk-detail-tags-section"></div>
+    <div id="walk-notices-container" style="padding: 0 16px;"></div>
     <div class="walk-detail-desc" id="walk-detail-desc"></div>
     <div class="walk-detail-conditions">
       <div class="walk-detail-conditions-heading">Current conditions</div>
@@ -9360,6 +9374,7 @@
     syncIcons();
 
     renderDetailTags(walk);
+    renderWalkNotices(walk);
 
     var descEl = document.getElementById('walk-detail-desc');
     if (descEl) descEl.textContent = walk.description;
@@ -9505,6 +9520,108 @@
     }
 
     syncIcons();
+  }
+
+  function getWalkNotices(walk) {
+    var notices = [];
+    var month = new Date().getMonth();
+    var hazards = walk.hazards || [];
+
+    if (hazards.indexOf('deer') > -1 && month >= 8 && month <= 10) {
+      notices.push({
+        type: 'warning',
+        title: 'Deer rutting season',
+        text: 'Deer are rutting at this location. Keep dogs on leads and maintain distance.'
+      });
+    }
+
+    if (hazards.indexOf('deer') > -1 && month >= 4 && month <= 6) {
+      notices.push({
+        type: 'warning',
+        title: 'Deer birthing season',
+        text: 'Female deer with young are present. Keep dogs on leads. Do not approach fawns.'
+      });
+    }
+
+    if (hazards.indexOf('adders') > -1 && month >= 2 && month <= 9) {
+      notices.push({
+        type: 'info',
+        title: 'Adder season',
+        text: 'Adders are active at this location. Keep dogs on paths and away from long grass and bracken.'
+      });
+    }
+
+    if (hazards.indexOf('ground-nesting-birds') > -1 && month >= 2 && month <= 6) {
+      notices.push({
+        type: 'warning',
+        title: 'Ground-nesting bird season',
+        text: 'Dogs must be on leads to protect ground-nesting birds. Required on open access land 1 March to 31 July.'
+      });
+    }
+
+    if (hazards.indexOf('algae') > -1 && month >= 6 && month <= 8) {
+      notices.push({
+        type: 'danger',
+        title: 'Blue-green algae risk',
+        text: 'Blue-green algae may be present in water at this location. Do not let your dog drink from or swim in affected water.'
+      });
+    }
+
+    if (hazards.indexOf('flooding') > -1 && (month >= 9 || month <= 2)) {
+      notices.push({
+        type: 'info',
+        title: 'Flood risk',
+        text: 'Parts of this route may flood after heavy rain. Check conditions before setting out.'
+      });
+    }
+
+    if (hazards.indexOf('livestock') > -1) {
+      notices.push({
+        type: 'info',
+        title: 'Livestock on route',
+        text: 'Livestock may be present. Keep dogs on leads near animals. If cattle approach, release the lead and move away.'
+      });
+    }
+
+    if (hazards.indexOf('cliff') > -1) {
+      notices.push({
+        type: 'warning',
+        title: 'Cliff edges',
+        text: 'This route has unprotected cliff edges. Keep dogs on leads near drop-offs.'
+      });
+    }
+
+    if (hazards.indexOf('mountain-bikers') > -1) {
+      notices.push({
+        type: 'info',
+        title: 'Mountain bikers',
+        text: 'Paths are shared with mountain bikers who may appear at speed. Keep dogs in sight on narrow tracks.'
+      });
+    }
+
+    return notices;
+  }
+
+  function renderWalkNotices(walk) {
+    var container = document.getElementById('walk-notices-container');
+    if (!container) return;
+    var notices = getWalkNotices(walk);
+    if (!notices.length) {
+      container.innerHTML = '';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < notices.length; i++) {
+      var n = notices[i];
+      html += '<div class="walk-notice walk-notice--' + n.type + '">' +
+        '<div class="walk-notice-content">' +
+          '<div class="walk-notice-title">' + escHtml(n.title) + '</div>' +
+          '<div class="walk-notice-text">' + escHtml(n.text) + '</div>' +
+        '</div>' +
+        '<button class="walk-notice-dismiss" onclick="this.parentElement.style.display=\'none\'" aria-label="Dismiss">\u00d7</button>' +
+      '</div>';
+    }
+    container.innerHTML = html;
   }
 
   function renderDetailTags(walk) {
@@ -9817,7 +9934,8 @@
       description: 'The climb up from the Burford Bridge car park is perfectly manageable even for older dogs, and the wide chalk grassland at the top opens out beautifully once you\'re past the steeper section. Biscuit and Marmalade go absolutely wild up here -- there\'s so much space and the views across the Weald on a clear day are well worth every step of the ascent. Do bear in mind the path near the viewpoint can get busy at weekends, particularly in summer. The National Trust café at the top is dog-friendly and does decent cake, which is always a bonus.',
       distance: 3.2, duration: 90, difficulty: 'moderate', terrain: 'mixed', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: true, hasParking: true,
-      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/box-hill.jpg', badge: 'Popular', rating: 4.7, reviewCount: 312, source: 'curated'
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/box-hill.jpg', badge: 'Popular', rating: 4.7, reviewCount: 312, source: 'curated',
+      hazards: ['livestock', 'ticks']
     },
     {
       id: 'richmond-park',
@@ -9827,7 +9945,8 @@
       description: 'Honestly one of those walks that actually delivers on the hype -- 2,500 acres inside London is genuinely hard to argue with. The deer are everywhere and you do have to clip on when you\'re near the herds, but there\'s enough open grassland between the wood plantations that Ghost can still get a proper run. Gets very busy on sunny weekends near the Pen Ponds, so either go early or push further south toward Spankers Hill Wood where it thins out. Parking\'s straightforward off the A316 gate.',
       distance: 4.5, duration: 100, difficulty: 'easy', terrain: 'mixed', environment: 'urban',
       offLead: 'partial', enclosed: true, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/richmond-park.jpg', badge: 'Popular', rating: 4.6, reviewCount: 528, source: 'curated'
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/richmond-park.jpg', badge: 'Popular', rating: 4.6, reviewCount: 528, source: 'curated',
+      hazards: ['deer', 'ticks']
     },
     {
       id: 'isabella-plantation',
@@ -9850,7 +9969,8 @@
       badge: 'Hidden gem',
       rating: 0,
       reviewCount: 0,
-      source: 'curated'
+      source: 'curated',
+      hazards: ['deer', 'ticks']
     },
     {
       id: 'leith-hill',
@@ -9860,7 +9980,8 @@
       description: 'The summit and woodland below it are split between two different access regimes - access land from the tower south, and well-maintained National Trust permissive paths for the estate below, with no ambiguity about where you\'re permitted to walk. The Gothic tower is the highest point in south-east England and the views to the Channel on a clear day are genuinely exceptional. Underfoot conditions on the descent toward Coldharbour can become waterlogged after prolonged rain; the clay here holds moisture well into spring. Scratchy has the full run of it in the off-season -- no livestock, no shooting season complications on this land.',
       distance: 4.1, duration: 110, difficulty: 'moderate', terrain: 'muddy', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/leith-hill.jpg', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 187, source: 'curated'
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/leith-hill.jpg', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 187, source: 'curated',
+      hazards: ['adders', 'ticks']
     },
     {
       id: 'frensham-common',
@@ -9870,7 +9991,8 @@
       description: 'We stumbled on this one and honestly it felt like a proper discovery - a sandy beach on a heathland lake in Surrey is not something you expect to find. Pretzel loved paddling along the shallows near the Great Pond and the path around the edge of the heath is well surfaced and easy underfoot which is ideal for smaller dogs. Do keep leads on near the roped-off nesting areas in spring, the signage is clear so its easy to navigate around them. There\'s a small NT car park and the whole thing makes for a really lovely half-day out - deffo one for the list.',
       distance: 2.8, duration: 65, difficulty: 'easy', terrain: 'mixed', environment: 'heathland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/frensham-great-pond.jpg', badge: 'Hidden gem', rating: 4.5, reviewCount: 143, source: 'curated'
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/frensham-great-pond.jpg', badge: 'Hidden gem', rating: 4.5, reviewCount: 143, source: 'curated',
+      hazards: ['adders', 'ticks', 'algae']
     },
     {
       id: 'hindhead-common',
@@ -9880,7 +10002,8 @@
       description: 'A braw bit of heathland walking - the Devil\'s Punch Bowl is one of those landscapes that surprises you when you see it for the first time, a proper natural amphitheatre carved into the Surrey hills. The rim path around the top gives you good views and Midge can be off-lead the entire way round with no livestock complications. Underfoot it\'s dry and firm on the upper paths but can get soft in the lower bowl after wet weather. Worth going on a weekday if you can - busy at weekends, especially in summer.',
       distance: 3.6, duration: 85, difficulty: 'easy', terrain: 'mixed', environment: 'heathland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/hindhead-common.png', badge: undefined, rating: 4.6, reviewCount: 209, source: 'curated'
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/hindhead-common.png', badge: undefined, rating: 4.6, reviewCount: 209, source: 'curated',
+      hazards: ['adders', 'ticks', 'ground-nesting-birds']
     },
     {
       id: 'seven-sisters',
@@ -9890,7 +10013,8 @@
       description: 'You\'ll need a clear day for this one - the views from the cliff tops across the Channel are grand when the light\'s right, but the exposure on the top path makes it miserable in wind and rain. The chalk grassland along the cliff edge is impressive, though mind you keep dogs back from the edge itself. The valley behind Cuckmere Haven opens up nicely and that\'s where Midge gets her best off-lead run. Livestock present in the lower fields so leads on through those sections. There\'s a good NT café at Birling Gap about halfway round.',
       distance: 6.2, duration: 165, difficulty: 'moderate', terrain: 'mixed', environment: 'coastal',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/seven-sisters.jpg', badge: 'Popular', rating: 4.9, reviewCount: 441, source: 'curated'
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/seven-sisters.jpg', badge: 'Popular', rating: 4.9, reviewCount: 441, source: 'curated',
+      hazards: ['livestock', 'cliff']
     },
     {
       id: 'devils-dyke',
@@ -9900,7 +10024,8 @@
       description: 'The view from the top is properly good -- you can see half of Sussex on a clear day and it doesn\'t feel like you\'ve earned it because the car park basically drops you on the ridge. That\'s fine. Ghost loves the wide open grassland up here and there\'s decent off-lead running when the sheep aren\'t about, which varies by season. Gets absolutely rammed on summer weekends - go in autumn or winter when it\'s windswept and atmospheric and half the people have stayed home. The pub at the top is average but it\'s there.',
       distance: 4.0, duration: 95, difficulty: 'moderate', terrain: 'paved', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: undefined, rating: 4.5, reviewCount: 276, source: 'curated'
+      imageUrl: '', badge: undefined, rating: 4.5, reviewCount: 276, source: 'curated',
+      hazards: ['livestock', 'ticks']
     },
     {
       id: 'ashridge-estate',
@@ -9912,7 +10037,8 @@
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       wetNote: 'Beech roots slippery when wet. Ground holds water longer than expected.',
       hotNote: 'Ancient beech canopy provides excellent shade. Bring water for longer loops.',
-      imageUrl: '', badge: 'Hidden gem', rating: 4.7, reviewCount: 163, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.7, reviewCount: 163, source: 'curated',
+      hazards: ['deer', 'ticks', 'livestock']
     },
     {
       id: 'hampstead-heath',
@@ -9922,7 +10048,8 @@
       description: 'Parliament Hill on a winter morning when the mist is sitting over the city is genuinely one of the best things about living near London - there\'s nothing else quite like it. Ghost can be off-lead the whole way and there\'s enough variety between the meadows, the woodland around Kenwood, and the ponds section to keep it interesting every time. It gets crowded near the ponds on summer afternoons, obviously, but push east toward the Vale of Health and you\'ll find quieter ground. No car park - come by tube or bus, it\'s easy enough.',
       distance: 3.8, duration: 90, difficulty: 'easy', terrain: 'mixed', environment: 'urban',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: false,
-      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/hampstead-heath.jpg', badge: 'Popular', rating: 4.8, reviewCount: 619, source: 'curated'
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/hampstead-heath.jpg', badge: 'Popular', rating: 4.8, reviewCount: 619, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'wimbledon-common',
@@ -9932,7 +10059,8 @@
       description: 'A proper midweek reset - Pretzel gets a full run on the heather and we\'re back in under an hour if we do the windmill loop. The Common is huge so its easy to find quieter corners even when the main paths near Windmill Road are busy with cyclists. Well surfaced in most places which helps for little legs, and there\'s a café by the windmill that does dog biscuits at the counter. Parking off Windmill Road is easy and free in the mornings.',
       distance: 3.0, duration: 70, difficulty: 'easy', terrain: 'mixed', environment: 'urban',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/wimbledon-common.jpg', badge: undefined, rating: 4.5, reviewCount: 384, source: 'curated'
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/wimbledon-common.jpg', badge: undefined, rating: 4.5, reviewCount: 384, source: 'curated',
+      hazards: ['ticks', 'ground-nesting-birds']
     },
     {
       id: 'newlands-corner',
@@ -9942,7 +10070,8 @@
       description: 'Several well-waymarked rights of way head south from here across Albury Downs and toward the Silent Pool - public footpaths and bridleways, not merely permissive access. The chalk grassland above the North Downs scarp is excellent open walking and the views across the Tillingbourne Valley are as good as anything in Surrey. Stiles are present on some of the field paths toward Albury; manageable but worth knowing about. Dont attempt the lower paths through the valley floor after heavy rain as the going becomes heavy underfoot near the water meadows.',
       distance: 3.5, duration: 80, difficulty: 'moderate', terrain: 'mixed', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: undefined, rating: 4.4, reviewCount: 118, source: 'curated'
+      imageUrl: '', badge: undefined, rating: 4.4, reviewCount: 118, source: 'curated',
+      hazards: []
     },
     {
       id: 'ranmore-common',
@@ -9952,7 +10081,8 @@
       description: 'A really satisfying woodland ridge walk that feels far more remote than it has any right to given how close it is to Dorking. The path along Ranmore Common runs above the Mole Valley with glimpses of the Denbies vineyard slopes below, and the trails are well maintained by the National Trust for much of the route. The terrain is muddy through winter - good boots are essential, and I wouldn\'t bring an older dog in January without expecting them to get thoroughly mucky. Full off-lead access throughout is a genuine bonus for those of us with dogs that need space to roam.',
       distance: 4.8, duration: 115, difficulty: 'moderate', terrain: 'muddy', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'New', rating: 4.3, reviewCount: 42, source: 'curated'
+      imageUrl: '', badge: 'New', rating: 4.3, reviewCount: 42, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'haytor-dartmoor',
@@ -9962,7 +10092,8 @@
       description: 'Open moorland walking at its best - Haytor and Hound Tor on the same circuit gives you two dramatic granite outcrops and proper Dartmoor atmosphere. The weather changes fast up here, so your best bet is to check the forecast and not start if it\'s coming in from the west. Midge can be off-lead for the full route on the open moor; watch for ponies and sheep in the lower ground though, both are present. The granite tramway between the tors is an interesting bit of history underfoot if you know to look for it. Worth every step on a clear day.',
       distance: 5.5, duration: 140, difficulty: 'hard', terrain: 'rocky', environment: 'moorland',
       offLead: 'full', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/haytor-dartmoor.jpg', badge: 'Sniffout Pick', rating: 4.9, reviewCount: 287, source: 'curated'
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/haytor-dartmoor.jpg', badge: 'Sniffout Pick', rating: 4.9, reviewCount: 287, source: 'curated',
+      hazards: ['adders', 'livestock', 'ticks']
     },
     {
       id: 'burley-new-forest',
@@ -9972,7 +10103,8 @@
       description: 'Start from the village car park in Burley and head south into the open forest, where the ancient beech and oak quickly swallow the sound of the road. The New Forest ponies and cattle roam freely throughout and you will encounter them, so leads on when animals are nearby - this is not the place to find out whether your dog is reliable with livestock. The heathland sections beyond the forest edge are completely open and the boys absolutely love it there, but do bear in mind that ground-nesting birds are present in spring and summer. The village has a couple of dog-friendly cafés for afterwards - worth planning the walk around if you\'re coming for the day.',
       distance: 3.8, duration: 95, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/burley-new-forest.png', badge: undefined, rating: 4.6, reviewCount: 201, source: 'curated'
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/burley-new-forest.png', badge: undefined, rating: 4.6, reviewCount: 201, source: 'curated',
+      hazards: ['adders', 'livestock', 'ticks']
     },
     {
       id: 'stanage-edge',
@@ -9982,7 +10114,8 @@
       description: 'The entire ridge from Stanage End to High Neb is open access land under the CRoW Act - no footpath restrictions, full ranging rights for dogs throughout. The gritstone edge itself is one of the finest walking ridges in England, with the Hope Valley opening up to the south in a view that repays the climb every single time. Underfoot conditions on the ridge are firm and good; the moorland on the eastern slope toward Moscar can be wet underfoot after rain. Grouse shooting takes place on the moor east of the edge from 12th August; no formal closure of access land but be aware of shooting parties and keep dogs under close control during that period.',
       distance: 6.8, duration: 175, difficulty: 'hard', terrain: 'rocky', environment: 'moorland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/stanage-edge.jpg', badge: 'Popular', rating: 4.8, reviewCount: 334, source: 'curated'
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/stanage-edge.jpg', badge: 'Popular', rating: 4.8, reviewCount: 334, source: 'curated',
+      hazards: ['adders', 'livestock', 'cliff']
     },
     {
       id: 'malham-cove',
@@ -9992,7 +10125,8 @@
       description: 'The limestone pavement at the top of the cove is one of those genuinely strange landscapes - nothing quite prepares you for it the first time, these flat sheets of weathered rock criss-crossed with deep grykes. The ascent up the steps alongside the cove face is steep but short, and the path opens onto the pavement almost immediately. Gordale Scar is worth the detour - scramble through the narrow gorge and you\'re into quiet fell country above. Livestock present throughout the lower dale so leads on; off-lead territory begins properly once you\'re up on the open fell above. Not a walk for soft-pawed dogs - the limestone is hard underfoot.',
       distance: 5.2, duration: 145, difficulty: 'hard', terrain: 'rocky', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/malham-cove.jpg', badge: 'Sniffout Pick', rating: 4.9, reviewCount: 198, source: 'curated'
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/malham-cove.jpg', badge: 'Sniffout Pick', rating: 4.9, reviewCount: 198, source: 'curated',
+      hazards: ['livestock', 'cliff']
     },
     {
       id: 'grasmere-lake',
@@ -10002,7 +10136,8 @@
       description: 'We did this on a drizzly October morning and it was still completely stunning - the lake and the fells behind it are just one of those views that photographs can\'t really do justice to. The path around the lake is mostly well surfaced and Pretzel managed every bit of it without any trouble, which says something for a dachshund with little legs. The village of Grasmere is right there at the end with several dog-friendly cafés including one that does the famous Grasmere gingerbread nearby. Parking is in the village or at the NT car park on the A591 - it fills up in summer so an early start pays off.',
       distance: 3.2, duration: 75, difficulty: 'easy', terrain: 'paved', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/grasmere-lake.jpg', badge: 'Popular', rating: 4.7, reviewCount: 421, source: 'curated'
+      imageUrl: 'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/img/walks/grasmere-lake.jpg', badge: 'Popular', rating: 4.7, reviewCount: 421, source: 'curated',
+      hazards: ['livestock']
     },
     {
       id: 'headley-heath',
@@ -10014,7 +10149,8 @@
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       wetNote: 'Sandy paths drain well but boots recommended October to April',
       hotNote: 'Open heathland with limited shade. Bring water. Leads required 1 Mar-31 Aug for ground-nesting birds.',
-      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 76, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 76, source: 'curated',
+      hazards: ['adders', 'ticks', 'livestock', 'ground-nesting-birds']
     },
     {
       id: 'bookham-common',
@@ -10026,7 +10162,8 @@
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       wetNote: 'Little Bookham Common has very poor drainage. Seriously waterlogged November to March. Boots essential.',
       hotNote: 'Ancient oak woodland provides good shade. Check for blue-green algae at ponds in summer.',
-      imageUrl: '', badge: undefined, rating: 4.3, reviewCount: 94, source: 'curated'
+      imageUrl: '', badge: undefined, rating: 4.3, reviewCount: 94, source: 'curated',
+      hazards: ['adders', 'ticks', 'livestock', 'ground-nesting-birds', 'algae']
     },
     {
       id: 'st-marthas-hill',
@@ -10038,7 +10175,8 @@
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       wetNote: 'Sandy soil becomes slippery when wet. Grip matters November to March.',
       hotNote: 'Exposed summit but shaded Tillingbourne valley. Dog paddling possible at the base.',
-      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 102, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 102, source: 'curated',
+      hazards: ['ticks', 'mountain-bikers']
     },
     {
       id: 'the-hurtwood',
@@ -10050,7 +10188,8 @@
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       wetNote: 'Woodland tracks can be muddy. Some paths shared with mountain bikers.',
       hotNote: 'Ridge exposed to sun. Woodland sections provide shade. Watch for mountain bikers on narrow tracks.',
-      imageUrl: '', badge: 'Hidden gem', rating: 4.7, reviewCount: 58, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.7, reviewCount: 58, source: 'curated',
+      hazards: ['adders', 'ticks', 'mountain-bikers']
     },
     {
       id: 'epsom-common',
@@ -10062,7 +10201,8 @@
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       wetNote: 'London clay. Grass paths seriously waterlogged October to April. Hard-surfaced perimeter track stays usable.',
       hotNote: 'Woodland provides shade. Check Stew Ponds for blue-green algae July to September before dogs enter water.',
-      imageUrl: '', badge: 'Hidden gem', rating: 4.4, reviewCount: 61, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.4, reviewCount: 61, source: 'curated',
+      hazards: ['livestock', 'ticks', 'algae']
     },
     {
       id: 'shere-village',
@@ -10074,7 +10214,8 @@
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
       wetNote: 'Woodland paths muddy in winter. Village lanes are firm year-round.',
       hotNote: 'Good shade through Abinger Roughs woodland. A25 road crossing requires full attention.',
-      imageUrl: '', badge: undefined, rating: 4.5, reviewCount: 127, source: 'curated'
+      imageUrl: '', badge: undefined, rating: 4.5, reviewCount: 127, source: 'curated',
+      hazards: ['livestock', 'ticks']
     },
     {
       id: 'cuckmere-haven',
@@ -10086,7 +10227,8 @@
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       wetNote: 'Valley floor floods November to February. River path can be impassable after heavy rain.',
       hotNote: 'Exposed chalk downland - little shade. Tidal currents at beach mouth - keep dogs clear. Calm river section near Litlington safe for swimming.',
-      imageUrl: '', badge: undefined, rating: 4.6, reviewCount: 173, source: 'curated'
+      imageUrl: '', badge: undefined, rating: 4.6, reviewCount: 173, source: 'curated',
+      hazards: ['livestock', 'adders']
     },
     {
       id: 'cissbury-ring',
@@ -10098,7 +10240,8 @@
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       wetNote: 'Chalk and flint paths slippery when wet. Exposed hilltop - no shelter.',
       hotNote: 'No shade on hilltop. Bring water. On lead near ponies and cattle year-round.',
-      imageUrl: '', badge: 'New', rating: 4.4, reviewCount: 39, source: 'curated'
+      imageUrl: '', badge: 'New', rating: 4.4, reviewCount: 39, source: 'curated',
+      hazards: ['livestock', 'ground-nesting-birds']
     },
     {
       id: 'arthurs-seat-holyrood',
@@ -10108,7 +10251,8 @@
       description: 'A 251-metre extinct volcano sitting in the middle of a capital city - the fact that this exists and you can just walk up it is still slightly unreal. The climb from Queen\'s Drive up the rocky path to the summit is genuinely steep in places but Ghost manages it no problem and the view from the top over the whole city and out to the Firth is worth every bit of it. Keep leads on near the two lochs at the bottom (Dunsapie especially) because of the wildfowl, but the open hillside above that is fully off-lead. Parking on Queen\'s Drive is free which, for an Edinburgh attraction, is basically miraculous.',
       distance: 3.5, duration: 100, difficulty: 'moderate', terrain: 'rocky', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 412, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 412, source: 'curated',
+      hazards: []
     },
     {
       id: 'threipmuir-pentland-hills',
@@ -10118,7 +10262,8 @@
       description: 'A really lovely reservoir circuit in the Pentland Hills - the Threipmuir and Harlaw loop is perfectly manageable and the scenery is far grander than the "easy" rating might suggest. Do bear in mind that sheep are present in the fields surrounding the reservoirs, particularly during lambing season in spring, so leads on when near the boundaries is the sensible approach. The boys love the open hillside above the reservoir where you can let them range properly. The car park at Mansfield Road in Balerno is free and straightforward to find.',
       distance: 4.2, duration: 105, difficulty: 'easy', terrain: 'mixed', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 237, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 237, source: 'curated',
+      hazards: ['livestock']
     },
     {
       id: 'dunkeld-hermitage',
@@ -10128,7 +10273,8 @@
       description: 'Ossian\'s Hall perched above Black Linn Falls is one of those spots you remember - a wee folly on a rocky promontory with the River Braan thundering into the gorge below. The National Trust for Scotland woodland is full off-lead territory throughout and the giant Douglas firs make it feel properly dramatic. Underfoot it\'s well maintained on the main path, though some of the side routes can be slippy after rain - your feet will know about it. There\'s a good café back at the car park. Worth the small parking charge.',
       distance: 3.5, duration: 85, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 183, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 183, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'tentsmuir-forest-fife',
@@ -10138,7 +10284,8 @@
       description: 'Pine forest straight onto a wide sandy beach - Tentsmuir does that combination better than almost anywhere on the east coast of Scotland. Midge gets off-lead in the forest sections and along the beach, though the NNR section near the north end of the beach requires leads to protect the grey seals and nesting birds. Your best bet is to go at low tide when the sand is firm and wide. Mind the car park charges at Kinshaldy - £4 for the day, which is fair enough given how good it is. Quiet on weekdays even in summer.',
       distance: 4.8, duration: 120, difficulty: 'easy', terrain: 'mixed', environment: 'coastal',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 69, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 69, source: 'curated',
+      hazards: []
     },
     {
       id: 'balmaha-loch-lomond',
@@ -10148,7 +10295,8 @@
       description: 'Balmaha sits right on the West Highland Way and the lochshore walk south from the village gives you proper Loch Lomond views without the effort of climbing Ben Lomond. The Millennium Forest loop behind the village adds a good bit of woodland variation. Highland cattle are in the fields seasonally so leads near those sections; off-lead on the forest road and along the lochshore itself. Grand on a clear day, dreich but still worthwhile in the rain. The Oak Tree Inn in the village does food and is dog-friendly.',
       distance: 2.8, duration: 70, difficulty: 'easy', terrain: 'mixed', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', rating: 4.5, reviewCount: 56, source: 'curated'
+      imageUrl: '', rating: 4.5, reviewCount: 56, source: 'curated',
+      hazards: ['livestock']
     },
     {
       id: 'pen-y-fan-brecon',
@@ -10158,7 +10306,8 @@
       description: 'The standard ascent from Pont ar Daf is a clear public right of way the whole way to the ridge - well waymarked, heavily used, maintained by the National Trust. Pen y Fan and Corn Du are the highest points in the Brecon Beacons and the views south over the Neuadd Reservoirs and further south toward the Vale of Neath are exceptional in clear conditions. Dogs must be on leads throughout this route due to sheep - there is no off-lead opportunity on the standard circuit and that should be stated plainly. The ascent gains around 450m; underfoot conditions on the main path are generally good but can be eroded near the summit. Paid NT car park at Pont ar Daf.',
       distance: 5.8, duration: 165, difficulty: 'hard', terrain: 'mixed', environment: 'moorland',
       offLead: 'none', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Popular', rating: 4.8, reviewCount: 3841, source: 'curated'
+      imageUrl: '', badge: 'Popular', rating: 4.8, reviewCount: 3841, source: 'curated',
+      hazards: ['livestock']
     },
     {
       id: 'llyn-padarn-llanberis',
@@ -10168,7 +10317,8 @@
       description: 'Padarn Country Park is managed by Gwynedd Council and the waymarked circuit through it is mostly permissive paths - well-maintained, clearly signed, and largely good underfoot year-round. The route passes Dolbadarn Castle, a genuine 13th-century Welsh fortress on a rocky bluff above the lake, which is worth a stop. Off-lead access through most of the park; leads required near nesting birds in the woodland section on the north shore. Underfoot it\'s good for most of the year - firm gravel and tarmac paths with some rougher ground near the quarry workings. The lake provides excellent swimming access for dogs throughout. Paid car park at the National Slate Museum.',
       distance: 5.6, duration: 135, difficulty: 'easy', terrain: 'mixed', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 1204, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 1204, source: 'curated',
+      hazards: []
     },
     {
       id: 'rhossili-gower',
@@ -10178,7 +10328,8 @@
       description: 'Three miles of wide sandy beach backed by massive green headland, with a dragon-shaped tidal island sticking out into the sea at one end - Pretzel just loved bombing around on the sand here. The beach is off-lead year-round with no seasonal restrictions which is genuinely rare for a beach this beautiful. The clifftop path from the village is well surfaced and gives you the iconic view down the full length of the bay. We got there early to beat the crowds and the light was absolutely stunning. NT car park in the village - free for members.',
       distance: 4.0, duration: 100, difficulty: 'moderate', terrain: 'mixed', environment: 'coastal',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.9, reviewCount: 318, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.9, reviewCount: 318, source: 'curated',
+      hazards: ['cliff']
     },
     {
       id: 'alnmouth-northumberland',
@@ -10188,7 +10339,8 @@
       description: 'One of those quietly brilliant small places that hasn\'t been ruined yet - a small estuary village at the mouth of the River Aln with a genuinely beautiful beach and almost no one on it outside summer. Ghost can run free the whole way and the circuit combining the beach with the riverside return path along the Aln is a really satisfying shape to a walk. Worth knowing that the tidal currents make swimming a bit sketchy, so keep an eye if your dog is a strong swimmer and keen on it. The car park on Marine Road is about £3.50 all day which is reasonable.',
       distance: 3.8, duration: 95, difficulty: 'easy', terrain: 'mixed', environment: 'coastal',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 74, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 74, source: 'curated',
+      hazards: []
     },
     {
       id: 'hardcastle-crags-hebden',
@@ -10198,7 +10350,8 @@
       description: 'Deep wooded valley, a Victorian mill at the bottom, and honestly better than it sounds on paper. This is National Trust walking in the north done right - Gibson Mill is a proper focal point and the woodland along Hebden Water is lowkey beautiful in all seasons. Leads near the café and mill area, off-lead in the woodland sections which is most of it. Gets muddy - this is West Yorkshire and the valley floor holds water, don\'t pretend otherwise. The NT car park at Midgehole is a bit steep at £8 for the day but Hebden Bridge right nearby has decent food if you fancy making a full day of it.',
       distance: 4.5, duration: 115, difficulty: 'moderate', terrain: 'muddy', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', rating: 4.6, reviewCount: 52, source: 'curated'
+      imageUrl: '', rating: 4.6, reviewCount: 52, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'formby-beach-pinewoods',
@@ -10208,7 +10361,8 @@
       description: 'A walk that gives you two very different environments - the ancient pinewood first, then the wide open beach beyond the dunes. The pine section is a red squirrel conservation area, so dogs need to be under close control through there and ideally on leads to give the squirrels every chance, which is entirely reasonable. Once you\'re through to the beach, off-lead running is permitted and the space is wonderful. Do bear in mind the dunes here are some of the most impressive in England and the scramble over them is perfectly manageable for most dogs. National Trust car park at Lifeboat Road.',
       distance: 3.5, duration: 90, difficulty: 'easy', terrain: 'mixed', environment: 'coastal',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Popular', rating: 4.7, reviewCount: 341, source: 'curated'
+      imageUrl: '', badge: 'Popular', rating: 4.7, reviewCount: 341, source: 'curated',
+      hazards: []
     },
     {
       id: 'clumber-park-nottinghamshire',
@@ -10218,7 +10372,8 @@
       description: 'Six miles around a large estate lake sounds like alot, but the terrain is so gentle and the National Trust paths so well maintained that it never feels it - we\'ve taken two older rescue dogs here and they completed the full circuit without any trouble. The lakeside path is particularly lovely, with the Gothic revival chapel appearing through the trees about halfway round as a proper landmark moment. There\'s a dog-friendly café called Central Bark on site, which the boys were very excited about. Leads near the kitchen garden area only; off-lead for the vast majority of the route.',
       distance: 6.0, duration: 150, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', rating: 4.6, reviewCount: 178, source: 'curated'
+      imageUrl: '', rating: 4.6, reviewCount: 178, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'sherwood-forest-major-oak',
@@ -10228,7 +10383,8 @@
       description: 'A thousand-year-old pedunculate oak with a girth of nearly 10 metres doesn\'t need much introduction, but the walk through Sherwood Forest to reach it passes through genuinely impressive ancient woodland managed by Forestry England. Dogs should be on leads near the visitor centre and the Major Oak itself per RSPB management guidance, but may be off-lead in the broader Budby South Forest sections away from the main paths. The RSPB-managed car park is paid; dont let the modest entrance facilities fool you about the quality of the woodland beyond. A short walk but a significant one.',
       distance: 2.5, duration: 60, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Popular', rating: 4.4, reviewCount: 265, source: 'curated'
+      imageUrl: '', badge: 'Popular', rating: 4.4, reviewCount: 265, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'cannock-chase-birches-valley',
@@ -10238,7 +10394,8 @@
       description: 'The best access point into an Area of Outstanding Natural Beauty - a vast network of waymarked trails through pine forest and open heathland, all of it open access land under CRoW. This is open access land under CRoW throughout the forest sections, with dedicated dog exercise areas in addition. No livestock anywhere on the Chase, no shooting complications. Underfoot conditions vary by trail - the forest roads are firm year-round, the heathland paths can be soft after rain. Scratchy has full off-lead access the entire route. Forestry England pay-and-display car park at Birches Valley; the Forest Café on site is dog-friendly.',
       distance: 5.0, duration: 125, difficulty: 'moderate', terrain: 'mixed', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 82, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 82, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'kielder-water-forest',
@@ -10248,7 +10405,8 @@
       description: 'Kielder is properly remote - the Duke\'s Trail heads into the largest working forest in England from the castle and you can go an entire morning without crossing another person. Midge is off-lead the whole way with no livestock to worry about, which makes a pleasant change. Underfoot it\'s muddy in places after rain, mind - the forestry tracks hold water and you\'ll need decent boots from October onwards. The forest is at its best in autumn when the larch plantations turn. Free parking at Kielder Castle visitor centre, and the café there is warm and welcome after a winter circuit.',
       distance: 2.8, duration: 70, difficulty: 'easy', terrain: 'muddy', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 38, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 38, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'dunwich-heath-suffolk',
@@ -10258,7 +10416,8 @@
       description: 'Lowland heathland right on the Suffolk coast - the sea is visible through gaps in the scrub and the whole thing is quiet and a bit otherworldly in a way that\'s hard to describe but easy to feel. Pretzel loved it and the National Trust\'s waymarked Woof Walk means its really easy to follow without any navigation stress. Keep leads on between March and August when ground-nesting birds are present on the heath, but off-lead on the beach and outside the nesting season on the heath itself. The NT tearoom in the coastguard cottages is dog-friendly and the scones are excellent.',
       distance: 2.5, duration: 65, difficulty: 'easy', terrain: 'mixed', environment: 'heathland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 94, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 94, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'thetford-forest-high-lodge',
@@ -10268,7 +10427,8 @@
       description: 'Four waymarked trails from a single well-organised base, with clear signage throughout and a dedicated off-lead exercise area near the start for dogs that need a run before settling into the main walk. The Firecrest Trail at four miles gives you the best of the forest with good firm paths throughout, ideal for dogs of all ages and fitness levels. Do bear in mind dogs are on leads on the main waymarked trails outside the exercise area, so if you have an off-lead-only dog it\'s worth checking the layout before you go. The Forestry England café is dog-friendly.',
       distance: 4.0, duration: 100, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', rating: 4.4, reviewCount: 47, source: 'curated'
+      imageUrl: '', rating: 4.4, reviewCount: 47, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'baggy-point-croyde',
@@ -10278,7 +10438,8 @@
       description: 'A National Trust headland separating two of north Devon\'s best beaches - the cliff walk around the point gives you views of both, Croyde to the north and Morte Bay opening out to the south. Genuinely good walking and Ghost appreciated the wide clifftop grassland. Worth knowing that Croyde beach has a seasonal dog ban May to September so this walk is better done in shoulder season when you can access the beach section as well. There are stiles in the field sections and a bit of livestock so clip on through those bits. NT car park in Croyde village - paid, but not outrageous.',
       distance: 3.2, duration: 80, difficulty: 'moderate', terrain: 'mixed', environment: 'coastal',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.7, reviewCount: 63, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.7, reviewCount: 63, source: 'curated',
+      hazards: ['livestock', 'cliff']
     },
     {
       id: 'bute-park-cardiff',
@@ -10288,7 +10449,8 @@
       description: 'Right next to Cardiff Castle and you genuinely forget you\'re in the middle of a capital city once you\'re into the arboretum and following the river north toward Pontcanna Fields. The Taff Trail extension makes it a proper 3-mile circuit and the path is well surfaced the whole way, ideal for Pretzel\'s short legs. Off-lead on the open parkland sections but leads near the café areas and road crossings - very clearly signed so no confusion about where. No on-site parking so we came in by train which took about ten minutes from Cardiff Central.',
       distance: 3.0, duration: 70, difficulty: 'easy', terrain: 'paved', environment: 'urban',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: false,
-      imageUrl: '', badge: 'Popular', rating: 4.5, reviewCount: 127, source: 'curated'
+      imageUrl: '', badge: 'Popular', rating: 4.5, reviewCount: 127, source: 'curated',
+      hazards: []
     },
     {
       id: 'plessey-woods',
@@ -10298,7 +10460,8 @@
       description: 'One of those places that genuinely surprises you - proper woodland along the River Blyth, not just a field with a path round it. Ghost had a brilliant time in the trees and there\'s enough space off the main track that it doesn\'t feel cramped. Can get muddy in winter but honestly that\'s fine. Small visitor centre café if you need a warm drink after.',
       distance: 2.8, duration: 65, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.4, reviewCount: 38, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.4, reviewCount: 38, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'roseberry-topping',
@@ -10308,7 +10471,8 @@
       description: 'That distinctive wee peak is properly satisfying to climb - not a big day out but the views from the top over the Cleveland Plain are grand on a clear morning. Underfoot it\'s mixed - good path through Newton Wood but rockier as you get higher, and there can be sheep on the lower pasture so you\'ll need the lead handy. Midge gets off-lead on the moorland section and loves it. Best in autumn when the bracken turns; there\'s a decent pub in Newton under Roseberry at the bottom if you time it right.',
       distance: 3.8, duration: 105, difficulty: 'moderate', terrain: 'mixed', environment: 'moorland',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 72, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 72, source: 'curated',
+      hazards: ['livestock']
     },
     {
       id: 'dalby-forest',
@@ -10318,7 +10482,8 @@
       description: 'A really lovely woodland walk with well-marked paths throughout - the Woodcock Way Circular is perfectly manageable for dogs of all ages, and Biscuit and Marmalade can be off-lead the whole way as there\'s no livestock in the forest. Do bear in mind there\'s a toll road charge to reach the visitor centre (around £5-£9 depending on season), but the facilities are excellent once you\'re there. The visitor centre has everything you\'d need for a proper day out, and there\'s a café on site which Biscuit and Marmalade are very familiar with by now.',
       distance: 3.2, duration: 80, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Family Friendly', rating: 4.5, reviewCount: 58, source: 'curated'
+      imageUrl: '', badge: 'Family Friendly', rating: 4.5, reviewCount: 58, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'beacon-fell',
@@ -10328,7 +10493,8 @@
       description: 'An underwalked Forest of Bowland AONB fell circuit using a mix of public footpath and permissive path across Lancashire County Council-managed land. Dogs can be off-lead for most of it, though sheep do graze the fell at certain times of year - the council website doesn\'t confirm exact dates so assume livestock may be present and keep Scratchy close on the upper grassland. The drainage is notably good for a moorland site - dont expect the boot-soaking bogs you get elsewhere in the Pennines.',
       distance: 3.6, duration: 90, difficulty: 'easy', terrain: 'mixed', environment: 'moorland',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.4, reviewCount: 44, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.4, reviewCount: 44, source: 'curated',
+      hazards: ['livestock']
     },
     {
       id: 'rivington-pike',
@@ -10338,7 +10504,8 @@
       description: 'Honestly one of the better ones in Greater Manchester\'s orbit - the old tower at the top is a proper landmark and the views back over the reservoir are worth the climb. Ghost can run freely on most of the open moor sections but you\'ll hit sheep near the top so watch it. Gets very busy on sunny weekends, go early or it\'s a nightmare for parking even though the car park itself is free. A few stiles on some variants but nothing terrible.',
       distance: 3.1, duration: 85, difficulty: 'moderate', terrain: 'mixed', environment: 'moorland',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: 'Popular', rating: 4.6, reviewCount: 67, source: 'curated'
+      imageUrl: '', badge: 'Popular', rating: 4.6, reviewCount: 67, source: 'curated',
+      hazards: ['livestock']
     },
     {
       id: 'lyme-park',
@@ -10348,7 +10515,8 @@
       description: 'The NT dog walking map (downloadable PDF from its website) is essential here - the off-lead areas are not obvious on the ground and getting it wrong means walking into the red and fallow deer enclosures or the Highland cattle section, neither of which you want with a dog. Knightslow Wood is off-lead year-round and is the main draw for dog walkers; the wider parkland and moorland beyond the wood are excellent but require a lead near all stock. A 5-mile circuit taking in the moorland above the hall gives exceptional views toward Kinder Scout on a clear day. Parking at the main NT car park off the A6 near Disley.',
       distance: 5.0, duration: 135, difficulty: 'moderate', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.6, reviewCount: 81, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.6, reviewCount: 81, source: 'curated',
+      hazards: ['livestock', 'ticks']
     },
     {
       id: 'bradgate-park',
@@ -10358,7 +10526,8 @@
       description: 'The ruins of Lady Jane Grey\'s house rising out of bracken-covered hillside are a genuinely unexpected sight - we came expecting a country park and got something much more atmospheric, and Pretzel was completely obsessed with the rocks around Old John Tower. It\'s a big open park so there\'s plenty of room even on busy weekends, though the red deer roam freely so keep an eye out and pop the lead on when they\'re close. Parking is paid at Newtown Linford but the park itself is free which feels fair for what you get. Deffo one to go back to.',
       distance: 3.1, duration: 85, difficulty: 'moderate', terrain: 'mixed', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Popular', rating: 4.7, reviewCount: 78, source: 'curated'
+      imageUrl: '', badge: 'Popular', rating: 4.7, reviewCount: 78, source: 'curated',
+      hazards: ['livestock']
     },
     {
       id: 'calke-abbey',
@@ -10368,7 +10537,8 @@
       description: 'Worth understanding the access layers before you go - the wider parkland is open to all, but entry to the house and walled garden requires NT membership. Dogs are permitted off lead in the parkland and woodland under close control, which in practice means keeping a reasonable eye on them given the deer, cattle and sheep across the meadows and along the historic lime avenue. The estate has a pleasantly forgotten quality about it - the walled kitchen garden in a state of deliberate decay, the peeling outbuildings - that makes it feel like a different sort of NT property. Some stiles and uneven ground throughout; the 4-mile circuit is well worth the time.',
       distance: 4.0, duration: 110, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 52, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 52, source: 'curated',
+      hazards: ['livestock', 'ticks']
     },
     {
       id: 'lickey-hills',
@@ -10378,7 +10548,8 @@
       description: 'Genuinely underrated for how close it sits to Birmingham - Bilberry Hill gives you a proper panorama over the city which feels like it shouldn\'t exist given you drove here in 20 minutes from the Middleway. There\'s one sheep field section where you\'ll need the lead on but otherwise it\'s pretty open. Gets busy on weekends but nowhere near as bad as the obvious spots. Free parking off Warren Lane which is a rare thing.',
       distance: 3.5, duration: 90, difficulty: 'moderate', terrain: 'mixed', environment: 'heathland',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.4, reviewCount: 49, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.4, reviewCount: 49, source: 'curated',
+      hazards: ['livestock', 'ticks']
     },
     {
       id: 'symonds-yat',
@@ -10388,7 +10559,8 @@
       description: 'The hand-pulled ferry crossing the Wye is what makes this one - it\'s a tiny bit of a faff, you have to shout across for the ferryman, but Ghost thought it was brilliant and honestly so did I. The gorge views from the rock viewpoint above are actually as good as the photos suggest which isn\'t always the case. Livestock possible on some sections so not fully off-lead but there\'s plenty of space in the woodland stretches. Pay and display in the village, nothing outrageous.',
       distance: 3.5, duration: 95, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 83, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 83, source: 'curated',
+      hazards: ['livestock', 'ticks']
     },
     {
       id: 'penllergare-valley-woods',
@@ -10398,7 +10570,8 @@
       description: 'A Victorian woodland estate with a waterfall that photographs beautifully, all tucked just off the M4 near Swansea - genuinely one of the better surprises we\'ve had looking for somewhere new. Pretzel managed the paths fine, they\'re well maintained and not too steep, though it can get muddy after rain so worth checking conditions. Dogs need to be on leads during nesting season (March to August) which is worth knowing. There\'s a free parking option nearby if you don\'t want to pay the main car park fee.',
       distance: 2.5, duration: 65, difficulty: 'easy', terrain: 'muddy', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 41, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 41, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'llansteffan-castle',
@@ -10408,7 +10581,8 @@
       description: 'Wide sandy beach, a ruined Norman castle on the clifftop, and estuary views that stretch for miles - we genuinely couldn\'t believe how much one circular route fits in, and Pretzel absolutely loved it. The circular route out to Wharley Point is easy going with no stiles and dogs are welcome on the beach year-round which is such a bonus. Pretzel handled the cliff path sections absolutely fine, the surface is good. Parking on The Green is free out of season which makes it an easy yes.',
       distance: 4.6, duration: 120, difficulty: 'moderate', terrain: 'mixed', environment: 'coastal',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 34, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 34, source: 'curated',
+      hazards: ['cliff']
     },
     {
       id: 'sheringham-park',
@@ -10418,7 +10592,8 @@
       description: 'A wonderful National Trust property with trails suitable for all ages - the rhododendrons in May are quite spectacular, and the path to the clifftop viewpoint over the sea is well worth including on the route. Do bear in mind dogs must be on lead between March and July due to nesting and the cattle that graze the parkland, which is perfectly reasonable. The NT provides drinking bowls near the visitor centre which is always a bonus, and the car park is at Upper Sheringham with pay and display.',
       distance: 3.5, duration: 95, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.5, reviewCount: 47, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.5, reviewCount: 47, source: 'curated',
+      hazards: ['livestock', 'ticks']
     },
     {
       id: 'tehidy-country-park',
@@ -10428,7 +10603,8 @@
       description: 'Cornwall\'s biggest woodland and it\'s completely free to park at multiple entrances - we went in via East Drive and it was a lovely easy loop around the lake with Pretzel off-lead for most of the way as there\'s no livestock anywhere on site. The café by the lake does good coffee and was dog-friendly when we visited. Perfect for smaller dogs - the paths are level and well-kept and Pretzel\'s little legs handled it with no trouble at all. Deffo worth bookmarking for a low-effort day - not a showstopper but genuinely lovely for what it is.',
       distance: 2.9, duration: 75, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.4, reviewCount: 36, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.4, reviewCount: 36, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'moors-valley',
@@ -10438,7 +10614,8 @@
       description: 'One of the most well-organised dog-friendly country parks I\'ve come across - there are two designated dog paddling areas which the boys absolutely love, and the long forest walk covers a lovely 5 miles through varied woodland without feeling repetitive. Dogs are off-lead in most of the forest, though you\'ll want leads near the visitor centre, lake and picnic areas where it gets busy at weekends. Parking is charged but pay on exit, and the facilities are genuinely excellent. It\'s one of those places where you can happily spend an entire morning without covering the same ground twice.',
       distance: 5.0, duration: 130, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Family Friendly', rating: 4.6, reviewCount: 62, source: 'curated'
+      imageUrl: '', badge: 'Family Friendly', rating: 4.6, reviewCount: 62, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'kinnoull-hill',
@@ -10448,7 +10625,8 @@
       description: 'Right on the edge of Perth and you\'d barely know the city was there - the woodland paths climb steadily to the cliff edge above the Tay and the views are braw on a clear day, the river winding south through patchwork fields below the ruined folly tower. Midge can be off-lead throughout which is rare to say for a walk this close to a city centre. Paths are a mix of wide gravel tracks and narrower natural routes - some muddy sections in wet weather, mind. Free parking at Jubilee Car Park on Dundee Road; there\'s a good café in Kinnoull village a short walk from the car park if you need something warm after.',
       distance: 2.9, duration: 80, difficulty: 'moderate', terrain: 'mixed', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.6, reviewCount: 55, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.6, reviewCount: 55, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'elterwater-langdale',
@@ -10458,7 +10636,8 @@
       description: 'A gentle loop through the Great Langdale valley with the sound of the river beside you for most of it - the path past Skelwith Force is well-marked and the classic Lakeland backdrop never feels like a postcard because you\'re properly in it. There are cattle and sheep in the valley fields so you\'ll want the lead on in those sections, and a few stiles to navigate which is worth knowing if your dog finds them difficult. The National Trust car park in the village is pay and display but perfectly convenient. There\'s a dog-friendly pub in Elterwater village for afterwards, which Biscuit and Marmalade consider a non-negotiable part of the route.',
       distance: 4.2, duration: 115, difficulty: 'moderate', terrain: 'mixed', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 76, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 76, source: 'curated',
+      hazards: ['livestock']
     },
     {
       id: 'newtondale-levisham',
@@ -10468,7 +10647,8 @@
       description: 'One of the North York Moors\' genuinely undervisited routes - start at the small car park by Levisham Station (grid ref SE 818 910) where there\'s an honesty box, and the path drops you immediately into the glacial valley which is dramatic from the first steps. The Forestry England woodland sections are open access throughout and Scratchy can range freely; the one section to watch is near Kale Pot Hole Farm where livestock are present and the path becomes a public right of way through a farmyard - keep dogs under close control there. No stiles, just gates, and the full 6-mile circuit is excellent underfoot in dry conditions.',
       distance: 6.0, duration: 165, difficulty: 'moderate', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.7, reviewCount: 31, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.7, reviewCount: 31, source: 'curated',
+      hazards: ['livestock', 'ticks']
     },
     {
       id: 'loch-ard-aberfoyle',
@@ -10478,7 +10658,8 @@
       description: 'Forestry and Land Scotland land throughout, so Midge has the run of the whole route without restriction - no livestock, no lead requirements, just proper forest walking with loch views opening up through the trees as you follow the Loch Ard shore. The waymarking is decent enough, though the forest tracks all look similar so a quick glance at the map before you go is sensible. Your best in late spring or early autumn when the midges are manageable. Free parking on the B829 just west of Aberfoyle; the Forth Inn in the village does food and is worth timing the walk around.',
       distance: 5.2, duration: 140, difficulty: 'moderate', terrain: 'mixed', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 43, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 43, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'rhossili-down',
@@ -10488,7 +10669,8 @@
       description: 'The Down sits above the famous bay and most people never bother climbing it, which is a shame because the ridge walk gives you three bays at once - Rhossili, Llangennith and the Broughton Bay stretch to the north, all laid out below you. It\'s open National Trust moorland so Midge gets plenty of freedom, though horses and cattle do graze the Down so you\'ll need to stay alert and have the lead ready. Underfoot it\'s short cropped grass and rougher sections - fine in dry conditions but can be slippery if wet; there\'s an NT café in the village at the start if you need a warm-up before heading up. Mind the wind up on the ridge, it can be properly fierce in any season.',
       distance: 4.0, duration: 110, difficulty: 'moderate', terrain: 'mixed', environment: 'moorland',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 69, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 69, source: 'curated',
+      hazards: ['livestock']
     },
     {
       id: 'cave-hill-belfast',
@@ -10498,7 +10680,8 @@
       description: 'Belfast City Council bylaws require dogs to be kept on leads throughout the park, which catches some visitors by surprise - well worth knowing before you set out. The route from Belfast Castle car park climbs through beech woodland onto the open hillside and up to McArt\'s Fort, an Iron Age promontory fort with a proper panorama over Belfast Lough and the city below. Scratchy doesnt get to range free here, but at 4.5 miles its a proper day out and the summit views are genuinely worth the ascent.',
       distance: 4.5, duration: 120, difficulty: 'moderate', terrain: 'mixed', environment: 'open',
       offLead: 'none', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 68, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 68, source: 'curated',
+      hazards: ['livestock']
     },
     {
       id: 'tollymore-forest',
@@ -10508,7 +10691,8 @@
       description: 'A really lovely walk through some of the most beautiful woodland in Northern Ireland - the path winds along the River Shimna and crosses several of those distinctive arched stone bridges that make this park so special. Biscuit and Marmalade can be off the lead through the open forest sections, though the signs do ask for leads near the campsite and visitor area. There\'s plenty of river for a drink and a splash along the route, and the ground is kind underfoot throughout - paid parking at the Bryansford Road entrance is around £5.',
       distance: 3.0, duration: 80, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 52, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 52, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'white-park-bay',
@@ -10518,7 +10702,8 @@
       description: 'A braw sweep of white sand on the Causeway Coast - sea views across to Scotland on a clear day, and a clifftop path with proper exposure above the limestone cliffs. A formal Dog Control Order has been in place since April 2024 requiring leads at all times across the whole bay - £80 fixed penalty, and worth knowing before you arrive if you were expecting a run-free beach. The NT car park is wee so early is essential on summer weekends, and there\'s a decent cafe in Ballycastle a few miles along if you need warming up after the clifftop stretch.',
       distance: 2.5, duration: 65, difficulty: 'easy', terrain: 'mixed', environment: 'coastal',
       offLead: 'none', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 35, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 35, source: 'curated',
+      hazards: ['cliff']
     },
     {
       id: 'farley-mount',
@@ -10530,7 +10715,8 @@
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
       wetNote: 'Woodland sections muddy after prolonged rain. Gravelled paths hold up well.',
       hotNote: 'Good woodland shade. Tick-heavy site - check dogs after every visit. On lead near cattle on downland.',
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.6, reviewCount: 48, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.6, reviewCount: 48, source: 'curated',
+      hazards: ['livestock', 'ticks']
     },
     {
       id: 'lepe-country-park',
@@ -10542,7 +10728,8 @@
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
       wetNote: 'Shingle beach firm underfoot. Coastal path can be exposed in strong wind.',
       hotNote: 'Limited shade on beach. Strong currents at Lepe Spit and Stansore Point - keep dogs clear. Family beach closed to dogs May-Sep.',
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.5, reviewCount: 47, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.5, reviewCount: 47, source: 'curated',
+      hazards: []
     },
     {
       id: 'savernake-forest',
@@ -10552,7 +10739,8 @@
       description: 'A privately owned forest managed under Crown Forestry - the only one of its kind in England - where the wide rides are permissive paths rather than public rights of way, but access for walkers and dogs is long established and uncontested on the main routes. The Grand Avenue is the centrepiece: 3.9 miles dead straight and beech-lined, one of the longest tree avenues in the country, and Scratchy made himself busy in the understorey the whole length of it. Gated enclosures contain cattle in some sections, so its leads-on there; open forest and woodland rides everywhere else. Start from Postern Hill car park off the A346 (SN8 3HP), free.',
       distance: 4.5, duration: 110, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 38, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 38, source: 'curated',
+      hazards: ['livestock', 'ticks']
     },
     {
       id: 'valley-of-rocks-lynton',
@@ -10562,7 +10750,8 @@
       description: 'Ghost was on the lead the whole way and I genuinely didn\'t mind - the place is so dramatically weird it holds your attention regardless of what your dog is doing. Feral mountain goats wandering between enormous rock formations, the Bristol Channel dropping away below, sculpted crags above - it\'s a lot. Not an off-lead walk at all due to the cliff edge and the goats, but if your dog handles a lead on dramatic terrain the views along the South West Coast Path are honestly worth it.',
       distance: 3.0, duration: 85, difficulty: 'moderate', terrain: 'mixed', environment: 'coastal',
       offLead: 'none', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 72, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 72, source: 'curated',
+      hazards: ['livestock', 'cliff']
     },
     {
       id: 'quantock-hills-staple-plain',
@@ -10572,7 +10761,8 @@
       description: 'Proper hill ground this - open heathland ridge with views across to Wales and down to Exmoor that are genuinely grand on a clear day. Midge can range free for most of the circuit, though mind the March to July ground-nesting season when you\'ll need the lead on the heath. The path from Staple Plain car park is well waymarked and there\'s a decent pub in Nether Stowey if you take the lower path back through the combe.',
       distance: 4.5, duration: 120, difficulty: 'moderate', terrain: 'mixed', environment: 'moorland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 32, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 32, source: 'curated',
+      hazards: []
     },
     {
       id: 'mallards-pike-forest-of-dean',
@@ -10582,7 +10772,8 @@
       description: 'Forestry England maintains full open access throughout the forest here - no restrictions, no livestock, and Scratchy can range freely from the car park to the furthest trail junction without going near a lead. The lake circuit itself is only half a mile but the waymarked forest trails beyond it extend the walk to 3.5 miles through good mixed oak and conifer, and theres a designated dog dip area on the far bank of the lake that Scratchy had found before I\'d even noticed it was there. Paid car park up to £5, off the Blakeney road - follow the Go Ape signs and you\'re there.',
       distance: 3.5, duration: 90, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Family Friendly', rating: 4.5, reviewCount: 55, source: 'curated'
+      imageUrl: '', badge: 'Family Friendly', rating: 4.5, reviewCount: 55, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'loch-morlich-glenmore',
@@ -10592,7 +10783,8 @@
       description: 'A braw flat circuit through Scots pine with the Cairngorm plateau as your backdrop and, unusually for a Highland loch, a proper sandy beach where Midge will spend considerably longer than you\'d planned. The path is well maintained and dry underfoot for most of the year - mind the April to August bird nesting season when extra care is needed near the open grassland sections. The Glenmore Lodge cafe is right by the car park, which makes the end of the walk considerably more civilised.',
       distance: 3.9, duration: 100, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 61, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 61, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'robin-hoods-bay',
@@ -10602,7 +10794,8 @@
       description: 'One of our favourites along the Yorkshire coast - the path out from the village car park follows the Cleveland Way above the cliffs to Boggle Hole, where there\'s usually a stream running across the beach that the boys love to drink from. You\'ll want to clip on for the return section through the farm fields (cattle and sheep on that stretch), but the clifftop walk and the beach at low tide are both good off-lead. Do bear in mind the village car park fills up quickly on summer weekends - we always try to arrive by nine.',
       distance: 4.0, duration: 110, difficulty: 'moderate', terrain: 'mixed', environment: 'coastal',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 79, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 79, source: 'curated',
+      hazards: ['livestock', 'cliff']
     },
     {
       id: 'hamsterley-forest',
@@ -10612,7 +10805,8 @@
       description: 'A good solid forest walk in County Durham that most visitors from outside the northeast seem to miss entirely - Hamsterley has two becks running through it and the swimming spots in summer are as good as anything in the Yorkshire Dales. Dogs can range free once you\'re past the visitor centre, and the Orange Trail follows the upper and lower becks the whole 4.5 miles with barely any road to worry about. The visitor centre has a cafe, and there are pubs in the nearby villages if you\'re making a day of it.',
       distance: 4.5, duration: 115, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 43, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 43, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'gibraltar-point-lincolnshire',
@@ -10622,7 +10816,8 @@
       description: 'A rainy October weekend and it turned out to be one of the better wild beach walks we\'ve done - the dunes stretch further than you\'d expect and the whole reserve has that genuinely remote feel even though it\'s only a couple of miles south of Skegness. Pretzel managed the sandy paths absolutely fine and the flat trails through the dunes are great for small dogs. There\'s a visitor centre cafe at the car park which we were very glad of, and parking is paid at the Lincolnshire Wildlife Trust site.',
       distance: 3.0, duration: 75, difficulty: 'easy', terrain: 'mixed', environment: 'coastal',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.3, reviewCount: 28, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.3, reviewCount: 28, source: 'curated',
+      hazards: []
     },
     {
       id: 'uffington-white-horse',
@@ -10632,7 +10827,8 @@
       description: 'The Ridgeway runs along the top of the Berkshire Downs here - a national trail and public right of way adjacent to one of England\'s oldest chalk hill figures - and dogs must be kept on leads throughout due to year-round sheep grazing on all sections of the route. Dont let that put you off: chalk downland drains remarkably well and its one of the better all-weather options in the region, firm underfoot even after prolonged rain when most other local footpaths have become a quagmire. The 4-mile circuit from the NT car park (SN7 7UK, free for members) takes in the ancient earthwork banks and gives a view down the Vale that goes on for miles.',
       distance: 4.0, duration: 110, difficulty: 'moderate', terrain: 'mixed', environment: 'open',
       offLead: 'none', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.6, reviewCount: 54, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.6, reviewCount: 54, source: 'curated',
+      hazards: ['livestock']
     },
     {
       id: 'dovestone-reservoir',
@@ -10642,7 +10838,8 @@
       description: 'Half of Greater Manchester has found this one, which means arrive early on weekends or parking becomes a faff. That said it\'s genuinely good - the reservoir sits right on the edge of the moors above Greenfield and the hills above look properly dramatic when the weather cooperates. Ghost gets decent off-lead stretches on the quieter moor sections, though clip on near the sheep that graze parts of the upper circuit - Bank Lane car park, small charge, even cheaper if you\'re RSPB.',
       distance: 2.7, duration: 70, difficulty: 'easy', terrain: 'mixed', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: 'Popular', rating: 4.6, reviewCount: 83, source: 'curated'
+      imageUrl: '', badge: 'Popular', rating: 4.6, reviewCount: 83, source: 'curated',
+      hazards: ['livestock']
     },
     {
       id: 'blaise-castle-estate',
@@ -10652,7 +10849,8 @@
       description: 'A proper gorge walk tucked into the north edge of Bristol that\'s easy to miss if you don\'t know it\'s there - the wooded valley drops away sharply from the road and once you\'re in it you could be miles from anywhere. Ghost had a run in the deeper woodland sections and a swim in the stream, which is exactly what he needs after a week of pavement. Free parking on Kings Weston Road is the move - the Coombe Dingle entrance puts you closest to the river gorge trails, and the visitor centre cafe is right there on the way back out.',
       distance: 3.0, duration: 75, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.4, reviewCount: 36, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.4, reviewCount: 36, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'epping-forest-chingford',
@@ -10662,7 +10860,8 @@
       description: 'The ancient pollarded hornbeams in the older sections of the forest are unlike anything else near London - they look genuinely strange, like a woodland from another era, and once Ghost is among them he doesn\'t want to leave. Get past the visitor centre and the weekend crowds thin out fairly quickly, and there\'s proper off-lead running in the quieter glades once you\'re clear of the families near the water. Goes very busy on sunny Sundays - honestly just go on a Tuesday in autumn, and stop at the King\'s Oak cafe near High Beach on the way round.',
       distance: 4.0, duration: 100, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Popular', rating: 4.5, reviewCount: 74, source: 'curated'
+      imageUrl: '', badge: 'Popular', rating: 4.5, reviewCount: 74, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'compton-bay-iow',
@@ -10672,7 +10871,8 @@
       description: 'The sandstone cliffs here come in layers of red, orange and cream that are obv stunning to photograph, and the wide sandy beach below gives Pretzel plenty of space to run about. The beach between Hanover Point and Brook Chine is open to dogs year-round - just note the section west of Compton Chine has seasonal restrictions from May to September. Definitely do the chalk downs loop as well while you\'re there, the view back down to the bay is genuinely worth the short climb up.',
       distance: 3.5, duration: 90, difficulty: 'moderate', terrain: 'mixed', environment: 'coastal',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 63, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 63, source: 'curated',
+      hazards: ['livestock', 'cliff']
     },
     {
       id: 'crawfordsburn-country-park',
@@ -10682,7 +10882,8 @@
       description: 'A compact and lovely circuit in County Down that packs in a lot for a 2.5-mile walk - a wooded glen, a waterfall (one of the tallest in Northern Ireland, which genuinely surprised me), and a stretch of sandy beach on Belfast Lough at the end for the dogs to have a swim. Biscuit and Marmalade both went straight for the water, so do bear in mind there is a fairly steep path down to the beach that older or less mobile dogs might find hard on the way back up. Free parking at the main entrance on Bridge Road in Helen\'s Bay, easy to find from the village.',
       distance: 2.5, duration: 65, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
-      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 39, source: 'curated'
+      imageUrl: '', badge: 'Hidden gem', rating: 4.5, reviewCount: 39, source: 'curated',
+      hazards: ['ticks']
     },
     {
       id: 'golden-cap-seatown',
@@ -10692,7 +10893,8 @@
       description: 'The views from the top of the highest cliff on the south coast are honestly spectacular - you can see the Jurassic Coast stretching away in both directions and the layers of colour in the cliffs below tell their own story even if you\'re not a geology person. We came on a clear September day and I\'ll be honest, the climb from Seatown is genuinely steep over a short section - Pretzel made it but we stopped four times and his little legs were done at the top. Paid car park in Seatown and there are wooden stiles on the field approach that small dogs can squeeze past, just about.',
       distance: 3.5, duration: 105, difficulty: 'hard', terrain: 'mixed', environment: 'coastal',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
-      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 45, source: 'curated'
+      imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 45, source: 'curated',
+      hazards: ['livestock', 'cliff']
     }
   ];
 
