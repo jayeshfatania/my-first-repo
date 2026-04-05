@@ -10251,8 +10251,10 @@
       description: 'A 251-metre extinct volcano sitting in the middle of a capital city - the fact that this exists and you can just walk up it is still slightly unreal. The climb from Queen\'s Drive up the rocky path to the summit is genuinely steep in places but Ghost manages it no problem and the view from the top over the whole city and out to the Firth is worth every bit of it. Keep leads on near the two lochs at the bottom (Dunsapie especially) because of the wildfowl, but the open hillside above that is fully off-lead. Parking on Queen\'s Drive is free which, for an Edinburgh attraction, is basically miraculous.',
       distance: 3.5, duration: 100, difficulty: 'moderate', terrain: 'rocky', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
+      wetNote: 'Icy slopes below summit in winter. Cliff sections on Salisbury Crags require leads regardless of conditions.',
+      hotNote: 'Very busy Easter to October. Arrive before 8am to avoid crowds. Occasional conservation grazing (heritage breeds, seasonal) - check park notices with reactive dogs.',
       imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 412, source: 'curated',
-      hazards: []
+      hazards: ['cliff', 'ground-nesting-birds']
     },
     {
       id: 'threipmuir-pentland-hills',
@@ -10262,8 +10264,10 @@
       description: 'A really lovely reservoir circuit in the Pentland Hills - the Threipmuir and Harlaw loop is perfectly manageable and the scenery is far grander than the "easy" rating might suggest. Do bear in mind that sheep are present in the fields surrounding the reservoirs, particularly during lambing season in spring, so leads on when near the boundaries is the sensible approach. The boys love the open hillside above the reservoir where you can let them range properly. The car park at Mansfield Road in Balerno is free and straightforward to find.',
       distance: 4.2, duration: 105, difficulty: 'easy', terrain: 'mixed', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
+      wetNote: 'Tracks muddy after rain, particularly west side of Threipmuir. Reservoir edges drop sharply - keep dogs back from the water edge.',
+      hotNote: 'Ticks active April to October - check dogs after every visit. Do not let dogs swim in the reservoirs (Scottish Water supply, cold with steep edges).',
       imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 237, source: 'curated',
-      hazards: ['livestock']
+      hazards: ['livestock', 'ticks']
     },
     {
       id: 'dunkeld-hermitage',
@@ -10272,7 +10276,9 @@
       lat: 56.5610, lon: -3.6090,
       description: 'Ossian\'s Hall perched above Black Linn Falls is one of those spots you remember - a wee folly on a rocky promontory with the River Braan thundering into the gorge below. The National Trust for Scotland woodland is full off-lead territory throughout and the giant Douglas firs make it feel properly dramatic. Underfoot it\'s well maintained on the main path, though some of the side routes can be slippy after rain - your feet will know about it. There\'s a good café back at the car park. Worth the small parking charge.',
       distance: 3.5, duration: 85, difficulty: 'easy', terrain: 'mixed', environment: 'woodland',
-      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
+      wetNote: 'Leaf litter on boardwalk sections slippery when wet. Gorge banks near Black Linn Falls extremely dangerous in wet conditions - leads on throughout gorge.',
+      hotNote: 'Canopy keeps the walk cool in summer. Dog swimming possible in calm sections of the Braan upstream from the falls. Never let dogs near the gorge water.',
       imageUrl: '', badge: 'Sniffout Pick', rating: 4.7, reviewCount: 183, source: 'curated',
       hazards: ['ticks']
     },
@@ -10284,8 +10290,10 @@
       description: 'Pine forest straight onto a wide sandy beach - Tentsmuir does that combination better than almost anywhere on the east coast of Scotland. Midge gets off-lead in the forest sections and along the beach, though the NNR section near the north end of the beach requires leads to protect the grey seals and nesting birds. Your best bet is to go at low tide when the sand is firm and wide. Mind the car park charges at Kinshaldy - £4 for the day, which is fair enough given how good it is. Quiet on weekdays even in summer.',
       distance: 4.8, duration: 120, difficulty: 'easy', terrain: 'mixed', environment: 'coastal',
       offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
+      wetNote: 'Deep sand on forest tracks can make progress slow. Open beach sections fully exposed in coastal storms.',
+      hotNote: 'No shade on beach sections - dogs can overheat. Check tide times before visiting (tidal flats extend far offshore and come in fast). Keep 100m from hauled seals year-round.',
       imageUrl: '', badge: 'Hidden gem', rating: 4.6, reviewCount: 69, source: 'curated',
-      hazards: []
+      hazards: ['ticks']
     },
     {
       id: 'balmaha-loch-lomond',
@@ -10295,8 +10303,10 @@
       description: 'Balmaha sits right on the West Highland Way and the lochshore walk south from the village gives you proper Loch Lomond views without the effort of climbing Ben Lomond. The Millennium Forest loop behind the village adds a good bit of woodland variation. Highland cattle are in the fields seasonally so leads near those sections; off-lead on the forest road and along the lochshore itself. Grand on a clear day, dreich but still worthwhile in the rain. The Oak Tree Inn in the village does food and is dog-friendly.',
       distance: 2.8, duration: 70, difficulty: 'easy', terrain: 'mixed', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: false, hasParking: true,
+      wetNote: 'Lochside path can flood near Milarrochy in very wet spells. Exposed tree roots on woodland sections slippery when wet.',
+      hotNote: 'Midges severe May to September - bring Smidge or DEET. Loch swimming generally safe near Balmaha. Watch for boat traffic in summer.',
       imageUrl: '', rating: 4.5, reviewCount: 56, source: 'curated',
-      hazards: ['livestock']
+      hazards: ['livestock', 'ticks']
     },
     {
       id: 'pen-y-fan-brecon',
@@ -10624,9 +10634,11 @@
       lat: 56.3900, lon: -3.4100,
       description: 'Right on the edge of Perth and you\'d barely know the city was there - the woodland paths climb steadily to the cliff edge above the Tay and the views are braw on a clear day, the river winding south through patchwork fields below the ruined folly tower. Midge can be off-lead throughout which is rare to say for a walk this close to a city centre. Paths are a mix of wide gravel tracks and narrower natural routes - some muddy sections in wet weather, mind. Free parking at Jubilee Car Park on Dundee Road; there\'s a good café in Kinnoull village a short walk from the car park if you need something warm after.',
       distance: 2.9, duration: 80, difficulty: 'moderate', terrain: 'mixed', environment: 'woodland',
-      offLead: 'full', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
+      offLead: 'partial', enclosed: false, livestock: false, hasStiles: false, hasParking: true,
+      wetNote: 'Boggy ground on lower paths in wet weather. Cliff path near Kinnoull Tower can be icy in winter - leads required near cliff edge regardless of conditions.',
+      hotNote: 'Canopy provides good shade. No water access on the route. Red squirrels and roe deer present throughout the woodland.',
       imageUrl: '', badge: 'Sniffout Pick', rating: 4.6, reviewCount: 55, source: 'curated',
-      hazards: ['ticks']
+      hazards: ['cliff', 'ticks']
     },
     {
       id: 'elterwater-langdale',
@@ -10636,6 +10648,8 @@
       description: 'A gentle loop through the Great Langdale valley with the sound of the river beside you for most of it - the path past Skelwith Force is well-marked and the classic Lakeland backdrop never feels like a postcard because you\'re properly in it. There are cattle and sheep in the valley fields so you\'ll want the lead on in those sections, and a few stiles to navigate which is worth knowing if your dog finds them difficult. The National Trust car park in the village is pay and display but perfectly convenient. There\'s a dog-friendly pub in Elterwater village for afterwards, which Biscuit and Marmalade consider a non-negotiable part of the route.',
       distance: 4.2, duration: 115, difficulty: 'moderate', terrain: 'mixed', environment: 'open',
       offLead: 'partial', enclosed: false, livestock: true, hasStiles: true, hasParking: true,
+      wetNote: 'Valley floor and lochside path can flood after prolonged rain. Great Langdale Beck fast-flowing after heavy rain - avoid upper sections.',
+      hotNote: 'Very busy in summer - arrive early. Beck swimming safe in lower valley where it broadens and slows. Leads required near livestock and on open access land 1 March to 31 July (CRoW Act).',
       imageUrl: '', badge: 'Sniffout Pick', rating: 4.8, reviewCount: 76, source: 'curated',
       hazards: ['livestock']
     },
