@@ -373,7 +373,19 @@
       "Read(//Users/jayeshfatania/Desktop/sniffout-website/public/areas/$area/**)",
       "Bash(done)",
       "Bash(echo \"scoring-spec: $?\")",
-      "Bash(echo \"canine-weather: $?\")"
+      "Bash(echo \"canine-weather: $?\")",
+      "Bash(find ~/Desktop -name \"*methodology*\" 2>/dev/null | head -10\nfind ~/Desktop -name \"*french-bulldog*fact*\" -o -name \"*methodology*fact*\" 2>/dev/null | head -10)",
+      "Bash(find ~/Desktop -name \"*methodology*\" 2>/dev/null\nfind ~/Desktop -name \"*french*bulldog*\" 2>/dev/null | grep -v \".git\")",
+      "Bash(find ~/Desktop -name \"*.md\" 2>/dev/null | xargs grep -l \"methodology\\\\|french bulldog\\\\|french-bulldog\" 2>/dev/null | grep -v \".git\" | head -20)",
+      "Bash(head -3 echo \"--- page template check ---\" grep \"page-layout\\\\|page-heading\\\\|page-prose\" ~/Desktop/sniffout-website/public/methodology/index.html)",
+      "Bash(find ~/Desktop -name \"french-bulldog-walking-guide*\" 2>/dev/null | head -5\nfind ~/Desktop -name \"french-bulldog-walking-research*\" 2>/dev/null | head -5\nfind ~/Desktop -name \"*french-bulldog*fact*\" 2>/dev/null | head -5\nfind ~/Desktop -name \"scoring-validation*\" 2>/dev/null | head -5)",
+      "Bash(find ~/Desktop -name \"*.md\" 2>/dev/null | xargs grep -l \"french bulldog\\\\|French Bulldog\\\\|french-bulldog\" 2>/dev/null | grep -v \".git\" | head -10)",
+      "Bash(cd ~/Desktop/sniffout-website echo \"=== richmond-park-dog-walk.md body ===\" awk '/^---/{c++; if\\(c==2\\){found=1; next}} found{print}' content/walks/richmond-park-dog-walk.md)",
+      "Bash(cd ~/Desktop/sniffout-website echo \"=== richmond-park body start ===\" awk '/^---/{c++; if\\(c==2\\){found=1; next}} found{print}' content/walks/richmond-park-dog-walk.md)",
+      "Bash(sed -n '75,96p' ~/Desktop/sniffout-website/docs/research/surrey-walks-expansion-april-5.md\necho \"===\"\nsed -n '148,169p' ~/Desktop/sniffout-website/docs/research/surrey-walks-expansion-april-5.md\necho \"===\"\nsed -n '218,240p' ~/Desktop/sniffout-website/docs/research/surrey-walks-expansion-april-5.md\necho \"===\"\nsed -n '288,310p' ~/Desktop/sniffout-website/docs/research/surrey-walks-expansion-april-5.md\necho \"===\"\nsed -n '356,378p' ~/Desktop/sniffout-website/docs/research/surrey-walks-expansion-april-5.md\necho \"===\"\nsed -n '426,448p' ~/Desktop/sniffout-website/docs/research/surrey-walks-expansion-april-5.md)",
+      "Read(//Users/jayeshfatania/Desktop/sniffout-website/**)",
+      "Bash(ls ~/Desktop/my-first-repo/docs/ | grep -i hazard; find ~/Desktop -name \"*hazard*spec*\" 2>/dev/null)",
+      "Bash(hugo --destination docs)"
     ]
   }
 }
