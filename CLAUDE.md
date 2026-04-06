@@ -235,7 +235,7 @@ Note: `communityWalks` is not part of v2 — community features are deferred.
 
 ### Data
 
-Walk data is hardcoded in `WALKS_DB` (100 UK walks). No backend — all persistence is `localStorage`. The v2 schema for each walk entry:
+Walk data is hardcoded in `WALKS_DB` (85 UK walks with hazard tagging). No backend — all persistence is `localStorage`. The v2 schema for each walk entry:
 
 ```
 id, name, location, lat, lon, description
@@ -252,7 +252,12 @@ reviewCount: number
 distance:    number (miles)
 duration:    number (minutes)
 source:      "curated" | "places"
+hazards:     array — approved values: deer, adders, ticks, algae, livestock, ground-nesting-birds, cliff, flooding, paw-burn, mountain-bikers
+wetNote:     string (optional) — underfoot condition note shown in wet weather context
+hotNote:     string (optional) — heat/summer note shown in hot weather context
 ```
+
+**Hazard tagging:** Every walk has a `hazards` array. Per-walk seasonal notices driven by `getWalkNotices()` function. Old global deer rut notice has been removed in favour of per-walk hazard data.
 
 Walk log entries (in `sniffout_walk_log`) have an additional `type` field:
 - `"curated"` — a walk from WALKS_DB, linked by `id`
@@ -277,9 +282,10 @@ Do not add WALKS_DB schema fields without PO sign-off.
 
 ### Infrastructure and Monitoring
 
-- **Circuit breaker (Cloudflare Worker):** Live at places-proxy.sniffout.app. 500 requests/hour threshold, KV-backed rate limiting, email alert to hello@sniffout.app on trigger, auto-reset after 60 minutes. Admin endpoints: /admin/stats (view usage) and /admin/reset?key=SNIFFOUT_ADMIN_2026 (manual reset).
+- **Circuit breaker (Cloudflare Worker):** Live at places-proxy.sniffout.app. 500 requests/hour threshold, KV-backed rate limiting, email alert to hello@sniffout.app on trigger, auto-reset after 60 minutes. Admin endpoints: /admin/stats (view usage) and /admin/reset?key=SNIFFOUT_ADMIN_2026 (manual reset). Worker uses ES module syntax (`export default`), `env.PLACES_API_KEY`, `env.SNIFFOUT_KV`.
 - **GA4 tracking:** Live on app and website. Measurement ID: G-B1GQG1KWD3. Custom events: tab_view, walk_card_tap, walk_detail_open, weather_check, nearby_search, app_install_prompt, app_installed. Beta source tracking via ?src= URL parameter.
 - **Email routing:** hello@sniffout.app forwards to personal email via Cloudflare Email Routing.
+- **Google Cloud billing alerts:** Configured at £50 and £100 thresholds.
 - **Google Maps cost risk:** Primary scaling cost. At 50,000 MAU, interactive map loads could be £200-600/month. Mitigation: static map images on overview pages; interactive map only on navigate/start walk view.
 
 ### CSS
@@ -317,6 +323,7 @@ Dark mode is toggled manually by the user via Settings. "Auto" option uses `pref
 - **Weather**: `fetchWeather(lat, lon)`, `renderWeather(data)` — hazard detection for rain/heat/wind/UV; hourly forecast bar on Weather tab. Includes smart walk window bar chart with evidence-based per-hour scoring. Five reason icons: rain, heat, wind, cold, storm. Info disclaimer pill on Weather tab. "All day" pill when all bars are green.
 - **Smart weather scoring**: `scoreHour(hour, dogProfile)` — per-hour quality score using evidence-based thresholds. Heat threshold 22C (product decision), 28C = POOR. Rain scored as amount x probability. Humidity multipliers 1.3x (70-79%) and 1.6x (80%+). Scoring spec: docs/smart-weather-scoring-spec.md. Fact check: ~/Desktop/sniffout-website/docs/reviews/scoring-thresholds-fact-check-april-2.md.
 - **Breed sensitivity engine**: `BREED_SENSITIVITY` constant, `getBreedGroup()`, `getActiveDogProfile()`, `getDogWeatherNotes()`, `getConditionalAlerts()` — drives breed-specific notes on Weather tab condition tiles.
+- **Hazard notices**: `getWalkNotices(walk, date)` — returns per-walk seasonal notices based on the walk's `hazards` array and current date. Replaced old global deer rut notice.
 - **Walk verdict**: `getWalkVerdict(weatherData)` — shared pure function returning approved verdict strings; used by Today and Weather tabs
 - **Walks**: `renderWalks()` — filtering by offLead/livestock/terrain/distance, map view, favourites
 - **Walk log**: `getWalkLog()`, `saveWalkLog(entry)` — manages `sniffout_walk_log`. Handles both `"curated"` and `"custom"` entry types.
@@ -364,11 +371,12 @@ These items are not yet implemented. Do not start any of these without an explic
 - Website methodology page: live at /methodology/
 - Lighter green #5A8A2E treatment for 20-22C awareness range: shipped
 - Reason icons replaced with simpler bolder versions: shipped
+- OS Maps Leisure tiles: fixed and active
+- Smart weather bar chart with evidence-based per-hour scoring: live
 
 **PWA backlog:**
 - Push notifications spec
 - B2 beforeunload handler - deferred, manual test on Android needed
-- OS Maps Leisure tiles not activating
 - Firebase Phase 3 migration - authenticated accounts, server-side walk log, full Firestore
 
 **Website backlog:**
@@ -384,6 +392,32 @@ These items are not yet implemented. Do not start any of these without an explic
 - French Bulldog walking guide: fact-checked PASS, live
 - Cockapoo walking guide: fact-checked PASS with one correction applied, live
 - Ailsa walk descriptions for all 14 live walk pages: complete at docs/copy/ailsa-walk-descriptions-april-3.md (pending Developer commit to walk pages)
+
+### Working Agreements
+
+These govern how all agents and Developer briefs operate. Do not deviate.
+
+- Always ask Jayesh before writing any Developer or agent brief
+- Number tasks clearly (Task 1, Task 2 etc) with visual separators between tasks
+- Specify which repo (PWA or website) for every task
+- Handoff and CLAUDE.md updates go through PO pane only
+- Kanban must be updated at end of every session
+- Content pipeline: Researcher - Copywriter - Fact Checker (mandatory for Tom) - fixes - commit
+- Surgical single-task briefs only (maximum 3-4 related tasks per round)
+- No time estimates in Developer briefs
+- Developer must confirm changes with line numbers summary
+- Developer must verify push with git log --oneline -3 confirming origin/main matches HEAD
+- Agent prompt format: single copyable code block, start with "You are the [Role] for Sniffout...", include file protection warning and no em dash rule
+
+### Trail Tips Content Category
+
+Short practical hacks written in Jayesh's founder voice. Distinct from Tom's safety guide format. Lives across multiple surfaces:
+- Walk pages: contextual tips relevant to that specific walk
+- Standalone articles on website
+- In-app contextual tips (future)
+- Social media
+
+Trail Tips are written by Jayesh directly or heavily edited from Jayesh's voice. They are not a Tom article type and do not require Fact Checker unless health claims are made.
 
 ### Em Dash Rule
 
