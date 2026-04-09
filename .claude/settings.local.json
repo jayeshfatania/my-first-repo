@@ -385,7 +385,10 @@
       "Bash(sed -n '75,96p' ~/Desktop/sniffout-website/docs/research/surrey-walks-expansion-april-5.md\necho \"===\"\nsed -n '148,169p' ~/Desktop/sniffout-website/docs/research/surrey-walks-expansion-april-5.md\necho \"===\"\nsed -n '218,240p' ~/Desktop/sniffout-website/docs/research/surrey-walks-expansion-april-5.md\necho \"===\"\nsed -n '288,310p' ~/Desktop/sniffout-website/docs/research/surrey-walks-expansion-april-5.md\necho \"===\"\nsed -n '356,378p' ~/Desktop/sniffout-website/docs/research/surrey-walks-expansion-april-5.md\necho \"===\"\nsed -n '426,448p' ~/Desktop/sniffout-website/docs/research/surrey-walks-expansion-april-5.md)",
       "Read(//Users/jayeshfatania/Desktop/sniffout-website/**)",
       "Bash(ls ~/Desktop/my-first-repo/docs/ | grep -i hazard; find ~/Desktop -name \"*hazard*spec*\" 2>/dev/null)",
-      "Bash(hugo --destination docs)"
+      "Bash(hugo --destination docs)",
+      "WebFetch(domain:www.thekennelclub.org.uk)",
+      "WebFetch(domain:www.royalkennelclub.com)",
+      "WebFetch(domain:www.petplan.co.uk)"
     ]
   }
 }
