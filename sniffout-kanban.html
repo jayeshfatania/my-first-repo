@@ -384,6 +384,48 @@
 .card-edit-save:active{transform:scale(0.97)}
 .card-edit-cancel{font-size:11px;font-weight:600;background:none;color:var(--ink-3);border:none;cursor:pointer;font-family:inherit;padding:5px 2px}
 .card-edit-cancel:hover{color:var(--ink)}
+
+  /* === Card detail modal === */
+  .card-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px}
+  .card-modal-overlay.open{display:flex;animation:cmo-fade 0.15s ease}
+  @keyframes cmo-fade{from{opacity:0}to{opacity:1}}
+  .card-modal{background:#fff;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,0.2);width:100%;max-width:860px;max-height:90vh;overflow-y:auto;position:relative;user-select:text}
+  .card-modal-top-bar{height:4px;background:#B85C2C;border-radius:8px 8px 0 0}
+  .card-modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:20px 24px 16px;border-bottom:1px solid var(--border)}
+  .card-modal-hdr-title{font-size:18px;font-weight:700;color:#2C4A14;line-height:1.4;flex:1;user-select:text}
+  .card-modal-x{background:none;border:none;cursor:pointer;color:var(--ink-3);padding:2px;line-height:1;border-radius:4px;transition:color 0.15s ease;flex-shrink:0}
+  .card-modal-x:hover{color:var(--ink)}
+  .card-modal-body{display:flex;gap:24px;padding:20px 24px}
+  .card-modal-left{flex:0 0 63%;min-width:0}
+  .card-modal-right{flex:1;min-width:0}
+  .card-modal-section{margin-bottom:20px}
+  .card-modal-slabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(44,74,20,0.55);margin-bottom:8px}
+  .card-modal-desc{font-size:13px;color:var(--ink);line-height:1.6;user-select:text}
+  .card-modal-desc p{margin:0 0 6px}
+  .card-modal-desc p:last-child{margin-bottom:0}
+  .card-modal-desc ol{padding-left:20px;margin:0 0 6px}
+  .card-modal-desc ul{list-style:none;padding:0;margin:0 0 6px}
+  .card-modal-desc ul li{padding-left:14px;position:relative;margin-bottom:3px}
+  .card-modal-desc ul li::before{content:'';display:inline-block;width:5px;height:5px;background:#2C4A14;position:absolute;left:0;top:7px;border-radius:1px}
+  .card-modal-desc ol li{margin-bottom:3px}
+  .card-modal-notes-list{font-size:11px}
+  .card-modal-note{background:#FFFBF0;border:0.5px solid #F0E0A0;border-radius:6px;padding:6px 8px;color:#5C4A00;line-height:1.5;margin-bottom:4px;user-select:text}
+  .card-modal-nonotes{font-size:12px;color:var(--ink-3)}
+  .card-modal-status-pill{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;display:inline-block}
+  .cms-backlog{background:#e8e8e8;color:#555}
+  .cms-inprogress{background:#FFF3D6;color:#B07020}
+  .cms-done{background:#E8F0DC;color:#2C4A14}
+  .cms-blocker{background:#FCE8E8;color:#C04040}
+  .card-modal-tags-wrap{display:flex;flex-wrap:wrap;gap:4px}
+  .card-modal-copy{font-size:12px;font-weight:600;background:var(--brand-tint);color:var(--brand);border:1px solid rgba(44,74,20,0.2);border-radius:6px;padding:7px 14px;cursor:pointer;font-family:inherit;transition:background 0.15s ease;width:100%;text-align:center}
+  .card-modal-copy:hover{background:var(--brand-light)}
+  .card-modal-copy:active{transform:scale(0.97)}
+  .card-modal-card-id{font-size:11px;color:var(--ink-3)}
+  .card-modal-ftr{display:flex;justify-content:flex-end;padding:12px 24px;border-top:1px solid var(--border)}
+  .card-modal-close-ftr{font-size:12px;font-weight:600;background:none;color:var(--ink-3);border:1px solid var(--border);border-radius:6px;padding:7px 16px;cursor:pointer;font-family:inherit}
+  .card-modal-close-ftr:hover{color:var(--ink);border-color:var(--ink-3)}
+  .card .card-title,.card .card-body{cursor:pointer}
+  @media (max-width:768px){.card-modal-body{flex-direction:column}.card-modal-left,.card-modal-right{flex:none;width:100%}}
 </style>
 </head>
 <body>
@@ -1367,6 +1409,51 @@
   sniffout-kanban.html · Updated by Claude each session · github.com/jayeshfatania/my-first-repo
 </div>
 
+<!-- Card detail modal -->
+<div id="card-modal-overlay" class="card-modal-overlay">
+  <div id="card-modal" class="card-modal" role="dialog" aria-modal="true">
+    <div class="card-modal-top-bar"></div>
+    <div class="card-modal-header">
+      <div id="cmd-title" class="card-modal-hdr-title"></div>
+      <button class="card-modal-x" id="cmd-close-x" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="card-modal-body">
+      <div class="card-modal-left">
+        <div class="card-modal-section">
+          <div class="card-modal-slabel">Description</div>
+          <div id="cmd-desc" class="card-modal-desc"></div>
+        </div>
+        <div class="card-modal-section">
+          <div class="card-modal-slabel">Activity / Notes</div>
+          <div id="cmd-notes" class="card-modal-notes-list"></div>
+        </div>
+      </div>
+      <div class="card-modal-right">
+        <div class="card-modal-section">
+          <div class="card-modal-slabel">Status</div>
+          <div id="cmd-status"></div>
+        </div>
+        <div class="card-modal-section" id="cmd-tags-section">
+          <div class="card-modal-slabel">Labels</div>
+          <div id="cmd-tags" class="card-modal-tags-wrap"></div>
+        </div>
+        <div class="card-modal-section">
+          <button id="cmd-copy" class="card-modal-copy">Copy card</button>
+        </div>
+        <div class="card-modal-section">
+          <div class="card-modal-slabel">Card ID</div>
+          <div id="cmd-id" class="card-modal-card-id"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-modal-ftr">
+      <button class="card-modal-close-ftr" id="cmd-close-ftr">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
 function showNoteInput(id){var w=document.getElementById('input-'+id);if(w)w.classList.toggle('visible');}
 function saveNote(id){var input=document.getElementById('text-'+id);if(!input||!input.value.trim())return;var notes=JSON.parse(localStorage.getItem('sniffout-notes-'+id)||'[]');notes.push(input.value.trim());localStorage.setItem('sniffout-notes-'+id,JSON.stringify(notes));input.value='';document.getElementById('input-'+id).classList.remove('visible');renderNotes(id);}
@@ -1681,6 +1768,74 @@ document.addEventListener('DOMContentLoaded',function(){loadChecklist('website')
     });
 
     updateCounts();
+  });
+})();
+</script>
+<script>
+(function(){
+  function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function fmtBody(txt){
+    if(!txt)return '<p style="color:var(--ink-3)">No description.</p>';
+    var lines=txt.split('\n');var html='';var i=0;
+    while(i<lines.length){
+      var l=lines[i];
+      if(/^\d+\./.test(l)){html+='<ol>';while(i<lines.length&&/^\d+\./.test(lines[i])){html+='<li>'+escH(lines[i].replace(/^\d+\.\s*/,''))+'</li>';i++;}html+='</ol>';}
+      else if(/^-\s/.test(l)){html+='<ul>';while(i<lines.length&&/^-\s/.test(lines[i])){html+='<li>'+escH(lines[i].replace(/^-\s*/,''))+'</li>';i++;}html+='</ul>';}
+      else{if(l.trim())html+='<p>'+escH(l)+'</p>';i++;}
+    }
+    return html||'<p style="color:var(--ink-3)">No description.</p>';
+  }
+  function getColForCard(card){var cols=['backlog','inprogress','done'];for(var i=0;i<cols.length;i++){var c=document.getElementById('cards-'+cols[i]);if(c&&c.contains(card))return cols[i];}return 'backlog';}
+  function getTagText(el){if(!el)return '';var t='';el.childNodes.forEach(function(n){if(n.nodeType===3)t+=n.textContent;});return t.trim();}
+  function openModal(card){
+    var cardId=card.id;
+    var titleEl=card.querySelector('.card-title');
+    var titleText='';
+    if(titleEl){var tc=titleEl.cloneNode(true);tc.querySelectorAll('button,.card-checklist-toggle,.card-checklist-wrap').forEach(function(e){e.remove();});titleText=tc.textContent.trim();}
+    document.getElementById('cmd-title').textContent=titleText;
+    var bodyEl=card.querySelector('.card-body');
+    var bodyText=bodyEl?bodyEl.textContent.trim():'';
+    document.getElementById('cmd-desc').innerHTML=fmtBody(bodyText);
+    var isBlocker=card.classList.contains('blocker');
+    var col=getColForCard(card);
+    var statusText,statusCls;
+    if(isBlocker){statusText='Hard Blocker';statusCls='cms-blocker';}
+    else if(col==='inprogress'){statusText='In Progress';statusCls='cms-inprogress';}
+    else if(col==='done'){statusText='Done';statusCls='cms-done';}
+    else{statusText='Backlog';statusCls='cms-backlog';}
+    document.getElementById('cmd-status').innerHTML='<span class="card-modal-status-pill '+statusCls+'">'+statusText+'</span>';
+    var tagsWrap=document.getElementById('cmd-tags');var tagsSection=document.getElementById('cmd-tags-section');var tagParts=[];
+    var tagEl=card.querySelector('.card-top .card-tag');
+    if(tagEl){var tText=getTagText(tagEl);if(tText){var tCls=Array.from(tagEl.classList).filter(function(c){return c!=='card-tag';}).join(' ');tagParts.push('<span class="card-tag '+escH(tCls)+'">'+escH(tText)+'</span>');}}
+    card.querySelectorAll('.card-footer .card-label').forEach(function(lbl){tagParts.push('<span class="card-label">'+escH(lbl.textContent.trim())+'</span>');});
+    if(tagParts.length){tagsWrap.innerHTML=tagParts.join('');tagsSection.style.display='';}else{tagsSection.style.display='none';}
+    var notesContainer=document.getElementById('cmd-notes');
+    var notes=JSON.parse(localStorage.getItem('sniffout-notes-'+cardId)||'[]');
+    if(notes.length){notesContainer.innerHTML=notes.map(function(n){return '<div class="card-modal-note">'+escH(n)+'</div>';}).join('');}
+    else{notesContainer.innerHTML='<div class="card-modal-nonotes">No notes yet.</div>';}
+    var copyBtn=document.getElementById('cmd-copy');copyBtn.setAttribute('data-title',titleText);copyBtn.setAttribute('data-body',bodyText);copyBtn.textContent='Copy card';
+    document.getElementById('cmd-id').textContent=cardId;
+    document.getElementById('card-modal-overlay').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(){document.getElementById('card-modal-overlay').classList.remove('open');document.body.style.overflow='';}
+  document.getElementById('cmd-close-x').addEventListener('click',closeModal);
+  document.getElementById('cmd-close-ftr').addEventListener('click',closeModal);
+  document.getElementById('card-modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.getElementById('card-modal-overlay').classList.contains('open'))closeModal();});
+  document.getElementById('cmd-copy').addEventListener('click',function(){
+    var title=this.getAttribute('data-title')||'';var body=this.getAttribute('data-body')||'';var text=title+(body?'\n\n'+body:'');var btn=this;
+    function onCopy(){btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy card';},1500);}
+    function fallback(){var ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0;top:0;left:0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');onCopy();}catch(ex){}document.body.removeChild(ta);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(onCopy).catch(fallback);}else{fallback();}
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.closest)return;
+    var inTitle=e.target.closest('.card-title');var inBody=e.target.closest('.card-body');
+    if(!inTitle&&!inBody)return;
+    if(e.target.closest('.card-edit-panel')||e.target.closest('.card-note-input-wrap')||e.target.closest('.card-notes-add')||e.target.closest('.card-edit-btn')||e.target.closest('.card-move-btn')||e.target.closest('.card-move-select')||e.target.closest('.card-checklist-wrap')||e.target.closest('.card-checklist-toggle')||e.target.closest('.add-card-form'))return;
+    var card=e.target.closest('.card');if(!card)return;
+    openModal(card);
   });
 })();
 </script></body>
