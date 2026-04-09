@@ -391,8 +391,10 @@
   @keyframes cmo-fade{from{opacity:0}to{opacity:1}}
   .card-modal{background:#fff;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,0.2);width:100%;max-width:860px;max-height:90vh;overflow-y:auto;position:relative;user-select:text}
   .card-modal-top-bar{height:4px;background:#B85C2C;border-radius:8px 8px 0 0}
-  .card-modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:20px 24px 16px;border-bottom:1px solid var(--border)}
-  .card-modal-hdr-title{font-size:18px;font-weight:700;color:#2C4A14;line-height:1.4;flex:1;user-select:text}
+  .card-modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:16px 24px 14px;border-bottom:1px solid var(--border)}
+  .card-modal-hdr-title{font-size:18px;font-weight:700;color:#2C4A14;line-height:1.4;flex:1;cursor:text;user-select:text;border-radius:4px;padding:2px 4px;margin:-2px -4px;transition:background 0.1s ease;min-width:0;word-break:break-word;outline:none}
+  .card-modal-hdr-title[contenteditable="true"]:hover{background:rgba(0,0,0,0.04)}
+  .card-modal-hdr-title[contenteditable="true"]:focus{outline:2px solid #B85C2C;outline-offset:2px;background:#fff}
   .card-modal-x{background:none;border:none;cursor:pointer;color:var(--ink-3);padding:2px;line-height:1;border-radius:4px;transition:color 0.15s ease;flex-shrink:0}
   .card-modal-x:hover{color:var(--ink)}
   .card-modal-body{display:flex;gap:24px;padding:20px 24px}
@@ -400,26 +402,53 @@
   .card-modal-right{flex:1;min-width:0}
   .card-modal-section{margin-bottom:20px}
   .card-modal-slabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(44,74,20,0.55);margin-bottom:8px}
-  .card-modal-desc{font-size:13px;color:var(--ink);line-height:1.6;user-select:text}
-  .card-modal-desc p{margin:0 0 6px}
-  .card-modal-desc p:last-child{margin-bottom:0}
+  .card-modal-desc{font-size:13px;color:var(--ink);line-height:1.6;user-select:text;cursor:pointer;border-radius:4px;padding:6px 8px;margin:-6px -8px;transition:background 0.1s ease;min-height:36px}
+  .card-modal-desc:hover{background:rgba(0,0,0,0.04)}
+  .card-modal-desc p{margin:0 0 6px}.card-modal-desc p:last-child{margin-bottom:0}
   .card-modal-desc ol{padding-left:20px;margin:0 0 6px}
   .card-modal-desc ul{list-style:none;padding:0;margin:0 0 6px}
   .card-modal-desc ul li{padding-left:14px;position:relative;margin-bottom:3px}
   .card-modal-desc ul li::before{content:'';display:inline-block;width:5px;height:5px;background:#2C4A14;position:absolute;left:0;top:7px;border-radius:1px}
   .card-modal-desc ol li{margin-bottom:3px}
-  .card-modal-notes-list{font-size:11px}
-  .card-modal-note{background:#FFFBF0;border:0.5px solid #F0E0A0;border-radius:6px;padding:6px 8px;color:#5C4A00;line-height:1.5;margin-bottom:4px;user-select:text}
-  .card-modal-nonotes{font-size:12px;color:var(--ink-3)}
+  .card-modal-desc-empty{color:var(--ink-3);font-style:italic}
+  .card-modal-desc-edit{display:none}
+  .card-modal-desc-edit.active{display:block}
+  .card-modal-desc-edit textarea{display:block;width:100%;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;border:1px solid var(--border);border-radius:6px;padding:8px 10px;background:white;color:var(--ink);outline:none;resize:vertical;min-height:120px;line-height:1.6}
+  .card-modal-desc-edit textarea:focus{border-color:#B85C2C}
+  .card-modal-desc-edit-actions{display:flex;gap:8px;margin-top:6px;align-items:center}
+  .cmd-desc-save{font-size:12px;font-weight:600;background:#B85C2C;color:white;border:none;border-radius:6px;padding:6px 14px;cursor:pointer;font-family:inherit}
+  .cmd-desc-save:hover{opacity:0.88}.cmd-desc-save:active{transform:scale(0.97)}
+  .cmd-desc-cancel{font-size:12px;font-weight:600;background:none;color:var(--ink-3);border:none;cursor:pointer;font-family:inherit;padding:6px 4px}
+  .cmd-desc-cancel:hover{color:var(--ink)}
+  .card-modal-notes-list{margin-bottom:8px}
+  .card-modal-note{display:flex;align-items:flex-start;gap:6px;background:#FFFBF0;border:0.5px solid #F0E0A0;border-radius:6px;padding:6px 8px;color:#5C4A00;line-height:1.5;margin-bottom:4px;font-size:12px;user-select:text}
+  .card-modal-note-text{flex:1}
+  .card-modal-note-del{background:none;border:none;cursor:pointer;color:#B09020;font-size:16px;line-height:1;padding:0 2px;flex-shrink:0;opacity:0.55;transition:opacity 0.1s ease;font-family:inherit}
+  .card-modal-note-del:hover{opacity:1}
+  .card-modal-nonotes{font-size:12px;color:var(--ink-3);margin-bottom:8px}
+  .card-modal-note-add-row{display:flex;gap:6px;align-items:center}
+  .card-modal-note-input{flex:1;font-size:12px;font-family:inherit;border:0.5px solid var(--border);border-radius:6px;padding:6px 10px;background:white;color:var(--ink);outline:none}
+  .card-modal-note-input:focus{border-color:var(--brand)}
+  .card-modal-note-add-btn{font-size:11px;font-weight:600;background:var(--brand-tint);color:var(--brand);border:1px solid rgba(44,74,20,0.2);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .card-modal-note-add-btn:hover{background:var(--brand-light)}.card-modal-note-add-btn:active{transform:scale(0.97)}
+  .card-modal-status-select{font-size:12px;font-weight:600;font-family:inherit;border:1px solid var(--border);border-radius:6px;padding:5px 10px;background:white;color:var(--ink);cursor:pointer;outline:none;width:100%}
+  .card-modal-status-select:focus{border-color:var(--brand)}
   .card-modal-status-pill{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;display:inline-block}
   .cms-backlog{background:#e8e8e8;color:#555}
   .cms-inprogress{background:#FFF3D6;color:#B07020}
   .cms-done{background:#E8F0DC;color:#2C4A14}
   .cms-blocker{background:#FCE8E8;color:#C04040}
-  .card-modal-tags-wrap{display:flex;flex-wrap:wrap;gap:4px}
+  .card-modal-tags-wrap{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;min-height:4px}
+  .card-modal-tag-pill{display:inline-flex;align-items:center;gap:2px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--bg);border:0.5px solid var(--border);color:var(--ink-2)}
+  .card-modal-tag-pill-del{background:none;border:none;cursor:pointer;color:var(--ink-3);font-size:14px;line-height:1;padding:0 1px;margin-left:2px;opacity:0.7;transition:opacity 0.1s;font-family:inherit}
+  .card-modal-tag-pill-del:hover{opacity:1;color:var(--ink)}
+  .card-modal-tag-input-row{display:flex;gap:6px}
+  .card-modal-tag-input{flex:1;font-size:11px;font-family:inherit;border:0.5px solid var(--border);border-radius:6px;padding:5px 8px;background:white;color:var(--ink);outline:none}
+  .card-modal-tag-input:focus{border-color:var(--brand)}
   .card-modal-copy{font-size:12px;font-weight:600;background:var(--brand-tint);color:var(--brand);border:1px solid rgba(44,74,20,0.2);border-radius:6px;padding:7px 14px;cursor:pointer;font-family:inherit;transition:background 0.15s ease;width:100%;text-align:center}
-  .card-modal-copy:hover{background:var(--brand-light)}
-  .card-modal-copy:active{transform:scale(0.97)}
+  .card-modal-copy:hover{background:var(--brand-light)}.card-modal-copy:active{transform:scale(0.97)}
+  .card-modal-delete{font-size:12px;font-weight:600;background:none;color:rgba(192,57,43,0.6);border:1px solid rgba(192,57,43,0.25);border-radius:6px;padding:7px 14px;cursor:pointer;font-family:inherit;width:100%;text-align:center;transition:all 0.15s ease;margin-top:6px}
+  .card-modal-delete:hover{color:#C0392B;border-color:#C0392B;background:rgba(192,57,43,0.05)}.card-modal-delete:active{transform:scale(0.97)}
   .card-modal-card-id{font-size:11px;color:var(--ink-3)}
   .card-modal-ftr{display:flex;justify-content:flex-end;padding:12px 24px;border-top:1px solid var(--border)}
   .card-modal-close-ftr{font-size:12px;font-weight:600;background:none;color:var(--ink-3);border:1px solid var(--border);border-radius:6px;padding:7px 16px;cursor:pointer;font-family:inherit}
@@ -1414,7 +1443,7 @@
   <div id="card-modal" class="card-modal" role="dialog" aria-modal="true">
     <div class="card-modal-top-bar"></div>
     <div class="card-modal-header">
-      <div id="cmd-title" class="card-modal-hdr-title"></div>
+      <div id="cmd-title" class="card-modal-hdr-title" contenteditable="false" spellcheck="false"></div>
       <button class="card-modal-x" id="cmd-close-x" aria-label="Close">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -1424,23 +1453,38 @@
         <div class="card-modal-section">
           <div class="card-modal-slabel">Description</div>
           <div id="cmd-desc" class="card-modal-desc"></div>
+          <div id="cmd-desc-edit" class="card-modal-desc-edit">
+            <textarea id="cmd-desc-ta" rows="6"></textarea>
+            <div class="card-modal-desc-edit-actions">
+              <button class="cmd-desc-save" id="cmd-desc-save-btn">Save</button>
+              <button class="cmd-desc-cancel" id="cmd-desc-cancel-btn">Cancel</button>
+            </div>
+          </div>
         </div>
         <div class="card-modal-section">
-          <div class="card-modal-slabel">Activity / Notes</div>
+          <div class="card-modal-slabel">Activity</div>
           <div id="cmd-notes" class="card-modal-notes-list"></div>
+          <div class="card-modal-note-add-row">
+            <input class="card-modal-note-input" id="cmd-note-input" placeholder="Add a note..." type="text">
+            <button class="card-modal-note-add-btn" id="cmd-note-add-btn">Add note</button>
+          </div>
         </div>
       </div>
       <div class="card-modal-right">
         <div class="card-modal-section">
           <div class="card-modal-slabel">Status</div>
-          <div id="cmd-status"></div>
+          <div id="cmd-status-wrap"></div>
         </div>
-        <div class="card-modal-section" id="cmd-tags-section">
+        <div class="card-modal-section">
           <div class="card-modal-slabel">Labels</div>
           <div id="cmd-tags" class="card-modal-tags-wrap"></div>
+          <div class="card-modal-tag-input-row" id="cmd-tags-input-row">
+            <input class="card-modal-tag-input" id="cmd-tag-input" placeholder="Add label, press Enter">
+          </div>
         </div>
         <div class="card-modal-section">
           <button id="cmd-copy" class="card-modal-copy">Copy card</button>
+          <button id="cmd-delete" class="card-modal-delete" style="display:none">Delete card</button>
         </div>
         <div class="card-modal-section">
           <div class="card-modal-slabel">Card ID</div>
@@ -1773,67 +1817,358 @@ document.addEventListener('DOMContentLoaded',function(){loadChecklist('website')
 </script>
 <script>
 (function(){
+  var _cardId=null,_isBlocker=false,_isCustom=false,_descDirty=false;
+  var STORE_CUSTOM='sniffout-kanban-custom-cards';
+  var STORE_EDITS='sniffout-kanban-card-edits';
+  var STORE_DELETED='sniffout-kanban-deleted';
+  var COLS=['backlog','inprogress','done'];
+  var COL_LABELS={backlog:'Backlog',inprogress:'In Progress',done:'Done'};
+
+  // Remove deleted static cards on load
+  document.addEventListener('DOMContentLoaded',function(){
+    var del=JSON.parse(localStorage.getItem(STORE_DELETED)||'[]');
+    del.forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});
+  });
+
   function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
   function fmtBody(txt){
-    if(!txt)return '<p style="color:var(--ink-3)">No description.</p>';
-    var lines=txt.split('\n');var html='';var i=0;
+    if(!txt||!txt.trim())return '<span class="card-modal-desc-empty">Click to add a description...</span>';
+    var lines=txt.split('\n'),html='',i=0;
     while(i<lines.length){
       var l=lines[i];
       if(/^\d+\./.test(l)){html+='<ol>';while(i<lines.length&&/^\d+\./.test(lines[i])){html+='<li>'+escH(lines[i].replace(/^\d+\.\s*/,''))+'</li>';i++;}html+='</ol>';}
       else if(/^-\s/.test(l)){html+='<ul>';while(i<lines.length&&/^-\s/.test(lines[i])){html+='<li>'+escH(lines[i].replace(/^-\s*/,''))+'</li>';i++;}html+='</ul>';}
       else{if(l.trim())html+='<p>'+escH(l)+'</p>';i++;}
     }
-    return html||'<p style="color:var(--ink-3)">No description.</p>';
+    return html||'<span class="card-modal-desc-empty">Click to add a description...</span>';
   }
-  function getColForCard(card){var cols=['backlog','inprogress','done'];for(var i=0;i<cols.length;i++){var c=document.getElementById('cards-'+cols[i]);if(c&&c.contains(card))return cols[i];}return 'backlog';}
-  function getTagText(el){if(!el)return '';var t='';el.childNodes.forEach(function(n){if(n.nodeType===3)t+=n.textContent;});return t.trim();}
-  function openModal(card){
-    var cardId=card.id;
-    var titleEl=card.querySelector('.card-title');
-    var titleText='';
-    if(titleEl){var tc=titleEl.cloneNode(true);tc.querySelectorAll('button,.card-checklist-toggle,.card-checklist-wrap').forEach(function(e){e.remove();});titleText=tc.textContent.trim();}
-    document.getElementById('cmd-title').textContent=titleText;
-    var bodyEl=card.querySelector('.card-body');
-    var bodyText=bodyEl?bodyEl.textContent.trim():'';
-    document.getElementById('cmd-desc').innerHTML=fmtBody(bodyText);
-    var isBlocker=card.classList.contains('blocker');
-    var col=getColForCard(card);
-    var statusText,statusCls;
-    if(isBlocker){statusText='Hard Blocker';statusCls='cms-blocker';}
-    else if(col==='inprogress'){statusText='In Progress';statusCls='cms-inprogress';}
-    else if(col==='done'){statusText='Done';statusCls='cms-done';}
-    else{statusText='Backlog';statusCls='cms-backlog';}
-    document.getElementById('cmd-status').innerHTML='<span class="card-modal-status-pill '+statusCls+'">'+statusText+'</span>';
-    var tagsWrap=document.getElementById('cmd-tags');var tagsSection=document.getElementById('cmd-tags-section');var tagParts=[];
+
+  function getColForCard(card){
+    for(var i=0;i<COLS.length;i++){var c=document.getElementById('cards-'+COLS[i]);if(c&&c.contains(card))return COLS[i];}
+    return 'backlog';
+  }
+
+  function getTitleText(card){
+    var el=card.querySelector('.card-title');if(!el)return '';
+    var tc=el.cloneNode(true);
+    tc.querySelectorAll('button,.card-checklist-toggle,.card-checklist-wrap').forEach(function(e){e.remove();});
+    return tc.textContent.trim();
+  }
+
+  function getCardBody(card){
+    var el=card.querySelector('.card-body');return el?el.textContent.trim():'';
+  }
+
+  function getTagClass(t){
+    t=(t||'').toLowerCase();
+    if(t==='dev'||t==='developer')return 'tag-dev';
+    if(t==='design'||t==='designer')return 'tag-design';
+    if(t==='owner')return 'tag-owner';
+    if(t==='research')return 'tag-research';
+    if(t==='blocker')return 'tag-blocker';
+    if(t==='copy'||t==='copywriter')return 'tag-copy';
+    return 'tag-dev';
+  }
+
+  function getTagsFromCard(card){
+    var tags=[];
     var tagEl=card.querySelector('.card-top .card-tag');
-    if(tagEl){var tText=getTagText(tagEl);if(tText){var tCls=Array.from(tagEl.classList).filter(function(c){return c!=='card-tag';}).join(' ');tagParts.push('<span class="card-tag '+escH(tCls)+'">'+escH(tText)+'</span>');}}
-    card.querySelectorAll('.card-footer .card-label').forEach(function(lbl){tagParts.push('<span class="card-label">'+escH(lbl.textContent.trim())+'</span>');});
-    if(tagParts.length){tagsWrap.innerHTML=tagParts.join('');tagsSection.style.display='';}else{tagsSection.style.display='none';}
-    var notesContainer=document.getElementById('cmd-notes');
-    var notes=JSON.parse(localStorage.getItem('sniffout-notes-'+cardId)||'[]');
-    if(notes.length){notesContainer.innerHTML=notes.map(function(n){return '<div class="card-modal-note">'+escH(n)+'</div>';}).join('');}
-    else{notesContainer.innerHTML='<div class="card-modal-nonotes">No notes yet.</div>';}
-    var copyBtn=document.getElementById('cmd-copy');copyBtn.setAttribute('data-title',titleText);copyBtn.setAttribute('data-body',bodyText);copyBtn.textContent='Copy card';
-    document.getElementById('cmd-id').textContent=cardId;
+    if(tagEl){var t='';tagEl.childNodes.forEach(function(n){if(n.nodeType===3)t+=n.textContent;});t=t.trim();if(t)tags.push(t);}
+    card.querySelectorAll('.card-footer .card-label').forEach(function(lbl){var t=lbl.textContent.trim();if(t)tags.push(t);});
+    return tags;
+  }
+
+  function renderModalNotes(){
+    if(!_cardId)return;
+    var notes=JSON.parse(localStorage.getItem('sniffout-notes-'+_cardId)||'[]');
+    var c=document.getElementById('cmd-notes');if(!c)return;
+    if(notes.length){
+      c.innerHTML=notes.map(function(n,i){
+        return '<div class="card-modal-note"><span class="card-modal-note-text">'+escH(n)+'</span>'
+          +'<button class="card-modal-note-del" data-idx="'+i+'" title="Delete">&times;</button></div>';
+      }).join('');
+    } else {
+      c.innerHTML='<div class="card-modal-nonotes">No notes yet.</div>';
+    }
+  }
+
+  function renderModalTags(){
+    if(!_cardId)return;
+    var card=document.getElementById(_cardId);if(!card)return;
+    var tags=getTagsFromCard(card);
+    var wrap=document.getElementById('cmd-tags');if(!wrap)return;
+    wrap.innerHTML=tags.map(function(t,i){
+      var html='<span class="card-modal-tag-pill">'+escH(t);
+      if(!_isBlocker)html+='<button class="card-modal-tag-pill-del" data-idx="'+i+'" title="Remove">&times;</button>';
+      html+='</span>';
+      return html;
+    }).join('');
+  }
+
+  function saveTagsToCard(tags){
+    var card=document.getElementById(_cardId);if(!card)return;
+    // Remove existing tag from card-top
+    var existingTag=card.querySelector('.card-top .card-tag');
+    if(existingTag)existingTag.remove();
+    // Add first tag back
+    if(tags.length){
+      var nt=document.createElement('div');
+      nt.className='card-tag '+getTagClass(tags[0]);nt.textContent=tags[0];
+      card.querySelector('.card-top').appendChild(nt);
+    }
+    // Rebuild footer labels (tags[1..n])
+    var footer=card.querySelector('.card-footer');
+    if(tags.length>1){
+      if(!footer){
+        footer=document.createElement('div');footer.className='card-footer';
+        var anchor=card.querySelector('.card-notes')||card.querySelector('.card-move-btn')||card.querySelector('.card-edit-btn');
+        if(anchor)card.insertBefore(footer,anchor);else card.appendChild(footer);
+      } else {footer.innerHTML='';}
+      tags.slice(1).forEach(function(t){var lbl=document.createElement('div');lbl.className='card-label';lbl.textContent=t;footer.appendChild(lbl);});
+    } else if(footer){footer.innerHTML='';}
+    // Persist
+    persistFields({tags:tags});
+  }
+
+  function persistFields(fields){
+    if(!_cardId)return;
+    if(_isCustom){
+      var all=JSON.parse(localStorage.getItem(STORE_CUSTOM)||'[]');
+      for(var i=0;i<all.length;i++){
+        if(all[i].id===_cardId){
+          if(fields.title!==undefined)all[i].title=fields.title;
+          if(fields.body!==undefined)all[i].body=fields.body;
+          if(fields.tags!==undefined)all[i].tags=fields.tags;
+          break;
+        }
+      }
+      localStorage.setItem(STORE_CUSTOM,JSON.stringify(all));
+    } else {
+      var edits=JSON.parse(localStorage.getItem(STORE_EDITS)||'{}');
+      if(!edits[_cardId])edits[_cardId]={};
+      if(fields.title!==undefined)edits[_cardId].title=fields.title;
+      if(fields.body!==undefined)edits[_cardId].body=fields.body;
+      if(fields.tags!==undefined&&fields.tags.length)edits[_cardId].tag=fields.tags[0];
+      localStorage.setItem(STORE_EDITS,JSON.stringify(edits));
+    }
+  }
+
+  function updateBoardCounts(){
+    COLS.forEach(function(col){
+      var cont=document.getElementById('cards-'+col);
+      var n=cont?cont.querySelectorAll('.card').length:0;
+      var badge=document.getElementById('count-'+col);var stat=document.getElementById('stat-'+col);
+      if(badge)badge.textContent=n;if(stat)stat.textContent=n;
+    });
+  }
+
+  function openModal(card){
+    _cardId=card.id;
+    _isBlocker=card.classList.contains('blocker');
+    _isCustom=!!(card.getAttribute('data-custom'));
+    _descDirty=false;
+
+    // Title
+    var titleEl=document.getElementById('cmd-title');
+    titleEl.textContent=getTitleText(card);
+    titleEl.contentEditable=_isBlocker?'false':'true';
+    titleEl.style.cursor=_isBlocker?'default':'text';
+
+    // Description
+    var bodyText=getCardBody(card);
+    document.getElementById('cmd-desc').innerHTML=fmtBody(bodyText);
+    document.getElementById('cmd-desc').style.display='';
+    document.getElementById('cmd-desc-edit').classList.remove('active');
+    document.getElementById('cmd-desc-ta').value=bodyText;
+    if(_isBlocker){
+      document.getElementById('cmd-desc').style.cursor='default';
+      document.getElementById('cmd-desc').classList.add('no-hover');
+    } else {
+      document.getElementById('cmd-desc').style.cursor='pointer';
+    }
+
+    // Notes
+    renderModalNotes();
+
+    // Status
+    var col=getColForCard(card);
+    var statusWrap=document.getElementById('cmd-status-wrap');
+    statusWrap.innerHTML='';
+    if(_isBlocker){
+      statusWrap.innerHTML='<span class="card-modal-status-pill cms-blocker">Hard Blocker</span>';
+    } else {
+      var sel=document.createElement('select');sel.className='card-modal-status-select';
+      COLS.forEach(function(c){var opt=document.createElement('option');opt.value=c;opt.textContent=COL_LABELS[c];if(c===col)opt.selected=true;sel.appendChild(opt);});
+      sel.addEventListener('change',function(){
+        if(sel.value)window.moveCard(_cardId,sel.value,_isCustom);
+      });
+      statusWrap.appendChild(sel);
+    }
+
+    // Tags
+    renderModalTags();
+    document.getElementById('cmd-tags-input-row').style.display=_isBlocker?'none':'';
+    document.getElementById('cmd-tag-input').value='';
+
+    // Delete
+    document.getElementById('cmd-delete').style.display=_isBlocker?'none':'block';
+
+    // Copy reset
+    document.getElementById('cmd-copy').textContent='Copy card';
+
+    // Card ID
+    document.getElementById('cmd-id').textContent=_cardId;
+
+    // Open
     document.getElementById('card-modal-overlay').classList.add('open');
     document.body.style.overflow='hidden';
   }
-  function closeModal(){document.getElementById('card-modal-overlay').classList.remove('open');document.body.style.overflow='';}
-  document.getElementById('cmd-close-x').addEventListener('click',closeModal);
-  document.getElementById('cmd-close-ftr').addEventListener('click',closeModal);
-  document.getElementById('card-modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.getElementById('card-modal-overlay').classList.contains('open'))closeModal();});
+
+  function maybeClose(){
+    if(_descDirty){if(!confirm('You have unsaved changes. Close anyway?'))return;}
+    closeModal();
+  }
+
+  function closeModal(){
+    _descDirty=false;
+    document.getElementById('card-modal-overlay').classList.remove('open');
+    document.body.style.overflow='';
+    _cardId=null;
+  }
+
+  // --- Title inline editing ---
+  var titleEl=document.getElementById('cmd-title');
+  titleEl.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();titleEl.blur();}});
+  titleEl.addEventListener('blur',function(){
+    if(!_cardId||_isBlocker)return;
+    var newTitle=(titleEl.textContent||'').trim();
+    var card=document.getElementById(_cardId);if(!card)return;
+    if(!newTitle){titleEl.textContent=getTitleText(card);return;}
+    var cardTitleEl=card.querySelector('.card-title');
+    if(cardTitleEl)cardTitleEl.textContent=newTitle;
+    persistFields({title:newTitle});
+  });
+
+  // --- Description click to edit ---
+  document.getElementById('cmd-desc').addEventListener('click',function(){
+    if(_isBlocker)return;
+    var card=document.getElementById(_cardId);
+    document.getElementById('cmd-desc-ta').value=card?getCardBody(card):'';
+    document.getElementById('cmd-desc').style.display='none';
+    document.getElementById('cmd-desc-edit').classList.add('active');
+    document.getElementById('cmd-desc-ta').focus();
+    _descDirty=false;
+  });
+  document.getElementById('cmd-desc-ta').addEventListener('input',function(){_descDirty=true;});
+  document.getElementById('cmd-desc-save-btn').addEventListener('click',function(){
+    if(!_cardId)return;
+    var newBody=document.getElementById('cmd-desc-ta').value.trim();
+    var card=document.getElementById(_cardId);
+    if(card){
+      var bodyEl=card.querySelector('.card-body');
+      if(newBody){
+        if(bodyEl){bodyEl.textContent=newBody;}
+        else{var nb=document.createElement('div');nb.className='card-body';nb.textContent=newBody;
+          var ct=card.querySelector('.card-top');if(ct&&ct.nextSibling)card.insertBefore(nb,ct.nextSibling);else card.appendChild(nb);}
+      } else {if(bodyEl)bodyEl.textContent='';}
+    }
+    persistFields({body:newBody});
+    document.getElementById('cmd-desc').innerHTML=fmtBody(newBody);
+    document.getElementById('cmd-desc').style.display='';
+    document.getElementById('cmd-desc-edit').classList.remove('active');
+    _descDirty=false;
+  });
+  document.getElementById('cmd-desc-cancel-btn').addEventListener('click',function(){
+    document.getElementById('cmd-desc').style.display='';
+    document.getElementById('cmd-desc-edit').classList.remove('active');
+    _descDirty=false;
+  });
+
+  // --- Notes ---
+  document.getElementById('cmd-notes').addEventListener('click',function(e){
+    var btn=e.target.closest('.card-modal-note-del');if(!btn||!_cardId)return;
+    var idx=parseInt(btn.getAttribute('data-idx'),10);
+    var notes=JSON.parse(localStorage.getItem('sniffout-notes-'+_cardId)||'[]');
+    notes.splice(idx,1);
+    localStorage.setItem('sniffout-notes-'+_cardId,JSON.stringify(notes));
+    renderModalNotes();
+    renderNotes(_cardId);
+  });
+  function addModalNote(){
+    if(!_cardId)return;
+    var input=document.getElementById('cmd-note-input');
+    var val=(input.value||'').trim();if(!val)return;
+    var notes=JSON.parse(localStorage.getItem('sniffout-notes-'+_cardId)||'[]');
+    notes.push(val);localStorage.setItem('sniffout-notes-'+_cardId,JSON.stringify(notes));
+    input.value='';renderModalNotes();renderNotes(_cardId);
+  }
+  document.getElementById('cmd-note-add-btn').addEventListener('click',addModalNote);
+  document.getElementById('cmd-note-input').addEventListener('keydown',function(e){if(e.key==='Enter')addModalNote();});
+
+  // --- Tags ---
+  document.getElementById('cmd-tags').addEventListener('click',function(e){
+    var btn=e.target.closest('.card-modal-tag-pill-del');if(!btn||!_cardId||_isBlocker)return;
+    var idx=parseInt(btn.getAttribute('data-idx'),10);
+    var card=document.getElementById(_cardId);if(!card)return;
+    var tags=getTagsFromCard(card);tags.splice(idx,1);
+    saveTagsToCard(tags);renderModalTags();
+  });
+  document.getElementById('cmd-tag-input').addEventListener('keydown',function(e){
+    if(e.key!=='Enter')return;
+    if(!_cardId||_isBlocker)return;
+    var val=(this.value||'').trim();if(!val)return;
+    var card=document.getElementById(_cardId);if(!card)return;
+    var tags=getTagsFromCard(card);tags.push(val);
+    saveTagsToCard(tags);this.value='';renderModalTags();
+  });
+
+  // --- Copy ---
   document.getElementById('cmd-copy').addEventListener('click',function(){
-    var title=this.getAttribute('data-title')||'';var body=this.getAttribute('data-body')||'';var text=title+(body?'\n\n'+body:'');var btn=this;
+    if(!_cardId)return;
+    var card=document.getElementById(_cardId);
+    var title=getTitleText(card)||'';var body=getCardBody(card)||'';
+    var text=title+(body?'\n\n'+body:'');var btn=this;
     function onCopy(){btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy card';},1500);}
     function fallback(){var ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0;top:0;left:0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');onCopy();}catch(ex){}document.body.removeChild(ta);}
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(onCopy).catch(fallback);}else{fallback();}
   });
+
+  // --- Delete ---
+  document.getElementById('cmd-delete').addEventListener('click',function(){
+    if(!_cardId||_isBlocker)return;
+    if(!confirm('Delete this card? This cannot be undone.'))return;
+    var id=_cardId;
+    var card=document.getElementById(id);if(card)card.remove();
+    if(_isCustom){
+      var all=JSON.parse(localStorage.getItem(STORE_CUSTOM)||'[]');
+      all=all.filter(function(c){return c.id!==id;});
+      localStorage.setItem(STORE_CUSTOM,JSON.stringify(all));
+    } else {
+      var del=JSON.parse(localStorage.getItem(STORE_DELETED)||'[]');
+      if(del.indexOf(id)===-1)del.push(id);
+      localStorage.setItem(STORE_DELETED,JSON.stringify(del));
+    }
+    localStorage.removeItem('sniffout-notes-'+id);
+    closeModal();updateBoardCounts();
+  });
+
+  // --- Close handlers ---
+  document.getElementById('cmd-close-x').addEventListener('click',maybeClose);
+  document.getElementById('cmd-close-ftr').addEventListener('click',maybeClose);
+  document.getElementById('card-modal-overlay').addEventListener('click',function(e){if(e.target===this)maybeClose();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.getElementById('card-modal-overlay').classList.contains('open'))maybeClose();});
+
+  // --- Card click trigger ---
   document.addEventListener('click',function(e){
     if(!e.target.closest)return;
-    var inTitle=e.target.closest('.card-title');var inBody=e.target.closest('.card-body');
+    var inTitle=e.target.closest('.card-title'),inBody=e.target.closest('.card-body');
     if(!inTitle&&!inBody)return;
-    if(e.target.closest('.card-edit-panel')||e.target.closest('.card-note-input-wrap')||e.target.closest('.card-notes-add')||e.target.closest('.card-edit-btn')||e.target.closest('.card-move-btn')||e.target.closest('.card-move-select')||e.target.closest('.card-checklist-wrap')||e.target.closest('.card-checklist-toggle')||e.target.closest('.add-card-form'))return;
+    if(e.target.closest('.card-edit-panel')||e.target.closest('.card-note-input-wrap')||
+       e.target.closest('.card-notes-add')||e.target.closest('.card-edit-btn')||
+       e.target.closest('.card-move-btn')||e.target.closest('.card-move-select')||
+       e.target.closest('.card-checklist-wrap')||e.target.closest('.card-checklist-toggle')||
+       e.target.closest('.add-card-form'))return;
     var card=e.target.closest('.card');if(!card)return;
     openModal(card);
   });
