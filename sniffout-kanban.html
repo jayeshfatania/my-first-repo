@@ -308,17 +308,15 @@
     .header { padding: 12px 16px; }
     .stats-bar { padding: 10px 16px; }
   }
-  .card-notes{margin-top:8px;border-top:0.5px solid var(--border);padding-top:8px}
-  .card-notes-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-3);margin-bottom:4px}
-  .card-notes-add{font-size:10px;color:var(--brand);cursor:pointer;font-weight:600;background:none;border:none;padding:0;font-family:inherit;float:right}
-  .card-notes-add:hover{text-decoration:underline}
-  .card-note-item{background:#FFFBF0;border:0.5px solid #F0E0A0;border-radius:6px;padding:6px 8px;font-size:11px;color:#5C4A00;line-height:1.5;margin-bottom:4px;display:flex;gap:6px;align-items:flex-start}
-  .card-note-dot{width:4px;height:4px;background:#B09020;border-radius:50%;margin-top:5px;flex-shrink:0}
-  .card-note-input-wrap{display:none;margin-top:4px;gap:4px}
+  .card-notes{margin-top:8px;border-top:0.5px solid rgba(0,0,0,0.08);padding-top:8px}
+  .card-notes-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  .card-notes-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888}
+  .card-notes-add{font-size:10px;color:#2C4A14;cursor:pointer;font-weight:600;background:none;border:none;padding:0;font-family:inherit}
+  .card-note-item{background:#FFFBF0;border:0.5px solid #F0E0A0;border-radius:6px;padding:6px 8px;font-size:11px;color:#5C4A00;line-height:1.5;margin-bottom:4px}
+  .card-note-input-wrap{display:none;margin-top:4px;gap:4px;align-items:center}
   .card-note-input-wrap.visible{display:flex}
-  .card-note-input{flex:1;font-size:11px;font-family:inherit;border:0.5px solid var(--border);border-radius:6px;padding:5px 8px;background:white;color:var(--ink);outline:none}
-  .card-note-input:focus{border-color:var(--brand)}
-  .card-note-save{font-size:10px;font-weight:600;background:var(--brand);color:white;border:none;border-radius:6px;padding:5px 10px;cursor:pointer;font-family:inherit}
+  .card-note-input{flex:1;font-size:11px;font-family:inherit;border:0.5px solid rgba(0,0,0,0.1);border-radius:6px;padding:5px 8px;outline:none}
+  .card-note-save{font-size:10px;font-weight:600;background:#2C4A14;color:white;border:none;border-radius:6px;padding:5px 10px;cursor:pointer}
   .img-sources{margin-top:10px;border-top:0.5px solid var(--border);padding-top:10px}
   .img-sources-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-3);margin-bottom:8px}
   .img-source-row{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:11px}
@@ -327,63 +325,49 @@
   .img-source-desc{color:var(--ink-3);flex:1;line-height:1.4}
   .img-source-tag{font-size:9px;font-weight:600;padding:2px 6px;border-radius:20px;white-space:nowrap;flex-shrink:0}
   .tag-free{background:#E8F0DC;color:#2C4A14}.tag-cc{background:#E8F5F0;color:#1A6B4A}
-.card-notes{margin-top:8px;border-top:0.5px solid rgba(0,0,0,0.08);padding-top:8px}.card-notes-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}.card-notes-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888}.card-notes-add{font-size:10px;color:#2C4A14;cursor:pointer;font-weight:600;background:none;border:none;padding:0;font-family:inherit}.card-note-item{background:#FFFBF0;border:0.5px solid #F0E0A0;border-radius:6px;padding:6px 8px;font-size:11px;color:#5C4A00;line-height:1.5;margin-bottom:4px}.card-note-input-wrap{display:none;margin-top:4px;gap:4px;align-items:center}.card-note-input-wrap.visible{display:flex}.card-note-input{flex:1;font-size:11px;font-family:inherit;border:0.5px solid rgba(0,0,0,0.1);border-radius:6px;padding:5px 8px;outline:none}.card-note-save{font-size:10px;font-weight:600;background:#2C4A14;color:white;border:none;border-radius:6px;padding:5px 10px;cursor:pointer}
-.card-checklist-toggle{font-size:10px;color:#2C4A14;cursor:pointer;font-weight:600;background:none;border:none;padding:0;font-family:inherit;display:flex;align-items:center;gap:4px;margin-top:8px}
-.card-checklist-toggle:hover{text-decoration:underline}
-.card-checklist-wrap{display:none;margin-top:8px;border-top:0.5px solid rgba(0,0,0,0.08);padding-top:8px;max-height:300px;overflow-y:auto}
-.card-checklist-wrap.open{display:block}
-.card-checklist-progress{font-size:10px;color:#888;margin-bottom:8px;font-weight:600}
-.card-checklist-progress span{color:#2C4A14}
-.walk-check-item{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:0.5px solid rgba(0,0,0,0.05)}
-.walk-check-item:last-child{border-bottom:none}
-.walk-check-item input[type=checkbox]{width:14px;height:14px;accent-color:#2C4A14;flex-shrink:0;cursor:pointer}
-.walk-check-item label{font-size:11px;color:#333;cursor:pointer;line-height:1.4;flex:1}
-.walk-check-item.checked label{color:#aaa;text-decoration:line-through}
-.walk-location{font-size:10px;color:#aaa;white-space:nowrap;flex-shrink:0}
-
-.card-checklist-toggle{font-size:10px;color:#2C4A14;cursor:pointer;font-weight:600;background:none;border:none;padding:0;font-family:inherit;display:flex;align-items:center;gap:4px;margin-top:8px}
-.card-checklist-toggle:hover{text-decoration:underline}
-.card-checklist-wrap{display:none;margin-top:8px;border-top:0.5px solid rgba(0,0,0,0.08);padding-top:8px;max-height:300px;overflow-y:auto}
-.card-checklist-wrap.open{display:block}
-.card-checklist-progress{font-size:10px;color:#888;margin-bottom:8px;font-weight:600}
-.card-checklist-progress span{color:#2C4A14}
-.walk-check-item{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:0.5px solid rgba(0,0,0,0.05)}
-.walk-check-item:last-child{border-bottom:none}
-.walk-check-item input[type=checkbox]{width:14px;height:14px;accent-color:#2C4A14;flex-shrink:0;cursor:pointer}
-.walk-check-item label{font-size:11px;color:#333;cursor:pointer;line-height:1.4;flex:1}
-.walk-check-item.checked label{color:#aaa;text-decoration:line-through}
-.walk-location{font-size:10px;color:#aaa;white-space:nowrap;flex-shrink:0}
-.add-card-btn{display:block;width:100%;margin-top:10px;padding:9px;background:none;border:1.5px dashed var(--border);border-radius:var(--radius);font-size:12px;font-weight:600;color:var(--ink-3);cursor:pointer;font-family:inherit;transition:border-color 0.15s ease,color 0.15s ease,background 0.15s ease;text-align:center}
-.add-card-btn:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-tint)}
-.add-card-btn:active{transform:scale(0.97)}
-.add-card-form{display:none;margin-top:8px;background:var(--surface);border:1.5px solid var(--brand);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
-.add-card-form.visible{display:block}
-.add-card-form input,.add-card-form textarea{display:block;width:100%;font-family:inherit;font-size:12px;border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;margin-bottom:8px;background:white;color:var(--ink);outline:none;resize:vertical}
-.add-card-form input:focus,.add-card-form textarea:focus{border-color:var(--brand)}
-.add-card-actions{display:flex;gap:8px;align-items:center}
-.add-card-submit{font-size:12px;font-weight:600;background:var(--brand);color:white;border:none;border-radius:var(--radius-sm);padding:7px 14px;cursor:pointer;font-family:inherit;transition:opacity 0.15s ease}
-.add-card-submit:hover{opacity:0.88}
-.add-card-submit:active{transform:scale(0.97)}
-.add-card-cancel{font-size:12px;font-weight:600;background:none;color:var(--ink-3);border:none;cursor:pointer;font-family:inherit;padding:7px 4px}
-.add-card-cancel:hover{color:var(--ink)}
-.cards.drag-over{background:var(--brand-tint);border-radius:var(--radius);outline:2px dashed var(--brand);outline-offset:3px}
-.card.dragging{opacity:0.35;pointer-events:none}
-.card-move-btn{display:none;font-size:10px;color:var(--brand);cursor:pointer;font-weight:600;background:none;border:none;padding:4px 0 0;font-family:inherit}
-.card-move-btn:hover{text-decoration:underline}
-.card-move-select{display:none;width:100%;font-size:11px;font-family:inherit;border:0.5px solid var(--border);border-radius:6px;padding:5px 8px;margin-top:4px;color:var(--ink);background:white;cursor:pointer}
-@media (hover:none) and (pointer:coarse){.card-move-btn{display:block}}
-.card-edit-btn{display:block;margin-top:6px;font-size:10px;color:var(--ink-3);cursor:pointer;font-weight:600;background:none;border:none;padding:2px 0;font-family:inherit;transition:color 0.15s ease}
-.card-edit-btn:hover{color:var(--brand)}
-.card-edit-btn:active{transform:scale(0.97)}
-.card-edit-panel{display:none;margin-top:8px;border-top:0.5px solid var(--border);padding-top:8px}
-.card-edit-panel.open{display:block}
-.card-edit-panel input,.card-edit-panel textarea{display:block;width:100%;font-family:inherit;font-size:12px;border:0.5px solid var(--border);border-radius:6px;padding:6px 8px;margin-bottom:6px;background:white;color:var(--ink);outline:none;resize:vertical}
-.card-edit-panel input:focus,.card-edit-panel textarea:focus{border-color:var(--brand)}
-.card-edit-actions{display:flex;gap:6px;align-items:center}
-.card-edit-save{font-size:11px;font-weight:600;background:var(--brand);color:white;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:inherit}
-.card-edit-save:active{transform:scale(0.97)}
-.card-edit-cancel{font-size:11px;font-weight:600;background:none;color:var(--ink-3);border:none;cursor:pointer;font-family:inherit;padding:5px 2px}
-.card-edit-cancel:hover{color:var(--ink)}
+  .card-checklist-toggle{font-size:10px;color:#2C4A14;cursor:pointer;font-weight:600;background:none;border:none;padding:0;font-family:inherit;display:flex;align-items:center;gap:4px;margin-top:8px}
+  .card-checklist-toggle:hover{text-decoration:underline}
+  .card-checklist-wrap{display:none;margin-top:8px;border-top:0.5px solid rgba(0,0,0,0.08);padding-top:8px;max-height:300px;overflow-y:auto}
+  .card-checklist-wrap.open{display:block}
+  .card-checklist-progress{font-size:10px;color:#888;margin-bottom:8px;font-weight:600}
+  .card-checklist-progress span{color:#2C4A14}
+  .walk-check-item{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:0.5px solid rgba(0,0,0,0.05)}
+  .walk-check-item:last-child{border-bottom:none}
+  .walk-check-item input[type=checkbox]{width:14px;height:14px;accent-color:#2C4A14;flex-shrink:0;cursor:pointer}
+  .walk-check-item label{font-size:11px;color:#333;cursor:pointer;line-height:1.4;flex:1}
+  .walk-check-item.checked label{color:#aaa;text-decoration:line-through}
+  .walk-location{font-size:10px;color:#aaa;white-space:nowrap;flex-shrink:0}
+  .add-card-btn{display:block;width:100%;margin-top:10px;padding:9px;background:none;border:1.5px dashed var(--border);border-radius:var(--radius);font-size:12px;font-weight:600;color:var(--ink-3);cursor:pointer;font-family:inherit;transition:border-color 0.15s ease,color 0.15s ease,background 0.15s ease;text-align:center}
+  .add-card-btn:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-tint)}
+  .add-card-btn:active{transform:scale(0.97)}
+  .add-card-form{display:none;margin-top:8px;background:var(--surface);border:1.5px solid var(--brand);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
+  .add-card-form.visible{display:block}
+  .add-card-form input,.add-card-form textarea{display:block;width:100%;font-family:inherit;font-size:12px;border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;margin-bottom:8px;background:white;color:var(--ink);outline:none;resize:vertical}
+  .add-card-form input:focus,.add-card-form textarea:focus{border-color:var(--brand)}
+  .add-card-actions{display:flex;gap:8px;align-items:center}
+  .add-card-submit{font-size:12px;font-weight:600;background:var(--brand);color:white;border:none;border-radius:var(--radius-sm);padding:7px 14px;cursor:pointer;font-family:inherit;transition:opacity 0.15s ease}
+  .add-card-submit:hover{opacity:0.88}
+  .add-card-submit:active{transform:scale(0.97)}
+  .add-card-cancel{font-size:12px;font-weight:600;background:none;color:var(--ink-3);border:none;cursor:pointer;font-family:inherit;padding:7px 4px}
+  .add-card-cancel:hover{color:var(--ink)}
+  .cards.drag-over{background:var(--brand-tint);border-radius:var(--radius);outline:2px dashed var(--brand);outline-offset:3px}
+  .card.dragging{opacity:0.35;pointer-events:none}
+  .card-move-btn{display:none;font-size:10px;color:var(--brand);cursor:pointer;font-weight:600;background:none;border:none;padding:4px 0 0;font-family:inherit}
+  .card-move-btn:hover{text-decoration:underline}
+  .card-move-select{display:none;width:100%;font-size:11px;font-family:inherit;border:0.5px solid var(--border);border-radius:6px;padding:5px 8px;margin-top:4px;color:var(--ink);background:white;cursor:pointer}
+  @media (hover:none) and (pointer:coarse){.card-move-btn{display:block}}
+  .card-edit-btn{display:block;margin-top:6px;font-size:10px;color:var(--ink-3);cursor:pointer;font-weight:600;background:none;border:none;padding:2px 0;font-family:inherit;transition:color 0.15s ease}
+  .card-edit-btn:hover{color:var(--brand)}
+  .card-edit-btn:active{transform:scale(0.97)}
+  .card-edit-panel{display:none;margin-top:8px;border-top:0.5px solid var(--border);padding-top:8px}
+  .card-edit-panel.open{display:block}
+  .card-edit-panel input,.card-edit-panel textarea{display:block;width:100%;font-family:inherit;font-size:12px;border:0.5px solid var(--border);border-radius:6px;padding:6px 8px;margin-bottom:6px;background:white;color:var(--ink);outline:none;resize:vertical}
+  .card-edit-panel input:focus,.card-edit-panel textarea:focus{border-color:var(--brand)}
+  .card-edit-actions{display:flex;gap:6px;align-items:center}
+  .card-edit-save{font-size:11px;font-weight:600;background:var(--brand);color:white;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:inherit}
+  .card-edit-save:active{transform:scale(0.97)}
+  .card-edit-cancel{font-size:11px;font-weight:600;background:none;color:var(--ink-3);border:none;cursor:pointer;font-family:inherit;padding:5px 2px}
+  .card-edit-cancel:hover{color:var(--ink)}
 
   /* === Card detail modal === */
   .card-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px}
@@ -454,6 +438,8 @@
   .card-modal-close-ftr{font-size:12px;font-weight:600;background:none;color:var(--ink-3);border:1px solid var(--border);border-radius:6px;padding:7px 16px;cursor:pointer;font-family:inherit}
   .card-modal-close-ftr:hover{color:var(--ink);border-color:var(--ink-3)}
   .card .card-title,.card .card-body{cursor:pointer}
+  .card-modal-section-label-field{display:block;width:100%;font-family:inherit;font-size:12px;border:0.5px solid var(--border);border-radius:6px;padding:6px 8px;background:white;color:var(--ink);outline:none;margin-top:2px}
+  .card-modal-section-label-field:focus{border-color:var(--brand)}
   @media (max-width:768px){.card-modal-body{flex-direction:column}.card-modal-left,.card-modal-right{flex:none;width:100%}}
 </style>
 </head>
@@ -472,7 +458,7 @@
       <div class="header-subtitle">Project Board</div>
     </div>
   </div>
-  <div class="header-meta">Last updated <span>28 March 2026</span></div>
+  <div class="header-meta" id="header-meta">Last updated <span id="header-date">9 Apr 2026</span></div>
 </header>
 
 <!-- Stats bar -->
@@ -480,25 +466,25 @@
   <div class="stat">
     <div class="stat-dot backlog"></div>
     <div class="stat-label">Backlog</div>
-    <div class="stat-count" id="stat-backlog">14</div>
+    <div class="stat-count" id="stat-backlog">0</div>
   </div>
   <div class="stat-divider"></div>
   <div class="stat">
     <div class="stat-dot progress"></div>
     <div class="stat-label">In Progress</div>
-    <div class="stat-count" id="stat-inprogress">4</div>
+    <div class="stat-count" id="stat-inprogress">0</div>
   </div>
   <div class="stat-divider"></div>
   <div class="stat">
     <div class="stat-dot done"></div>
     <div class="stat-label">Done</div>
-    <div class="stat-count" id="stat-done">22</div>
+    <div class="stat-count" id="stat-done">0</div>
   </div>
   <div class="stat-divider"></div>
   <div class="stat">
     <div class="stat-dot blocker"></div>
     <div class="stat-label">Hard Blockers</div>
-    <div class="stat-count">4</div>
+    <div class="stat-count" id="stat-blockers">0</div>
   </div>
 </div>
 
@@ -510,316 +496,10 @@
     <div class="column-header">
       <div class="column-title">
         <div class="column-title-text">Backlog</div>
-        <div class="column-count" id="count-backlog">14</div>
+        <div class="column-count" id="count-backlog">0</div>
       </div>
     </div>
-    <div class="cards" id="cards-backlog">
-
-      <div class="card blocker" id="card-tc">
-        <div class="card-top">
-          <div class="card-title">T&C consent screen</div>
-          <div class="card-tag tag-blocker">Blocker</div>
-        </div>
-        <div class="card-body">L5 - hard go-live blocker. Needs solicitor engagement first (Sprintlaw or LawBite £600-1,500).</div>
-        <div class="card-footer">
-          <div class="card-label">Owner action</div>
-          <div class="card-label">Dev</div>
-        </div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-tc')">+ Add note</button>
-          </div>
-          <div id="notes-card-tc"></div>
-          <div class="card-note-input-wrap" id="input-card-tc">
-            <input class="card-note-input" id="text-card-tc" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-tc')">
-            <button class="card-note-save" onclick="saveNote('card-tc')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card blocker" id="card-pentest">
-        <div class="card-top">
-          <div class="card-title">Pen test (T12)</div>
-          <div class="card-tag tag-blocker">Blocker</div>
-        </div>
-        <div class="card-body">Mandatory security penetration test before launch.</div>
-        <div class="card-footer"><div class="card-label">Owner action</div></div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-pentest')">+ Add note</button>
-          </div>
-          <div id="notes-card-pentest"></div>
-          <div class="card-note-input-wrap" id="input-card-pentest">
-            <input class="card-note-input" id="text-card-pentest" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-pentest')">
-            <button class="card-note-save" onclick="saveNote('card-pentest')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card blocker" id="card-e2e">
-        <div class="card-top">
-          <div class="card-title">Full end-to-end test pass (T16)</div>
-          <div class="card-tag tag-blocker">Blocker</div>
-        </div>
-        <div class="card-body">Full test pass across all tabs, features, and edge cases before launch.</div>
-        <div class="card-footer"><div class="card-label">Dev</div></div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-e2e')">+ Add note</button>
-          </div>
-          <div id="notes-card-e2e"></div>
-          <div class="card-note-input-wrap" id="input-card-e2e">
-            <input class="card-note-input" id="text-card-e2e" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-e2e')">
-            <button class="card-note-save" onclick="saveNote('card-e2e')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card blocker" id="card-firebase-sec">
-        <div class="card-top">
-          <div class="card-title">Firebase security review (T17)</div>
-          <div class="card-tag tag-blocker">Blocker</div>
-        </div>
-        <div class="card-body">Security review of Firestore rules and auth before Phase 3 goes live.</div>
-        <div class="card-footer"><div class="card-label">Phase 3</div></div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-firebase-sec')">+ Add note</button>
-          </div>
-          <div id="notes-card-firebase-sec"></div>
-          <div class="card-note-input-wrap" id="input-card-firebase-sec">
-            <input class="card-note-input" id="text-card-firebase-sec" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-firebase-sec')">
-            <button class="card-note-save" onclick="saveNote('card-firebase-sec')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-label">Owner Actions</div>
-
-      <div class="card owner-action" id="card-companies-house">
-        <div class="card-top">
-          <div class="card-title">Companies House registration</div>
-          <div class="card-tag tag-owner">Owner</div>
-        </div>
-        <div class="card-body">Limited company formation. £100, 15 min online at Companies House.</div>
-        <div class="card-footer"><div class="card-label">companies-house.gov.uk</div></div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-companies-house')">+ Add note</button>
-          </div>
-          <div id="notes-card-companies-house"></div>
-          <div class="card-note-input-wrap" id="input-card-companies-house">
-            <input class="card-note-input" id="text-card-companies-house" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-companies-house')">
-            <button class="card-note-save" onclick="saveNote('card-companies-house')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card owner-action" id="card-ico">
-        <div class="card-top">
-          <div class="card-title">ICO registration</div>
-          <div class="card-tag tag-owner">Owner</div>
-        </div>
-        <div class="card-body">Data controller registration. ~£52/year at ico.org.uk.</div>
-        <div class="card-footer"><div class="card-label">ico.org.uk</div></div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-ico')">+ Add note</button>
-          </div>
-          <div id="notes-card-ico"></div>
-          <div class="card-note-input-wrap" id="input-card-ico">
-            <input class="card-note-input" id="text-card-ico" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-ico')">
-            <button class="card-note-save" onclick="saveNote('card-ico')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card owner-action" id="card-trademark">
-        <div class="card-top">
-          <div class="card-title">Trade mark application</div>
-          <div class="card-tag tag-owner">Owner</div>
-        </div>
-        <div class="card-body">Register "Sniffout" trade mark. ~£170, one class, IPO website.</div>
-        <div class="card-footer"><div class="card-label">gov.uk/apply-trade-mark</div></div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-trademark')">+ Add note</button>
-          </div>
-          <div id="notes-card-trademark"></div>
-          <div class="card-note-input-wrap" id="input-card-trademark">
-            <input class="card-note-input" id="text-card-trademark" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-trademark')">
-            <button class="card-note-save" onclick="saveNote('card-trademark')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-label">Development Backlog</div>
-
-      <div class="card" id="card-placeholder">
-        <div class="card-top">
-          <div class="card-title">Green space card placeholder image</div>
-          <div class="card-tag tag-design">Design</div>
-        </div>
-        <div class="card-body">OSM-sourced green space results have no photo. Need illustrated fallback matching walk card style.</div>
-        <div class="img-sources">
-          <div class="img-sources-title">Free image sources</div>
-          <div class="img-source-row"><div class="img-source-name">Geograph.org.uk</div><div class="img-source-desc">UK landscapes by grid reference. Best for walk hero images.</div><div class="img-source-tag tag-cc">CC licence</div></div>
-          <div class="img-source-row"><div class="img-source-name">Unsplash</div><div class="img-source-desc">High quality nature/outdoor photos. No attribution needed.</div><div class="img-source-tag tag-free">Free</div></div>
-          <div class="img-source-row"><div class="img-source-name">Pexels</div><div class="img-source-desc">Dogs, parks, countryside. No attribution needed.</div><div class="img-source-tag tag-free">Free</div></div>
-          <div class="img-source-row"><div class="img-source-name">Owner photos (Luna)</div><div class="img-source-desc">Most authentic. Prioritise for Kingston and Surrey walks.</div><div class="img-source-tag tag-free">Free</div></div>
-          <div class="img-source-row"><div class="img-source-name">Micro-influencer swap</div><div class="img-source-desc">Walk documentation photos in exchange for feature placement.</div><div class="img-source-tag tag-free">Free</div></div>
-        </div>
-        <div class="card-footer"><div class="card-label">Designer first</div></div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-placeholder')">+ Add note</button>
-          </div>
-          <div id="notes-card-placeholder"></div>
-          <div class="card-note-input-wrap" id="input-card-placeholder">
-            <input class="card-note-input" id="text-card-placeholder" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-placeholder')">
-            <button class="card-note-save" onclick="saveNote('card-placeholder')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" id="card-pubs">
-        <div class="card-top">
-          <div class="card-title">Pubs/restaurants Nearby tab (FIX 23.2)</div>
-          <div class="card-tag tag-dev">Dev</div>
-        </div>
-        <div class="card-body">Reverted due to result quality issues. Needs careful scoping before reimplementation.</div>
-        <div class="card-footer"><div class="card-label">Needs scoping</div></div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-pubs')">+ Add note</button>
-          </div>
-          <div id="notes-card-pubs"></div>
-          <div class="card-note-input-wrap" id="input-card-pubs">
-            <input class="card-note-input" id="text-card-pubs" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-pubs')">
-            <button class="card-note-save" onclick="saveNote('card-pubs')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" id="card-beforeunload">
-        <div class="card-top">
-          <div class="card-title">B2 beforeunload handler</div>
-          <div class="card-tag tag-dev">Dev</div>
-        </div>
-        <div class="card-body">Deferred pending surgical fix and on-device testing.</div>
-        <div class="card-footer"><div class="card-label">Android Chrome</div></div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-beforeunload')">+ Add note</button>
-          </div>
-          <div id="notes-card-beforeunload"></div>
-          <div class="card-note-input-wrap" id="input-card-beforeunload">
-            <input class="card-note-input" id="text-card-beforeunload" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-beforeunload')">
-            <button class="card-note-save" onclick="saveNote('card-beforeunload')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" id="card-tick">
-        <div class="card-top">
-          <div class="card-title">Tick hazard</div>
-          <div class="card-tag tag-dev">Dev</div>
-        </div>
-        <div class="card-body">Add seasonal hazard: month 3-10. Trigger at line ~6400, definition at ~6522. Copywriter pass required first.</div>
-        <div class="card-footer">
-          <div class="card-label">Copywriter first</div>
-          <div class="card-label">Mar-Oct</div>
-        </div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-tick')">+ Add note</button>
-          </div>
-          <div id="notes-card-tick"></div>
-          <div class="card-note-input-wrap" id="input-card-tick">
-            <input class="card-note-input" id="text-card-tick" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-tick')">
-            <button class="card-note-save" onclick="saveNote('card-tick')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" id="card-affiliate">
-        <div class="card-top">
-          <div class="card-title">Affiliate links - 3 placements</div>
-          <div class="card-tag tag-dev">Dev</div>
-        </div>
-        <div class="card-body">Pet insurance (ManyPets, Petplan) in walk detail, dog profile setup, and Nearby footer. Build website first.</div>
-        <div class="card-footer">
-          <div class="card-label">Website first</div>
-          <div class="card-label">Post-launch</div>
-        </div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-affiliate')">+ Add note</button>
-          </div>
-          <div id="notes-card-affiliate"></div>
-          <div class="card-note-input-wrap" id="input-card-affiliate">
-            <input class="card-note-input" id="text-card-affiliate" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-affiliate')">
-            <button class="card-note-save" onclick="saveNote('card-affiliate')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" id="card-playground">
-        <div class="card-top">
-          <div class="card-title">Green spaces playground exclusion</div>
-          <div class="card-tag tag-dev">Dev</div>
-        </div>
-        <div class="card-body">Verify Task 3 from 27 March batch brief landed. Run: grep -n "playground\|gs2" sniffout-v2.html | head -10</div>
-        <div class="card-footer"><div class="card-label">Verify first</div></div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-playground')">+ Add note</button>
-          </div>
-          <div id="notes-card-playground"></div>
-          <div class="card-note-input-wrap" id="input-card-playground">
-            <input class="card-note-input" id="text-card-playground" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-playground')">
-            <button class="card-note-save" onclick="saveNote('card-playground')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" id="card-firebase-migration">
-        <div class="card-top">
-          <div class="card-title">Phase 3 - Firebase migration</div>
-          <div class="card-tag tag-dev">Dev</div>
-        </div>
-        <div class="card-body">Walk journal and photos need data persistence. Full spec written, all 12 owner decisions confirmed. FIREBASE_WRITE_ENABLED = false until ready.</div>
-        <div class="card-footer">
-          <div class="card-label">Phase 3</div>
-          <div class="card-label">After blockers resolved</div>
-        </div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-firebase-migration')">+ Add note</button>
-          </div>
-          <div id="notes-card-firebase-migration"></div>
-          <div class="card-note-input-wrap" id="input-card-firebase-migration">
-            <input class="card-note-input" id="text-card-firebase-migration" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-firebase-migration')">
-            <button class="card-note-save" onclick="saveNote('card-firebase-migration')">Save</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <div class="cards" id="cards-backlog"></div>
     <button class="add-card-btn" onclick="showAddForm('backlog')">+ Add card</button>
     <div class="add-card-form" id="add-form-backlog">
       <input type="text" id="add-title-backlog" placeholder="Card title" onkeydown="if(event.key==='Enter')submitCard('backlog')">
@@ -837,104 +517,10 @@
     <div class="column-header">
       <div class="column-title">
         <div class="column-title-text">In Progress</div>
-        <div class="column-count progress" id="count-inprogress">4</div>
+        <div class="column-count progress" id="count-inprogress">0</div>
       </div>
     </div>
-    <div class="cards" id="cards-inprogress">
-
-      <div class="card" id="card-website">
-        <div class="card-top">
-          <div class="card-title">Companion website (sniffout.co.uk)</div>
-          <div class="card-tag tag-dev">Dev<button class="card-checklist-toggle" id="toggle-website" onclick="toggleChecklist('website')">&#9654; Show walk image checklist</button><div class="card-checklist-wrap" id="checklist-website"><div class="card-checklist-progress" id="prog-website"><span>0</span> of 85 images sourced</div><div class="walk-check-item"><input type="checkbox" id="chk-1" onchange="saveCheck('1','website')"><label for="chk-1">Box Hill Summit Loop</label><span class="walk-location">Dorking, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-2" onchange="saveCheck('2','website')"><label for="chk-2">Richmond Park Deer Loop</label><span class="walk-location">Richmond, London</span></div><div class="walk-check-item"><input type="checkbox" id="chk-3" onchange="saveCheck('3','website')"><label for="chk-3">Isabella Plantation</label><span class="walk-location">Richmond Park, London</span></div><div class="walk-check-item"><input type="checkbox" id="chk-4" onchange="saveCheck('4','website')"><label for="chk-4">Leith Hill & Coldharbour</label><span class="walk-location">Dorking, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-5" onchange="saveCheck('5','website')"><label for="chk-5">Frensham Great Pond</label><span class="walk-location">Farnham, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-6" onchange="saveCheck('6','website')"><label for="chk-6">Hindhead Common & Devil's Punch Bowl</label><span class="walk-location">Hindhead, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-7" onchange="saveCheck('7','website')"><label for="chk-7">Seven Sisters Cliffs</label><span class="walk-location">Seaford, East Sussex</span></div><div class="walk-check-item"><input type="checkbox" id="chk-8" onchange="saveCheck('8','website')"><label for="chk-8">Devil's Dyke & South Downs</label><span class="walk-location">Brighton, West Sussex</span></div><div class="walk-check-item"><input type="checkbox" id="chk-9" onchange="saveCheck('9','website')"><label for="chk-9">Ashridge Estate Bluebell Walk</label><span class="walk-location">Berkhamsted, Hertfordshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-10" onchange="saveCheck('10','website')"><label for="chk-10">Hampstead Heath & Ponds</label><span class="walk-location">Hampstead, London</span></div><div class="walk-check-item"><input type="checkbox" id="chk-11" onchange="saveCheck('11','website')"><label for="chk-11">Wimbledon Common Loop</label><span class="walk-location">Wimbledon, London</span></div><div class="walk-check-item"><input type="checkbox" id="chk-12" onchange="saveCheck('12','website')"><label for="chk-12">Newlands Corner & Albury Downs</label><span class="walk-location">Guildford, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-13" onchange="saveCheck('13','website')"><label for="chk-13">Ranmore Common & Denbies</label><span class="walk-location">Dorking, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-14" onchange="saveCheck('14','website')"><label for="chk-14">Haytor & Hound Tor</label><span class="walk-location">Bovey Tracey, Devon</span></div><div class="walk-check-item"><input type="checkbox" id="chk-15" onchange="saveCheck('15','website')"><label for="chk-15">Burley Village & Forest Walks</label><span class="walk-location">Burley, Hampshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-16" onchange="saveCheck('16','website')"><label for="chk-16">Stanage Edge & Hathersage Moor</label><span class="walk-location">Hathersage, Derbyshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-17" onchange="saveCheck('17','website')"><label for="chk-17">Malham Cove & Gordale Scar</label><span class="walk-location">Malham, North Yorkshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-18" onchange="saveCheck('18','website')"><label for="chk-18">Grasmere Lake Circuit</label><span class="walk-location">Grasmere, Cumbria</span></div><div class="walk-check-item"><input type="checkbox" id="chk-19" onchange="saveCheck('19','website')"><label for="chk-19">Headley Heath & Nower Wood</label><span class="walk-location">Headley, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-20" onchange="saveCheck('20','website')"><label for="chk-20">Bookham Common & Fetcham Downs</label><span class="walk-location">Great Bookham, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-21" onchange="saveCheck('21','website')"><label for="chk-21">St Martha's Hill & Chilworth</label><span class="walk-location">Guildford, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-22" onchange="saveCheck('22','website')"><label for="chk-22">The Hurtwood Ridge Walk</label><span class="walk-location">Ewhurst, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-23" onchange="saveCheck('23','website')"><label for="chk-23">Epsom Common & Stew Ponds</label><span class="walk-location">Epsom, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-24" onchange="saveCheck('24','website')"><label for="chk-24">Shere Village & Abinger Roughs</label><span class="walk-location">Shere, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-25" onchange="saveCheck('25','website')"><label for="chk-25">Cuckmere Haven & Litlington</label><span class="walk-location">Seaford, East Sussex</span></div><div class="walk-check-item"><input type="checkbox" id="chk-26" onchange="saveCheck('26','website')"><label for="chk-26">Cissbury Ring Iron Age Fort</label><span class="walk-location">Worthing, West Sussex</span></div><div class="walk-check-item"><input type="checkbox" id="chk-27" onchange="saveCheck('27','website')"><label for="chk-27">Arthur's Seat & Holyrood Park</label><span class="walk-location">Edinburgh</span></div><div class="walk-check-item"><input type="checkbox" id="chk-28" onchange="saveCheck('28','website')"><label for="chk-28">Threipmuir & Harlaw Reservoirs</label><span class="walk-location">Balerno, Edinburgh</span></div><div class="walk-check-item"><input type="checkbox" id="chk-29" onchange="saveCheck('29','website')"><label for="chk-29">The Hermitage & Black Linn Falls</label><span class="walk-location">Dunkeld, Perthshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-30" onchange="saveCheck('30','website')"><label for="chk-30">Tentsmuir Forest & Beach</label><span class="walk-location">Leuchars, Fife</span></div><div class="walk-check-item"><input type="checkbox" id="chk-31" onchange="saveCheck('31','website')"><label for="chk-31">Balmaha & Loch Lomond Shore</label><span class="walk-location">Balmaha, Loch Lomond</span></div><div class="walk-check-item"><input type="checkbox" id="chk-32" onchange="saveCheck('32','website')"><label for="chk-32">Pen y Fan & Corn Du Circuit</label><span class="walk-location">Libanus, Powys</span></div><div class="walk-check-item"><input type="checkbox" id="chk-33" onchange="saveCheck('33','website')"><label for="chk-33">Llyn Padarn Lake Circuit</label><span class="walk-location">Llanberis, Gwynedd</span></div><div class="walk-check-item"><input type="checkbox" id="chk-34" onchange="saveCheck('34','website')"><label for="chk-34">Rhossili Bay & Worms Head</label><span class="walk-location">Rhossili, Swansea</span></div><div class="walk-check-item"><input type="checkbox" id="chk-35" onchange="saveCheck('35','website')"><label for="chk-35">Alnmouth Beach & River Aln</label><span class="walk-location">Alnmouth, Northumberland</span></div><div class="walk-check-item"><input type="checkbox" id="chk-36" onchange="saveCheck('36','website')"><label for="chk-36">Hardcastle Crags & Gibson Mill</label><span class="walk-location">Hebden Bridge, West Yorkshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-37" onchange="saveCheck('37','website')"><label for="chk-37">Formby Beach & Red Squirrel Pinewoods</label><span class="walk-location">Formby, Merseyside</span></div><div class="walk-check-item"><input type="checkbox" id="chk-38" onchange="saveCheck('38','website')"><label for="chk-38">Clumber Park Lakeside Circuit</label><span class="walk-location">Worksop, Nottinghamshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-39" onchange="saveCheck('39','website')"><label for="chk-39">Sherwood Forest & The Major Oak</label><span class="walk-location">Edwinstowe, Nottinghamshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-40" onchange="saveCheck('40','website')"><label for="chk-40">Cannock Chase Forest Walk</label><span class="walk-location">Rugeley, Staffordshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-41" onchange="saveCheck('41','website')"><label for="chk-41">Kielder Castle & Duke's Trail</label><span class="walk-location">Kielder, Northumberland</span></div><div class="walk-check-item"><input type="checkbox" id="chk-42" onchange="saveCheck('42','website')"><label for="chk-42">Dunwich Heath & Beach</label><span class="walk-location">Dunwich, Suffolk</span></div><div class="walk-check-item"><input type="checkbox" id="chk-43" onchange="saveCheck('43','website')"><label for="chk-43">High Lodge Thetford Forest Trails</label><span class="walk-location">Brandon, Suffolk</span></div><div class="walk-check-item"><input type="checkbox" id="chk-44" onchange="saveCheck('44','website')"><label for="chk-44">Baggy Point & Croyde Bay</label><span class="walk-location">Croyde, North Devon</span></div><div class="walk-check-item"><input type="checkbox" id="chk-45" onchange="saveCheck('45','website')"><label for="chk-45">Bute Park & Taff Trail</label><span class="walk-location">Cardiff</span></div><div class="walk-check-item"><input type="checkbox" id="chk-46" onchange="saveCheck('46','website')"><label for="chk-46">Plessey Woods & River Blyth</label><span class="walk-location">Bedlington, Northumberland</span></div><div class="walk-check-item"><input type="checkbox" id="chk-47" onchange="saveCheck('47','website')"><label for="chk-47">Roseberry Topping & Newton Wood</label><span class="walk-location">Great Ayton, North Yorkshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-48" onchange="saveCheck('48','website')"><label for="chk-48">Dalby Forest Woodcock Way</label><span class="walk-location">Thornton-le-Dale, North Yorkshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-49" onchange="saveCheck('49','website')"><label for="chk-49">Beacon Fell Country Park</label><span class="walk-location">Goosnargh, Lancashire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-50" onchange="saveCheck('50','website')"><label for="chk-50">Rivington Pike & Lever Park</label><span class="walk-location">Rivington, Lancashire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-51" onchange="saveCheck('51','website')"><label for="chk-51">Lyme Park & Knightslow Wood</label><span class="walk-location">Disley, Cheshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-52" onchange="saveCheck('52','website')"><label for="chk-52">Bradgate Park & Old John Tower</label><span class="walk-location">Newtown Linford, Leicestershire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-53" onchange="saveCheck('53','website')"><label for="chk-53">Calke Abbey Parkland Loop</label><span class="walk-location">Ticknall, Derbyshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-54" onchange="saveCheck('54','website')"><label for="chk-54">Lickey Hills & Bilberry Hill</label><span class="walk-location">Rednal, Birmingham</span></div><div class="walk-check-item"><input type="checkbox" id="chk-55" onchange="saveCheck('55','website')"><label for="chk-55">Symonds Yat & River Wye Loop</label><span class="walk-location">Symonds Yat, Herefordshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-56" onchange="saveCheck('56','website')"><label for="chk-56">Penllergare Valley Woods & Waterfall</label><span class="walk-location">Penllergaer, Swansea</span></div><div class="walk-check-item"><input type="checkbox" id="chk-57" onchange="saveCheck('57','website')"><label for="chk-57">Llansteffan Castle & Estuary Walk</label><span class="walk-location">Llansteffan, Carmarthenshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-58" onchange="saveCheck('58','website')"><label for="chk-58">Sheringham Park & Coastal Path</label><span class="walk-location">Upper Sheringham, Norfolk</span></div><div class="walk-check-item"><input type="checkbox" id="chk-59" onchange="saveCheck('59','website')"><label for="chk-59">Tehidy Country Park</label><span class="walk-location">Camborne, Cornwall</span></div><div class="walk-check-item"><input type="checkbox" id="chk-60" onchange="saveCheck('60','website')"><label for="chk-60">Moors Valley Country Park & Forest</label><span class="walk-location">Ashley Heath, Dorset</span></div><div class="walk-check-item"><input type="checkbox" id="chk-61" onchange="saveCheck('61','website')"><label for="chk-61">Kinnoull Hill & Tay Valley Views</label><span class="walk-location">Perth, Perth & Kinross</span></div><div class="walk-check-item"><input type="checkbox" id="chk-62" onchange="saveCheck('62','website')"><label for="chk-62">Elterwater & Langdale Valley</label><span class="walk-location">Elterwater, Cumbria</span></div><div class="walk-check-item"><input type="checkbox" id="chk-63" onchange="saveCheck('63','website')"><label for="chk-63">Newtondale Forest & Levisham Beck</label><span class="walk-location">Levisham, North Yorkshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-64" onchange="saveCheck('64','website')"><label for="chk-64">Loch Ard Forest & Trossachs Trail</label><span class="walk-location">Aberfoyle, Stirlingshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-65" onchange="saveCheck('65','website')"><label for="chk-65">Rhossili Down Ridge Walk</label><span class="walk-location">Rhossili, Gower, Swansea</span></div><div class="walk-check-item"><input type="checkbox" id="chk-66" onchange="saveCheck('66','website')"><label for="chk-66">Cave Hill & Belfast Castle</label><span class="walk-location">Belfast, Northern Ireland</span></div><div class="walk-check-item"><input type="checkbox" id="chk-67" onchange="saveCheck('67','website')"><label for="chk-67">Tollymore Forest Park Red Trail</label><span class="walk-location">Newcastle, County Down</span></div><div class="walk-check-item"><input type="checkbox" id="chk-68" onchange="saveCheck('68','website')"><label for="chk-68">White Park Bay & Causeway Coast</label><span class="walk-location">Ballintoy, County Antrim</span></div><div class="walk-check-item"><input type="checkbox" id="chk-69" onchange="saveCheck('69','website')"><label for="chk-69">Farley Mount Country Park</label><span class="walk-location">Sparsholt, Hampshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-70" onchange="saveCheck('70','website')"><label for="chk-70">Lepe Beach & Solent Shore</label><span class="walk-location">Exbury, Hampshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-71" onchange="saveCheck('71','website')"><label for="chk-71">Savernake Forest & Grand Avenue</label><span class="walk-location">Marlborough, Wiltshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-72" onchange="saveCheck('72','website')"><label for="chk-72">Valley of Rocks & Lynton Coast</label><span class="walk-location">Lynton, Devon</span></div><div class="walk-check-item"><input type="checkbox" id="chk-73" onchange="saveCheck('73','website')"><label for="chk-73">Quantock Hills & Beacon Hill</label><span class="walk-location">Nether Stowey, Somerset</span></div><div class="walk-check-item"><input type="checkbox" id="chk-74" onchange="saveCheck('74','website')"><label for="chk-74">Mallards Pike Lake & Forest of Dean</label><span class="walk-location">Parkend, Gloucestershire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-75" onchange="saveCheck('75','website')"><label for="chk-75">Loch Morlich & Glenmore Forest</label><span class="walk-location">Aviemore, Highland</span></div><div class="walk-check-item"><input type="checkbox" id="chk-76" onchange="saveCheck('76','website')"><label for="chk-76">Robin Hood's Bay & Cleveland Way</label><span class="walk-location">Robin Hood's Bay, North Yorkshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-77" onchange="saveCheck('77','website')"><label for="chk-77">Hamsterley Forest Becks Trail</label><span class="walk-location">Hamsterley, County Durham</span></div><div class="walk-check-item"><input type="checkbox" id="chk-78" onchange="saveCheck('78','website')"><label for="chk-78">Gibraltar Point Beach & Dunes</label><span class="walk-location">Skegness, Lincolnshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-79" onchange="saveCheck('79','website')"><label for="chk-79">Uffington White Horse & Ridgeway</label><span class="walk-location">Uffington, Oxfordshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-80" onchange="saveCheck('80','website')"><label for="chk-80">Dovestone Reservoir Circuit</label><span class="walk-location">Greenfield, Greater Manchester</span></div><div class="walk-check-item"><input type="checkbox" id="chk-81" onchange="saveCheck('81','website')"><label for="chk-81">Blaise Castle Estate & Gorge Walk</label><span class="walk-location">Henbury, Bristol</span></div><div class="walk-check-item"><input type="checkbox" id="chk-82" onchange="saveCheck('82','website')"><label for="chk-82">Epping Forest & Connaught Water</label><span class="walk-location">Chingford, Essex</span></div><div class="walk-check-item"><input type="checkbox" id="chk-83" onchange="saveCheck('83','website')"><label for="chk-83">Compton Bay & Chalk Downs</label><span class="walk-location">Freshwater, Isle of Wight</span></div><div class="walk-check-item"><input type="checkbox" id="chk-84" onchange="saveCheck('84','website')"><label for="chk-84">Crawfordsburn Glen & Belfast Lough</label><span class="walk-location">Helen's Bay, County Down</span></div><div class="walk-check-item"><input type="checkbox" id="chk-85" onchange="saveCheck('85','website')"><label for="chk-85">Golden Cap & Jurassic Coast</label><span class="walk-location">Seatown, Dorset</span><button class="card-checklist-toggle" id="toggle-website" onclick="toggleChecklist('website')">&#9654; Show walk image checklist</button><div class="card-checklist-wrap" id="checklist-website"><div class="card-checklist-progress" id="prog-website"><span>0</span> of 85 images sourced</div><div class="walk-check-item"><input type="checkbox" id="chk-1" onchange="saveCheck('1','website')"><label for="chk-1">Box Hill Summit Loop</label><span class="walk-location">Dorking, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-2" onchange="saveCheck('2','website')"><label for="chk-2">Richmond Park Deer Loop</label><span class="walk-location">Richmond, London</span></div><div class="walk-check-item"><input type="checkbox" id="chk-3" onchange="saveCheck('3','website')"><label for="chk-3">Isabella Plantation</label><span class="walk-location">Richmond Park, London</span></div><div class="walk-check-item"><input type="checkbox" id="chk-4" onchange="saveCheck('4','website')"><label for="chk-4">Leith Hill & Coldharbour</label><span class="walk-location">Dorking, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-5" onchange="saveCheck('5','website')"><label for="chk-5">Frensham Great Pond</label><span class="walk-location">Farnham, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-6" onchange="saveCheck('6','website')"><label for="chk-6">Hindhead Common & Devil's Punch Bowl</label><span class="walk-location">Hindhead, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-7" onchange="saveCheck('7','website')"><label for="chk-7">Seven Sisters Cliffs</label><span class="walk-location">Seaford, East Sussex</span></div><div class="walk-check-item"><input type="checkbox" id="chk-8" onchange="saveCheck('8','website')"><label for="chk-8">Devil's Dyke & South Downs</label><span class="walk-location">Brighton, West Sussex</span></div><div class="walk-check-item"><input type="checkbox" id="chk-9" onchange="saveCheck('9','website')"><label for="chk-9">Ashridge Estate Bluebell Walk</label><span class="walk-location">Berkhamsted, Hertfordshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-10" onchange="saveCheck('10','website')"><label for="chk-10">Hampstead Heath & Ponds</label><span class="walk-location">Hampstead, London</span></div><div class="walk-check-item"><input type="checkbox" id="chk-11" onchange="saveCheck('11','website')"><label for="chk-11">Wimbledon Common Loop</label><span class="walk-location">Wimbledon, London</span></div><div class="walk-check-item"><input type="checkbox" id="chk-12" onchange="saveCheck('12','website')"><label for="chk-12">Newlands Corner & Albury Downs</label><span class="walk-location">Guildford, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-13" onchange="saveCheck('13','website')"><label for="chk-13">Ranmore Common & Denbies</label><span class="walk-location">Dorking, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-14" onchange="saveCheck('14','website')"><label for="chk-14">Haytor & Hound Tor</label><span class="walk-location">Bovey Tracey, Devon</span></div><div class="walk-check-item"><input type="checkbox" id="chk-15" onchange="saveCheck('15','website')"><label for="chk-15">Burley Village & Forest Walks</label><span class="walk-location">Burley, Hampshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-16" onchange="saveCheck('16','website')"><label for="chk-16">Stanage Edge & Hathersage Moor</label><span class="walk-location">Hathersage, Derbyshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-17" onchange="saveCheck('17','website')"><label for="chk-17">Malham Cove & Gordale Scar</label><span class="walk-location">Malham, North Yorkshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-18" onchange="saveCheck('18','website')"><label for="chk-18">Grasmere Lake Circuit</label><span class="walk-location">Grasmere, Cumbria</span></div><div class="walk-check-item"><input type="checkbox" id="chk-19" onchange="saveCheck('19','website')"><label for="chk-19">Headley Heath & Nower Wood</label><span class="walk-location">Headley, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-20" onchange="saveCheck('20','website')"><label for="chk-20">Bookham Common & Fetcham Downs</label><span class="walk-location">Great Bookham, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-21" onchange="saveCheck('21','website')"><label for="chk-21">St Martha's Hill & Chilworth</label><span class="walk-location">Guildford, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-22" onchange="saveCheck('22','website')"><label for="chk-22">The Hurtwood Ridge Walk</label><span class="walk-location">Ewhurst, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-23" onchange="saveCheck('23','website')"><label for="chk-23">Epsom Common & Stew Ponds</label><span class="walk-location">Epsom, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-24" onchange="saveCheck('24','website')"><label for="chk-24">Shere Village & Abinger Roughs</label><span class="walk-location">Shere, Surrey</span></div><div class="walk-check-item"><input type="checkbox" id="chk-25" onchange="saveCheck('25','website')"><label for="chk-25">Cuckmere Haven & Litlington</label><span class="walk-location">Seaford, East Sussex</span></div><div class="walk-check-item"><input type="checkbox" id="chk-26" onchange="saveCheck('26','website')"><label for="chk-26">Cissbury Ring Iron Age Fort</label><span class="walk-location">Worthing, West Sussex</span></div><div class="walk-check-item"><input type="checkbox" id="chk-27" onchange="saveCheck('27','website')"><label for="chk-27">Arthur's Seat & Holyrood Park</label><span class="walk-location">Edinburgh</span></div><div class="walk-check-item"><input type="checkbox" id="chk-28" onchange="saveCheck('28','website')"><label for="chk-28">Threipmuir & Harlaw Reservoirs</label><span class="walk-location">Balerno, Edinburgh</span></div><div class="walk-check-item"><input type="checkbox" id="chk-29" onchange="saveCheck('29','website')"><label for="chk-29">The Hermitage & Black Linn Falls</label><span class="walk-location">Dunkeld, Perthshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-30" onchange="saveCheck('30','website')"><label for="chk-30">Tentsmuir Forest & Beach</label><span class="walk-location">Leuchars, Fife</span></div><div class="walk-check-item"><input type="checkbox" id="chk-31" onchange="saveCheck('31','website')"><label for="chk-31">Balmaha & Loch Lomond Shore</label><span class="walk-location">Balmaha, Loch Lomond</span></div><div class="walk-check-item"><input type="checkbox" id="chk-32" onchange="saveCheck('32','website')"><label for="chk-32">Pen y Fan & Corn Du Circuit</label><span class="walk-location">Libanus, Powys</span></div><div class="walk-check-item"><input type="checkbox" id="chk-33" onchange="saveCheck('33','website')"><label for="chk-33">Llyn Padarn Lake Circuit</label><span class="walk-location">Llanberis, Gwynedd</span></div><div class="walk-check-item"><input type="checkbox" id="chk-34" onchange="saveCheck('34','website')"><label for="chk-34">Rhossili Bay & Worms Head</label><span class="walk-location">Rhossili, Swansea</span></div><div class="walk-check-item"><input type="checkbox" id="chk-35" onchange="saveCheck('35','website')"><label for="chk-35">Alnmouth Beach & River Aln</label><span class="walk-location">Alnmouth, Northumberland</span></div><div class="walk-check-item"><input type="checkbox" id="chk-36" onchange="saveCheck('36','website')"><label for="chk-36">Hardcastle Crags & Gibson Mill</label><span class="walk-location">Hebden Bridge, West Yorkshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-37" onchange="saveCheck('37','website')"><label for="chk-37">Formby Beach & Red Squirrel Pinewoods</label><span class="walk-location">Formby, Merseyside</span></div><div class="walk-check-item"><input type="checkbox" id="chk-38" onchange="saveCheck('38','website')"><label for="chk-38">Clumber Park Lakeside Circuit</label><span class="walk-location">Worksop, Nottinghamshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-39" onchange="saveCheck('39','website')"><label for="chk-39">Sherwood Forest & The Major Oak</label><span class="walk-location">Edwinstowe, Nottinghamshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-40" onchange="saveCheck('40','website')"><label for="chk-40">Cannock Chase Forest Walk</label><span class="walk-location">Rugeley, Staffordshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-41" onchange="saveCheck('41','website')"><label for="chk-41">Kielder Castle & Duke's Trail</label><span class="walk-location">Kielder, Northumberland</span></div><div class="walk-check-item"><input type="checkbox" id="chk-42" onchange="saveCheck('42','website')"><label for="chk-42">Dunwich Heath & Beach</label><span class="walk-location">Dunwich, Suffolk</span></div><div class="walk-check-item"><input type="checkbox" id="chk-43" onchange="saveCheck('43','website')"><label for="chk-43">High Lodge Thetford Forest Trails</label><span class="walk-location">Brandon, Suffolk</span></div><div class="walk-check-item"><input type="checkbox" id="chk-44" onchange="saveCheck('44','website')"><label for="chk-44">Baggy Point & Croyde Bay</label><span class="walk-location">Croyde, North Devon</span></div><div class="walk-check-item"><input type="checkbox" id="chk-45" onchange="saveCheck('45','website')"><label for="chk-45">Bute Park & Taff Trail</label><span class="walk-location">Cardiff</span></div><div class="walk-check-item"><input type="checkbox" id="chk-46" onchange="saveCheck('46','website')"><label for="chk-46">Plessey Woods & River Blyth</label><span class="walk-location">Bedlington, Northumberland</span></div><div class="walk-check-item"><input type="checkbox" id="chk-47" onchange="saveCheck('47','website')"><label for="chk-47">Roseberry Topping & Newton Wood</label><span class="walk-location">Great Ayton, North Yorkshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-48" onchange="saveCheck('48','website')"><label for="chk-48">Dalby Forest Woodcock Way</label><span class="walk-location">Thornton-le-Dale, North Yorkshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-49" onchange="saveCheck('49','website')"><label for="chk-49">Beacon Fell Country Park</label><span class="walk-location">Goosnargh, Lancashire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-50" onchange="saveCheck('50','website')"><label for="chk-50">Rivington Pike & Lever Park</label><span class="walk-location">Rivington, Lancashire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-51" onchange="saveCheck('51','website')"><label for="chk-51">Lyme Park & Knightslow Wood</label><span class="walk-location">Disley, Cheshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-52" onchange="saveCheck('52','website')"><label for="chk-52">Bradgate Park & Old John Tower</label><span class="walk-location">Newtown Linford, Leicestershire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-53" onchange="saveCheck('53','website')"><label for="chk-53">Calke Abbey Parkland Loop</label><span class="walk-location">Ticknall, Derbyshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-54" onchange="saveCheck('54','website')"><label for="chk-54">Lickey Hills & Bilberry Hill</label><span class="walk-location">Rednal, Birmingham</span></div><div class="walk-check-item"><input type="checkbox" id="chk-55" onchange="saveCheck('55','website')"><label for="chk-55">Symonds Yat & River Wye Loop</label><span class="walk-location">Symonds Yat, Herefordshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-56" onchange="saveCheck('56','website')"><label for="chk-56">Penllergare Valley Woods & Waterfall</label><span class="walk-location">Penllergaer, Swansea</span></div><div class="walk-check-item"><input type="checkbox" id="chk-57" onchange="saveCheck('57','website')"><label for="chk-57">Llansteffan Castle & Estuary Walk</label><span class="walk-location">Llansteffan, Carmarthenshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-58" onchange="saveCheck('58','website')"><label for="chk-58">Sheringham Park & Coastal Path</label><span class="walk-location">Upper Sheringham, Norfolk</span></div><div class="walk-check-item"><input type="checkbox" id="chk-59" onchange="saveCheck('59','website')"><label for="chk-59">Tehidy Country Park</label><span class="walk-location">Camborne, Cornwall</span></div><div class="walk-check-item"><input type="checkbox" id="chk-60" onchange="saveCheck('60','website')"><label for="chk-60">Moors Valley Country Park & Forest</label><span class="walk-location">Ashley Heath, Dorset</span></div><div class="walk-check-item"><input type="checkbox" id="chk-61" onchange="saveCheck('61','website')"><label for="chk-61">Kinnoull Hill & Tay Valley Views</label><span class="walk-location">Perth, Perth & Kinross</span></div><div class="walk-check-item"><input type="checkbox" id="chk-62" onchange="saveCheck('62','website')"><label for="chk-62">Elterwater & Langdale Valley</label><span class="walk-location">Elterwater, Cumbria</span></div><div class="walk-check-item"><input type="checkbox" id="chk-63" onchange="saveCheck('63','website')"><label for="chk-63">Newtondale Forest & Levisham Beck</label><span class="walk-location">Levisham, North Yorkshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-64" onchange="saveCheck('64','website')"><label for="chk-64">Loch Ard Forest & Trossachs Trail</label><span class="walk-location">Aberfoyle, Stirlingshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-65" onchange="saveCheck('65','website')"><label for="chk-65">Rhossili Down Ridge Walk</label><span class="walk-location">Rhossili, Gower, Swansea</span></div><div class="walk-check-item"><input type="checkbox" id="chk-66" onchange="saveCheck('66','website')"><label for="chk-66">Cave Hill & Belfast Castle</label><span class="walk-location">Belfast, Northern Ireland</span></div><div class="walk-check-item"><input type="checkbox" id="chk-67" onchange="saveCheck('67','website')"><label for="chk-67">Tollymore Forest Park Red Trail</label><span class="walk-location">Newcastle, County Down</span></div><div class="walk-check-item"><input type="checkbox" id="chk-68" onchange="saveCheck('68','website')"><label for="chk-68">White Park Bay & Causeway Coast</label><span class="walk-location">Ballintoy, County Antrim</span></div><div class="walk-check-item"><input type="checkbox" id="chk-69" onchange="saveCheck('69','website')"><label for="chk-69">Farley Mount Country Park</label><span class="walk-location">Sparsholt, Hampshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-70" onchange="saveCheck('70','website')"><label for="chk-70">Lepe Beach & Solent Shore</label><span class="walk-location">Exbury, Hampshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-71" onchange="saveCheck('71','website')"><label for="chk-71">Savernake Forest & Grand Avenue</label><span class="walk-location">Marlborough, Wiltshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-72" onchange="saveCheck('72','website')"><label for="chk-72">Valley of Rocks & Lynton Coast</label><span class="walk-location">Lynton, Devon</span></div><div class="walk-check-item"><input type="checkbox" id="chk-73" onchange="saveCheck('73','website')"><label for="chk-73">Quantock Hills & Beacon Hill</label><span class="walk-location">Nether Stowey, Somerset</span></div><div class="walk-check-item"><input type="checkbox" id="chk-74" onchange="saveCheck('74','website')"><label for="chk-74">Mallards Pike Lake & Forest of Dean</label><span class="walk-location">Parkend, Gloucestershire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-75" onchange="saveCheck('75','website')"><label for="chk-75">Loch Morlich & Glenmore Forest</label><span class="walk-location">Aviemore, Highland</span></div><div class="walk-check-item"><input type="checkbox" id="chk-76" onchange="saveCheck('76','website')"><label for="chk-76">Robin Hood's Bay & Cleveland Way</label><span class="walk-location">Robin Hood's Bay, North Yorkshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-77" onchange="saveCheck('77','website')"><label for="chk-77">Hamsterley Forest Becks Trail</label><span class="walk-location">Hamsterley, County Durham</span></div><div class="walk-check-item"><input type="checkbox" id="chk-78" onchange="saveCheck('78','website')"><label for="chk-78">Gibraltar Point Beach & Dunes</label><span class="walk-location">Skegness, Lincolnshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-79" onchange="saveCheck('79','website')"><label for="chk-79">Uffington White Horse & Ridgeway</label><span class="walk-location">Uffington, Oxfordshire</span></div><div class="walk-check-item"><input type="checkbox" id="chk-80" onchange="saveCheck('80','website')"><label for="chk-80">Dovestone Reservoir Circuit</label><span class="walk-location">Greenfield, Greater Manchester</span></div><div class="walk-check-item"><input type="checkbox" id="chk-81" onchange="saveCheck('81','website')"><label for="chk-81">Blaise Castle Estate & Gorge Walk</label><span class="walk-location">Henbury, Bristol</span></div><div class="walk-check-item"><input type="checkbox" id="chk-82" onchange="saveCheck('82','website')"><label for="chk-82">Epping Forest & Connaught Water</label><span class="walk-location">Chingford, Essex</span></div><div class="walk-check-item"><input type="checkbox" id="chk-83" onchange="saveCheck('83','website')"><label for="chk-83">Compton Bay & Chalk Downs</label><span class="walk-location">Freshwater, Isle of Wight</span></div><div class="walk-check-item"><input type="checkbox" id="chk-84" onchange="saveCheck('84','website')"><label for="chk-84">Crawfordsburn Glen & Belfast Lough</label><span class="walk-location">Helen's Bay, County Down</span></div><div class="walk-check-item"><input type="checkbox" id="chk-85" onchange="saveCheck('85','website')"><label for="chk-85">Golden Cap & Jurassic Coast</label><span class="walk-location">Seatown, Dorset</span></div></div></div></div></div>
-        </div>
-        <div class="card-body">Static SEO website. One page per walk, area indexes, editorial guides. Walk page mockup approved. Building before PWA launch.</div>
-        <div class="card-footer">
-          <div class="card-label">Pre-launch priority</div>
-          <div class="card-label">Hugo or Astro</div>
-          <div class="card-label">Plausible analytics</div>
-        </div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-website')">+ Add note</button>
-          </div>
-          <div id="notes-card-website"></div>
-          <div class="card-note-input-wrap" id="input-card-website">
-            <input class="card-note-input" id="text-card-website" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-website')">
-            <button class="card-note-save" onclick="saveNote('card-website')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" id="card-personas">
-        <div class="card-top">
-          <div class="card-title">New Copywriter personas for website</div>
-          <div class="card-tag tag-copy">Copy</div>
-        </div>
-        <div class="card-body">4-6 new personas distinct from app personas (Morag, Deborah, Priya, Pete). Different demographics, breeds, regions, walking styles.</div>
-        <div class="card-footer">
-          <div class="card-label">Brief needed</div>
-        </div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-personas')">+ Add note</button>
-          </div>
-          <div id="notes-card-personas"></div>
-          <div class="card-note-input-wrap" id="input-card-personas">
-            <input class="card-note-input" id="text-card-personas" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-personas')">
-            <button class="card-note-save" onclick="saveNote('card-personas')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" id="card-ios">
-        <div class="card-top">
-          <div class="card-title">App Store submission (iOS)</div>
-          <div class="card-tag tag-dev">Dev</div>
-        </div>
-        <div class="card-body">Capacitor wrapper for iOS App Store. Mac + Xcode required (Mac confirmed). £99/year Apple dev account. Native share, local notifications, haptics needed to pass review.</div>
-        <div class="card-footer">
-          <div class="card-label">Capacitor</div>
-          <div class="card-label">Pre-launch</div>
-        </div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-ios')">+ Add note</button>
-          </div>
-          <div id="notes-card-ios"></div>
-          <div class="card-note-input-wrap" id="input-card-ios">
-            <input class="card-note-input" id="text-card-ios" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-ios')">
-            <button class="card-note-save" onclick="saveNote('card-ios')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" id="card-play">
-        <div class="card-top">
-          <div class="card-title">Google Play submission</div>
-          <div class="card-tag tag-dev">Dev</div>
-        </div>
-        <div class="card-body">PWABuilder TWA. $25 one-time. assetlinks.json needed at sniffout.app/.well-known/. Lighthouse score 80+ required.</div>
-        <div class="card-footer">
-          <div class="card-label">PWABuilder</div>
-          <div class="card-label">Pre-launch</div>
-        </div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-play')">+ Add note</button>
-          </div>
-          <div id="notes-card-play"></div>
-          <div class="card-note-input-wrap" id="input-card-play">
-            <input class="card-note-input" id="text-card-play" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-play')">
-            <button class="card-note-save" onclick="saveNote('card-play')">Save</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <div class="cards" id="cards-inprogress"></div>
     <button class="add-card-btn" onclick="showAddForm('inprogress')">+ Add card</button>
     <div class="add-card-form" id="add-form-inprogress">
       <input type="text" id="add-title-inprogress" placeholder="Card title" onkeydown="if(event.key==='Enter')submitCard('inprogress')">
@@ -952,474 +538,10 @@
     <div class="column-header">
       <div class="column-title">
         <div class="column-title-text">Done</div>
-        <div class="column-count done-count" id="count-done">22</div>
+        <div class="column-count done-count" id="count-done">0</div>
       </div>
     </div>
-    <div class="cards" id="cards-done">
-
-      <div class="card done-card" id="card-fab">
-        <div class="card-top">
-          <div class="card-title">FAB map controls</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Replaced all map toggles and filter chips with single expandable FAB. Walks + Nearby maps. Document click-outside handler.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-fab')">+ Add note</button>
-          </div>
-          <div id="notes-card-fab"></div>
-          <div class="card-note-input-wrap" id="input-card-fab">
-            <input class="card-note-input" id="text-card-fab" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-fab')">
-            <button class="card-note-save" onclick="saveNote('card-fab')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-hero">
-        <div class="card-top">
-          <div class="card-title">Today tab hero card redesign</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Brand green always. Watermark icon, smart sun pill, rain % pill, best window, alert pills. renderTodayStateB 5 params.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-hero')">+ Add note</button>
-          </div>
-          <div id="notes-card-hero"></div>
-          <div class="card-note-input-wrap" id="input-card-hero">
-            <input class="card-note-input" id="text-card-hero" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-hero')">
-            <button class="card-note-save" onclick="saveNote('card-hero')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-design-system">
-        <div class="card-top">
-          <div class="card-title">Signature Tactile design system</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Full design system implemented. Spec at docs/design/signature-tactile-spec.md.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-design-system')">+ Add note</button>
-          </div>
-          <div id="notes-card-design-system"></div>
-          <div class="card-note-input-wrap" id="input-card-design-system">
-            <input class="card-note-input" id="text-card-design-system" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-design-system')">
-            <button class="card-note-save" onclick="saveNote('card-design-system')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-font">
-        <div class="card-top">
-          <div class="card-title">Plus Jakarta Sans migration</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Replaced Fraunces + Inter with Plus Jakarta Sans throughout. 146 occurrences.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-font')">+ Add note</button>
-          </div>
-          <div id="notes-card-font"></div>
-          <div class="card-note-input-wrap" id="input-card-font">
-            <input class="card-note-input" id="text-card-font" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-font')">
-            <button class="card-note-save" onclick="saveNote('card-font')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-places-cost">
-        <div class="card-top">
-          <div class="card-title">Google Places API cost reduction</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">99.8% cost reduction. Race condition fix, 24h cache, lazy photos, Cloudflare proxy, maxResultCount 10, OSM hybrid.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-places-cost')">+ Add note</button>
-          </div>
-          <div id="notes-card-places-cost"></div>
-          <div class="card-note-input-wrap" id="input-card-places-cost">
-            <input class="card-note-input" id="text-card-places-cost" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-places-cost')">
-            <button class="card-note-save" onclick="saveNote('card-places-cost')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-cf-worker">
-        <div class="card-top">
-          <div class="card-title">Cloudflare Worker referer check</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Returns 403 for non-sniffout.app requests. Blocks API key abuse.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-cf-worker')">+ Add note</button>
-          </div>
-          <div id="notes-card-cf-worker"></div>
-          <div class="card-note-input-wrap" id="input-card-cf-worker">
-            <input class="card-note-input" id="text-card-cf-worker" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-cf-worker')">
-            <button class="card-note-save" onclick="saveNote('card-cf-worker')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-venue-status">
-        <div class="card-top">
-          <div class="card-title">Open/closed venue status fix</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">isVenueOpenNow() calculates live from regularOpeningHours.periods. No longer stale from cache.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-venue-status')">+ Add note</button>
-          </div>
-          <div id="notes-card-venue-status"></div>
-          <div class="card-note-input-wrap" id="input-card-venue-status">
-            <input class="card-note-input" id="text-card-venue-status" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-venue-status')">
-            <button class="card-note-save" onclick="saveNote('card-venue-status')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-os-tiles">
-        <div class="card-top">
-          <div class="card-title">OS Maps Outdoor tiles</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Replaced broken Leisure_3857 with Outdoor_3857. Free OpenData, Web Mercator, footpaths and rights of way. OS ticket closed.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-os-tiles')">+ Add note</button>
-          </div>
-          <div id="notes-card-os-tiles"></div>
-          <div class="card-note-input-wrap" id="input-card-os-tiles">
-            <input class="card-note-input" id="text-card-os-tiles" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-os-tiles')">
-            <button class="card-note-save" onclick="saveNote('card-os-tiles')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-gs-hybrid">
-        <div class="card-top">
-          <div class="card-title">Green/OSM hybrid for green spaces</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Google + OSM Overpass parallel fetch. OSM fills coverage gaps Google misses. Cache key gs2|.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-gs-hybrid')">+ Add note</button>
-          </div>
-          <div id="notes-card-gs-hybrid"></div>
-          <div class="card-note-input-wrap" id="input-card-gs-hybrid">
-            <input class="card-note-input" id="text-card-gs-hybrid" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-gs-hybrid')">
-            <button class="card-note-save" onclick="saveNote('card-gs-hybrid')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-sun-pill">
-        <div class="card-top">
-          <div class="card-title">Smart sun pill</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Pre-noon: today sunrise. Post-noon: today sunset. Post-sunset: tomorrow sunrise. Uses daily.sunrise[1].</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-sun-pill')">+ Add note</button>
-          </div>
-          <div id="notes-card-sun-pill"></div>
-          <div class="card-note-input-wrap" id="input-card-sun-pill">
-            <input class="card-note-input" id="text-card-sun-pill" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-sun-pill')">
-            <button class="card-note-save" onclick="saveNote('card-sun-pill')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-walks-empty">
-        <div class="card-top">
-          <div class="card-title">Walks map empty state pill</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">"No walks match your filters" converted from blocking centred overlay to small non-blocking pill at bottom of map.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-walks-empty')">+ Add note</button>
-          </div>
-          <div id="notes-card-walks-empty"></div>
-          <div class="card-note-input-wrap" id="input-card-walks-empty">
-            <input class="card-note-input" id="text-card-walks-empty" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-walks-empty')">
-            <button class="card-note-save" onclick="saveNote('card-walks-empty')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-refactor">
-        <div class="card-top">
-          <div class="card-title">Refactoring round</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Dead yrIcon function removed. 32 global vars converted to const. 92 mutable vars correctly left as var.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-refactor')">+ Add note</button>
-          </div>
-          <div id="notes-card-refactor"></div>
-          <div class="card-note-input-wrap" id="input-card-refactor">
-            <input class="card-note-input" id="text-card-refactor" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-refactor')">
-            <button class="card-note-save" onclick="saveNote('card-refactor')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-sun-row">
-        <div class="card-top">
-          <div class="card-title">Weather tab sunrise/sunset row</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">.wx-sun-row added between tiles and 5-day forecast. Amber icons.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-sun-row')">+ Add note</button>
-          </div>
-          <div id="notes-card-sun-row"></div>
-          <div class="card-note-input-wrap" id="input-card-sun-row">
-            <input class="card-note-input" id="text-card-sun-row" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-sun-row')">
-            <button class="card-note-save" onclick="saveNote('card-sun-row')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-monetisation">
-        <div class="card-top">
-          <div class="card-title">Monetisation research</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Full research on monetisation strategy, brand building, competitor analysis, content strategy. Saved at docs/research/.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-monetisation')">+ Add note</button>
-          </div>
-          <div id="notes-card-monetisation"></div>
-          <div class="card-note-input-wrap" id="input-card-monetisation">
-            <input class="card-note-input" id="text-card-monetisation" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-monetisation')">
-            <button class="card-note-save" onclick="saveNote('card-monetisation')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-website-research">
-        <div class="card-top">
-          <div class="card-title">Companion website research</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Structure, design, SEO, app store strategy, analytics. Walk page mockups approved (mobile + desktop). sniffout.co.uk.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-website-research')">+ Add note</button>
-          </div>
-          <div id="notes-card-website-research"></div>
-          <div class="card-note-input-wrap" id="input-card-website-research">
-            <input class="card-note-input" id="text-card-website-research" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-website-research')">
-            <button class="card-note-save" onclick="saveNote('card-website-research')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-mockups">
-        <div class="card-top">
-          <div class="card-title">Walk page mockups</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Mobile and desktop walk page mockups built and approved. Real icon integrated. sniffout.co.uk visual direction confirmed.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-mockups')">+ Add note</button>
-          </div>
-          <div id="notes-card-mockups"></div>
-          <div class="card-note-input-wrap" id="input-card-mockups">
-            <input class="card-note-input" id="text-card-mockups" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-mockups')">
-            <button class="card-note-save" onclick="saveNote('card-mockups')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-walks-db">
-        <div class="card-top">
-          <div class="card-title">100 curated walks in WALKS_DB</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">100 walks via Morag, Deborah, Priya, Pete, Jamie persona pipeline.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-walks-db')">+ Add note</button>
-          </div>
-          <div id="notes-card-walks-db"></div>
-          <div class="card-note-input-wrap" id="input-card-walks-db">
-            <input class="card-note-input" id="text-card-walks-db" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-walks-db')">
-            <button class="card-note-save" onclick="saveNote('card-walks-db')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-dogs">
-        <div class="card-top">
-          <div class="card-title">Multiple dog profiles</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Multiple dogs supported from Phase 2.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-dogs')">+ Add note</button>
-          </div>
-          <div id="notes-card-dogs"></div>
-          <div class="card-note-input-wrap" id="input-card-dogs">
-            <input class="card-note-input" id="text-card-dogs" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-dogs')">
-            <button class="card-note-save" onclick="saveNote('card-dogs')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-firebase-auth">
-        <div class="card-top">
-          <div class="card-title">Anonymous Firebase auth + Firestore dual-write</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Implemented but FIREBASE_WRITE_ENABLED = false. Ready for Phase 3 activation.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-firebase-auth')">+ Add note</button>
-          </div>
-          <div id="notes-card-firebase-auth"></div>
-          <div class="card-note-input-wrap" id="input-card-firebase-auth">
-            <input class="card-note-input" id="text-card-firebase-auth" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-firebase-auth')">
-            <button class="card-note-save" onclick="saveNote('card-firebase-auth')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-dark-mode">
-        <div class="card-top">
-          <div class="card-title">Dark mode + light/auto toggle</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Default light for new users. Auto mode renamed "Match device". Full night mode CSS throughout.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-dark-mode')">+ Add note</button>
-          </div>
-          <div id="notes-card-dark-mode"></div>
-          <div class="card-note-input-wrap" id="input-card-dark-mode">
-            <input class="card-note-input" id="text-card-dark-mode" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-dark-mode')">
-            <button class="card-note-save" onclick="saveNote('card-dark-mode')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-location-switch">
-        <div class="card-top">
-          <div class="card-title">Location switching on Walks + Nearby</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">Users can switch location from the Walks and Nearby tab headers.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-location-switch')">+ Add note</button>
-          </div>
-          <div id="notes-card-location-switch"></div>
-          <div class="card-note-input-wrap" id="input-card-location-switch">
-            <input class="card-note-input" id="text-card-location-switch" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-location-switch')">
-            <button class="card-note-save" onclick="saveNote('card-location-switch')">Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card done-card" id="card-leaflet-tap">
-        <div class="card-top">
-          <div class="card-title">Leaflet 44px DivIcon tap targets</div>
-          <div class="card-done-check">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div class="card-body">WCAG AA compliant map pin tap targets. Zoom controls permanently removed.</div>
-        <div class="card-notes">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="card-notes-label">Notes</div>
-            <button class="card-notes-add" onclick="showNoteInput('card-leaflet-tap')">+ Add note</button>
-          </div>
-          <div id="notes-card-leaflet-tap"></div>
-          <div class="card-note-input-wrap" id="input-card-leaflet-tap">
-            <input class="card-note-input" id="text-card-leaflet-tap" placeholder="Add a note..." onkeydown="if(event.key==='Enter')saveNote('card-leaflet-tap')">
-            <button class="card-note-save" onclick="saveNote('card-leaflet-tap')">Save</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <div class="cards" id="cards-done"></div>
     <button class="add-card-btn" onclick="showAddForm('done')">+ Add card</button>
     <div class="add-card-form" id="add-form-done">
       <input type="text" id="add-title-done" placeholder="Card title" onkeydown="if(event.key==='Enter')submitCard('done')">
@@ -1475,6 +597,10 @@
           <div class="card-modal-slabel">Status</div>
           <div id="cmd-status-wrap"></div>
         </div>
+        <div class="card-modal-section" id="cmd-section-label-section" style="display:none">
+          <div class="card-modal-slabel">Section label</div>
+          <input type="text" class="card-modal-section-label-field" id="cmd-section-label-input" placeholder="e.g. Owner Actions">
+        </div>
         <div class="card-modal-section">
           <div class="card-modal-slabel">Labels</div>
           <div id="cmd-tags" class="card-modal-tags-wrap"></div>
@@ -1499,679 +625,1068 @@
 </div>
 
 <script>
-function showNoteInput(id){var w=document.getElementById('input-'+id);if(w)w.classList.toggle('visible');}
-function saveNote(id){var input=document.getElementById('text-'+id);if(!input||!input.value.trim())return;var notes=JSON.parse(localStorage.getItem('sniffout-notes-'+id)||'[]');notes.push(input.value.trim());localStorage.setItem('sniffout-notes-'+id,JSON.stringify(notes));input.value='';document.getElementById('input-'+id).classList.remove('visible');renderNotes(id);}
-function renderNotes(id){var container=document.getElementById('notes-'+id);if(!container)return;var notes=JSON.parse(localStorage.getItem('sniffout-notes-'+id)||'[]');container.innerHTML=notes.map(function(n){return '<div class="card-note-item"><div class="card-note-dot"></div>'+n+'</div>';}).join('');}
-document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('[id^="card-"]').forEach(function(card){var id=card.id;renderNotes(id);});});
-</script>
-<script>
-function showNoteInput(id){var w=document.getElementById("input-"+id);if(w)w.classList.toggle("visible");}
-function saveNote(id){var input=document.getElementById("text-"+id);if(!input||!input.value.trim())return;var notes=JSON.parse(localStorage.getItem("sniffout-notes-"+id)||"[]");notes.push(input.value.trim());localStorage.setItem("sniffout-notes-"+id,JSON.stringify(notes));input.value="";document.getElementById("input-"+id).classList.remove("visible");renderNotes(id);}
-function renderNotes(id){var c=document.getElementById("notes-"+id);if(!c)return;var notes=JSON.parse(localStorage.getItem("sniffout-notes-"+id)||"[]");c.innerHTML=notes.map(function(n){return "<div class=\"card-note-item\">"+n+"</div>";}).join("");}
-document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll("[id^=\"card-\"]").forEach(function(card){renderNotes(card.id);});});
-</script><script>
-function toggleChecklist(id){var w=document.getElementById('checklist-'+id);var b=document.getElementById('toggle-'+id);if(!w)return;var open=w.classList.toggle('open');b.innerHTML=(open?'&#9660;':'&#9654;')+' '+(open?'Hide':'Show')+' walk image checklist';}
-function saveCheck(n,cardId){var cb=document.getElementById('chk-'+n);if(!cb)return;var key='sniffout-walk-img-'+cardId;var state=JSON.parse(localStorage.getItem(key)||'{}');state[n]=cb.checked;localStorage.setItem(key,JSON.stringify(state));var item=cb.closest('.walk-check-item');if(item)item.classList.toggle('checked',cb.checked);updateProgress(cardId);}
-function updateProgress(cardId){var key='sniffout-walk-img-'+cardId;var state=JSON.parse(localStorage.getItem(key)||'{}');var total=document.querySelectorAll('#checklist-'+cardId+' .walk-check-item').length;var done=Object.values(state).filter(Boolean).length;var p=document.getElementById('prog-'+cardId);if(p)p.innerHTML='<span>'+done+'</span> of '+total+' images sourced';}
-function loadChecklist(cardId){var key='sniffout-walk-img-'+cardId;var state=JSON.parse(localStorage.getItem(key)||'{}');Object.keys(state).forEach(function(n){if(state[n]){var cb=document.getElementById('chk-'+n);if(cb){cb.checked=true;var item=cb.closest('.walk-check-item');if(item)item.classList.add('checked');}}});updateProgress(cardId);}
-document.addEventListener('DOMContentLoaded',function(){loadChecklist('website');});
-</script><script>
-function toggleChecklist(id){var w=document.getElementById('checklist-'+id);var b=document.getElementById('toggle-'+id);if(!w)return;var open=w.classList.toggle('open');b.innerHTML=(open?'&#9660;':'&#9654;')+' '+(open?'Hide':'Show')+' walk image checklist';}
-function saveCheck(n,cardId){var cb=document.getElementById('chk-'+n);if(!cb)return;var key='sniffout-walk-img-'+cardId;var state=JSON.parse(localStorage.getItem(key)||'{}');state[n]=cb.checked;localStorage.setItem(key,JSON.stringify(state));var item=cb.closest('.walk-check-item');if(item)item.classList.toggle('checked',cb.checked);updateProgress(cardId);}
-function updateProgress(cardId){var key='sniffout-walk-img-'+cardId;var state=JSON.parse(localStorage.getItem(key)||'{}');var total=document.querySelectorAll('#checklist-'+cardId+' .walk-check-item').length;var done=Object.values(state).filter(Boolean).length;var p=document.getElementById('prog-'+cardId);if(p)p.innerHTML='<span>'+done+'</span> of '+total+' images sourced';}
-function loadChecklist(cardId){var key='sniffout-walk-img-'+cardId;var state=JSON.parse(localStorage.getItem(key)||'{}');Object.keys(state).forEach(function(n){if(state[n]){var cb=document.getElementById('chk-'+n);if(cb){cb.checked=true;var item=cb.closest('.walk-check-item');if(item)item.classList.add('checked');}}});updateProgress(cardId);}
-document.addEventListener('DOMContentLoaded',function(){loadChecklist('website');});
-</script>
-<script>
 (function(){
-  var STORE_CUSTOM='sniffout-kanban-custom-cards';
-  var STORE_MOVES='sniffout-kanban-card-moves';
-  var COLS=['backlog','inprogress','done'];
-  var COL_LABELS={backlog:'Backlog',inprogress:'In Progress',done:'Done'};
-  var dragging=null;
+  'use strict';
 
-  function getCustomCards(){return JSON.parse(localStorage.getItem(STORE_CUSTOM)||'[]');}
-  function saveCustomCards(a){localStorage.setItem(STORE_CUSTOM,JSON.stringify(a));}
-  function getMoves(){return JSON.parse(localStorage.getItem(STORE_MOVES)||'{}');}
-  function saveMoves(m){localStorage.setItem(STORE_MOVES,JSON.stringify(m));}
-  var STORE_EDITS='sniffout-kanban-card-edits';
-  function getEdits(){return JSON.parse(localStorage.getItem(STORE_EDITS)||'{}');}
-  function saveEdits(e){localStorage.setItem(STORE_EDITS,JSON.stringify(e));}
+  var STORE_CUSTOM = 'sniffout-kanban-custom-cards';
+  var STORE_MOVES  = 'sniffout-kanban-card-moves';
+  var STORE_EDITS  = 'sniffout-kanban-card-edits';
+  var STORE_DELETED= 'sniffout-kanban-deleted';
+  var STORE_MIGRATED = 'sniffout-kanban-migrated-v1';
+  var STORE_LAST_UPDATED = 'sniffout-kanban-last-updated';
+  var COLS = ['backlog','inprogress','done'];
+  var COL_LABELS = {backlog:'Backlog', inprogress:'In Progress', done:'Done'};
+  var dragging = null;
 
-  function getTagClass(t){
-    t=(t||'').toLowerCase();
-    if(t==='dev'||t==='developer')return'tag-dev';
-    if(t==='design'||t==='designer')return'tag-design';
-    if(t==='owner')return'tag-owner';
-    if(t==='research')return'tag-research';
-    if(t==='blocker')return'tag-blocker';
-    if(t==='copy'||t==='copywriter')return'tag-copy';
-    return'tag-dev';
+  // ---- last-updated timestamp ----
+  function fmtDate(d) {
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+  }
+  function touchLastUpdated() {
+    var s = fmtDate(new Date());
+    localStorage.setItem(STORE_LAST_UPDATED, s);
+    var el = document.getElementById('header-date');
+    if (el) el.textContent = s;
+  }
+  function initLastUpdated() {
+    var saved = localStorage.getItem(STORE_LAST_UPDATED);
+    if (!saved) { saved = fmtDate(new Date()); localStorage.setItem(STORE_LAST_UPDATED, saved); }
+    var el = document.getElementById('header-date');
+    if (el) el.textContent = saved;
   }
 
-  window.showAddForm=function(col){
-    COLS.forEach(function(c){var f=document.getElementById('add-form-'+c);if(f)f.classList.remove('visible');});
-    var f=document.getElementById('add-form-'+col);
-    if(!f)return;
-    f.classList.add('visible');
-    var ti=document.getElementById('add-title-'+col);
-    if(ti)ti.focus();
+  // ---- storage helpers ----
+  function getCustomCards() { return JSON.parse(localStorage.getItem(STORE_CUSTOM) || '[]'); }
+  function saveCustomCards(a) { localStorage.setItem(STORE_CUSTOM, JSON.stringify(a)); }
+  function getMoves() { return JSON.parse(localStorage.getItem(STORE_MOVES) || '{}'); }
+  function saveMoves(m) { localStorage.setItem(STORE_MOVES, JSON.stringify(m)); }
+  function getEdits() { return JSON.parse(localStorage.getItem(STORE_EDITS) || '{}'); }
+  function saveEdits(e) { localStorage.setItem(STORE_EDITS, JSON.stringify(e)); }
+
+  // ---- tag styling ----
+  function getTagClass(t) {
+    t = (t||'').toLowerCase();
+    if (t==='dev'||t==='developer') return 'tag-dev';
+    if (t==='design'||t==='designer') return 'tag-design';
+    if (t==='owner') return 'tag-owner';
+    if (t==='research') return 'tag-research';
+    if (t==='blocker') return 'tag-blocker';
+    if (t==='copy'||t==='copywriter') return 'tag-copy';
+    return 'tag-dev';
+  }
+
+  // ---- migration data: 41 hardcoded cards ----
+  var MIGRATED_CARDS = [
+    // BACKLOG - HARD BLOCKERS
+    {id:'migrated-tc', title:'T&C consent screen', body:'L5 - hard go-live blocker. Needs solicitor engagement first (Sprintlaw or LawBite £600-1,500).', tags:['Blocker','Owner action','Dev'], column:'backlog', isBlocker:true},
+    {id:'migrated-pentest', title:'Pen test (T12)', body:'Mandatory security penetration test before launch.', tags:['Blocker','Owner action'], column:'backlog', isBlocker:true},
+    {id:'migrated-e2e', title:'Full end-to-end test pass (T16)', body:'Full test pass across all tabs, features, and edge cases before launch.', tags:['Blocker','Dev'], column:'backlog', isBlocker:true},
+    {id:'migrated-firebase-sec', title:'Firebase security review (T17)', body:'Security review of Firestore rules and auth before Phase 3 goes live.', tags:['Blocker','Phase 3'], column:'backlog', isBlocker:true},
+    // BACKLOG - OWNER ACTIONS
+    {id:'migrated-companies-house', title:'Companies House registration', body:'Limited company formation. £100, 15 min online at Companies House.', tags:['Owner','companies-house.gov.uk'], column:'backlog', isBlocker:false, sectionLabel:'Owner Actions'},
+    {id:'migrated-ico', title:'ICO registration', body:'Data controller registration. ~£52/year at ico.org.uk.', tags:['Owner','ico.org.uk'], column:'backlog', isBlocker:false, sectionLabel:'Owner Actions'},
+    {id:'migrated-trademark', title:'Trade mark application', body:'Register "Sniffout" trade mark. ~£170, one class, IPO website.', tags:['Owner','gov.uk/apply-trade-mark'], column:'backlog', isBlocker:false, sectionLabel:'Owner Actions'},
+    // BACKLOG - DEVELOPMENT
+    {id:'migrated-placeholder', title:'Green space card placeholder image', body:'OSM-sourced green space results have no photo. Need illustrated fallback matching walk card style.\n\nFree image sources:\n- Geograph.org.uk: UK landscapes by grid reference. Best for walk hero images. (CC licence)\n- Unsplash: High quality nature/outdoor photos. No attribution needed. (Free)\n- Pexels: Dogs, parks, countryside. No attribution needed. (Free)\n- Owner photos (Luna): Most authentic. Prioritise for Kingston and Surrey walks. (Free)\n- Micro-influencer swap: Walk documentation photos in exchange for feature placement. (Free)', tags:['Design','Designer first'], column:'backlog', isBlocker:false, sectionLabel:'Development Backlog'},
+    {id:'migrated-pubs', title:'Pubs/restaurants Nearby tab (FIX 23.2)', body:'Reverted due to result quality issues. Needs careful scoping before reimplementation.', tags:['Dev','Needs scoping'], column:'backlog', isBlocker:false, sectionLabel:'Development Backlog'},
+    {id:'migrated-walk-images', title:'Walk images', body:'Source hero images for all 85 curated walks. Checklist tracked in website card. Prioritise Kingston and Surrey walks using owner photos (Luna). Use Geograph.org.uk, Unsplash, Pexels, or micro-influencer swap.', tags:['Design'], column:'backlog', isBlocker:false, sectionLabel:'Development Backlog'},
+    {id:'migrated-personas', title:'New Copywriter personas for website', body:'4-6 new personas distinct from app personas (Morag, Deborah, Priya, Pete). Different demographics, breeds, regions, walking styles.', tags:['Research','Brief needed'], column:'backlog', isBlocker:false, sectionLabel:'Development Backlog'},
+    {id:'migrated-ios', title:'App Store submission (iOS)', body:'Capacitor wrapper for iOS App Store. Mac + Xcode required (Mac confirmed). £99/year Apple dev account. Native share, local notifications, haptics needed to pass review.', tags:['Dev','Capacitor','Pre-launch'], column:'backlog', isBlocker:false, sectionLabel:'Development Backlog'},
+    {id:'migrated-play', title:'Google Play submission', body:'PWABuilder TWA. $25 one-time. assetlinks.json needed at sniffout.app/.well-known/. Lighthouse score 80+ required.', tags:['Dev','PWABuilder','Pre-launch'], column:'backlog', isBlocker:false, sectionLabel:'Development Backlog'},
+    {id:'migrated-beforeunload', title:'B2 beforeunload handler', body:'Deferred pending surgical fix and on-device testing.', tags:['Dev','Android Chrome'], column:'backlog', isBlocker:false, sectionLabel:'Development Backlog'},
+    {id:'migrated-tick', title:'Tick hazard', body:'Add seasonal hazard: month 3-10. Trigger at line ~6400, definition at ~6522. Copywriter pass required first.', tags:['Dev','Copywriter first','Mar-Oct'], column:'backlog', isBlocker:false, sectionLabel:'Development Backlog'},
+    {id:'migrated-affiliate', title:'Affiliate links - 3 placements', body:'Pet insurance (ManyPets, Petplan) in walk detail, dog profile setup, and Nearby footer. Build website first.', tags:['Dev','Website first','Post-launch'], column:'backlog', isBlocker:false, sectionLabel:'Development Backlog'},
+    {id:'migrated-playground', title:'Green spaces playground exclusion', body:'Verify Task 3 from 27 March batch brief landed. Run: grep -n "playground|gs2" sniffout-v2.html | head -10', tags:['Dev','Verify first'], column:'backlog', isBlocker:false, sectionLabel:'Development Backlog'},
+    {id:'migrated-firebase-migration', title:'Phase 3 - Firebase migration', body:'Walk journal and photos need data persistence. Full spec written, all 12 owner decisions confirmed. FIREBASE_WRITE_ENABLED = false until ready.', tags:['Dev','Phase 3','After blockers resolved'], column:'backlog', isBlocker:false, sectionLabel:'Development Backlog'},
+    // IN PROGRESS
+    {id:'migrated-website', title:'Companion website (sniffout.co.uk)', body:'Static SEO website. One page per walk, area indexes, editorial guides. Walk page mockup approved. Building before PWA launch.', tags:['Dev','Pre-launch priority','Hugo or Astro','Plausible analytics'], column:'inprogress', isBlocker:false},
+    // DONE
+    {id:'migrated-fab', title:'FAB map controls', body:'Replaced all map toggles and filter chips with single expandable FAB. Walks + Nearby maps. Document click-outside handler.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-hero', title:'Today tab hero card redesign', body:'Brand green always. Watermark icon, smart sun pill, rain % pill, best window, alert pills. renderTodayStateB 5 params.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-design-system', title:'Signature Tactile design system', body:'Full design system implemented. Spec at docs/design/signature-tactile-spec.md.', tags:['Design'], column:'done', isBlocker:false},
+    {id:'migrated-font', title:'Plus Jakarta Sans migration', body:'Replaced Fraunces + Inter with Plus Jakarta Sans throughout. 146 occurrences.', tags:['Design'], column:'done', isBlocker:false},
+    {id:'migrated-places-cost', title:'Google Places API cost reduction', body:'99.8% cost reduction. Race condition fix, 24h cache, lazy photos, Cloudflare proxy, maxResultCount 10, OSM hybrid.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-cf-worker', title:'Cloudflare Worker referer check', body:'Returns 403 for non-sniffout.app requests. Blocks API key abuse.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-venue-status', title:'Open/closed venue status fix', body:'isVenueOpenNow() calculates live from regularOpeningHours.periods. No longer stale from cache.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-os-tiles', title:'OS Maps Outdoor tiles', body:'Replaced broken Leisure_3857 with Outdoor_3857. Free OpenData, Web Mercator, footpaths and rights of way. OS ticket closed.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-gs-hybrid', title:'Green/OSM hybrid for green spaces', body:'Google + OSM Overpass parallel fetch. OSM fills coverage gaps Google misses. Cache key gs2|.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-sun-pill', title:'Smart sun pill', body:'Pre-noon: today sunrise. Post-noon: today sunset. Post-sunset: tomorrow sunrise. Uses daily.sunrise[1].', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-walks-empty', title:'Walks map empty state pill', body:'"No walks match your filters" converted from blocking centred overlay to small non-blocking pill at bottom of map.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-refactor', title:'Refactoring round', body:'Dead yrIcon function removed. 32 global vars converted to const. 92 mutable vars correctly left as var.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-sun-row', title:'Weather tab sunrise/sunset row', body:'.wx-sun-row added between tiles and 5-day forecast. Amber icons.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-monetisation', title:'Monetisation research', body:'Full research on monetisation strategy, brand building, competitor analysis, content strategy. Saved at docs/research/.', tags:['Research'], column:'done', isBlocker:false},
+    {id:'migrated-website-research', title:'Companion website research', body:'Structure, design, SEO, app store strategy, analytics. Walk page mockups approved (mobile + desktop). sniffout.co.uk.', tags:['Research'], column:'done', isBlocker:false},
+    {id:'migrated-mockups', title:'Walk page mockups', body:'Mobile and desktop walk page mockups built and approved. Real icon integrated. sniffout.co.uk visual direction confirmed.', tags:['Design'], column:'done', isBlocker:false},
+    {id:'migrated-walks-db', title:'100 curated walks in WALKS_DB', body:'100 walks via Morag, Deborah, Priya, Pete, Jamie persona pipeline.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-dogs', title:'Multiple dog profiles', body:'Multiple dogs supported from Phase 2.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-firebase-auth', title:'Anonymous Firebase auth + Firestore dual-write', body:'Implemented but FIREBASE_WRITE_ENABLED = false. Ready for Phase 3 activation.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-dark-mode', title:'Dark mode + light/auto toggle', body:'Default light for new users. Auto mode renamed "Match device". Full night mode CSS throughout.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-location-switch', title:'Location switching on Walks + Nearby', body:'Users can switch location from the Walks and Nearby tab headers.', tags:['Dev'], column:'done', isBlocker:false},
+    {id:'migrated-leaflet-tap', title:'Leaflet 44px DivIcon tap targets', body:'WCAG AA compliant map pin tap targets. Zoom controls permanently removed.', tags:['Dev'], column:'done', isBlocker:false}
+  ];
+
+  // ---- one-time migration ----
+  function runMigrationIfNeeded() {
+    if (localStorage.getItem(STORE_MIGRATED) === '1') return;
+    var existing = getCustomCards();
+    var existingIds = {};
+    existing.forEach(function(c) { existingIds[c.id] = true; });
+    MIGRATED_CARDS.forEach(function(card) {
+      if (!existingIds[card.id]) existing.push(card);
+    });
+    saveCustomCards(existing);
+    localStorage.setItem(STORE_MIGRATED, '1');
+  }
+
+  // ---- note helpers ----
+  window.showNoteInput = function(id) {
+    var w = document.getElementById('input-' + id);
+    if (w) w.classList.toggle('visible');
   };
 
-  window.hideAddForm=function(col){
-    var f=document.getElementById('add-form-'+col);
-    if(!f)return;
-    f.classList.remove('visible');
-    ['add-title-','add-body-','add-tags-'].forEach(function(p){var el=document.getElementById(p+col);if(el)el.value='';});
+  window.saveNote = function(id) {
+    var input = document.getElementById('text-' + id);
+    if (!input || !input.value.trim()) return;
+    var notes = JSON.parse(localStorage.getItem('sniffout-notes-' + id) || '[]');
+    notes.push(input.value.trim());
+    localStorage.setItem('sniffout-notes-' + id, JSON.stringify(notes));
+    input.value = '';
+    document.getElementById('input-' + id).classList.remove('visible');
+    renderNotes(id);
+    touchLastUpdated();
   };
 
-  window.submitCard=function(col){
-    var titleEl=document.getElementById('add-title-'+col);
-    if(!titleEl||!titleEl.value.trim()){if(titleEl)titleEl.focus();return;}
-    var title=titleEl.value.trim();
-    var body=(document.getElementById('add-body-'+col)||{value:''}).value.trim();
-    var tagsRaw=(document.getElementById('add-tags-'+col)||{value:''}).value;
-    var tags=tagsRaw.split(',').map(function(t){return t.trim();}).filter(Boolean);
-    var card={id:'custom-'+Date.now(),title:title,body:body,tags:tags,column:col};
-    var all=getCustomCards();all.push(card);saveCustomCards(all);
-    var container=document.getElementById('cards-'+col);
-    if(container){var el=buildCardEl(card);container.appendChild(el);renderNotes(card.id);}
-    window.hideAddForm(col);
-    updateCounts();
-  };
+  function renderNotes(id) {
+    var c = document.getElementById('notes-' + id);
+    if (!c) return;
+    var notes = JSON.parse(localStorage.getItem('sniffout-notes-' + id) || '[]');
+    c.innerHTML = notes.map(function(n) {
+      return '<div class="card-note-item">' + escH(n) + '</div>';
+    }).join('');
+  }
 
-  function buildCardEl(card){
-    var div=document.createElement('div');
-    div.className='card';div.id=card.id;
-    div.setAttribute('draggable','true');div.setAttribute('data-custom','1');
+  function escH(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
 
-    var top=document.createElement('div');top.className='card-top';
-    var titleEl=document.createElement('div');titleEl.className='card-title';titleEl.textContent=card.title;
+  // ---- card building ----
+  function buildCardEl(card) {
+    var div = document.createElement('div');
+    var cls = 'card';
+    if (card.isBlocker) cls += ' blocker';
+    if (card.column === 'done') cls += ' done-card';
+    div.className = cls;
+    div.id = card.id;
+    div.setAttribute('draggable', 'true');
+    div.setAttribute('data-custom', '1');
+
+    var top = document.createElement('div');
+    top.className = 'card-top';
+    var titleEl = document.createElement('div');
+    titleEl.className = 'card-title';
+    titleEl.textContent = card.title;
     top.appendChild(titleEl);
-    if(card.tags&&card.tags.length){var tag=document.createElement('div');tag.className='card-tag '+getTagClass(card.tags[0]);tag.textContent=card.tags[0];top.appendChild(tag);}
+
+    if (card.column === 'done') {
+      var chk = document.createElement('div');
+      chk.className = 'card-done-check';
+      chk.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      top.appendChild(chk);
+    } else if (card.tags && card.tags.length) {
+      var tagEl = document.createElement('div');
+      var tagClass = card.isBlocker ? 'tag-blocker' : getTagClass(card.tags[0]);
+      tagEl.className = 'card-tag ' + tagClass;
+      tagEl.textContent = card.tags[0];
+      top.appendChild(tagEl);
+    }
     div.appendChild(top);
 
-    if(card.body){var body=document.createElement('div');body.className='card-body';body.textContent=card.body;div.appendChild(body);}
+    if (card.body) {
+      var body = document.createElement('div');
+      body.className = 'card-body';
+      body.textContent = card.body;
+      div.appendChild(body);
+    }
 
-    if(card.tags&&card.tags.length>1){
-      var footer=document.createElement('div');footer.className='card-footer';
-      card.tags.slice(1).forEach(function(t){var lbl=document.createElement('div');lbl.className='card-label';lbl.textContent=t;footer.appendChild(lbl);});
+    // footer labels: tags[1..n]
+    if (card.tags && card.tags.length > 1) {
+      var footer = document.createElement('div');
+      footer.className = 'card-footer';
+      card.tags.slice(1).forEach(function(t) {
+        var lbl = document.createElement('div');
+        lbl.className = 'card-label';
+        lbl.textContent = t;
+        footer.appendChild(lbl);
+      });
       div.appendChild(footer);
     }
 
-    var moveBtn=document.createElement('button');moveBtn.className='card-move-btn';moveBtn.textContent='Move to...';
-    var moveSel=document.createElement('select');moveSel.className='card-move-select';
-    moveBtn.onclick=function(){moveSel.style.display=moveSel.style.display==='block'?'none':'block';};
-    buildMoveSelect(moveSel,card.id,card.column,true);
-    div.appendChild(moveBtn);div.appendChild(moveSel);
+    // move button (touch devices)
+    var moveBtn = document.createElement('button');
+    moveBtn.className = 'card-move-btn';
+    moveBtn.textContent = 'Move to...';
+    var moveSel = document.createElement('select');
+    moveSel.className = 'card-move-select';
+    moveBtn.onclick = function() { moveSel.style.display = moveSel.style.display === 'block' ? 'none' : 'block'; };
+    buildMoveSelect(moveSel, card.id, card.column, true);
+    div.appendChild(moveBtn);
+    div.appendChild(moveSel);
 
-    var notesWrap=document.createElement('div');notesWrap.className='card-notes';
-    var notesHdr=document.createElement('div');notesHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;';
-    var notesLbl=document.createElement('div');notesLbl.className='card-notes-label';notesLbl.textContent='Notes';
-    var notesAdd=document.createElement('button');notesAdd.className='card-notes-add';notesAdd.textContent='+ Add note';
-    (function(id){notesAdd.onclick=function(){showNoteInput(id);};})(card.id);
-    notesHdr.appendChild(notesLbl);notesHdr.appendChild(notesAdd);notesWrap.appendChild(notesHdr);
-    var notesList=document.createElement('div');notesList.id='notes-'+card.id;notesWrap.appendChild(notesList);
-    var noteInputWrap=document.createElement('div');noteInputWrap.className='card-note-input-wrap';noteInputWrap.id='input-'+card.id;
-    var noteInput=document.createElement('input');noteInput.className='card-note-input';noteInput.id='text-'+card.id;noteInput.placeholder='Add a note...';
-    (function(id){noteInput.addEventListener('keydown',function(e){if(e.key==='Enter')saveNote(id);});})(card.id);
-    var noteSaveBtn=document.createElement('button');noteSaveBtn.className='card-note-save';noteSaveBtn.textContent='Save';
-    (function(id){noteSaveBtn.onclick=function(){saveNote(id);};})(card.id);
-    noteInputWrap.appendChild(noteInput);noteInputWrap.appendChild(noteSaveBtn);notesWrap.appendChild(noteInputWrap);
+    // notes
+    var notesWrap = document.createElement('div');
+    notesWrap.className = 'card-notes';
+    var notesHdr = document.createElement('div');
+    notesHdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
+    var notesLbl = document.createElement('div');
+    notesLbl.className = 'card-notes-label';
+    notesLbl.textContent = 'Notes';
+    var notesAdd = document.createElement('button');
+    notesAdd.className = 'card-notes-add';
+    notesAdd.textContent = '+ Add note';
+    (function(id) { notesAdd.onclick = function() { window.showNoteInput(id); }; })(card.id);
+    notesHdr.appendChild(notesLbl);
+    notesHdr.appendChild(notesAdd);
+    notesWrap.appendChild(notesHdr);
+    var notesList = document.createElement('div');
+    notesList.id = 'notes-' + card.id;
+    notesWrap.appendChild(notesList);
+    var noteInputWrap = document.createElement('div');
+    noteInputWrap.className = 'card-note-input-wrap';
+    noteInputWrap.id = 'input-' + card.id;
+    var noteInput = document.createElement('input');
+    noteInput.className = 'card-note-input';
+    noteInput.id = 'text-' + card.id;
+    noteInput.placeholder = 'Add a note...';
+    (function(id) { noteInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') window.saveNote(id); }); })(card.id);
+    var noteSaveBtn = document.createElement('button');
+    noteSaveBtn.className = 'card-note-save';
+    noteSaveBtn.textContent = 'Save';
+    (function(id) { noteSaveBtn.onclick = function() { window.saveNote(id); }; })(card.id);
+    noteInputWrap.appendChild(noteInput);
+    noteInputWrap.appendChild(noteSaveBtn);
+    notesWrap.appendChild(noteInputWrap);
     div.appendChild(notesWrap);
 
-    var editBtn=document.createElement('button');editBtn.className='card-edit-btn';editBtn.textContent='Edit';
-    (function(id){editBtn.onclick=function(){window.toggleEditPanel(id);};})(card.id);
+    // edit button
+    var editBtn = document.createElement('button');
+    editBtn.className = 'card-edit-btn';
+    editBtn.textContent = 'Edit';
+    (function(id) { editBtn.onclick = function() { window.toggleEditPanel(id); }; })(card.id);
     div.appendChild(editBtn);
-    div.appendChild(buildEditPanel(card.id,true));
+    div.appendChild(buildEditPanel(card.id, true));
 
     addDragListeners(div);
     return div;
   }
 
-  function buildMoveSelect(sel,cardId,currentCol,isCustom){
-    sel.innerHTML='';
-    var opt0=document.createElement('option');opt0.value='';opt0.textContent='Move to...';sel.appendChild(opt0);
-    COLS.filter(function(c){return c!==currentCol;}).forEach(function(c){
-      var opt=document.createElement('option');opt.value=c;opt.textContent=COL_LABELS[c];sel.appendChild(opt);
+  function buildMoveSelect(sel, cardId, currentCol, isCustom) {
+    sel.innerHTML = '';
+    var opt0 = document.createElement('option');
+    opt0.value = '';
+    opt0.textContent = 'Move to...';
+    sel.appendChild(opt0);
+    COLS.filter(function(c) { return c !== currentCol; }).forEach(function(c) {
+      var opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = COL_LABELS[c];
+      sel.appendChild(opt);
     });
-    sel.onchange=function(){if(sel.value)window.moveCard(cardId,sel.value,isCustom);};
+    sel.onchange = function() { if (sel.value) window.moveCard(cardId, sel.value, isCustom); };
   }
 
-  function buildEditPanel(cardId,isCustom){
-    var wrap=document.createElement('div');wrap.className='card-edit-panel';wrap.id='edit-panel-'+cardId;
-    var titleIn=document.createElement('input');titleIn.id='edit-title-'+cardId;titleIn.placeholder='Title';
-    var bodyIn=document.createElement('textarea');bodyIn.id='edit-body-'+cardId;bodyIn.placeholder='Description';bodyIn.rows=2;
-    var tagIn=document.createElement('input');tagIn.id='edit-tag-'+cardId;tagIn.placeholder='Tag (e.g. Dev, Design, Blocker, Owner)';
-    var actions=document.createElement('div');actions.className='card-edit-actions';
-    var saveBtn=document.createElement('button');saveBtn.className='card-edit-save';saveBtn.textContent='Save';
-    (function(id,c){saveBtn.onclick=function(){window.saveCardEdit(id,c);};})(cardId,isCustom);
-    var cancelBtn=document.createElement('button');cancelBtn.className='card-edit-cancel';cancelBtn.textContent='Cancel';
-    (function(id){cancelBtn.onclick=function(){window.toggleEditPanel(id);};})(cardId);
-    actions.appendChild(saveBtn);actions.appendChild(cancelBtn);
-    wrap.appendChild(titleIn);wrap.appendChild(bodyIn);wrap.appendChild(tagIn);wrap.appendChild(actions);
+  function buildEditPanel(cardId, isCustom) {
+    var wrap = document.createElement('div');
+    wrap.className = 'card-edit-panel';
+    wrap.id = 'edit-panel-' + cardId;
+    var titleIn = document.createElement('input');
+    titleIn.id = 'edit-title-' + cardId;
+    titleIn.placeholder = 'Title';
+    var bodyIn = document.createElement('textarea');
+    bodyIn.id = 'edit-body-' + cardId;
+    bodyIn.placeholder = 'Description';
+    bodyIn.rows = 2;
+    var tagIn = document.createElement('input');
+    tagIn.id = 'edit-tag-' + cardId;
+    tagIn.placeholder = 'Tag (e.g. Dev, Design, Blocker, Owner)';
+    var actions = document.createElement('div');
+    actions.className = 'card-edit-actions';
+    var saveBtn = document.createElement('button');
+    saveBtn.className = 'card-edit-save';
+    saveBtn.textContent = 'Save';
+    (function(id, c) { saveBtn.onclick = function() { window.saveCardEdit(id, c); }; })(cardId, isCustom);
+    var cancelBtn = document.createElement('button');
+    cancelBtn.className = 'card-edit-cancel';
+    cancelBtn.textContent = 'Cancel';
+    (function(id) { cancelBtn.onclick = function() { window.toggleEditPanel(id); }; })(cardId);
+    actions.appendChild(saveBtn);
+    actions.appendChild(cancelBtn);
+    wrap.appendChild(titleIn);
+    wrap.appendChild(bodyIn);
+    wrap.appendChild(tagIn);
+    wrap.appendChild(actions);
     return wrap;
   }
 
-  window.toggleEditPanel=function(cardId){
-    var panel=document.getElementById('edit-panel-'+cardId);if(!panel)return;
-    var opening=!panel.classList.contains('open');
-    if(opening){
-      var card=document.getElementById(cardId);
-      var titleEl=card?card.querySelector('.card-title'):null;
-      var bodyEl=card?card.querySelector('.card-body'):null;
-      var tagEl=card?card.querySelector('.card-tag'):null;
-      var ti=document.getElementById('edit-title-'+cardId);
-      var bi=document.getElementById('edit-body-'+cardId);
-      var tagi=document.getElementById('edit-tag-'+cardId);
-      if(ti&&titleEl)ti.value=titleEl.textContent;
-      if(bi)bi.value=bodyEl?bodyEl.textContent:'';
-      if(tagi)tagi.value=tagEl?tagEl.textContent:'';
+  window.toggleEditPanel = function(cardId) {
+    var panel = document.getElementById('edit-panel-' + cardId);
+    if (!panel) return;
+    var opening = !panel.classList.contains('open');
+    if (opening) {
+      var card = document.getElementById(cardId);
+      var titleEl = card ? card.querySelector('.card-title') : null;
+      var bodyEl = card ? card.querySelector('.card-body') : null;
+      var tagEl = card ? card.querySelector('.card-tag') : null;
+      var ti = document.getElementById('edit-title-' + cardId);
+      var bi = document.getElementById('edit-body-' + cardId);
+      var tagi = document.getElementById('edit-tag-' + cardId);
+      if (ti && titleEl) ti.value = titleEl.textContent;
+      if (bi) bi.value = bodyEl ? bodyEl.textContent : '';
+      if (tagi) tagi.value = tagEl ? tagEl.textContent : '';
     }
-    panel.classList.toggle('open',opening);
+    panel.classList.toggle('open', opening);
   };
 
-  window.saveCardEdit=function(cardId,isCustom){
-    var card=document.getElementById(cardId);if(!card)return;
-    var ti=document.getElementById('edit-title-'+cardId);
-    var bi=document.getElementById('edit-body-'+cardId);
-    var tagi=document.getElementById('edit-tag-'+cardId);
-    if(!ti||!ti.value.trim())return;
-    var newTitle=ti.value.trim();
-    var newBody=bi?bi.value.trim():'';
-    var newTag=tagi?tagi.value.trim():'';
-    var titleEl=card.querySelector('.card-title');
-    if(titleEl)titleEl.textContent=newTitle;
-    var bodyEl=card.querySelector('.card-body');
-    if(newBody){
-      if(bodyEl)bodyEl.textContent=newBody;
-      else{var nb=document.createElement('div');nb.className='card-body';nb.textContent=newBody;var cardTop=card.querySelector('.card-top');if(cardTop&&cardTop.nextSibling)card.insertBefore(nb,cardTop.nextSibling);else card.appendChild(nb);}
-    } else if(bodyEl){bodyEl.textContent='';}
-    var tagEl=card.querySelector('.card-tag');
-    if(newTag){
-      if(tagEl){tagEl.textContent=newTag;tagEl.className='card-tag '+getTagClass(newTag);}
-      else{var nt=document.createElement('div');nt.className='card-tag '+getTagClass(newTag);nt.textContent=newTag;var ct=card.querySelector('.card-top');if(ct)ct.appendChild(nt);}
-    } else if(tagEl){tagEl.remove();}
-    if(isCustom){
-      var all=getCustomCards();
-      for(var i=0;i<all.length;i++){if(all[i].id===cardId){all[i].title=newTitle;all[i].body=newBody;if(all[i].tags&&all[i].tags.length)all[i].tags[0]=newTag;else all[i].tags=[newTag];break;}}
+  window.saveCardEdit = function(cardId, isCustom) {
+    var card = document.getElementById(cardId);
+    if (!card) return;
+    var ti = document.getElementById('edit-title-' + cardId);
+    var bi = document.getElementById('edit-body-' + cardId);
+    var tagi = document.getElementById('edit-tag-' + cardId);
+    if (!ti || !ti.value.trim()) return;
+    var newTitle = ti.value.trim();
+    var newBody = bi ? bi.value.trim() : '';
+    var newTag = tagi ? tagi.value.trim() : '';
+    var titleEl = card.querySelector('.card-title');
+    if (titleEl) titleEl.textContent = newTitle;
+    var bodyEl = card.querySelector('.card-body');
+    if (newBody) {
+      if (bodyEl) bodyEl.textContent = newBody;
+      else {
+        var nb = document.createElement('div');
+        nb.className = 'card-body';
+        nb.textContent = newBody;
+        var cardTop = card.querySelector('.card-top');
+        if (cardTop && cardTop.nextSibling) card.insertBefore(nb, cardTop.nextSibling);
+        else card.appendChild(nb);
+      }
+    } else if (bodyEl) { bodyEl.textContent = ''; }
+    var tagEl2 = card.querySelector('.card-tag');
+    if (newTag) {
+      if (tagEl2) { tagEl2.textContent = newTag; tagEl2.className = 'card-tag ' + getTagClass(newTag); }
+      else {
+        var nt = document.createElement('div');
+        nt.className = 'card-tag ' + getTagClass(newTag);
+        nt.textContent = newTag;
+        var ct = card.querySelector('.card-top');
+        if (ct) ct.appendChild(nt);
+      }
+    } else if (tagEl2) { tagEl2.remove(); }
+    if (isCustom) {
+      var all = getCustomCards();
+      for (var i = 0; i < all.length; i++) {
+        if (all[i].id === cardId) {
+          all[i].title = newTitle;
+          all[i].body = newBody;
+          if (all[i].tags && all[i].tags.length) all[i].tags[0] = newTag;
+          else all[i].tags = [newTag];
+          break;
+        }
+      }
       saveCustomCards(all);
     } else {
-      var edits=getEdits();edits[cardId]={title:newTitle,body:newBody,tag:newTag};saveEdits(edits);
+      var edits = getEdits();
+      edits[cardId] = {title: newTitle, body: newBody, tag: newTag};
+      saveEdits(edits);
     }
-    var panel=document.getElementById('edit-panel-'+cardId);if(panel)panel.classList.remove('open');
+    var panel = document.getElementById('edit-panel-' + cardId);
+    if (panel) panel.classList.remove('open');
+    touchLastUpdated();
   };
 
-  function applyEdits(){
-    var edits=getEdits();
-    Object.keys(edits).forEach(function(cardId){
-      var e=edits[cardId];var card=document.getElementById(cardId);if(!card)return;
-      var titleEl=card.querySelector('.card-title');if(titleEl&&e.title)titleEl.textContent=e.title;
-      var bodyEl=card.querySelector('.card-body');if(bodyEl&&e.body!==undefined)bodyEl.textContent=e.body;
-      if(e.tag!==undefined){var tagEl=card.querySelector('.card-tag');if(tagEl&&e.tag){tagEl.textContent=e.tag;tagEl.className='card-tag '+getTagClass(e.tag);}}
+  function addDragListeners(el) {
+    el.addEventListener('dragstart', function(e) {
+      dragging = el;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', el.id);
+      setTimeout(function() { el.classList.add('dragging'); }, 0);
+    });
+    el.addEventListener('dragend', function() { el.classList.remove('dragging'); dragging = null; });
+  }
+
+  function setupDropZone(col) {
+    var container = document.getElementById('cards-' + col);
+    if (!container) return;
+    container.addEventListener('dragover', function(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; container.classList.add('drag-over'); });
+    container.addEventListener('dragenter', function(e) { e.preventDefault(); container.classList.add('drag-over'); });
+    container.addEventListener('dragleave', function(e) { if (!container.contains(e.relatedTarget)) container.classList.remove('drag-over'); });
+    container.addEventListener('drop', function(e) {
+      e.preventDefault();
+      container.classList.remove('drag-over');
+      var id = (dragging && dragging.id) || e.dataTransfer.getData('text/plain');
+      if (!id) return;
+      var el = document.getElementById(id);
+      var isCustom = !!(el && el.getAttribute('data-custom'));
+      window.moveCard(id, col, isCustom);
     });
   }
 
-  function addDragListeners(el){
-    el.addEventListener('dragstart',function(e){
-      dragging=el;
-      e.dataTransfer.effectAllowed='move';
-      e.dataTransfer.setData('text/plain',el.id);
-      setTimeout(function(){el.classList.add('dragging');},0);
-    });
-    el.addEventListener('dragend',function(){el.classList.remove('dragging');dragging=null;});
-  }
-
-  function setupDropZone(col){
-    var container=document.getElementById('cards-'+col);
-    if(!container)return;
-    container.addEventListener('dragover',function(e){e.preventDefault();e.dataTransfer.dropEffect='move';container.classList.add('drag-over');});
-    container.addEventListener('dragenter',function(e){e.preventDefault();container.classList.add('drag-over');});
-    container.addEventListener('dragleave',function(e){if(!container.contains(e.relatedTarget))container.classList.remove('drag-over');});
-    container.addEventListener('drop',function(e){
-      e.preventDefault();container.classList.remove('drag-over');
-      var id=(dragging&&dragging.id)||e.dataTransfer.getData('text/plain');
-      if(!id)return;
-      var el=document.getElementById(id);
-      var isCustom=!!(el&&el.getAttribute('data-custom'));
-      window.moveCard(id,col,isCustom);
-    });
-  }
-
-  window.moveCard=function(cardId,targetCol,isCustom){
-    var el=document.getElementById(cardId);if(!el)return;
-    var currentCol=null;
-    COLS.forEach(function(c){var cont=document.getElementById('cards-'+c);if(cont&&cont.contains(el))currentCol=c;});
-    if(currentCol===targetCol)return;
-    var targetContainer=document.getElementById('cards-'+targetCol);
-    if(!targetContainer)return;
+  window.moveCard = function(cardId, targetCol, isCustom) {
+    var el = document.getElementById(cardId);
+    if (!el) return;
+    var currentCol = null;
+    COLS.forEach(function(c) { var cont = document.getElementById('cards-' + c); if (cont && cont.contains(el)) currentCol = c; });
+    if (currentCol === targetCol) return;
+    var targetContainer = document.getElementById('cards-' + targetCol);
+    if (!targetContainer) return;
+    // Update done-card class based on target column
+    if (targetCol === 'done') {
+      el.classList.add('done-card');
+      var titleEl = el.querySelector('.card-title');
+      if (titleEl) titleEl.style.textDecoration = 'line-through';
+      // Replace tag chip with done check if not already there
+      var tagChip = el.querySelector('.card-top .card-tag');
+      var existingCheck = el.querySelector('.card-done-check');
+      if (tagChip && !existingCheck) {
+        var chk = document.createElement('div');
+        chk.className = 'card-done-check';
+        chk.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>';
+        el.querySelector('.card-top').replaceChild(chk, tagChip);
+      }
+    } else {
+      el.classList.remove('done-card');
+      var titleEl2 = el.querySelector('.card-title');
+      if (titleEl2) titleEl2.style.textDecoration = '';
+    }
     targetContainer.appendChild(el);
-    if(isCustom){
-      var all=getCustomCards();
-      for(var i=0;i<all.length;i++){if(all[i].id===cardId){all[i].column=targetCol;break;}}
+    if (isCustom) {
+      var all = getCustomCards();
+      for (var i = 0; i < all.length; i++) {
+        if (all[i].id === cardId) { all[i].column = targetCol; break; }
+      }
       saveCustomCards(all);
     } else {
-      var moves=getMoves();moves[cardId]=targetCol;saveMoves(moves);
+      var moves = getMoves();
+      moves[cardId] = targetCol;
+      saveMoves(moves);
     }
-    var moveSel=el.querySelector('.card-move-select');
-    if(moveSel){buildMoveSelect(moveSel,cardId,targetCol,isCustom);moveSel.style.display='none';}
+    var moveSel = el.querySelector('.card-move-select');
+    if (moveSel) { buildMoveSelect(moveSel, cardId, targetCol, isCustom); moveSel.style.display = 'none'; }
     updateCounts();
+    touchLastUpdated();
   };
 
-  function updateCounts(){
-    COLS.forEach(function(col){
-      var cont=document.getElementById('cards-'+col);
-      var n=cont?cont.querySelectorAll('.card').length:0;
-      var badge=document.getElementById('count-'+col);var stat=document.getElementById('stat-'+col);
-      if(badge)badge.textContent=n;if(stat)stat.textContent=n;
+  function updateCounts() {
+    var blockerCount = 0;
+    COLS.forEach(function(col) {
+      var cont = document.getElementById('cards-' + col);
+      var cards = cont ? cont.querySelectorAll('.card') : [];
+      var n = cards.length;
+      var badge = document.getElementById('count-' + col);
+      var stat = document.getElementById('stat-' + col);
+      if (badge) badge.textContent = n;
+      if (stat) stat.textContent = n;
+      if (col === 'backlog') {
+        cards.forEach(function(c) { if (c.classList.contains('blocker')) blockerCount++; });
+      }
     });
+    var bstat = document.getElementById('stat-blockers');
+    if (bstat) bstat.textContent = blockerCount;
   }
 
-  function applyMoves(){
-    var moves=getMoves();
-    Object.keys(moves).forEach(function(cardId){
-      var el=document.getElementById(cardId);if(!el)return;
-      var targetContainer=document.getElementById('cards-'+moves[cardId]);
-      if(targetContainer&&!targetContainer.contains(el))targetContainer.appendChild(el);
-    });
-  }
+  // ---- add card form ----
+  window.showAddForm = function(col) {
+    COLS.forEach(function(c) { var f = document.getElementById('add-form-' + c); if (f) f.classList.remove('visible'); });
+    var f = document.getElementById('add-form-' + col);
+    if (!f) return;
+    f.classList.add('visible');
+    var ti = document.getElementById('add-title-' + col);
+    if (ti) ti.focus();
+  };
 
-  document.addEventListener('DOMContentLoaded',function(){
-    applyMoves();
+  window.hideAddForm = function(col) {
+    var f = document.getElementById('add-form-' + col);
+    if (!f) return;
+    f.classList.remove('visible');
+    ['add-title-', 'add-body-', 'add-tags-'].forEach(function(p) { var el = document.getElementById(p + col); if (el) el.value = ''; });
+  };
 
-    document.querySelectorAll('.card').forEach(function(card){
-      if(card.getAttribute('data-custom'))return;
-      card.setAttribute('draggable','true');
-      addDragListeners(card);
-
-      var col=null;
-      COLS.forEach(function(c){var cont=document.getElementById('cards-'+c);if(cont&&cont.contains(card))col=c;});
-
-      var moveBtn=document.createElement('button');moveBtn.className='card-move-btn';moveBtn.textContent='Move to...';
-      var moveSel=document.createElement('select');moveSel.className='card-move-select';
-      moveBtn.onclick=function(){moveSel.style.display=moveSel.style.display==='block'?'none':'block';};
-      buildMoveSelect(moveSel,card.id,col,false);
-
-      var notesSection=card.querySelector('.card-notes');
-      if(notesSection){card.insertBefore(moveBtn,notesSection);card.insertBefore(moveSel,notesSection);}
-      else{card.appendChild(moveBtn);card.appendChild(moveSel);}
-
-      var editBtn2=document.createElement('button');editBtn2.className='card-edit-btn';editBtn2.textContent='Edit';
-      (function(id){editBtn2.onclick=function(){window.toggleEditPanel(id);};})(card.id);
-      card.appendChild(editBtn2);
-      card.appendChild(buildEditPanel(card.id,false));
-    });
-
-    applyEdits();
-    COLS.forEach(setupDropZone);
-
-    getCustomCards().forEach(function(card){
-      var container=document.getElementById('cards-'+card.column);
-      if(!container)return;
-      var el=buildCardEl(card);container.appendChild(el);renderNotes(card.id);
-    });
-
+  window.submitCard = function(col) {
+    var titleEl = document.getElementById('add-title-' + col);
+    if (!titleEl || !titleEl.value.trim()) { if (titleEl) titleEl.focus(); return; }
+    var title = titleEl.value.trim();
+    var body = (document.getElementById('add-body-' + col) || {value:''}).value.trim();
+    var tagsRaw = (document.getElementById('add-tags-' + col) || {value:''}).value;
+    var tags = tagsRaw.split(',').map(function(t) { return t.trim(); }).filter(Boolean);
+    var card = {id: 'custom-' + Date.now(), title: title, body: body, tags: tags, column: col, isBlocker: false};
+    var all = getCustomCards();
+    all.push(card);
+    saveCustomCards(all);
+    var container = document.getElementById('cards-' + col);
+    if (container) { var el = buildCardEl(card); container.appendChild(el); renderNotes(card.id); }
+    window.hideAddForm(col);
     updateCounts();
+    touchLastUpdated();
+  };
+
+  // ---- render all cards from localStorage ----
+  function renderAllCards() {
+    var cards = getCustomCards();
+    // Apply any legacy moves to the cards
+    var moves = getMoves();
+    cards.forEach(function(c) {
+      if (moves[c.id]) c.column = moves[c.id];
+    });
+
+    COLS.forEach(function(col) {
+      var container = document.getElementById('cards-' + col);
+      if (!container) return;
+      container.innerHTML = '';
+      var colCards = cards.filter(function(c) { return c.column === col; });
+      var lastSection = null;
+      colCards.forEach(function(card) {
+        // Insert section label if this card starts a new section
+        if (card.sectionLabel && card.sectionLabel !== lastSection) {
+          var sl = document.createElement('div');
+          sl.className = 'section-label';
+          sl.textContent = card.sectionLabel;
+          container.appendChild(sl);
+          lastSection = card.sectionLabel;
+        } else if (!card.sectionLabel) {
+          lastSection = null;
+        }
+        var el = buildCardEl(card);
+        container.appendChild(el);
+        renderNotes(card.id);
+      });
+    });
+  }
+
+  // ---- checklist functions (website card) ----
+  window.toggleChecklist = function(id) {
+    var w = document.getElementById('checklist-' + id);
+    var b = document.getElementById('toggle-' + id);
+    if (!w) return;
+    var open = w.classList.toggle('open');
+    b.innerHTML = (open ? '&#9660;' : '&#9654;') + ' ' + (open ? 'Hide' : 'Show') + ' walk image checklist';
+  };
+  window.saveCheck = function(n, cardId) {
+    var cb = document.getElementById('chk-' + n);
+    if (!cb) return;
+    var key = 'sniffout-walk-img-' + cardId;
+    var state = JSON.parse(localStorage.getItem(key) || '{}');
+    state[n] = cb.checked;
+    localStorage.setItem(key, JSON.stringify(state));
+    var item = cb.closest('.walk-check-item');
+    if (item) item.classList.toggle('checked', cb.checked);
+    updateProgress(cardId);
+  };
+  function updateProgress(cardId) {
+    var key = 'sniffout-walk-img-' + cardId;
+    var state = JSON.parse(localStorage.getItem(key) || '{}');
+    var total = document.querySelectorAll('#checklist-' + cardId + ' .walk-check-item').length;
+    var done = Object.values(state).filter(Boolean).length;
+    var p = document.getElementById('prog-' + cardId);
+    if (p) p.innerHTML = '<span>' + done + '</span> of ' + total + ' images sourced';
+  }
+  function loadChecklist(cardId) {
+    var key = 'sniffout-walk-img-' + cardId;
+    var state = JSON.parse(localStorage.getItem(key) || '{}');
+    Object.keys(state).forEach(function(n) {
+      if (state[n]) {
+        var cb = document.getElementById('chk-' + n);
+        if (cb) { cb.checked = true; var item = cb.closest('.walk-check-item'); if (item) item.classList.add('checked'); }
+      }
+    });
+    updateProgress(cardId);
+  }
+
+  // ---- DOMContentLoaded ----
+  document.addEventListener('DOMContentLoaded', function() {
+    initLastUpdated();
+    runMigrationIfNeeded();
+    renderAllCards();
+    COLS.forEach(setupDropZone);
+    updateCounts();
+    loadChecklist('migrated-website');
   });
+
+  // ---- expose for modal script ----
+  window._kanban = {
+    getCustomCards: getCustomCards,
+    saveCustomCards: saveCustomCards,
+    getEdits: getEdits,
+    saveEdits: saveEdits,
+    getMoves: getMoves,
+    saveMoves: saveMoves,
+    touchLastUpdated: touchLastUpdated,
+    updateCounts: updateCounts,
+    renderNotes: renderNotes,
+    escH: escH,
+    COLS: COLS,
+    COL_LABELS: COL_LABELS
+  };
+
 })();
 </script>
 <script>
 (function(){
-  var _cardId=null,_isBlocker=false,_isCustom=false,_descDirty=false;
-  var STORE_CUSTOM='sniffout-kanban-custom-cards';
-  var STORE_EDITS='sniffout-kanban-card-edits';
-  var STORE_DELETED='sniffout-kanban-deleted';
-  var COLS=['backlog','inprogress','done'];
-  var COL_LABELS={backlog:'Backlog',inprogress:'In Progress',done:'Done'};
+  'use strict';
+  var _cardId = null, _isBlocker = false, _isCustom = false, _descDirty = false;
+  var STORE_DELETED = 'sniffout-kanban-deleted';
 
-  // Remove deleted static cards on load
-  document.addEventListener('DOMContentLoaded',function(){
-    var del=JSON.parse(localStorage.getItem(STORE_DELETED)||'[]');
-    del.forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});
-  });
+  function kb() { return window._kanban; }
 
-  function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function escH(s) { return kb().escH(s); }
 
-  function fmtBody(txt){
-    if(!txt||!txt.trim())return '<span class="card-modal-desc-empty">Click to add a description...</span>';
-    var lines=txt.split('\n'),html='',i=0;
-    while(i<lines.length){
-      var l=lines[i];
-      if(/^\d+\./.test(l)){html+='<ol>';while(i<lines.length&&/^\d+\./.test(lines[i])){html+='<li>'+escH(lines[i].replace(/^\d+\.\s*/,''))+'</li>';i++;}html+='</ol>';}
-      else if(/^-\s/.test(l)){html+='<ul>';while(i<lines.length&&/^-\s/.test(lines[i])){html+='<li>'+escH(lines[i].replace(/^-\s*/,''))+'</li>';i++;}html+='</ul>';}
-      else{if(l.trim())html+='<p>'+escH(l)+'</p>';i++;}
+  function fmtBody(txt) {
+    if (!txt || !txt.trim()) return '<span class="card-modal-desc-empty">Click to add a description...</span>';
+    var lines = txt.split('\n'), html = '', i = 0;
+    while (i < lines.length) {
+      var l = lines[i];
+      if (/^\d+\./.test(l)) {
+        html += '<ol>';
+        while (i < lines.length && /^\d+\./.test(lines[i])) {
+          html += '<li>' + escH(lines[i].replace(/^\d+\.\s*/,'')) + '</li>';
+          i++;
+        }
+        html += '</ol>';
+      } else if (/^-\s/.test(l)) {
+        html += '<ul>';
+        while (i < lines.length && /^-\s/.test(lines[i])) {
+          html += '<li>' + escH(lines[i].replace(/^-\s*/,'')) + '</li>';
+          i++;
+        }
+        html += '</ul>';
+      } else {
+        if (l.trim()) html += '<p>' + escH(l) + '</p>';
+        i++;
+      }
     }
-    return html||'<span class="card-modal-desc-empty">Click to add a description...</span>';
+    return html || '<span class="card-modal-desc-empty">Click to add a description...</span>';
   }
 
-  function getColForCard(card){
-    for(var i=0;i<COLS.length;i++){var c=document.getElementById('cards-'+COLS[i]);if(c&&c.contains(card))return COLS[i];}
+  function getColForCard(card) {
+    var COLS = kb().COLS;
+    for (var i = 0; i < COLS.length; i++) {
+      var c = document.getElementById('cards-' + COLS[i]);
+      if (c && c.contains(card)) return COLS[i];
+    }
     return 'backlog';
   }
 
-  function getTitleText(card){
-    var el=card.querySelector('.card-title');if(!el)return '';
-    var tc=el.cloneNode(true);
-    tc.querySelectorAll('button,.card-checklist-toggle,.card-checklist-wrap').forEach(function(e){e.remove();});
+  function getTitleText(card) {
+    var el = card.querySelector('.card-title');
+    if (!el) return '';
+    var tc = el.cloneNode(true);
+    tc.querySelectorAll('button,.card-checklist-toggle,.card-checklist-wrap').forEach(function(e) { e.remove(); });
     return tc.textContent.trim();
   }
 
-  function getCardBody(card){
-    var el=card.querySelector('.card-body');return el?el.textContent.trim():'';
+  function getCardBody(card) {
+    var el = card.querySelector('.card-body');
+    return el ? el.textContent.trim() : '';
   }
 
-  function getTagClass(t){
-    t=(t||'').toLowerCase();
-    if(t==='dev'||t==='developer')return 'tag-dev';
-    if(t==='design'||t==='designer')return 'tag-design';
-    if(t==='owner')return 'tag-owner';
-    if(t==='research')return 'tag-research';
-    if(t==='blocker')return 'tag-blocker';
-    if(t==='copy'||t==='copywriter')return 'tag-copy';
+  function getTagClass(t) {
+    t = (t||'').toLowerCase();
+    if (t==='dev'||t==='developer') return 'tag-dev';
+    if (t==='design'||t==='designer') return 'tag-design';
+    if (t==='owner') return 'tag-owner';
+    if (t==='research') return 'tag-research';
+    if (t==='blocker') return 'tag-blocker';
+    if (t==='copy'||t==='copywriter') return 'tag-copy';
     return 'tag-dev';
   }
 
-  function getTagsFromCard(card){
-    var tags=[];
-    var tagEl=card.querySelector('.card-top .card-tag');
-    if(tagEl){var t='';tagEl.childNodes.forEach(function(n){if(n.nodeType===3)t+=n.textContent;});t=t.trim();if(t)tags.push(t);}
-    card.querySelectorAll('.card-footer .card-label').forEach(function(lbl){var t=lbl.textContent.trim();if(t)tags.push(t);});
+  function getTagsFromCard(card) {
+    var tags = [];
+    var tagEl = card.querySelector('.card-top .card-tag');
+    if (tagEl) {
+      var t = '';
+      tagEl.childNodes.forEach(function(n) { if (n.nodeType === 3) t += n.textContent; });
+      t = t.trim();
+      if (t) tags.push(t);
+    }
+    card.querySelectorAll('.card-footer .card-label').forEach(function(lbl) {
+      var t2 = lbl.textContent.trim();
+      if (t2) tags.push(t2);
+    });
     return tags;
   }
 
-  function renderModalNotes(){
-    if(!_cardId)return;
-    var notes=JSON.parse(localStorage.getItem('sniffout-notes-'+_cardId)||'[]');
-    var c=document.getElementById('cmd-notes');if(!c)return;
-    if(notes.length){
-      c.innerHTML=notes.map(function(n,i){
-        return '<div class="card-modal-note"><span class="card-modal-note-text">'+escH(n)+'</span>'
-          +'<button class="card-modal-note-del" data-idx="'+i+'" title="Delete">&times;</button></div>';
+  function renderModalNotes() {
+    if (!_cardId) return;
+    var notes = JSON.parse(localStorage.getItem('sniffout-notes-' + _cardId) || '[]');
+    var c = document.getElementById('cmd-notes');
+    if (!c) return;
+    if (notes.length) {
+      c.innerHTML = notes.map(function(n, i) {
+        return '<div class="card-modal-note"><span class="card-modal-note-text">' + escH(n) + '</span>'
+          + '<button class="card-modal-note-del" data-idx="' + i + '" title="Delete">&times;</button></div>';
       }).join('');
     } else {
-      c.innerHTML='<div class="card-modal-nonotes">No notes yet.</div>';
+      c.innerHTML = '<div class="card-modal-nonotes">No notes yet.</div>';
     }
   }
 
-  function renderModalTags(){
-    if(!_cardId)return;
-    var card=document.getElementById(_cardId);if(!card)return;
-    var tags=getTagsFromCard(card);
-    var wrap=document.getElementById('cmd-tags');if(!wrap)return;
-    wrap.innerHTML=tags.map(function(t,i){
-      var html='<span class="card-modal-tag-pill">'+escH(t);
-      if(!_isBlocker)html+='<button class="card-modal-tag-pill-del" data-idx="'+i+'" title="Remove">&times;</button>';
-      html+='</span>';
+  function renderModalTags() {
+    if (!_cardId) return;
+    var card = document.getElementById(_cardId);
+    if (!card) return;
+    var tags = getTagsFromCard(card);
+    var wrap = document.getElementById('cmd-tags');
+    if (!wrap) return;
+    wrap.innerHTML = tags.map(function(t, i) {
+      var html = '<span class="card-modal-tag-pill">' + escH(t);
+      if (!_isBlocker) html += '<button class="card-modal-tag-pill-del" data-idx="' + i + '" title="Remove">&times;</button>';
+      html += '</span>';
       return html;
     }).join('');
   }
 
-  function saveTagsToCard(tags){
-    var card=document.getElementById(_cardId);if(!card)return;
-    // Remove existing tag from card-top
-    var existingTag=card.querySelector('.card-top .card-tag');
-    if(existingTag)existingTag.remove();
-    // Add first tag back
-    if(tags.length){
-      var nt=document.createElement('div');
-      nt.className='card-tag '+getTagClass(tags[0]);nt.textContent=tags[0];
+  function saveTagsToCard(tags) {
+    var card = document.getElementById(_cardId);
+    if (!card) return;
+    var existingTag = card.querySelector('.card-top .card-tag');
+    if (existingTag) existingTag.remove();
+    if (tags.length) {
+      var nt = document.createElement('div');
+      nt.className = 'card-tag ' + getTagClass(tags[0]);
+      nt.textContent = tags[0];
       card.querySelector('.card-top').appendChild(nt);
     }
-    // Rebuild footer labels (tags[1..n])
-    var footer=card.querySelector('.card-footer');
-    if(tags.length>1){
-      if(!footer){
-        footer=document.createElement('div');footer.className='card-footer';
-        var anchor=card.querySelector('.card-notes')||card.querySelector('.card-move-btn')||card.querySelector('.card-edit-btn');
-        if(anchor)card.insertBefore(footer,anchor);else card.appendChild(footer);
-      } else {footer.innerHTML='';}
-      tags.slice(1).forEach(function(t){var lbl=document.createElement('div');lbl.className='card-label';lbl.textContent=t;footer.appendChild(lbl);});
-    } else if(footer){footer.innerHTML='';}
-    // Persist
-    persistFields({tags:tags});
+    var footer = card.querySelector('.card-footer');
+    if (tags.length > 1) {
+      if (!footer) {
+        footer = document.createElement('div');
+        footer.className = 'card-footer';
+        var anchor = card.querySelector('.card-notes') || card.querySelector('.card-move-btn') || card.querySelector('.card-edit-btn');
+        if (anchor) card.insertBefore(footer, anchor);
+        else card.appendChild(footer);
+      } else { footer.innerHTML = ''; }
+      tags.slice(1).forEach(function(t) {
+        var lbl = document.createElement('div');
+        lbl.className = 'card-label';
+        lbl.textContent = t;
+        footer.appendChild(lbl);
+      });
+    } else if (footer) { footer.innerHTML = ''; }
+    persistFields({tags: tags});
   }
 
-  function persistFields(fields){
-    if(!_cardId)return;
-    if(_isCustom){
-      var all=JSON.parse(localStorage.getItem(STORE_CUSTOM)||'[]');
-      for(var i=0;i<all.length;i++){
-        if(all[i].id===_cardId){
-          if(fields.title!==undefined)all[i].title=fields.title;
-          if(fields.body!==undefined)all[i].body=fields.body;
-          if(fields.tags!==undefined)all[i].tags=fields.tags;
+  function getSectionLabelForCard(cardId) {
+    var all = kb().getCustomCards();
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].id === cardId) return all[i].sectionLabel || '';
+    }
+    return '';
+  }
+
+  function persistFields(fields) {
+    if (!_cardId) return;
+    if (_isCustom) {
+      var all = kb().getCustomCards();
+      for (var i = 0; i < all.length; i++) {
+        if (all[i].id === _cardId) {
+          if (fields.title !== undefined) all[i].title = fields.title;
+          if (fields.body !== undefined) all[i].body = fields.body;
+          if (fields.tags !== undefined) all[i].tags = fields.tags;
+          if (fields.sectionLabel !== undefined) all[i].sectionLabel = fields.sectionLabel;
           break;
         }
       }
-      localStorage.setItem(STORE_CUSTOM,JSON.stringify(all));
+      kb().saveCustomCards(all);
     } else {
-      var edits=JSON.parse(localStorage.getItem(STORE_EDITS)||'{}');
-      if(!edits[_cardId])edits[_cardId]={};
-      if(fields.title!==undefined)edits[_cardId].title=fields.title;
-      if(fields.body!==undefined)edits[_cardId].body=fields.body;
-      if(fields.tags!==undefined&&fields.tags.length)edits[_cardId].tag=fields.tags[0];
-      localStorage.setItem(STORE_EDITS,JSON.stringify(edits));
+      var edits = kb().getEdits();
+      if (!edits[_cardId]) edits[_cardId] = {};
+      if (fields.title !== undefined) edits[_cardId].title = fields.title;
+      if (fields.body !== undefined) edits[_cardId].body = fields.body;
+      if (fields.tags !== undefined && fields.tags.length) edits[_cardId].tag = fields.tags[0];
+      kb().saveEdits(edits);
     }
   }
 
-  function updateBoardCounts(){
-    COLS.forEach(function(col){
-      var cont=document.getElementById('cards-'+col);
-      var n=cont?cont.querySelectorAll('.card').length:0;
-      var badge=document.getElementById('count-'+col);var stat=document.getElementById('stat-'+col);
-      if(badge)badge.textContent=n;if(stat)stat.textContent=n;
-    });
-  }
+  function openModal(card) {
+    _cardId = card.id;
+    _isBlocker = card.classList.contains('blocker');
+    _isCustom = !!(card.getAttribute('data-custom'));
+    _descDirty = false;
 
-  function openModal(card){
-    _cardId=card.id;
-    _isBlocker=card.classList.contains('blocker');
-    _isCustom=!!(card.getAttribute('data-custom'));
-    _descDirty=false;
+    var titleEl = document.getElementById('cmd-title');
+    titleEl.textContent = getTitleText(card);
+    titleEl.contentEditable = _isBlocker ? 'false' : 'true';
+    titleEl.style.cursor = _isBlocker ? 'default' : 'text';
 
-    // Title
-    var titleEl=document.getElementById('cmd-title');
-    titleEl.textContent=getTitleText(card);
-    titleEl.contentEditable=_isBlocker?'false':'true';
-    titleEl.style.cursor=_isBlocker?'default':'text';
-
-    // Description
-    var bodyText=getCardBody(card);
-    document.getElementById('cmd-desc').innerHTML=fmtBody(bodyText);
-    document.getElementById('cmd-desc').style.display='';
+    var bodyText = getCardBody(card);
+    document.getElementById('cmd-desc').innerHTML = fmtBody(bodyText);
+    document.getElementById('cmd-desc').style.display = '';
     document.getElementById('cmd-desc-edit').classList.remove('active');
-    document.getElementById('cmd-desc-ta').value=bodyText;
-    if(_isBlocker){
-      document.getElementById('cmd-desc').style.cursor='default';
-      document.getElementById('cmd-desc').classList.add('no-hover');
+    document.getElementById('cmd-desc-ta').value = bodyText;
+    if (_isBlocker) {
+      document.getElementById('cmd-desc').style.cursor = 'default';
     } else {
-      document.getElementById('cmd-desc').style.cursor='pointer';
+      document.getElementById('cmd-desc').style.cursor = 'pointer';
     }
 
-    // Notes
     renderModalNotes();
 
-    // Status
-    var col=getColForCard(card);
-    var statusWrap=document.getElementById('cmd-status-wrap');
-    statusWrap.innerHTML='';
-    if(_isBlocker){
-      statusWrap.innerHTML='<span class="card-modal-status-pill cms-blocker">Hard Blocker</span>';
+    var col = getColForCard(card);
+    var statusWrap = document.getElementById('cmd-status-wrap');
+    statusWrap.innerHTML = '';
+    if (_isBlocker) {
+      statusWrap.innerHTML = '<span class="card-modal-status-pill cms-blocker">Hard Blocker</span>';
     } else {
-      var sel=document.createElement('select');sel.className='card-modal-status-select';
-      COLS.forEach(function(c){var opt=document.createElement('option');opt.value=c;opt.textContent=COL_LABELS[c];if(c===col)opt.selected=true;sel.appendChild(opt);});
-      sel.addEventListener('change',function(){
-        if(sel.value)window.moveCard(_cardId,sel.value,_isCustom);
+      var sel = document.createElement('select');
+      sel.className = 'card-modal-status-select';
+      kb().COLS.forEach(function(c) {
+        var opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = kb().COL_LABELS[c];
+        if (c === col) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener('change', function() {
+        if (sel.value) window.moveCard(_cardId, sel.value, _isCustom);
       });
       statusWrap.appendChild(sel);
     }
 
-    // Tags
+    // Section label field
+    var slSection = document.getElementById('cmd-section-label-section');
+    var slInput = document.getElementById('cmd-section-label-input');
+    if (!_isBlocker) {
+      slSection.style.display = '';
+      slInput.value = getSectionLabelForCard(_cardId);
+    } else {
+      slSection.style.display = 'none';
+    }
+
     renderModalTags();
-    document.getElementById('cmd-tags-input-row').style.display=_isBlocker?'none':'';
-    document.getElementById('cmd-tag-input').value='';
+    document.getElementById('cmd-tags-input-row').style.display = _isBlocker ? 'none' : '';
+    document.getElementById('cmd-tag-input').value = '';
+    document.getElementById('cmd-delete').style.display = _isBlocker ? 'none' : 'block';
+    document.getElementById('cmd-copy').textContent = 'Copy card';
+    document.getElementById('cmd-id').textContent = _cardId;
 
-    // Delete
-    document.getElementById('cmd-delete').style.display=_isBlocker?'none':'block';
-
-    // Copy reset
-    document.getElementById('cmd-copy').textContent='Copy card';
-
-    // Card ID
-    document.getElementById('cmd-id').textContent=_cardId;
-
-    // Open
     document.getElementById('card-modal-overlay').classList.add('open');
-    document.body.style.overflow='hidden';
+    document.body.style.overflow = 'hidden';
   }
 
-  function maybeClose(){
-    if(_descDirty){if(!confirm('You have unsaved changes. Close anyway?'))return;}
+  function maybeClose() {
+    if (_descDirty) { if (!confirm('You have unsaved changes. Close anyway?')) return; }
     closeModal();
   }
 
-  function closeModal(){
-    _descDirty=false;
+  function closeModal() {
+    _descDirty = false;
     document.getElementById('card-modal-overlay').classList.remove('open');
-    document.body.style.overflow='';
-    _cardId=null;
+    document.body.style.overflow = '';
+    _cardId = null;
   }
 
   // --- Title inline editing ---
-  var titleEl=document.getElementById('cmd-title');
-  titleEl.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();titleEl.blur();}});
-  titleEl.addEventListener('blur',function(){
-    if(!_cardId||_isBlocker)return;
-    var newTitle=(titleEl.textContent||'').trim();
-    var card=document.getElementById(_cardId);if(!card)return;
-    if(!newTitle){titleEl.textContent=getTitleText(card);return;}
-    var cardTitleEl=card.querySelector('.card-title');
-    if(cardTitleEl)cardTitleEl.textContent=newTitle;
-    persistFields({title:newTitle});
+  var titleEl = document.getElementById('cmd-title');
+  titleEl.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); } });
+  titleEl.addEventListener('blur', function() {
+    if (!_cardId || _isBlocker) return;
+    var newTitle = (titleEl.textContent || '').trim();
+    var card = document.getElementById(_cardId);
+    if (!card) return;
+    if (!newTitle) { titleEl.textContent = getTitleText(card); return; }
+    var cardTitleEl = card.querySelector('.card-title');
+    if (cardTitleEl) cardTitleEl.textContent = newTitle;
+    persistFields({title: newTitle});
+    kb().touchLastUpdated();
   });
 
   // --- Description click to edit ---
-  document.getElementById('cmd-desc').addEventListener('click',function(){
-    if(_isBlocker)return;
-    var card=document.getElementById(_cardId);
-    document.getElementById('cmd-desc-ta').value=card?getCardBody(card):'';
-    document.getElementById('cmd-desc').style.display='none';
+  document.getElementById('cmd-desc').addEventListener('click', function() {
+    if (_isBlocker) return;
+    var card = document.getElementById(_cardId);
+    document.getElementById('cmd-desc-ta').value = card ? getCardBody(card) : '';
+    document.getElementById('cmd-desc').style.display = 'none';
     document.getElementById('cmd-desc-edit').classList.add('active');
     document.getElementById('cmd-desc-ta').focus();
-    _descDirty=false;
+    _descDirty = false;
   });
-  document.getElementById('cmd-desc-ta').addEventListener('input',function(){_descDirty=true;});
-  document.getElementById('cmd-desc-save-btn').addEventListener('click',function(){
-    if(!_cardId)return;
-    var newBody=document.getElementById('cmd-desc-ta').value.trim();
-    var card=document.getElementById(_cardId);
-    if(card){
-      var bodyEl=card.querySelector('.card-body');
-      if(newBody){
-        if(bodyEl){bodyEl.textContent=newBody;}
-        else{var nb=document.createElement('div');nb.className='card-body';nb.textContent=newBody;
-          var ct=card.querySelector('.card-top');if(ct&&ct.nextSibling)card.insertBefore(nb,ct.nextSibling);else card.appendChild(nb);}
-      } else {if(bodyEl)bodyEl.textContent='';}
+  document.getElementById('cmd-desc-ta').addEventListener('input', function() { _descDirty = true; });
+  document.getElementById('cmd-desc-save-btn').addEventListener('click', function() {
+    if (!_cardId) return;
+    var newBody = document.getElementById('cmd-desc-ta').value.trim();
+    var card = document.getElementById(_cardId);
+    if (card) {
+      var bodyEl = card.querySelector('.card-body');
+      if (newBody) {
+        if (bodyEl) { bodyEl.textContent = newBody; }
+        else {
+          var nb = document.createElement('div');
+          nb.className = 'card-body';
+          nb.textContent = newBody;
+          var ct = card.querySelector('.card-top');
+          if (ct && ct.nextSibling) card.insertBefore(nb, ct.nextSibling);
+          else card.appendChild(nb);
+        }
+      } else { if (bodyEl) bodyEl.textContent = ''; }
     }
-    persistFields({body:newBody});
-    document.getElementById('cmd-desc').innerHTML=fmtBody(newBody);
-    document.getElementById('cmd-desc').style.display='';
+    persistFields({body: newBody});
+    document.getElementById('cmd-desc').innerHTML = fmtBody(newBody);
+    document.getElementById('cmd-desc').style.display = '';
     document.getElementById('cmd-desc-edit').classList.remove('active');
-    _descDirty=false;
+    _descDirty = false;
+    kb().touchLastUpdated();
   });
-  document.getElementById('cmd-desc-cancel-btn').addEventListener('click',function(){
-    document.getElementById('cmd-desc').style.display='';
+  document.getElementById('cmd-desc-cancel-btn').addEventListener('click', function() {
+    document.getElementById('cmd-desc').style.display = '';
     document.getElementById('cmd-desc-edit').classList.remove('active');
-    _descDirty=false;
+    _descDirty = false;
+  });
+
+  // --- Section label ---
+  document.getElementById('cmd-section-label-input').addEventListener('blur', function() {
+    if (!_cardId || _isBlocker) return;
+    var val = (this.value || '').trim();
+    persistFields({sectionLabel: val || undefined});
+    kb().touchLastUpdated();
+  });
+  document.getElementById('cmd-section-label-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); this.blur(); }
   });
 
   // --- Notes ---
-  document.getElementById('cmd-notes').addEventListener('click',function(e){
-    var btn=e.target.closest('.card-modal-note-del');if(!btn||!_cardId)return;
-    var idx=parseInt(btn.getAttribute('data-idx'),10);
-    var notes=JSON.parse(localStorage.getItem('sniffout-notes-'+_cardId)||'[]');
-    notes.splice(idx,1);
-    localStorage.setItem('sniffout-notes-'+_cardId,JSON.stringify(notes));
+  document.getElementById('cmd-notes').addEventListener('click', function(e) {
+    var btn = e.target.closest('.card-modal-note-del');
+    if (!btn || !_cardId) return;
+    var idx = parseInt(btn.getAttribute('data-idx'), 10);
+    var notes = JSON.parse(localStorage.getItem('sniffout-notes-' + _cardId) || '[]');
+    notes.splice(idx, 1);
+    localStorage.setItem('sniffout-notes-' + _cardId, JSON.stringify(notes));
     renderModalNotes();
-    renderNotes(_cardId);
+    var notesEl = document.getElementById('notes-' + _cardId);
+    if (notesEl) {
+      notesEl.innerHTML = notes.map(function(n) { return '<div class="card-note-item">' + escH(n) + '</div>'; }).join('');
+    }
+    kb().touchLastUpdated();
   });
-  function addModalNote(){
-    if(!_cardId)return;
-    var input=document.getElementById('cmd-note-input');
-    var val=(input.value||'').trim();if(!val)return;
-    var notes=JSON.parse(localStorage.getItem('sniffout-notes-'+_cardId)||'[]');
-    notes.push(val);localStorage.setItem('sniffout-notes-'+_cardId,JSON.stringify(notes));
-    input.value='';renderModalNotes();renderNotes(_cardId);
+  function addModalNote() {
+    if (!_cardId) return;
+    var input = document.getElementById('cmd-note-input');
+    var val = (input.value || '').trim();
+    if (!val) return;
+    var notes = JSON.parse(localStorage.getItem('sniffout-notes-' + _cardId) || '[]');
+    notes.push(val);
+    localStorage.setItem('sniffout-notes-' + _cardId, JSON.stringify(notes));
+    input.value = '';
+    renderModalNotes();
+    var notesEl = document.getElementById('notes-' + _cardId);
+    if (notesEl) {
+      notesEl.innerHTML = notes.map(function(n) { return '<div class="card-note-item">' + escH(n) + '</div>'; }).join('');
+    }
+    kb().touchLastUpdated();
   }
-  document.getElementById('cmd-note-add-btn').addEventListener('click',addModalNote);
-  document.getElementById('cmd-note-input').addEventListener('keydown',function(e){if(e.key==='Enter')addModalNote();});
+  document.getElementById('cmd-note-add-btn').addEventListener('click', addModalNote);
+  document.getElementById('cmd-note-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') addModalNote(); });
 
   // --- Tags ---
-  document.getElementById('cmd-tags').addEventListener('click',function(e){
-    var btn=e.target.closest('.card-modal-tag-pill-del');if(!btn||!_cardId||_isBlocker)return;
-    var idx=parseInt(btn.getAttribute('data-idx'),10);
-    var card=document.getElementById(_cardId);if(!card)return;
-    var tags=getTagsFromCard(card);tags.splice(idx,1);
-    saveTagsToCard(tags);renderModalTags();
+  document.getElementById('cmd-tags').addEventListener('click', function(e) {
+    var btn = e.target.closest('.card-modal-tag-pill-del');
+    if (!btn || !_cardId || _isBlocker) return;
+    var idx = parseInt(btn.getAttribute('data-idx'), 10);
+    var card = document.getElementById(_cardId);
+    if (!card) return;
+    var tags = getTagsFromCard(card);
+    tags.splice(idx, 1);
+    saveTagsToCard(tags);
+    renderModalTags();
+    kb().touchLastUpdated();
   });
-  document.getElementById('cmd-tag-input').addEventListener('keydown',function(e){
-    if(e.key!=='Enter')return;
-    if(!_cardId||_isBlocker)return;
-    var val=(this.value||'').trim();if(!val)return;
-    var card=document.getElementById(_cardId);if(!card)return;
-    var tags=getTagsFromCard(card);tags.push(val);
-    saveTagsToCard(tags);this.value='';renderModalTags();
+  document.getElementById('cmd-tag-input').addEventListener('keydown', function(e) {
+    if (e.key !== 'Enter') return;
+    if (!_cardId || _isBlocker) return;
+    var val = (this.value || '').trim();
+    if (!val) return;
+    var card = document.getElementById(_cardId);
+    if (!card) return;
+    var tags = getTagsFromCard(card);
+    tags.push(val);
+    saveTagsToCard(tags);
+    this.value = '';
+    renderModalTags();
+    kb().touchLastUpdated();
   });
 
   // --- Copy ---
-  document.getElementById('cmd-copy').addEventListener('click',function(){
-    if(!_cardId)return;
-    var card=document.getElementById(_cardId);
-    var title=getTitleText(card)||'';var body=getCardBody(card)||'';
-    var text=title+(body?'\n\n'+body:'');var btn=this;
-    function onCopy(){btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy card';},1500);}
-    function fallback(){var ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0;top:0;left:0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');onCopy();}catch(ex){}document.body.removeChild(ta);}
-    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(onCopy).catch(fallback);}else{fallback();}
+  document.getElementById('cmd-copy').addEventListener('click', function() {
+    if (!_cardId) return;
+    var card = document.getElementById(_cardId);
+    var title = getTitleText(card) || '';
+    var body = getCardBody(card) || '';
+    var text = title + (body ? '\n\n' + body : '');
+    var btn = this;
+    function onCopy() { btn.textContent = 'Copied!'; setTimeout(function() { btn.textContent = 'Copy card'; }, 1500); }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try { document.execCommand('copy'); onCopy(); } catch(ex) {}
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(onCopy).catch(fallback); }
+    else { fallback(); }
   });
 
   // --- Delete ---
-  document.getElementById('cmd-delete').addEventListener('click',function(){
-    if(!_cardId||_isBlocker)return;
-    if(!confirm('Delete this card? This cannot be undone.'))return;
-    var id=_cardId;
-    var card=document.getElementById(id);if(card)card.remove();
-    if(_isCustom){
-      var all=JSON.parse(localStorage.getItem(STORE_CUSTOM)||'[]');
-      all=all.filter(function(c){return c.id!==id;});
-      localStorage.setItem(STORE_CUSTOM,JSON.stringify(all));
+  document.getElementById('cmd-delete').addEventListener('click', function() {
+    if (!_cardId || _isBlocker) return;
+    if (!confirm('Delete this card? This cannot be undone.')) return;
+    var id = _cardId;
+    var card = document.getElementById(id);
+    if (card) card.remove();
+    if (_isCustom) {
+      var all = kb().getCustomCards();
+      all = all.filter(function(c) { return c.id !== id; });
+      kb().saveCustomCards(all);
     } else {
-      var del=JSON.parse(localStorage.getItem(STORE_DELETED)||'[]');
-      if(del.indexOf(id)===-1)del.push(id);
-      localStorage.setItem(STORE_DELETED,JSON.stringify(del));
+      var del = JSON.parse(localStorage.getItem(STORE_DELETED) || '[]');
+      if (del.indexOf(id) === -1) del.push(id);
+      localStorage.setItem(STORE_DELETED, JSON.stringify(del));
     }
-    localStorage.removeItem('sniffout-notes-'+id);
-    closeModal();updateBoardCounts();
+    localStorage.removeItem('sniffout-notes-' + id);
+    closeModal();
+    kb().updateCounts();
+    kb().touchLastUpdated();
   });
 
   // --- Close handlers ---
-  document.getElementById('cmd-close-x').addEventListener('click',maybeClose);
-  document.getElementById('cmd-close-ftr').addEventListener('click',maybeClose);
-  document.getElementById('card-modal-overlay').addEventListener('click',function(e){if(e.target===this)maybeClose();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.getElementById('card-modal-overlay').classList.contains('open'))maybeClose();});
+  document.getElementById('cmd-close-x').addEventListener('click', maybeClose);
+  document.getElementById('cmd-close-ftr').addEventListener('click', maybeClose);
+  document.getElementById('card-modal-overlay').addEventListener('click', function(e) { if (e.target === this) maybeClose(); });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && document.getElementById('card-modal-overlay').classList.contains('open')) maybeClose();
+  });
 
   // --- Card click trigger ---
-  document.addEventListener('click',function(e){
-    if(!e.target.closest)return;
-    var inTitle=e.target.closest('.card-title'),inBody=e.target.closest('.card-body');
-    if(!inTitle&&!inBody)return;
-    if(e.target.closest('.card-edit-panel')||e.target.closest('.card-note-input-wrap')||
-       e.target.closest('.card-notes-add')||e.target.closest('.card-edit-btn')||
-       e.target.closest('.card-move-btn')||e.target.closest('.card-move-select')||
-       e.target.closest('.card-checklist-wrap')||e.target.closest('.card-checklist-toggle')||
-       e.target.closest('.add-card-form'))return;
-    var card=e.target.closest('.card');if(!card)return;
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest) return;
+    var inTitle = e.target.closest('.card-title'), inBody = e.target.closest('.card-body');
+    if (!inTitle && !inBody) return;
+    if (e.target.closest('.card-edit-panel') || e.target.closest('.card-note-input-wrap') ||
+        e.target.closest('.card-notes-add') || e.target.closest('.card-edit-btn') ||
+        e.target.closest('.card-move-btn') || e.target.closest('.card-move-select') ||
+        e.target.closest('.card-checklist-wrap') || e.target.closest('.card-checklist-toggle') ||
+        e.target.closest('.add-card-form')) return;
+    var card = e.target.closest('.card');
+    if (!card) return;
     openModal(card);
   });
+
+  // expose openModal
+  window._openModal = openModal;
+
 })();
-</script></body>
+</script>
+</body>
 </html>
