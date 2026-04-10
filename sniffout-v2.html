@@ -3055,6 +3055,69 @@
       gap: 0;
       padding-bottom: 96px;
     }
+    /* Account creation prompt card */
+    .fs-account-prompt {
+      margin: 12px 16px 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 2px 16px rgba(44,74,20,0.07), 0 1px 4px rgba(44,74,20,0.04);
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      position: relative;
+    }
+    .fs-account-prompt-icon {
+      width: 36px;
+      height: 36px;
+      background: #EDF2E8;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .fs-account-prompt-body { flex: 1; min-width: 0; }
+    .fs-account-prompt-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 2px;
+    }
+    .fs-account-prompt-text {
+      font-size: 12px;
+      color: var(--ink-2);
+      line-height: 1.45;
+      margin: 0 0 10px;
+    }
+    .fs-account-prompt-cta {
+      display: block;
+      width: 100%;
+      background: #2C4A14;
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 9px 0;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .fs-account-prompt-cta:active { transform: scale(0.97); }
+    .fs-account-prompt-dismiss {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      color: var(--ink-2);
+      opacity: 0.5;
+    }
+    body.night .fs-account-prompt { background: var(--surface); }
     /* Entry rows */
     .me-entry-row {
       display: flex;
@@ -5363,6 +5426,21 @@
           </button>
 
         </div><!-- /group 1 -->
+
+        <!-- Account creation prompt (shown when >=3 saves + anonymous) -->
+        <div id="fsAccountPrompt" style="display:none;" class="fs-account-prompt">
+          <button class="fs-account-prompt-dismiss" onclick="dismissAccountPrompt()" aria-label="Dismiss">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <div class="fs-account-prompt-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="fs-account-prompt-body">
+            <p class="fs-account-prompt-title">Keep your walks safe</p>
+            <p class="fs-account-prompt-text">Create an account to access your saved walks on any device.</p>
+          </div>
+          <button class="fs-account-prompt-cta" onclick="console.log('Account creation - Phase 3B')">Save my walks</button>
+        </div>
 
         <!-- Group 2: Achievements -->
         <p class="me-section-label">Achievements</p>
@@ -11379,8 +11457,15 @@
     var idx = favs.indexOf(id);
     if (idx === -1) { favs.push(id); } else { favs.splice(idx, 1); }
     saveFavourites(favs);
-    // Re-render heart icons for this walk everywhere
     var nowFav = idx === -1;
+    // Firestore write (dual-write alongside localStorage)
+    fsWriteSavedWalk(id, nowFav);
+    // Keep window.sniffoutSavedWalks in sync
+    if (window.sniffoutSavedWalks) {
+      if (nowFav) { window.sniffoutSavedWalks[id] = true; }
+      else { delete window.sniffoutSavedWalks[id]; }
+    }
+    // Re-render heart icons for this walk everywhere
     if (nowFav) navigator.vibrate && navigator.vibrate(10);
     document.querySelectorAll('[data-heart="' + id + '"]').forEach(function(el) {
       el.classList.toggle('fav-active', nowFav);
@@ -11394,6 +11479,7 @@
     });
     updateMeStats();
     renderFavouritesList();
+    updateSavedWalksPrompt();
   }
 
   /* ─── Gamification helpers (FIX 14.6) ─── */
@@ -12084,6 +12170,9 @@
 
     // Recently Viewed row
     renderRecentlyViewedMe();
+
+    // Account prompt (re-evaluate on every stats update)
+    updateSavedWalksPrompt();
 
     // Saved Places row
     var savedPlaces = getPlaceFavourites();
@@ -16025,8 +16114,8 @@
      FIREBASE — Initialisation, Auth, Firestore helpers
   ═══════════════════════════════ */
 
-  /* ─── Feature flag: disable all Firestore writes and anonymous auth until Phase 3 ─── */
-  var FIREBASE_WRITE_ENABLED = false;
+  /* ─── Feature flag: Phase 3A active ─── */
+  var FIREBASE_WRITE_ENABLED = true;
 
   /* ─── Firebase config ─── */
   var firebaseConfig = {
@@ -16058,11 +16147,19 @@
         console.warn('Firestore persistence unavailable:', err.code);
       });
 
-      // Anonymous auth — silent, graceful degradation on failure
-      auth.signInAnonymously().then(function(result) {
-        fsUid = result.user.uid;
-      }).catch(function(err) {
-        console.warn('Firebase anonymous auth failed:', err);
+      // Auth state listener — persists across reloads, triggers sign-in on first open
+      auth.onAuthStateChanged(function(user) {
+        if (user) {
+          fsUid = user.uid;
+          window.sniffoutUID = user.uid;
+          window.sniffoutIsAnon = user.isAnonymous;
+          console.log('Sniffout auth:', user.isAnonymous ? 'anonymous' : 'signed in', user.uid);
+          loadSavedWalksFromFirestore();
+        } else {
+          auth.signInAnonymously().catch(function(err) {
+            console.error('Anon auth failed:', err);
+          });
+        }
       });
     } catch(e) {
       console.warn('Firebase init failed:', e);
@@ -16167,8 +16264,13 @@
     try {
       var ref = db.collection('users').doc(fsUid).collection('savedWalks').doc(walkId);
       if (isSaving) {
-        ref.set({ walkId: walkId, savedAt: firebase.firestore.FieldValue.serverTimestamp() })
-          .catch(function(err) { console.warn('Firestore savedWalk write failed:', err); });
+        var walkData = WALKS_DB.find(function(w) { return w.id === walkId; });
+        ref.set({
+          walkId:    walkId,
+          walkName:  walkData ? (walkData.name     || null) : null,
+          location:  walkData ? (walkData.location || null) : null,
+          savedAt:   firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(function(err) { console.warn('Firestore savedWalk write failed:', err); });
       } else {
         ref.delete()
           .catch(function(err) { console.warn('Firestore savedWalk delete failed:', err); });
@@ -16192,6 +16294,70 @@
       console.warn('fsWriteUserProfile error:', e);
     }
   }
+  /* ─── Task 4: Load saved walks from Firestore after auth resolves ─── */
+  window.sniffoutSavedWalks = {};
+
+  function loadSavedWalksFromFirestore() {
+    if (!db || !window.sniffoutUID) return;
+    try {
+      db.collection('users')
+        .doc(window.sniffoutUID)
+        .collection('savedWalks')
+        .get()
+        .then(function(snapshot) {
+          window.sniffoutSavedWalks = {};
+          snapshot.forEach(function(doc) {
+            window.sniffoutSavedWalks[doc.id] = true;
+          });
+          // Merge with localStorage so offline saves are included
+          getFavourites().forEach(function(id) {
+            window.sniffoutSavedWalks[id] = true;
+          });
+          updateHeartStates();
+          updateSavedWalksPrompt();
+        })
+        .catch(function(err) {
+          console.error('loadSavedWalksFromFirestore failed:', err);
+          // Offline fallback — use localStorage
+          window.sniffoutSavedWalks = {};
+          getFavourites().forEach(function(id) {
+            window.sniffoutSavedWalks[id] = true;
+          });
+          updateHeartStates();
+        });
+    } catch(e) {
+      console.error('loadSavedWalksFromFirestore error:', e);
+    }
+  }
+
+  function updateHeartStates() {
+    var saved = window.sniffoutSavedWalks || {};
+    document.querySelectorAll('[data-heart]').forEach(function(el) {
+      var id = el.getAttribute('data-heart');
+      var isSaved = isFavourited(id) || !!saved[id];
+      el.classList.toggle('fav-active', isSaved);
+      el.setAttribute('aria-label', isSaved ? 'Remove from favourites' : 'Add to favourites');
+      el.innerHTML = heartSVG(isSaved);
+    });
+  }
+
+  /* ─── Task 6: Account creation prompt (show when ≥3 saves + anonymous) ─── */
+  function updateSavedWalksPrompt() {
+    var prompt = document.getElementById('fsAccountPrompt');
+    if (!prompt) return;
+    var dismissed = false;
+    try { dismissed = !!localStorage.getItem('sniffout-prompt-dismissed'); } catch(e) {}
+    var favCount = getFavourites().length;
+    var show = favCount >= 3 && window.sniffoutIsAnon === true && !dismissed;
+    prompt.style.display = show ? '' : 'none';
+  }
+
+  function dismissAccountPrompt() {
+    try { localStorage.setItem('sniffout-prompt-dismissed', '1'); } catch(e) {}
+    var prompt = document.getElementById('fsAccountPrompt');
+    if (prompt) prompt.style.display = 'none';
+  }
+
   /* ═══════════════════════════════
      INIT — Runs after all phases are defined
   ═══════════════════════════════ */
