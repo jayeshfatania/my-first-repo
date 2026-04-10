@@ -2872,6 +2872,7 @@
     .me-hero-name { font-size: 22px; font-weight: 800; color: #fff; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
     .me-hero-breed { font-size: 12px; color: rgba(255,255,255,0.55); font-style: italic; display: block; margin-top: 2px; }
     .me-hero-owner { font-size: 11px; color: rgba(255,255,255,0.4); display: block; margin-top: 3px; }
+    .me-hero-email { font-size: 11px; color: rgba(255,255,255,0.5); display: block; margin-top: 2px; }
     .me-hero-stats-row { display: flex; gap: 8px; }
     .me-hero-stat { flex: 1; background: rgba(255,255,255,0.10); border-radius: 14px; padding: 12px 10px; text-align: center; }
     .me-hero-stat-val { font-size: 20px; font-weight: 800; color: #fff; display: block; line-height: 1; }
@@ -5407,6 +5408,7 @@
             <span class="me-hero-name" id="meDogCardName">Add your dog</span>
             <span class="me-hero-breed" id="meDogCardBreed"></span>
             <span class="me-hero-owner" id="meDogCardOwner"></span>
+            <span class="me-hero-email" id="meDogCardEmail"></span>
           </div>
         </div>
         <div class="me-hero-stats-row">
@@ -5973,7 +5975,7 @@
     </div>
     <div class="log-walk-field">
       <label class="log-walk-label" for="authSignupPassword">Password</label>
-      <input class="log-walk-input" id="authSignupPassword" type="password" autocomplete="new-password" placeholder="At least 6 characters">
+      <input class="log-walk-input" id="authSignupPassword" type="password" autocomplete="new-password" placeholder="At least 8 characters">
     </div>
     <p class="auth-error" id="authSignupError"></p>
     <button class="log-walk-save-btn" onclick="submitAuthSheet('signup')">Keep my walks safe</button>
@@ -16653,7 +16655,7 @@
       var email    = (document.getElementById('authSignupEmail').value    || '').trim();
       var password = (document.getElementById('authSignupPassword').value || '');
       if (!email)          { showAuthError('signup', 'Enter your email address.'); return; }
-      if (password.length < 6) { showAuthError('signup', 'Password must be at least 6 characters.'); return; }
+      if (password.length < 8) { showAuthError('signup', 'Password must be at least 8 characters.'); return; }
       if (btn) btn.disabled = true;
       var credential = firebase.auth.EmailAuthProvider.credential(email, password);
       var currentUser = auth.currentUser;
@@ -16685,7 +16687,11 @@
   }
 
   function onAuthSignInSuccess(user, isNew) {
+    window.sniffoutUID    = user.uid;
+    window.sniffoutIsAnon = false;
+    fsUid = user.uid;
     closeAuthSheet();
+    updateMeAuthHeader();
     showToast(isNew ? 'Account created. Your walks are safe.' : 'Signed in.');
   }
 
@@ -16731,6 +16737,8 @@
         ? 'Your walks are backed up to your account.'
         : 'Your walks, favourites, and reviews are saved on this device. Sync across devices is coming in a future update.';
     }
+    var cardEmail = document.getElementById('meDogCardEmail');
+    if (cardEmail) cardEmail.textContent = email || '';
     updateSavedWalksPrompt();
   }
 
