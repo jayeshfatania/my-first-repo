@@ -235,7 +235,7 @@ Note: `communityWalks` is not part of v2 — community features are deferred.
 
 ### Data
 
-Walk data is hardcoded in `WALKS_DB` (85 UK walks with hazard tagging). No backend — all persistence is `localStorage`. The v2 schema for each walk entry:
+Walk data is hardcoded in `WALKS_DB` (93 UK walks with hazard tagging). No backend — all persistence is `localStorage`. The v2 schema for each walk entry:
 
 ```
 id, name, location, lat, lon, description
@@ -315,7 +315,7 @@ All inline. Light mode token set:
 | `--surface` | `#FFFFFF` | Card surfaces |
 | `--border` | `rgba(0,0,0,0.08)` | Card borders |
 | `--ink` | `#1A1A1A` | Primary text |
-| `--ink-2` | `#6B6B6B` | Secondary text |
+| `--ink-2` | `#555555` | Secondary text |
 | `--amber` | `#D97706` | Warnings |
 | `--red` | `#EF4444` | Danger/errors |
 
