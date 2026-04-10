@@ -3129,6 +3129,103 @@
       padding: 0;
     }
     body.night .fs-account-prompt { background: var(--surface); }
+
+    /* ─── Auth sheet ─── */
+    .auth-sheet {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      max-height: 90vh;
+      background: var(--surface);
+      border-radius: 28px 28px 0 0;
+      z-index: 420;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 380ms cubic-bezier(0.34,1.56,0.64,1);
+      padding: 12px 16px 40px;
+      box-shadow: 0 -4px 24px rgba(44,74,20,0.12), 0 -1px 6px rgba(44,74,20,0.07);
+    }
+    .auth-sheet.is-open { transform: translateY(0); }
+    .auth-sheet-title { font: 700 18px/1.2 'Plus Jakarta Sans', sans-serif; color: var(--ink); margin-bottom: 6px; padding-top: 4px; }
+    .auth-sheet-subtitle { font: 400 14px/1.5 'Plus Jakarta Sans', sans-serif; color: var(--ink-2); margin-bottom: 20px; }
+    .auth-error { font: 400 13px/1.4 'Plus Jakarta Sans', sans-serif; color: var(--red); margin-bottom: 8px; display: none; }
+    .auth-error.visible { display: block; }
+    .auth-toggle-link { display: block; width: 100%; margin-top: 8px; padding: 10px; background: none; border: none; font: 500 13px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-2); cursor: pointer; text-align: center; -webkit-tap-highlight-color: transparent; }
+    .auth-toggle-link:active { opacity: 0.6; }
+
+    /* ─── Add to journal button (in walk-detail-actions) ─── */
+    .add-journal-btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; height: 44px;
+      margin-top: 8px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font: 500 14px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-2);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease;
+    }
+    .add-journal-btn:active { transform: scale(0.97); }
+
+    /* ─── Journal add sheet star rating ─── */
+    .star-rating { display: flex; gap: 2px; margin-top: 2px; }
+    .star-btn {
+      background: none; border: none; font-size: 30px;
+      color: var(--border); cursor: pointer; padding: 2px 4px;
+      line-height: 1; -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease;
+    }
+    .star-btn:active { transform: scale(0.9); }
+    .star-btn.active { color: #F59E0B; }
+    .journal-add-walk-name {
+      font: 500 15px/1.4 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink);
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    /* ─── Me tab auth header pill ─── */
+    .me-auth-pill {
+      display: inline-block;
+      font: 400 12px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-2);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 5px 10px;
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ─── Settings sheet sign-out ─── */
+    .me-signout-btn {
+      width: 100%; height: 44px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font: 500 14px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--red);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      margin-top: 12px;
+      transition: transform 0.15s ease;
+    }
+    .me-signout-btn:active { transform: scale(0.97); }
+    .me-settings-auth-email {
+      font: 400 13px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-2);
+      padding: 4px 0 2px;
+    }
+
+    /* ─── Journal row rating ─── */
+    .journal-row-rating { font-size: 13px; color: #F59E0B; letter-spacing: 1px; margin-top: 4px; }
+    .journal-row-dur { font: 400 12px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-2); }
+
     /* Entry rows */
     .me-entry-row {
       display: flex;
@@ -5294,6 +5391,7 @@
         <div class="me-header-identity" id="meHeaderIdentity">
           <!-- dog picker appended here by JS when multiple dogs exist -->
         </div>
+        <div id="meAuthStatus" style="display:none; padding: 0 16px 8px;"></div>
       </header>
 
       <!-- Hero card -->
@@ -5449,7 +5547,7 @@
           <div class="fs-account-prompt-body">
             <p class="fs-account-prompt-title">Keep your walks safe</p>
             <p class="fs-account-prompt-text">Create an account to access your saved walks on any device.</p>
-            <button class="fs-account-prompt-cta" onclick="console.log('Account creation - Phase 3B')">Save my walks</button>
+            <button class="fs-account-prompt-cta" onclick="openAuthSheet('signup')">Save my walks</button>
           </div>
         </div>
 
@@ -5796,8 +5894,12 @@
       <button class="segment-btn" data-units="mi" aria-pressed="false"><span>miles</span></button>
     </div>
   </div>
-  <!-- Phase 3 hook: following/followers row here (not built) -->
-  <div class="me-settings-note">Your walks, favourites, and reviews are saved on this device. Sync across devices is coming in a future update.</div>
+  <!-- Sign-out row (shown when signed in) -->
+  <div class="me-settings-section" id="meSettingsAuthSection" style="display:none">
+    <div class="me-settings-auth-email" id="meSettingsAuthEmail"></div>
+    <button class="me-signout-btn" onclick="signOutUser()">Sign out</button>
+  </div>
+  <div class="me-settings-note" id="meSettingsNote">Your walks, favourites, and reviews are saved on this device. Sync across devices is coming in a future update.</div>
   <div class="me-settings-note" style="margin-top:8px;">Weather guidance is general only and is not a substitute for veterinary advice.</div>
 </div>
 
@@ -5856,6 +5958,95 @@
   <button class="log-walk-cancel-btn" onclick="closeLogWalkSheet()">Cancel</button>
 </div>
 
+<!-- Auth bottom sheet — Phase 3B -->
+<div class="filter-backdrop" id="auth-sheet-backdrop" onclick="closeAuthSheet()"></div>
+<div class="auth-sheet" id="authSheet" role="dialog" aria-modal="true" aria-label="Keep your walks safe">
+  <div class="me-settings-handle"></div>
+
+  <!-- Sign-up mode -->
+  <div id="authModeSignup">
+    <div class="auth-sheet-title">Keep your walks safe</div>
+    <div class="auth-sheet-subtitle">Create an account to access your saved walks on any device.</div>
+    <div class="log-walk-field">
+      <label class="log-walk-label" for="authSignupEmail">Email address</label>
+      <input class="log-walk-input" id="authSignupEmail" type="email" inputmode="email" autocomplete="email" placeholder="your@email.com">
+    </div>
+    <div class="log-walk-field">
+      <label class="log-walk-label" for="authSignupPassword">Password</label>
+      <input class="log-walk-input" id="authSignupPassword" type="password" autocomplete="new-password" placeholder="At least 6 characters">
+    </div>
+    <p class="auth-error" id="authSignupError"></p>
+    <button class="log-walk-save-btn" onclick="submitAuthSheet('signup')">Keep my walks safe</button>
+    <button class="log-walk-cancel-btn" onclick="setAuthSheetMode('signin')">Already have an account? Sign in</button>
+  </div>
+
+  <!-- Sign-in mode -->
+  <div id="authModeSignin" style="display:none">
+    <div class="auth-sheet-title">Sign in</div>
+    <div class="log-walk-field" style="margin-top:16px;">
+      <label class="log-walk-label" for="authSigninEmail">Email address</label>
+      <input class="log-walk-input" id="authSigninEmail" type="email" inputmode="email" autocomplete="email" placeholder="your@email.com">
+    </div>
+    <div class="log-walk-field">
+      <label class="log-walk-label" for="authSigninPassword">Password</label>
+      <input class="log-walk-input" id="authSigninPassword" type="password" autocomplete="current-password" placeholder="Your password">
+    </div>
+    <p class="auth-error" id="authSigninError"></p>
+    <button class="log-walk-save-btn" onclick="submitAuthSheet('signin')">Sign in</button>
+    <button class="log-walk-cancel-btn" onclick="setAuthSheetMode('forgot')">Forgot password?</button>
+    <button class="auth-toggle-link" onclick="setAuthSheetMode('signup')">New here? Create an account</button>
+  </div>
+
+  <!-- Password reset mode -->
+  <div id="authModeReset" style="display:none">
+    <div class="auth-sheet-title">Reset password</div>
+    <div class="auth-sheet-subtitle">Enter your email and we'll send you a reset link.</div>
+    <div class="log-walk-field">
+      <label class="log-walk-label" for="authResetEmail">Email address</label>
+      <input class="log-walk-input" id="authResetEmail" type="email" inputmode="email" autocomplete="email" placeholder="your@email.com">
+    </div>
+    <p class="auth-error" id="authResetError"></p>
+    <button class="log-walk-save-btn" onclick="submitPasswordReset()">Send reset email</button>
+    <button class="log-walk-cancel-btn" onclick="setAuthSheetMode('signin')">Back to sign in</button>
+  </div>
+</div>
+
+<!-- Journal add sheet — Phase 3B Task 5 -->
+<div class="filter-backdrop" id="journal-add-backdrop" onclick="closeJournalAddSheet()"></div>
+<div class="log-walk-sheet" id="journalAddSheet" role="dialog" aria-modal="true" aria-label="Add to journal">
+  <div class="me-settings-handle"></div>
+  <div class="log-walk-title">Add to journal</div>
+  <input type="hidden" id="journalAddWalkId">
+  <div class="log-walk-field">
+    <label class="log-walk-label">Walk</label>
+    <div class="journal-add-walk-name" id="journalAddWalkName"></div>
+  </div>
+  <div class="log-walk-field">
+    <label class="log-walk-label" for="journalAddDate">Date</label>
+    <input class="log-walk-input" id="journalAddDate" type="date">
+  </div>
+  <div class="log-walk-field">
+    <label class="log-walk-label">Rating (optional)</label>
+    <div class="star-rating" id="journalAddStars" role="group" aria-label="Rating">
+      <button class="star-btn" data-star="1" onclick="setStarRating(1)" aria-label="1 star">&#9733;</button>
+      <button class="star-btn" data-star="2" onclick="setStarRating(2)" aria-label="2 stars">&#9733;</button>
+      <button class="star-btn" data-star="3" onclick="setStarRating(3)" aria-label="3 stars">&#9733;</button>
+      <button class="star-btn" data-star="4" onclick="setStarRating(4)" aria-label="4 stars">&#9733;</button>
+      <button class="star-btn" data-star="5" onclick="setStarRating(5)" aria-label="5 stars">&#9733;</button>
+    </div>
+  </div>
+  <div class="log-walk-field">
+    <label class="log-walk-label" for="journalAddDur">Duration (optional, mins)</label>
+    <input class="log-walk-input" id="journalAddDur" type="number" min="0" step="1" placeholder="0">
+  </div>
+  <div class="log-walk-field">
+    <label class="log-walk-label" for="journalAddNote">Notes (optional)</label>
+    <textarea class="log-walk-textarea" id="journalAddNote" rows="3" placeholder="How did it go?"></textarea>
+  </div>
+  <button class="log-walk-save-btn" onclick="saveJournalEntry()">Save</button>
+  <button class="log-walk-cancel-btn" onclick="closeJournalAddSheet()">Cancel</button>
+</div>
+
 <!-- Walk detail overlay — FIX 12.1 -->
 <div id="walk-detail-overlay" class="walk-detail-overlay" role="dialog" aria-modal="true" aria-label="Walk detail">
   <div class="walk-detail-drag-handle"></div>
@@ -5897,6 +6088,10 @@
     </div>
     <div class="walk-detail-actions">
       <button class="walked-btn" id="walk-detail-walked-btn" data-walk-id=""></button>
+      <button class="add-journal-btn" id="walk-detail-journal-btn" data-walk-id="" onclick="openJournalAddSheetFromDetail()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        Add to journal
+      </button>
     </div>
     <div class="walk-detail-map-section">
       <div class="walk-detail-map-title">Location</div>
@@ -9533,6 +9728,8 @@
       if (oldPrompt)  oldPrompt.remove();
       if (oldPhoto)   oldPhoto.remove();
     }
+    var journalBtn = document.getElementById('walk-detail-journal-btn');
+    if (journalBtn) journalBtn.setAttribute('data-walk-id', walk.id);
     if (walkedBtn) {
       walkedBtn.setAttribute('data-walk-id', walk.id);
       walkedBtn.style.width        = '100%';
@@ -12674,17 +12871,21 @@
         var name   = walk ? walk.name : walkId;
         var dist   = walk ? formatDist(walk.distance) : '';
         var photo  = entry.photoDataUrl || null;
+        var durStr = entry.duration ? entry.duration + ' min' : '';
+        var metaParts2 = [dist, durStr, dateStr].filter(Boolean);
+        var ratingHtml = entry.rating ? '<div class="journal-row-rating">' + '\u2605'.repeat(entry.rating) + '</div>' : '';
         html +=
           '<div class="journal-row" data-key="' + escHtml(rowKey) + '" onclick="toggleSubpageJournalRow(this)">' +
             '<div class="journal-row-summary">' +
               '<div class="journal-row-left">' +
                 '<span class="journal-row-name">' + escHtml(name) + '</span>' +
                 (journalDogName ? '<span class="journal-row-with">with ' + escHtml(journalDogName) + '</span>' : '') +
-                '<span class="journal-row-meta">' + (dist ? dist + (dateStr ? ' \u00b7 ' + dateStr : '') : dateStr) + '</span>' +
+                '<span class="journal-row-meta">' + escHtml(metaParts2.join(' \u00b7 ')) + '</span>' +
               '</div>' +
               '<svg class="journal-row-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>' +
             '</div>' +
             '<div class="journal-row-detail" hidden>' +
+              ratingHtml +
               (note
                 ? '<p class="journal-row-note">' + escHtml(note) + '</p>'
                 : '<p class="journal-row-note-empty">No note added.</p>'
@@ -16166,6 +16367,7 @@
           window.sniffoutIsAnon = user.isAnonymous;
           console.log('Sniffout auth:', user.isAnonymous ? 'anonymous' : 'signed in', user.uid);
           loadSavedWalksFromFirestore();
+          if (typeof updateMeAuthHeader === 'function') updateMeAuthHeader();
         } else {
           auth.signInAnonymously().catch(function(err) {
             console.error('Anon auth failed:', err);
@@ -16367,6 +16569,263 @@
     try { localStorage.setItem('sniffout-prompt-dismissed', '1'); } catch(e) {}
     var prompt = document.getElementById('fsAccountPrompt');
     if (prompt) prompt.style.display = 'none';
+  }
+
+  /* ─── Phase 3B: General toast ─── */
+  function showToast(msg, duration) {
+    var existing = document.getElementById('sniffout-toast');
+    if (existing) existing.remove();
+    var t = document.createElement('div');
+    t.id = 'sniffout-toast';
+    t.className = 'badge-toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function() { t.classList.add('visible'); });
+    setTimeout(function() {
+      t.classList.remove('visible');
+      setTimeout(function() { if (t.parentNode) t.remove(); }, 350);
+    }, duration || 2500);
+  }
+
+  /* ─── Phase 3B: Auth sheet ─── */
+  var _authCurrentMode = 'signup';
+
+  function openAuthSheet(mode) {
+    setAuthSheetMode(mode || 'signup');
+    var backdrop = document.getElementById('auth-sheet-backdrop');
+    var sheet    = document.getElementById('authSheet');
+    if (!backdrop || !sheet) return;
+    backdrop.classList.add('open');
+    sheet.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function() {
+      var pane = mode === 'signin' ? document.getElementById('authModeSignin') : document.getElementById('authModeSignup');
+      if (pane) { var inp = pane.querySelector('input[type="email"]'); if (inp) inp.focus(); }
+    }, 380);
+  }
+
+  function closeAuthSheet() {
+    var backdrop = document.getElementById('auth-sheet-backdrop');
+    var sheet    = document.getElementById('authSheet');
+    if (backdrop) backdrop.classList.remove('open');
+    if (sheet)    sheet.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  function setAuthSheetMode(mode) {
+    _authCurrentMode = mode;
+    var panes = { signup: 'authModeSignup', signin: 'authModeSignin', forgot: 'authModeReset' };
+    Object.keys(panes).forEach(function(k) {
+      var el = document.getElementById(panes[k]);
+      if (el) el.style.display = k === mode ? '' : 'none';
+    });
+    ['authSignupError','authSigninError','authResetError'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) { el.textContent = ''; el.classList.remove('visible'); }
+    });
+  }
+
+  function showAuthError(mode, msg) {
+    var map = { signup: 'authSignupError', signin: 'authSigninError', forgot: 'authResetError' };
+    var el = document.getElementById(map[mode] || 'authSignupError');
+    if (el) { el.textContent = msg; el.classList.add('visible'); }
+  }
+
+  function getAuthErrorMsg(code) {
+    var map = {
+      'auth/email-already-in-use': 'That email is already registered. Try signing in.',
+      'auth/invalid-email':        'Enter a valid email address.',
+      'auth/weak-password':        'Password must be at least 6 characters.',
+      'auth/wrong-password':       'Incorrect password. Try again.',
+      'auth/user-not-found':       'No account found for that email.',
+      'auth/too-many-requests':    'Too many attempts. Please try again later.',
+      'auth/network-request-failed': 'No connection. Check your internet and try again.',
+      'auth/invalid-credential':   'Email or password is incorrect.'
+    };
+    return map[code] || 'Something went wrong. Please try again.';
+  }
+
+  function submitAuthSheet(mode) {
+    if (!auth) { showAuthError(mode, 'Sign-in unavailable right now. Try again later.'); return; }
+    var btn = document.querySelector('#authMode' + (mode === 'signup' ? 'Signup' : 'Signin') + ' .log-walk-save-btn');
+
+    if (mode === 'signup') {
+      var email    = (document.getElementById('authSignupEmail').value    || '').trim();
+      var password = (document.getElementById('authSignupPassword').value || '');
+      if (!email)          { showAuthError('signup', 'Enter your email address.'); return; }
+      if (password.length < 6) { showAuthError('signup', 'Password must be at least 6 characters.'); return; }
+      if (btn) btn.disabled = true;
+      var credential = firebase.auth.EmailAuthProvider.credential(email, password);
+      var currentUser = auth.currentUser;
+      if (currentUser && currentUser.isAnonymous) {
+        currentUser.linkWithCredential(credential)
+          .then(function(r) { if (btn) btn.disabled = false; onAuthSignInSuccess(r.user, true); })
+          .catch(function(e) {
+            if (btn) btn.disabled = false;
+            if (e.code === 'auth/email-already-in-use') {
+              showAuthError('signup', 'That email is already registered. Try signing in.');
+            } else { showAuthError('signup', getAuthErrorMsg(e.code)); }
+          });
+      } else {
+        auth.createUserWithEmailAndPassword(email, password)
+          .then(function(r) { if (btn) btn.disabled = false; onAuthSignInSuccess(r.user, true); })
+          .catch(function(e) { if (btn) btn.disabled = false; showAuthError('signup', getAuthErrorMsg(e.code)); });
+      }
+
+    } else if (mode === 'signin') {
+      var email    = (document.getElementById('authSigninEmail').value    || '').trim();
+      var password = (document.getElementById('authSigninPassword').value || '');
+      if (!email)    { showAuthError('signin', 'Enter your email address.'); return; }
+      if (!password) { showAuthError('signin', 'Enter your password.'); return; }
+      if (btn) btn.disabled = true;
+      auth.signInWithEmailAndPassword(email, password)
+        .then(function(r) { if (btn) btn.disabled = false; onAuthSignInSuccess(r.user, false); })
+        .catch(function(e) { if (btn) btn.disabled = false; showAuthError('signin', getAuthErrorMsg(e.code)); });
+    }
+  }
+
+  function onAuthSignInSuccess(user, isNew) {
+    closeAuthSheet();
+    showToast(isNew ? 'Account created. Your walks are safe.' : 'Signed in.');
+  }
+
+  function submitPasswordReset() {
+    if (!auth) { showAuthError('forgot', 'Password reset unavailable. Try again later.'); return; }
+    var email = (document.getElementById('authResetEmail').value || '').trim();
+    if (!email) { showAuthError('forgot', 'Enter your email address.'); return; }
+    var btn = document.querySelector('#authModeReset .log-walk-save-btn');
+    if (btn) btn.disabled = true;
+    auth.sendPasswordResetEmail(email)
+      .then(function() {
+        if (btn) btn.disabled = false;
+        closeAuthSheet();
+        showToast('Reset email sent. Check your inbox.');
+      })
+      .catch(function(e) {
+        if (btn) btn.disabled = false;
+        showAuthError('forgot', getAuthErrorMsg(e.code));
+      });
+  }
+
+  /* ─── Phase 3B: Me tab signed-in state ─── */
+  function updateMeAuthHeader() {
+    var statusEl     = document.getElementById('meAuthStatus');
+    var settingsAuth = document.getElementById('meSettingsAuthSection');
+    var settingsEmail= document.getElementById('meSettingsAuthEmail');
+    var settingsNote = document.getElementById('meSettingsNote');
+    var isAnon = window.sniffoutIsAnon !== false;
+    var email  = (!isAnon && auth && auth.currentUser) ? (auth.currentUser.email || '') : '';
+
+    if (statusEl) {
+      if (email) {
+        statusEl.innerHTML = '<span class="me-auth-pill">' + escHtml(email) + '</span>';
+        statusEl.style.display = '';
+      } else {
+        statusEl.style.display = 'none';
+      }
+    }
+    if (settingsAuth)  settingsAuth.style.display  = email ? '' : 'none';
+    if (settingsEmail) settingsEmail.textContent    = email;
+    if (settingsNote) {
+      settingsNote.textContent = email
+        ? 'Your walks are backed up to your account.'
+        : 'Your walks, favourites, and reviews are saved on this device. Sync across devices is coming in a future update.';
+    }
+    updateSavedWalksPrompt();
+  }
+
+  function signOutUser() {
+    if (!auth) return;
+    auth.signOut()
+      .then(function() {
+        closeMeSettingsSheet();
+        showToast('Signed out.');
+      })
+      .catch(function(e) { console.error('Sign out failed:', e); });
+  }
+
+  /* ─── Phase 3B Task 5: Journal add sheet ─── */
+  var _journalAddRating = 0;
+
+  function openJournalAddSheetFromDetail() {
+    var journalBtn = document.getElementById('walk-detail-journal-btn');
+    var heroTitle  = document.getElementById('walk-detail-hero-title');
+    if (!journalBtn) return;
+    var walkId   = journalBtn.getAttribute('data-walk-id') || '';
+    var walkName = heroTitle ? heroTitle.textContent : walkId;
+    openJournalAddSheet(walkId, walkName);
+  }
+
+  function openJournalAddSheet(walkId, walkName) {
+    var backdrop = document.getElementById('journal-add-backdrop');
+    var sheet    = document.getElementById('journalAddSheet');
+    if (!backdrop || !sheet) return;
+    var idEl   = document.getElementById('journalAddWalkId');
+    var nameEl = document.getElementById('journalAddWalkName');
+    var dateEl = document.getElementById('journalAddDate');
+    var durEl  = document.getElementById('journalAddDur');
+    var noteEl = document.getElementById('journalAddNote');
+    if (idEl)   idEl.value          = walkId || '';
+    if (nameEl) nameEl.textContent  = walkName || '';
+    if (dateEl) dateEl.value        = new Date().toISOString().slice(0, 10);
+    if (durEl)  durEl.value         = '';
+    if (noteEl) noteEl.value        = '';
+    _journalAddRating = 0;
+    updateStarDisplay(0);
+    backdrop.classList.add('open');
+    sheet.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeJournalAddSheet() {
+    var backdrop = document.getElementById('journal-add-backdrop');
+    var sheet    = document.getElementById('journalAddSheet');
+    if (backdrop) backdrop.classList.remove('open');
+    if (sheet)    sheet.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  function setStarRating(n) {
+    _journalAddRating = n;
+    updateStarDisplay(n);
+  }
+
+  function updateStarDisplay(n) {
+    document.querySelectorAll('#journalAddStars .star-btn').forEach(function(btn, i) {
+      btn.classList.toggle('active', i < n);
+    });
+  }
+
+  function saveJournalEntry() {
+    var walkId = (document.getElementById('journalAddWalkId').value || '').trim();
+    if (!walkId) return;
+    var dateVal = document.getElementById('journalAddDate').value;
+    var ts      = dateVal ? new Date(dateVal).getTime() : Date.now();
+    // Shift to noon local time so date doesn't roll back across midnight UTC
+    if (dateVal) ts += 12 * 3600 * 1000;
+    var dur    = parseInt(document.getElementById('journalAddDur').value, 10) || null;
+    var note   = (document.getElementById('journalAddNote').value || '').trim() || null;
+    var rating = _journalAddRating || null;
+    var weather_code = null, is_day = null, wind_speed = null;
+    try {
+      var sess = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+      if (sess && sess.weather && sess.weather.current) {
+        var wc = sess.weather.current;
+        weather_code = wc.weather_code  != null ? wc.weather_code  : null;
+        is_day       = wc.is_day        != null ? wc.is_day        : null;
+        wind_speed   = wc.wind_speed_10m != null ? wc.wind_speed_10m : null;
+      }
+    } catch(e) {}
+    var entry = { id: walkId, type: 'curated', ts: ts, weather_code: weather_code, is_day: is_day, wind_speed: wind_speed, note: note, rating: rating, duration: dur };
+    var log = getWalkLog();
+    log.unshift(entry);
+    try { localStorage.setItem('sniffout_walk_log', JSON.stringify(log)); } catch(e) {}
+    fsWriteWalkLogEntry(entry);
+    checkBadgeEarned();
+    updateMeStats();
+    closeJournalAddSheet();
+    renderSubpageJournal();
+    showToast('Added to journal.');
   }
 
   /* ═══════════════════════════════
