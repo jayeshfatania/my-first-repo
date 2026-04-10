@@ -3063,6 +3063,7 @@
       border-radius: var(--radius-lg);
       box-shadow: 0 2px 16px rgba(44,74,20,0.07), 0 1px 4px rgba(44,74,20,0.04);
       padding: 14px 16px;
+      padding-right: 36px;
       display: flex;
       align-items: flex-start;
       gap: 12px;
@@ -3078,7 +3079,11 @@
       justify-content: center;
       flex-shrink: 0;
     }
-    .fs-account-prompt-body { flex: 1; min-width: 0; }
+    .fs-account-prompt-body {
+      flex: 1;
+      min-width: 0;
+      word-break: break-word;
+    }
     .fs-account-prompt-title {
       font-size: 13px;
       font-weight: 700;
@@ -3108,14 +3113,20 @@
     .fs-account-prompt-cta:active { transform: scale(0.97); }
     .fs-account-prompt-dismiss {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
+      top: 12px;
+      right: 12px;
+      width: 24px;
+      height: 24px;
+      background: transparent;
       border: none;
-      padding: 4px;
-      cursor: pointer;
+      font-size: 18px;
       color: var(--ink-2);
-      opacity: 0.5;
+      cursor: pointer;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
     }
     body.night .fs-account-prompt { background: var(--surface); }
     /* Entry rows */
@@ -5438,8 +5449,8 @@
           <div class="fs-account-prompt-body">
             <p class="fs-account-prompt-title">Keep your walks safe</p>
             <p class="fs-account-prompt-text">Create an account to access your saved walks on any device.</p>
+            <button class="fs-account-prompt-cta" onclick="console.log('Account creation - Phase 3B')">Save my walks</button>
           </div>
-          <button class="fs-account-prompt-cta" onclick="console.log('Account creation - Phase 3B')">Save my walks</button>
         </div>
 
         <!-- Group 2: Achievements -->
