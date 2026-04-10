@@ -64,7 +64,7 @@ Verdict strings rule: verdict title strings in getWalkVerdict() must never conta
 
 Google Places API expansion (already integrated at current scope — do not add new venue categories or API calls), user accounts, native app, marker clustering plugin, community tab, walk submission, push notifications.
 
-**Firebase note:** Firebase foundation is now in place (project: `sniffout-fe976`, region `europe-west2`, anonymous auth, Firestore, Storage, SDK v10.12.0 via CDN). The foundation is integrated but the **full Firebase migration** — authenticated user accounts, server-side walk log migration, full Firestore read/write — remains Phase 3 and must not be implemented without explicit instruction and GDPR sign-off (L1).
+**Firebase note:** Firebase project `sniffout-fe976` is ACTIVE (region `europe-west2`, configured April 10 2026). SDK v10.12.0 via CDN. See Firebase status section below for full auth and Firestore state. Phase 3A (anonymous auth + saved walks) is the current build target. Phase 3B (email/password accounts + walk journal) must not be started without explicit PO brief and GDPR sign-off (L1).
 
 ## Hazard Content Rules
 
@@ -274,11 +274,27 @@ Do not add WALKS_DB schema fields without PO sign-off.
 | Nominatim (OSM) | Reverse geocoding | None |
 | postcodes.io | UK postcode → lat/lon | None |
 | Leaflet 1.9.4 (CDN) | Map rendering | None |
-| Firebase (compat SDK v10.12.0, CDN) | Firestore (walk log dual-write), Firebase Storage (photos), anonymous auth | Project: `sniffout-fe976`, region `europe-west2` |
+| Firebase (compat SDK v10.12.0, CDN) | Firestore (walk log dual-write), Firebase Storage (photos), anonymous auth + email/password auth | Project: `sniffout-fe976`, region `europe-west2` |
 
 **Firebase initialisation:** SDK loaded via CDN in `sniffout-v2.html`. Anonymous auth fires on load — UID used for Firestore document paths. Dual-write is active for walk log entries (writes to both localStorage and Firestore). Do not add Firebase reads to the critical render path — localStorage remains the source of truth for UI rendering.
 
-**Phase 3 additions (not yet implemented):** Open-Meteo `uv_index` parameter; Open-Meteo `european_aqi` endpoint for pollen; full authenticated Firebase migration.
+**Phase 3 additions (not yet implemented):** Open-Meteo `uv_index` parameter; Open-Meteo `european_aqi` endpoint for pollen.
+
+### Firebase Project Status
+
+Project: `sniffout-fe976` | Region: `europe-west2` | Status: ACTIVE (services configured April 10 2026)
+
+**Authentication:**
+- Anonymous auth: ENABLED (was already enabled from previous development, March 2026)
+- Email/Password: ENABLED (enabled April 10 2026)
+- Google OAuth: NOT YET ENABLED (Phase 4)
+
+**Firestore:**
+- Database: ACTIVE in europe-west2
+- Existing data: users collection with anonymous user documents and walkLog subcollections from March 2026 development
+- Security rules: published, user-scoped (`users/{uid}/{document=**}` read/write if `auth.uid` matches)
+
+**Firebase config:** Config object in Project Settings under the sniffout web app. Fields present: `apiKey`, `authDomain`, `projectId`, `storageBucket`, `messagingSenderId`, `appId`, `measurementId`. Config is currently hardcoded in `sniffout-v2.html` — must be moved to Cloudflare Worker environment variables before launch (see pre-launch blockers).
 
 ### Infrastructure and Monitoring
 
@@ -355,15 +371,40 @@ Scoring fact check: ~/Desktop/sniffout-website/docs/reviews/scoring-thresholds-f
 
 A website methodology page citing the scoring sources is required before go-live. This is a liability protection measure - do not launch without it.
 
+### Phase 3 Plan
+
+Do not implement any Phase 3 item without an explicit PO brief.
+
+**Phase 3A (current build target): Anonymous auth + saved walks**
+- Firebase SDK loaded via CDN in sniffout-v2.html
+- Anonymous auth on first open (silent, no UI)
+- Heart button writes to Firestore `users/{uid}/savedWalks/{walkId}`
+- Heart button reads saved state on load
+- Me tab shows saved walks list
+- Me tab shows account creation prompt after 3+ saved walks
+
+**Phase 3B (next): Account creation + walk journal**
+- Email/password sign-in bottom sheet
+- Anonymous account upgraded via `linkWithCredential` (all saved walks carry over, no data loss)
+- Me tab signed-in state: name, email, saved count, sign out
+- Walk journal: add entry from walk detail, list view, edit/delete
+- Journal fields: walkId, date, notes, rating (1-5), weather snapshot, duration, createdAt
+
+**Phase 4 (future):**
+- Google OAuth sign-in
+- Push notifications (hazard alerts only)
+- Photos on journal entries
+
 ### Backlog and Pending Items
 
 These items are not yet implemented. Do not start any of these without an explicit PO brief.
 
 **Pre-launch blockers (remaining):**
 - L5: T&C consent screen - needs solicitor first
-- T12: Pen test - not started
+- T12: Pen test covering auth flows and Firestore data access - not started
 - T16: Full end-to-end test pass - not started
-- T17: Firebase security review - not started
+- T17: Firebase security review - Firestore rules and auth config reviewed before launch - not started
+- T18: Firebase config object currently hardcoded in sniffout-v2.html - must be moved to Cloudflare Worker environment variables before launch
 
 **Resolved pre-launch blockers:**
 - Fake walk card ratings: removed (pre-launch blocker resolved)
@@ -434,3 +475,11 @@ No em dashes in app or website copy or user-facing strings. Em dashes are fine i
 - **Account messaging (Phase 3):** When prompting users to create an account, always frame it as protecting their data across devices - never as registration or sign-up. The approved hook line is: "Keep your walks safe across any device." Secondary framing: "Your stats, your journal, always with you." The trigger moment is when a user has logged enough walks that losing them would matter. Final copy to be confirmed by Copywriter before implementation.
 
 Do not use "free", "no sign-up", "no account", or "no login" anywhere in the app. When account creation arrives (Phase 3), it must be framed as data protection - "Keep your walks safe across any device" or "your data, safe wherever you are" - not as a registration step or burden. The absence of an account is not a selling point; protecting the user's data is. Copy that frames accounts as optional or avoidable will conflict with Phase 3 messaging and must not be introduced.
+
+### Auth Copy Rules
+
+Applies to all sign-in flows, account prompts, and account creation UI (Phase 3B onwards):
+
+- **Never use:** "register", "sign up", "create an account"
+- **Always use:** "Save your walks", "Keep your data safe", "Access on any device"
+- Account creation is always optional — never gated. Users must be able to dismiss any account prompt without penalty.
