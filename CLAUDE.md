@@ -62,9 +62,9 @@ Verdict strings rule: verdict title strings in getWalkVerdict() must never conta
 
 ## Deferred — Do Not Implement Without Instruction
 
-Google Places API expansion (already integrated at current scope — do not add new venue categories or API calls), user accounts, native app, marker clustering plugin, community tab, walk submission, push notifications.
+Google Places API expansion (already integrated at current scope — do not add new venue categories or API calls), native app, marker clustering plugin, community tab, walk submission, push notifications.
 
-**Firebase note:** Firebase project `sniffout-fe976` is ACTIVE (region `europe-west2`, configured April 10 2026). SDK v10.12.0 via CDN. See Firebase status section below for full auth and Firestore state. Phase 3A (anonymous auth + saved walks) is the current build target. Phase 3B (email/password accounts + walk journal) must not be started without explicit PO brief and GDPR sign-off (L1).
+**Firebase note:** Firebase project `sniffout-fe976` is ACTIVE (region `europe-west2`, configured April 10 2026). SDK v10.12.0 via CDN. See Firebase status section below for full auth and Firestore state. Phase 3A (anonymous auth + saved walks) is the current build target. Phase 3B requires an explicit PO brief before starting. GDPR sign-off (L1) is required before any real users can access email sign-in. Development and internal testing can proceed without it.
 
 ## Hazard Content Rules
 
