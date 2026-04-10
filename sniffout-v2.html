@@ -49,11 +49,11 @@
 
       /* Text */
       --ink:           #1A1A1A;
-      --ink-2:         #6B6B6B;
+      --ink-2:         #555555;
       --ink-3:         #9E9E9E;
 
       /* Borders */
-      --border:        rgba(0,0,0,0.07);
+      --border:        rgba(0,0,0,0.08);
       --border-strong: rgba(0,0,0,0.12);
 
       /* Brand */
@@ -1010,7 +1010,7 @@
     .portrait-photo {
       height: 210px;
       position: relative;
-      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
+      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #C8D8B0 0%, #2C4A14 100%);
       overflow: hidden;
     }
     .portrait-badge {
@@ -1028,14 +1028,16 @@
     /* Sniffout Pick badge - Pill Style B */
     .portrait-badge.badge-pick,
     .trail-card-badge.badge-pick,
-    .walk-badge.badge-pick {
+    .walk-badge.badge-pick,
+    .walk-detail-hero-badge.badge-pick {
       background: #2C4A14;
       color: #FFFFFF;
     }
     /* Hidden gem badge - Pill Style B */
     .portrait-badge.badge-gem,
     .trail-card-badge.badge-gem,
-    .walk-badge.badge-gem {
+    .walk-badge.badge-gem,
+    .walk-detail-hero-badge.badge-gem {
       background: #B85C2C;
       color: #FFFFFF;
     }
@@ -1045,14 +1047,13 @@
       right: 8px;
       width: 34px;
       height: 34px;
-      background: rgba(255,255,255,0.88);
+      background: rgba(0,0,0,0.35);
+      color: #ffffff;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 1px 4px rgba(44,74,20,0.14);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
     }
     .portrait-body { padding: 12px 14px 14px; }
     .portrait-name {
@@ -1586,7 +1587,7 @@
     .walk-photo {
       height: 180px;
       position: relative;
-      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
+      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #C8D8B0 0%, #2C4A14 100%);
       overflow: hidden;
     }
     .walk-photo img {
@@ -1627,7 +1628,8 @@
       right: 8px;
       width: 34px;
       height: 34px;
-      background: rgba(255,255,255,0.88);
+      background: rgba(0,0,0,0.35);
+      color: #ffffff;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -1635,8 +1637,6 @@
       cursor: pointer;
       z-index: 1;
       box-shadow: 0 1px 4px rgba(44,74,20,0.14);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
     }
     .walk-body { padding: 10px 12px 12px; }
     .walk-name { display: none; }
@@ -3019,6 +3019,17 @@
       padding: 4px 0 8px;
       margin: 16px 16px 0;
     }
+    /* Shared section label utility */
+    .section-label,
+    .wx-section-label,
+    .nearby-section-label,
+    .me-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(44,74,20,0.55);
+    }
     /* Group cards */
     .me-group-card {
       margin: 0 16px;
@@ -3842,7 +3853,7 @@
       position: relative;
       box-shadow: 0 4px 24px rgba(44,74,20,0.12), 0 1px 4px rgba(44,74,20,0.06);
       transition: transform 0.15s ease;
-      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
+      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #C8D8B0 0%, #2C4A14 100%);
     }
     .picks-card:active { transform: scale(0.97); }
 
@@ -4014,7 +4025,7 @@
     .trail-card:active { transform: scale(0.97); }
     .trail-card-photo {
       height: 140px;
-      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
+      background: url('https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-walk.jpg') center/cover, linear-gradient(135deg, #C8D8B0 0%, #2C4A14 100%);
       position: relative;
       overflow: hidden;
     }
@@ -4038,7 +4049,8 @@
       position: absolute;
       top: 8px;
       right: 8px;
-      background: rgba(255,255,255,0.88);
+      background: rgba(0,0,0,0.35);
+      color: #ffffff;
       border: none;
       border-radius: 50%;
       width: 34px;
@@ -4049,8 +4061,6 @@
       cursor: pointer;
       padding: 0;
       box-shadow: 0 1px 4px rgba(44,74,20,0.14);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
     }
     .trail-card-badge {
       position: absolute;
@@ -4101,6 +4111,10 @@
     .trail-tag.diff-easy     { color: #2C4A14; background: #E8F0E8; }
     .trail-tag.diff-moderate { color: var(--amber); background: var(--amber-tint); }
     .trail-tag.diff-hard     { color: var(--red); background: var(--red-tint); }
+    .portrait-tag { font-size: 11px; font-weight: 700; border-radius: 20px; padding: 2px 8px; flex-shrink: 0; }
+    .portrait-tag.diff-easy     { color: #2C4A14; background: #E8F0E8; }
+    .portrait-tag.diff-moderate { color: var(--amber); background: var(--amber-tint); }
+    .portrait-tag.diff-hard     { color: var(--red); background: var(--red-tint); }
     body.night .trail-tag {
       background: rgba(92,122,99,0.18);
       color: #6A9B4A;
@@ -4490,7 +4504,7 @@
     .walk-detail-hero {
       width: 100%;
       height: 320px;
-      background: linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%);
+      background: linear-gradient(135deg, #C8D8B0 0%, #2C4A14 100%);
       position: relative;
       flex-shrink: 0;
       overflow: hidden;
@@ -9275,7 +9289,7 @@
         hero.style.cursor = 'pointer';
         hero.onclick = function() { openImageViewer(walk.imageUrl); };
       } else {
-        hero.style.background = "linear-gradient(135deg, #2D5A1B 0%, #1A3D0F 50%, #3D6520 100%)";
+        hero.style.background = "linear-gradient(135deg, #C8D8B0 0%, #2C4A14 100%)";
         hero.style.cursor = '';
         hero.onclick = null;
       }
@@ -9308,6 +9322,7 @@
     if (badge) {
       if (walk.badge) {
         badge.textContent = walk.badge;
+        badge.className = 'walk-detail-hero-badge' + (walk.badge === 'Sniffout Pick' ? ' badge-pick' : walk.badge === 'Hidden gem' ? ' badge-gem' : '');
         badge.style.display = '';
       } else {
         badge.style.display = 'none';
@@ -13236,8 +13251,8 @@
     var olBg  = ol.cls === 'full' ? '#2C4A14' : ol.cls === 'partial' ? 'rgba(176,122,40,0.85)' : 'rgba(0,0,0,0.45)';
     var olText = ol.cls === 'full' ? 'Off-lead' : ol.cls === 'partial' ? 'Partial' : 'On-lead';
     var olPill = '<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;color:#fff;background:' + olBg + ';flex-shrink:0;">' + olText + '</span>';
-    var diffBg = walk.difficulty === 'easy' ? '#2C4A14' : walk.difficulty === 'moderate' ? '#D4940A' : walk.difficulty === 'hard' ? '#C0392B' : '';
-    var diffPill = diffBg ? '<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;color:#fff;background:' + diffBg + ';flex-shrink:0;">' + difficultyLabel(walk.difficulty) + '</span>' : '';
+    var diffCls = difficultyClass(walk.difficulty);
+    var diffPill = diffCls ? '<span class="portrait-tag ' + diffCls + '">' + difficultyLabel(walk.difficulty) + '</span>' : '';
 
     return (
       '<div class="portrait-card" onclick="onWalkTap(\'' + walk.id + '\')">' +
@@ -13319,7 +13334,7 @@
     var ol = offLeadLabel(walk.offLead);
     var olBg = ol.cls === 'full' ? '#2C4A14' : ol.cls === 'partial' ? 'rgba(176,122,40,0.85)' : 'rgba(0,0,0,0.45)';
     var olText = ol.cls === 'full' ? 'Off-lead' : ol.cls === 'partial' ? 'Partial' : 'On-lead';
-    var diffBg = walk.difficulty === 'easy' ? '#2C4A14' : walk.difficulty === 'moderate' ? '#D4940A' : walk.difficulty === 'hard' ? '#C0392B' : '';
+    var diffCls2 = difficultyClass(walk.difficulty);
     var diffText = walk.difficulty ? walk.difficulty.charAt(0).toUpperCase() + walk.difficulty.slice(1) : '';
     return (
       '<div class="picks-card" onclick="onWalkTap(\'' + walk.id + '\')">' +
@@ -13334,7 +13349,7 @@
           '<div style="display:flex;gap:4px;align-items:center;flex-wrap:nowrap;overflow:hidden;">' +
             '<span style="font-size:11px;color:rgba(255,255,255,0.65);flex-shrink:0;">' + formatDist(walk.distance) + '</span>' +
             '<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:' + olBg + ';flex-shrink:0;">' + olText + '</span>' +
-            (diffBg ? '<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;background:' + diffBg + ';flex-shrink:0;">' + diffText + '</span>' : '') +
+            (diffCls2 ? '<span class="portrait-tag ' + diffCls2 + '">' + diffText + '</span>' : '') +
           '</div>' +
         '</div>' +
       '</div>'

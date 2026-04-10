@@ -295,7 +295,7 @@ All inline. Light mode token set:
 | Token | Value | Notes |
 |-------|-------|-------|
 | `--brand` | `#2C4A14` | Woodland Green — brand colour |
-| `--bg` | `#F7F5F0` | Warm off-white page background |
+| `--bg` | `#F4EFE6` | Warm linen page background |
 | `--surface` | `#FFFFFF` | Card surfaces |
 | `--border` | `rgba(0,0,0,0.08)` | Card borders |
 | `--ink` | `#1A1A1A` | Primary text |
