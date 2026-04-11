@@ -375,20 +375,33 @@ A website methodology page citing the scoring sources is required before go-live
 
 Do not implement any Phase 3 item without an explicit PO brief.
 
-**Phase 3A (current build target): Anonymous auth + saved walks**
-- Firebase SDK loaded via CDN in sniffout-v2.html
-- Anonymous auth on first open (silent, no UI)
-- Heart button writes to Firestore `users/{uid}/savedWalks/{walkId}`
-- Heart button reads saved state on load
-- Me tab shows saved walks list
-- Me tab shows account creation prompt after 3+ saved walks
+Full spec: docs/specs/account-data-sync-spec-april-11.md
 
-**Phase 3B (next): Account creation + walk journal**
-- Email/password sign-in bottom sheet
-- Anonymous account upgraded via `linkWithCredential` (all saved walks carry over, no data loss)
-- Me tab signed-in state: name, email, saved count, sign out
-- Walk journal: add entry from walk detail, list view, edit/delete
-- Journal fields: walkId, date, notes, rating (1-5), weather snapshot, duration, createdAt
+**Phase 3A: Anonymous auth + saved walks — COMPLETE**
+- Firebase SDK loaded via CDN in sniffout-v2.html: DONE
+- Anonymous auth on first open (silent, no UI): DONE
+- Heart button writes to Firestore `users/{uid}/savedWalks/{walkId}`: DONE
+- Heart button reads saved state on load: DONE
+- Me tab shows saved walks list: DONE
+- Me tab shows account creation prompt after 3+ saves: DONE
+- Account row in Me tab (direct access): DONE
+
+**Phase 3B: Account creation + walk journal — IN PROGRESS**
+
+Completed:
+- Email/password sign-in bottom sheet: DONE
+- Anonymous account upgraded via `linkWithCredential` (all saved walks carry over, no data loss): DONE
+- Me tab signed-in state (email, saved count, sign out): DONE
+- Password reset flow: DONE
+- Walk journal add entry from walk detail: DONE
+- Walk journal list view: DONE
+
+Remaining:
+- Dog profile sync to Firestore on sign-in
+- Settings sync to Firestore on sign-in
+- Saved places sync to Firestore
+- Multi-device merge on sign-in
+- Account deletion flow
 
 **Phase 4 (future):**
 - Google OAuth sign-in

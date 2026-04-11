@@ -388,7 +388,21 @@
       "Bash(hugo --destination docs)",
       "WebFetch(domain:www.thekennelclub.org.uk)",
       "WebFetch(domain:www.royalkennelclub.com)",
-      "WebFetch(domain:www.petplan.co.uk)"
+      "WebFetch(domain:www.petplan.co.uk)",
+      "Bash(sed -n '10384,10386p' /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html\nsed -n '10450,10452p' /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html\nsed -n '10507,10509p' /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html\nsed -n '10862,10864p' /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html)",
+      "Bash(find /Users/jayeshfatania/Desktop/sniffout-website/layouts -name \"*.html\" 2>/dev/null | sort)",
+      "Bash(find /Users/jayeshfatania/Desktop/sniffout-website/themes -name \"*.js\" 2>/dev/null | sort\nfind /Users/jayeshfatania/Desktop/sniffout-website/static -name \"*.js\" 2>/dev/null | sort)",
+      "Bash(curl -s http://localhost:1313/walks/page/2/ | grep -o '\"pagination-more-btn\"[^>]*>[^<]*'\ncurl -s http://localhost:1313/walks/page/2/ | grep \"walk-list-card\" | wc -l)",
+      "Bash(curl -s \"http://localhost:1313/walks/page/4/\" | grep \"pagination-more-btn\\\\|pagination-end\\\\|pagination-count\" | head -5)",
+      "Bash(for i:*)",
+      "Bash(curl -s \"http://localhost:1313/walks/page/4/\" | grep \"pagination-more-btn\")",
+      "Bash(pkill -f \"hugo server\" 2>/dev/null; true)",
+      "Bash(sed -n '10356p' /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html | xxd | grep -A2 \"ratin\")",
+      "Bash(tmux send-keys:*)",
+      "Bash(tmux list-windows:*)",
+      "Bash(git:*)",
+      "Bash(grep -n \"footer\\\\|Dog walks UK\" /Users/jayeshfatania/Desktop/sniffout-website/docs/guides/ticks-dogs-uk/index.html 2>/dev/null | head -5\necho \"---\"\ngrep -n \"footer\\\\|Dog walks UK\" /Users/jayeshfatania/Desktop/sniffout-website/docs/get/index.html 2>/dev/null | head -5)",
+      "Bash(curl -s https://sniffout-website.pages.dev/ | head -200)"
     ]
   }
 }
