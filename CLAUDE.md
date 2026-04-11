@@ -32,7 +32,7 @@ Closest competitor is PlayDogs (France/Switzerland, 170k downloads), but it reli
 
 Researched and validated April 2026. Full research: ~/Desktop/sniffout-website/docs/research/monetisation-research-april-4.md. Summary: ~/Desktop/sniffout-website/docs/monetisation-strategy.md
 
-**Phase 1 - Affiliates (start now, pre-launch):** Join AWIN (Everypaw pet insurance CPA £20/policy, Zooplus, Purina Direct, Tailster). Join Amazon Associates UK (approximately 8% pet category - verify in Associates Central). Join Webgains (Rover UK - 15% per sale). Contact Booking.com affiliate for walk page accommodation links. Pet insurance CPAs £20-40/sale - highest-value category. Target 2,000-3,000 monthly visitors to monetised guides for self-sufficiency. New opportunity: dog-friendly accommodation affiliates on walk pages (Booking.com 3.75-6% per booking, Canopy and Stars, Cool Camping).
+**Phase 1 - Affiliates (start now, pre-launch):** AWIN application submitted April 11 2026, awaiting approval (1-5 business days). Account type: Publisher / Editorial & Media Sites. Sectors registered: Insurance, Pets & Pet Care, Hotels & Accommodation. On approval, apply in order: (1) Everypaw Pet Insurance (~£20 CPA), (2) tails.com, (3) VioVet, (4) Booking.com. First placement: heatstroke guide contextual link. Join Amazon Associates UK (approximately 8% pet category - verify in Associates Central). Join Webgains (Rover UK - 15% per sale). Pet insurance CPAs £20-40/sale - highest-value category. Target 2,000-3,000 monthly visitors to monetised guides for self-sufficiency. New opportunity: dog-friendly accommodation affiliates on walk pages (Booking.com 3.75-6% per booking, Canopy and Stars, Cool Camping).
 
 **Phase 2 - Sniffout+ subscription (12-18 months post-launch):** £29.99/year or £3.99/month. Launch trigger: 5,000+ MAU with retention. Never paywall existing free features (Komoot backlash lesson - disproportionate and persistent reputation damage). Gate only new features: offline maps, 7-day detailed weather scoring, cross-device sync.
 
@@ -64,7 +64,7 @@ Verdict strings rule: verdict title strings in getWalkVerdict() must never conta
 
 Google Places API expansion (already integrated at current scope — do not add new venue categories or API calls), native app, marker clustering plugin, community tab, walk submission, push notifications.
 
-**Firebase note:** Firebase project `sniffout-fe976` is ACTIVE (region `europe-west2`, configured April 10 2026). SDK v10.12.0 via CDN. See Firebase status section below for full auth and Firestore state. Phase 3A (anonymous auth + saved walks) is the current build target. Phase 3B requires an explicit PO brief before starting. GDPR sign-off (L1) is required before any real users can access email sign-in. Development and internal testing can proceed without it.
+**Firebase note:** Firebase project `sniffout-fe976` is ACTIVE (region `europe-west2`, configured April 10 2026). SDK v10.12.0 via CDN. See Firebase status section below for full auth and Firestore state. Phase 3A is complete. Phase 3B is largely complete (multi-device merge needs on-device testing; email verification required before public launch). GDPR sign-off (L1) is required before any real users can access email sign-in — development and internal testing can proceed without it.
 
 ## Hazard Content Rules
 
@@ -376,32 +376,45 @@ A website methodology page citing the scoring sources is required before go-live
 Do not implement any Phase 3 item without an explicit PO brief.
 
 Full spec: docs/specs/account-data-sync-spec-april-11.md
+Approved by owner April 11 2026.
+
+Key decisions:
+- Syncs: saved walks, journal, dog profile, settings, saved places
+- Multi-device merge: newer timestamp wins, walks/journal always union
+- Sign-out: keep local data, start fresh anonymous session
+- No display name: email is the identifier
+- No email verification for development (required before public launch)
+- Account deletion: immediate, all Firestore data removed, GDPR compliant
 
 **Phase 3A: Anonymous auth + saved walks — COMPLETE**
-- Firebase SDK loaded via CDN in sniffout-v2.html: DONE
+- Firebase SDK loaded via CDN in sniffout-v2.html: DONE (v10.12.0)
 - Anonymous auth on first open (silent, no UI): DONE
 - Heart button writes to Firestore `users/{uid}/savedWalks/{walkId}`: DONE
 - Heart button reads saved state on load: DONE
 - Me tab shows saved walks list: DONE
-- Me tab shows account creation prompt after 3+ saves: DONE
+- Me tab shows account creation prompt after 3+ saved walks: DONE
 - Account row in Me tab (direct access): DONE
 
-**Phase 3B: Account creation + walk journal — IN PROGRESS**
+**Phase 3B: Account creation + walk journal — LARGELY COMPLETE**
 
 Completed:
 - Email/password sign-in bottom sheet: DONE
-- Anonymous account upgraded via `linkWithCredential` (all saved walks carry over, no data loss): DONE
-- Me tab signed-in state (email, saved count, sign out): DONE
+- Anonymous account upgraded via `linkWithCredential` (UID preserved, all data carries over): DONE
+- Me tab signed-in state (email shown in header): DONE
 - Password reset flow: DONE
 - Walk journal add entry from walk detail: DONE
-- Walk journal list view: DONE
+- Walk journal list view in Me tab: DONE
+- Sign out with anonymous fallback: DONE
+- Direct Account row in Me tab: DONE
+- Dog profile sync to Firestore on sign-in: DONE
+- Settings sync to Firestore on sign-in: DONE
+- Saved places dual-write to Firestore: DONE
+- Account deletion flow (GDPR right to erasure): DONE
+- Dog profile write on update (live sync): DONE
 
 Remaining:
-- Dog profile sync to Firestore on sign-in
-- Settings sync to Firestore on sign-in
-- Saved places sync to Firestore
-- Multi-device merge on sign-in
-- Account deletion flow
+- Multi-device merge on sign-in: BUILT, needs on-device testing
+- Email verification: required before public launch, not yet implemented
 
 **Phase 4 (future):**
 - Google OAuth sign-in
@@ -413,11 +426,23 @@ Remaining:
 These items are not yet implemented. Do not start any of these without an explicit PO brief.
 
 **Pre-launch blockers (remaining):**
-- L5: T&C consent screen - needs solicitor first
-- T12: Pen test covering auth flows and Firestore data access - not started
-- T16: Full end-to-end test pass - not started
+
+GDPR/Legal:
+- L1: GDPR sign-off - STILL NEEDED before public launch with real users. Development/internal testing can proceed without it.
+- L5: T&C consent screen - still needed, blocked on Sprintlaw call
+- ICO registration: still needed before launch
+
+Firebase:
 - T17: Firebase security review - Firestore rules and auth config reviewed before launch - not started
+- T12: Pen test covering auth flows and Firestore data access - not started
 - T18: Firebase config object currently hardcoded in sniffout-v2.html - must be moved to Cloudflare Worker environment variables before launch
+- Email verification: must be implemented before public launch (Firebase sendEmailVerification)
+
+Other:
+- T16: Full end-to-end test pass - not started
+- Multi-device merge: BUILT, needs on-device testing before sign-off
+
+AWIN: Application submitted April 11 2026 - awaiting approval. Not a launch blocker but required for Phase 1 revenue.
 
 **Resolved pre-launch blockers:**
 - Fake walk card ratings: removed (pre-launch blocker resolved)
@@ -427,11 +452,15 @@ These items are not yet implemented. Do not start any of these without an explic
 - Reason icons replaced with simpler bolder versions: shipped
 - OS Maps Leisure tiles: fixed and active
 - Smart weather bar chart with evidence-based per-hour scoring: live
+- Weather bar chart smooth gradient colour system: shipped April 10 2026. Colour interpolates directly from score — taller always means richer/darker green. Old logic archived at docs/archive/weather-bar-chart-colour-logic-v1.md
+- UI parity fixes (April 10 2026): --ink-2 updated to #555555; difficulty badges portrait/trail cards now tinted not solid; walk detail overlay badge brand green/sienna per type; heart button blur removed, border none, SVG stroke white, box-shadow removed; section labels unified under .section-label class; walk card placeholder gradient aligned to website; --border token rgba(0,0,0,0.08)
+- Firebase Phase 3A: complete (anonymous auth, saved walks, Me tab prompt, account row)
+- Firebase Phase 3B: largely complete (see Phase 3 Plan above)
 
 **PWA backlog:**
-- Push notifications spec
+- Push notifications spec (Phase 4)
 - B2 beforeunload handler - deferred, manual test on Android needed
-- Firebase Phase 3 migration - authenticated accounts, server-side walk log, full Firestore
+- Multi-device merge on sign-in: BUILT, needs on-device testing
 
 **Website backlog:**
 - Website weather preview card on walk pages (contextual walk-level forecast)
