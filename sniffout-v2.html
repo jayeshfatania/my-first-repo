@@ -3226,6 +3226,33 @@
       transition: transform 0.15s ease;
     }
     .me-signout-btn:active { transform: scale(0.97); }
+    .me-delete-account-btn {
+      width: 100%; height: 40px;
+      background: none;
+      border: 1px solid rgba(192,57,43,0.2);
+      border-radius: 12px;
+      font: 400 13px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--red);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      margin-top: 8px;
+      opacity: 0.7;
+      transition: transform 0.15s ease;
+    }
+    .me-delete-account-btn:active { transform: scale(0.97); opacity: 1; }
+    .delete-confirm-btn {
+      width: 100%; height: 48px;
+      background: var(--red);
+      border: none;
+      border-radius: 20px;
+      font: 600 15px/1 'Plus Jakarta Sans', sans-serif;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 8px;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease;
+    }
+    .delete-confirm-btn:active { opacity: 0.85; transform: scale(0.97); }
     .me-settings-auth-email {
       font: 400 13px/1 'Plus Jakarta Sans', sans-serif;
       color: var(--ink-2);
@@ -5926,6 +5953,7 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
     <button class="me-signout-btn" id="meSettingsSignoutBtn" style="display:none" onclick="signOutUser()">Sign out</button>
+    <button class="me-delete-account-btn" id="meSettingsDeleteBtn" style="display:none" onclick="openDeleteConfirmSheet()">Delete account</button>
   </div>
   <div class="me-settings-note" id="meSettingsNote">Your walks, favourites, and reviews are saved on this device. Sync across devices is coming in a future update.</div>
   <div class="me-settings-note" style="margin-top:8px;">Weather guidance is general only and is not a substitute for veterinary advice.</div>
@@ -5984,6 +6012,16 @@
   </div>
   <button class="log-walk-save-btn" onclick="saveCustomWalk()">Save</button>
   <button class="log-walk-cancel-btn" onclick="closeLogWalkSheet()">Cancel</button>
+</div>
+
+<!-- Delete account confirmation sheet — Task 5 -->
+<div class="filter-backdrop" id="delete-confirm-backdrop" onclick="closeDeleteConfirmSheet()"></div>
+<div class="auth-sheet" id="deleteConfirmSheet" role="dialog" aria-modal="true" aria-label="Delete your account">
+  <div class="me-settings-handle"></div>
+  <div class="auth-sheet-title">Delete your account?</div>
+  <div class="auth-sheet-subtitle">This will permanently delete your account and all your walks, journal entries, and saved places. This cannot be undone.</div>
+  <button class="delete-confirm-btn" onclick="deleteAccount()">Delete everything</button>
+  <button class="log-walk-cancel-btn" onclick="closeDeleteConfirmSheet()">Cancel</button>
 </div>
 
 <!-- Auth bottom sheet — Phase 3B -->
@@ -11502,6 +11540,24 @@
         }
       }
       localStorage.setItem(DOGS_KEY, JSON.stringify(dogs));
+      // Firestore dual-write when signed in
+      if (FIREBASE_WRITE_ENABLED && window.sniffoutIsAnon === false && db && window.sniffoutUID) {
+        var uid = window.sniffoutUID;
+        dogs.forEach(function(dog) {
+          try {
+            db.collection('users').doc(uid).collection('dogs').doc(dog.id || 'dog-1')
+              .set({
+                name: dog.name,
+                breed: dog.breed || null,
+                size: dog.size || null,
+                ageGroup: dog.ageGroup || null,
+                isBrachycephalic: dog.isBrachycephalic || false,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+              }, { merge: true })
+              .catch(function(e) { console.warn('Firestore dog update failed:', e); });
+          } catch(e) { console.warn('saveDogProfile Firestore write error:', e); }
+        });
+      }
     } catch(e) { return false; }
     return true;
   }
@@ -11601,11 +11657,14 @@
     var favs = getPlaceFavourites();
     var idx  = -1;
     favs.forEach(function(f, i) { if (f.placeId === placeId) idx = i; });
-    if (idx !== -1) {
+    var venueForFs = null;
+    var wasRemoving = idx !== -1;
+    if (wasRemoving) {
       favs.splice(idx, 1);
     } else {
       var venue = nearbyVenues.find(function(v) { return v.placeId === placeId; });
       if (!venue) return;
+      venueForFs = venue;
       favs.unshift({
         placeId: placeId,
         name:    venue.name,
@@ -11617,6 +11676,22 @@
       navigator.vibrate && navigator.vibrate(10);
     }
     savePlaceFavourites(favs);
+    // Firestore dual-write
+    if (FIREBASE_WRITE_ENABLED && db && window.sniffoutUID) {
+      try {
+        var placeRef = db.collection('users').doc(window.sniffoutUID).collection('savedPlaces').doc(placeId);
+        if (wasRemoving) {
+          placeRef.delete().catch(function(e) { console.warn('Firestore savedPlace delete failed:', e); });
+        } else if (venueForFs) {
+          placeRef.set({
+            placeId:   placeId,
+            placeName: venueForFs.name || '',
+            placeType: venueForFs.cat  || '',
+            savedAt:   firebase.firestore.FieldValue.serverTimestamp()
+          }).catch(function(e) { console.warn('Firestore savedPlace write failed:', e); });
+        }
+      } catch(e) { console.warn('togglePlaceFavourite Firestore error:', e); }
+    }
     if (nearbyCategory === 'saved') {
       renderSavedVenueList();
     } else {
@@ -16719,6 +16794,170 @@
     closeAuthSheet();
     updateMeAuthHeader();
     showToast(isNew ? 'Account created. Your walks are safe.' : 'Signed in.');
+    // Tasks 1, 2, 4: write profile/settings and merge Firestore with local
+    fsWriteDogsOnSignIn(user.uid);
+    fsWriteSettingsOnSignIn(user.uid);
+    mergeFirestoreWithLocal(user.uid);
+  }
+
+  /* ─── Task 1: Write dog profile to Firestore on sign-in ─── */
+  function fsWriteDogsOnSignIn(uid) {
+    if (!FIREBASE_WRITE_ENABLED || !db || !uid) return;
+    try {
+      var dogs = JSON.parse(localStorage.getItem(DOGS_KEY) || '[]') || [];
+      if (!dogs.length) return;
+      dogs.forEach(function(dog) {
+        db.collection('users').doc(uid).collection('dogs').doc(dog.id || 'dog-1')
+          .set({
+            name:             dog.name,
+            breed:            dog.breed            || null,
+            size:             dog.size             || null,
+            ageGroup:         dog.ageGroup         || null,
+            isBrachycephalic: dog.isBrachycephalic || false,
+            createdAt:        firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt:        firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true })
+          .catch(function(e) { console.warn('Firestore dog write failed:', e); });
+      });
+      console.log('[Sniffout] Task 1: dog profile written to Firestore on sign-in, dogs:', dogs.length);
+    } catch(e) { console.warn('fsWriteDogsOnSignIn error:', e); }
+  }
+
+  /* ─── Task 2: Write settings to Firestore on sign-in ─── */
+  function fsWriteSettingsOnSignIn(uid) {
+    if (!FIREBASE_WRITE_ENABLED || !db || !uid) return;
+    try {
+      db.collection('users').doc(uid).collection('settings').doc('userPrefs')
+        .set({
+          units:  localStorage.getItem('sniffout_units')  || 'km',
+          radius: localStorage.getItem('sniffout_radius') || '5'
+        }, { merge: true })
+        .catch(function(e) { console.warn('Firestore settings write failed:', e); });
+      console.log('[Sniffout] Task 2: settings written to Firestore on sign-in');
+    } catch(e) { console.warn('fsWriteSettingsOnSignIn error:', e); }
+  }
+
+  /* ─── Task 4: Multi-device merge on sign-in ─── */
+  function mergeFirestoreWithLocal(uid) {
+    if (!FIREBASE_WRITE_ENABLED || !db || !uid) return;
+    console.log('[Sniffout] Task 4: mergeFirestoreWithLocal starting for uid:', uid);
+
+    // savedWalks: union of local + Firestore
+    db.collection('users').doc(uid).collection('savedWalks').get()
+      .then(function(snap) {
+        var localFavs = getFavourites();
+        var merged = localFavs.slice();
+        snap.forEach(function(doc) { if (merged.indexOf(doc.id) === -1) merged.push(doc.id); });
+        if (merged.length !== localFavs.length) {
+          saveFavourites(merged);
+          renderFavouritesList && renderFavouritesList();
+          console.log('[Sniffout] savedWalks merged: local=' + localFavs.length + ' remote=' + snap.size + ' merged=' + merged.length);
+        } else {
+          console.log('[Sniffout] savedWalks: no new remote entries, local=' + localFavs.length);
+        }
+      }).catch(function(e) { console.warn('merge savedWalks failed:', e); });
+
+    // walkLog: union by ts dedup key; local-only entries pushed to Firestore
+    db.collection('users').doc(uid).collection('walkLog').get()
+      .then(function(snap) {
+        var localLog = getWalkLog();
+        var localTs = {};
+        localLog.forEach(function(e) { if (e.ts) localTs[String(e.ts)] = true; });
+        var toAdd = [];
+        snap.forEach(function(doc) {
+          var d = doc.data();
+          if (d.ts && !localTs[String(d.ts)]) toAdd.push(d);
+        });
+        if (toAdd.length > 0) {
+          var merged = localLog.concat(toAdd);
+          merged.sort(function(a, b) { return (b.ts || 0) - (a.ts || 0); });
+          try { localStorage.setItem('sniffout_walk_log', JSON.stringify(merged)); } catch(e) {}
+          console.log('[Sniffout] walkLog merged: added ' + toAdd.length + ' entries from Firestore');
+        } else {
+          console.log('[Sniffout] walkLog: no new remote entries');
+        }
+        // Write local-only entries to Firestore (fire-and-forget)
+        var remoteTs = {};
+        snap.forEach(function(doc) { var d = doc.data(); if (d.ts) remoteTs[String(d.ts)] = true; });
+        localLog.forEach(function(entry) {
+          if (entry.ts && !remoteTs[String(entry.ts)]) fsWriteWalkLogEntry(entry);
+        });
+      }).catch(function(e) { console.warn('merge walkLog failed:', e); });
+
+    // dogs: Firestore wins if it has data; local used as fallback
+    db.collection('users').doc(uid).collection('dogs').get()
+      .then(function(snap) {
+        if (snap.empty) { console.log('[Sniffout] dogs: no Firestore data, keeping local'); return; }
+        var fsDogs = [];
+        snap.forEach(function(doc) {
+          var d = doc.data();
+          fsDogs.push({ id: doc.id, name: d.name || '', breed: d.breed || null, size: d.size || null, ageGroup: d.ageGroup || null, isBrachycephalic: d.isBrachycephalic || false, tags: d.tags || [], birthday: d.birthday || null, photoUrl: d.photoUrl || null, active: true });
+        });
+        try { localStorage.setItem(DOGS_KEY, JSON.stringify(fsDogs)); } catch(e) {}
+        console.log('[Sniffout] dogs: merged from Firestore, count=' + fsDogs.length);
+      }).catch(function(e) { console.warn('merge dogs failed:', e); });
+
+    // settings: local wins, no overwrite
+    console.log('[Sniffout] settings: local wins, skipping overwrite');
+  }
+
+  /* ─── Task 5: Account deletion ─── */
+  function openDeleteConfirmSheet() {
+    var backdrop = document.getElementById('delete-confirm-backdrop');
+    var sheet    = document.getElementById('deleteConfirmSheet');
+    if (!backdrop || !sheet) return;
+    backdrop.classList.add('open');
+    sheet.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDeleteConfirmSheet() {
+    var backdrop = document.getElementById('delete-confirm-backdrop');
+    var sheet    = document.getElementById('deleteConfirmSheet');
+    if (backdrop) backdrop.classList.remove('open');
+    if (sheet)    sheet.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  async function deleteAccount() {
+    if (!auth || !auth.currentUser || !db) {
+      showToast('Something went wrong. Please try again or contact hello@sniffout.app');
+      return;
+    }
+    try {
+      closeDeleteConfirmSheet();
+      var uid = auth.currentUser.uid;
+      var collections = ['savedWalks', 'walkLog', 'dogs', 'settings', 'savedPlaces'];
+      for (var i = 0; i < collections.length; i++) {
+        var snap = await db.collection('users').doc(uid).collection(collections[i]).get();
+        var batch = db.batch();
+        snap.docs.forEach(function(doc) { batch.delete(doc.ref); });
+        await batch.commit();
+      }
+      await db.collection('users').doc(uid).delete();
+      await auth.currentUser.delete();
+      var keysToKeep = ['sniffout_hide_install_prompt'];
+      Object.keys(localStorage).forEach(function(key) {
+        if (keysToKeep.indexOf(key) === -1) localStorage.removeItem(key);
+      });
+      await auth.signInAnonymously();
+      window.sniffoutIsAnon = true;
+      window.sniffoutUID    = null;
+      window.sniffoutSavedWalks = {};
+      fsUid = null;
+      updateMeTabForAnonUser();
+      closeMeSettingsSheet();
+      showToast('Your account and all data has been deleted.');
+    } catch(e) {
+      console.error('deleteAccount failed:', e);
+      showToast('Something went wrong. Please try again or contact hello@sniffout.app');
+    }
+  }
+
+  function updateMeTabForAnonUser() {
+    window.sniffoutIsAnon = true;
+    updateMeAuthHeader();
+    updateMeStats();
   }
 
   function submitPasswordReset() {
@@ -16759,8 +16998,10 @@
     // Settings sheet: account row text and sign-out button
     var settingsAccountText = document.getElementById('meSettingsAccountText');
     var settingsSignoutBtn  = document.getElementById('meSettingsSignoutBtn');
+    var settingsDeleteBtn   = document.getElementById('meSettingsDeleteBtn');
     if (settingsAccountText) settingsAccountText.textContent = email || 'Keep your walks safe';
-    if (settingsSignoutBtn)  settingsSignoutBtn.style.display = email ? '' : 'none';
+    if (settingsSignoutBtn)  settingsSignoutBtn.style.display  = email ? '' : 'none';
+    if (settingsDeleteBtn)   settingsDeleteBtn.style.display   = email ? '' : 'none';
     // Me tab entry row preview
     var accountPreview = document.getElementById('accountEntryPreview');
     if (accountPreview) accountPreview.textContent = email || 'Keep your walks safe';
