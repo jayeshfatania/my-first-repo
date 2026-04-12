@@ -26,15 +26,15 @@ The community features (user-submitted walks, ratings, reviews) are planned but 
 
 ## Competitive Context
 
-Closest competitor is PlayDogs (France/Switzerland, 170k downloads), but it relies on community-generated content so is empty in new regions. Sniffout differentiates with curated content from day one plus live weather integration. No UK competitor combines walk discovery + live weather + dog-specific hazard context in a single no-login product.
+Closest competitor is PlayDogs (France/Switzerland, 170k downloads), but it relies on community-generated content so is empty in new regions. Sniffout differentiates with curated content from day one plus live weather integration. No UK competitor combines walk discovery + live weather + dog-specific hazard context in a single product. Closest competitor is PlayDogs (France/Switzerland, 170k downloads) which relies on community-generated content so is empty in new regions.
 
 ## Monetisation Strategy
 
 Researched and validated April 2026. Full research: ~/Desktop/sniffout-website/docs/research/monetisation-research-april-4.md. Summary: ~/Desktop/sniffout-website/docs/monetisation-strategy.md
 
-**Phase 1 - Affiliates (start now, pre-launch):** AWIN application submitted April 11 2026, awaiting approval (1-5 business days). Account type: Publisher / Editorial & Media Sites. Sectors registered: Insurance, Pets & Pet Care, Hotels & Accommodation. On approval, apply in order: (1) Everypaw Pet Insurance (~£20 CPA), (2) tails.com, (3) VioVet, (4) Booking.com. First placement: heatstroke guide contextual link. Join Amazon Associates UK (approximately 8% pet category - verify in Associates Central). Join Webgains (Rover UK - 15% per sale). Pet insurance CPAs £20-40/sale - highest-value category. Target 2,000-3,000 monthly visitors to monetised guides for self-sufficiency. New opportunity: dog-friendly accommodation affiliates on walk pages (Booking.com 3.75-6% per booking, Canopy and Stars, Cool Camping).
+**Phase 1 - Affiliates (start now, pre-launch):** AWIN: Account approved April 11 2026 (publisher ID 2850243). Programmes applied to: Everypaw Pet Insurance (~£20 CPA), tails.com, VioVet. Booking.com not on AWIN - apply via CJ Affiliate (cj.com/en-gb/publisher/partners/booking.com). First placement: heatstroke guide contextual link once Everypaw approved. Amazon Associates UK and Webgains (Rover UK) still to join. Join Amazon Associates UK (approximately 8% pet category - verify in Associates Central). Join Webgains (Rover UK - 15% per sale). Pet insurance CPAs £20-40/sale - highest-value category. Target 2,000-3,000 monthly visitors to monetised guides for self-sufficiency. New opportunity: dog-friendly accommodation affiliates on walk pages (Booking.com 3.75-6% per booking, Canopy and Stars, Cool Camping).
 
-**Phase 2 - Sniffout+ subscription (12-18 months post-launch):** £29.99/year or £3.99/month. Launch trigger: 5,000+ MAU with retention. Never paywall existing free features (Komoot backlash lesson - disproportionate and persistent reputation damage). Gate only new features: offline maps, 7-day detailed weather scoring, cross-device sync.
+**Phase 2 - Sniffout+ subscription (at 5,000+ MAU):** £29.99/year or £3.99/month. Lifetime founder offer £69 (cap 500). Launch trigger: 5,000+ MAU with retention. Never paywall existing free features (Komoot backlash - company sold in distress after paywall expansion, March 2025). Cross-device sync is FREE (Phase 3B). Full spec: docs/specs/sniffout-plus-spec-april-12.md V1 paid features: offline walk packs, 7-day weather scoring, best time to walk prediction, breed exercise goals, walk difficulty personalisation, partner perks.
 
 **Phase 3 - Sponsored venue listings (18-24 months post-launch):** £59 + VAT per year per Featured listing. Self-serve model only. Validated by DogFriendly.co.uk (£54.95 Featured, confirmed). Launch only after venues see demonstrable traffic from Nearby tab.
 
@@ -120,13 +120,12 @@ The companion website is a Hugo static site in a separate repo: github.com/jayes
 - Frontmatter supports: pullQuote (rendered as styled pull quote), heroImage, relatedWalks
 
 ### Area pages
-- 7 area pages live: Surrey, London, New Forest, Yorkshire, Sussex, Lake District, Dartmoor
-- Files at content/areas/ (flat structure: e.g. content/areas/surrey.md, not subdirectories)
+- 26 area pages live across all UK regions. Files at content/areas/ (flat structure).
 - Area pills: horizontal scroll on mobile
 - Intros written by Saoirse persona (50-80 words each)
 
 ### Walk pages
-- 14 walk pages live with FAQ blocks and schema.org FAQ markup
+- 77 walk pages live with FAQ blocks, schema.org FAQ markup, and weather preview cards. All 12 batches complete.
 - FAQ blocks improve rich result eligibility in Google search
 
 ### SEO research
@@ -375,7 +374,8 @@ A website methodology page citing the scoring sources is required before go-live
 
 Do not implement any Phase 3 item without an explicit PO brief.
 
-Full spec: docs/specs/account-data-sync-spec-april-11.md
+Sniffout+ spec: docs/specs/sniffout-plus-spec-april-12.md (approved April 12 2026)
+Full account/sync spec: docs/specs/account-data-sync-spec-april-11.md
 Approved by owner April 11 2026.
 
 Key decisions:
@@ -442,7 +442,7 @@ Other:
 - T16: Full end-to-end test pass - not started
 - Multi-device merge: BUILT, needs on-device testing before sign-off
 
-AWIN: Application submitted April 11 2026 - awaiting approval. Not a launch blocker but required for Phase 1 revenue.
+AWIN: Account approved April 11 2026. Programmes applied: Everypaw, tails.com, VioVet. Booking.com via CJ Affiliate still to join. Payment details still to add to AWIN dashboard (required before first commission).
 
 **Resolved pre-launch blockers:**
 - Fake walk card ratings: removed (pre-launch blocker resolved)
