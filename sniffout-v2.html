@@ -16794,10 +16794,89 @@
     closeAuthSheet();
     updateMeAuthHeader();
     showToast(isNew ? 'Account created. Your walks are safe.' : 'Signed in.');
-    // Tasks 1, 2, 4: write profile/settings and merge Firestore with local
-    fsWriteDogsOnSignIn(user.uid);
-    fsWriteSettingsOnSignIn(user.uid);
+    // Upload all local data first, then merge Firestore with local
+    fsUploadAllLocalData(user.uid);
     mergeFirestoreWithLocal(user.uid);
+  }
+
+  /* ─── Bug 1: Upload all localStorage data to Firestore on sign-in/account creation ─── */
+  function fsUploadAllLocalData(uid) {
+    if (!FIREBASE_WRITE_ENABLED || !db || !uid) return;
+    console.log('[Sniffout] fsUploadAllLocalData: uploading all local data for uid:', uid);
+
+    // Step 1: Dog profile
+    try {
+      var dogs = JSON.parse(localStorage.getItem(DOGS_KEY) || '[]') || [];
+      dogs.forEach(function(dog) {
+        db.collection('users').doc(uid).collection('dogs').doc(dog.id || 'dog-1')
+          .set({
+            name:             dog.name             || '',
+            breed:            dog.breed            || null,
+            size:             dog.size             || null,
+            ageGroup:         dog.ageGroup         || null,
+            isBrachycephalic: dog.isBrachycephalic || false,
+            updatedAt:        firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true })
+          .catch(function(e) { console.warn('Upload dogs failed:', e); });
+      });
+      console.log('[Sniffout] upload Step 1: dogs uploaded, count=' + dogs.length);
+    } catch(e) { console.warn('fsUploadAllLocalData dogs error:', e); }
+
+    // Step 2: Saved walks (favs + wishlist union)
+    try {
+      var favs     = JSON.parse(localStorage.getItem(FAVS_KEY)     || '[]') || [];
+      var wishlist = JSON.parse(localStorage.getItem(WISHLIST_KEY) || '[]') || [];
+      var allSaved = favs.slice();
+      wishlist.forEach(function(id) { if (allSaved.indexOf(id) === -1) allSaved.push(id); });
+      allSaved.forEach(function(walkId) {
+        var walk = WALKS_DB.find(function(w) { return w.id === walkId; });
+        if (walk) {
+          db.collection('users').doc(uid).collection('savedWalks').doc(walkId)
+            .set({
+              walkId:   walkId,
+              walkName: walk.name     || '',
+              location: walk.location || '',
+              savedAt:  firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true })
+            .catch(function(e) { console.warn('Upload savedWalk failed:', e); });
+        }
+      });
+      console.log('[Sniffout] upload Step 2: saved walks uploaded, count=' + allSaved.length);
+    } catch(e) { console.warn('fsUploadAllLocalData savedWalks error:', e); }
+
+    // Step 3: Walk log
+    try {
+      var walkLog = JSON.parse(localStorage.getItem('sniffout_walk_log') || '[]') || [];
+      walkLog.forEach(function(entry) {
+        var docId = String(entry.ts || entry.timestamp || Date.now());
+        db.collection('users').doc(uid).collection('walkLog').doc(docId)
+          .set({
+            walkId:    entry.id       || entry.walkId   || null,
+            walkName:  entry.name     || entry.walkName || '',
+            date:      entry.date     || null,
+            notes:     entry.note     || entry.notes    || null,
+            rating:    entry.rating   || null,
+            duration:  entry.duration || null,
+            type:      entry.type     || 'curated',
+            dogId:     entry.dogId    || null,
+            ts:        entry.ts       || null,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true })
+          .catch(function(e) { console.warn('Upload walkLog entry failed:', e); });
+      });
+      console.log('[Sniffout] upload Step 3: walk log uploaded, count=' + walkLog.length);
+    } catch(e) { console.warn('fsUploadAllLocalData walkLog error:', e); }
+
+    // Step 4: Settings
+    try {
+      db.collection('users').doc(uid).collection('settings').doc('userPrefs')
+        .set({
+          units:  localStorage.getItem('sniffout_units')  || 'km',
+          radius: localStorage.getItem('sniffout_radius') || '5'
+        }, { merge: true })
+        .catch(function(e) { console.warn('Upload settings failed:', e); });
+      console.log('[Sniffout] upload Step 4: settings uploaded');
+    } catch(e) { console.warn('fsUploadAllLocalData settings error:', e); }
   }
 
   /* ─── Task 1: Write dog profile to Firestore on sign-in ─── */
@@ -16850,11 +16929,15 @@
         snap.forEach(function(doc) { if (merged.indexOf(doc.id) === -1) merged.push(doc.id); });
         if (merged.length !== localFavs.length) {
           saveFavourites(merged);
-          renderFavouritesList && renderFavouritesList();
+          if (typeof renderFavouritesList === 'function') renderFavouritesList();
           console.log('[Sniffout] savedWalks merged: local=' + localFavs.length + ' remote=' + snap.size + ' merged=' + merged.length);
         } else {
           console.log('[Sniffout] savedWalks: no new remote entries, local=' + localFavs.length);
         }
+        // Bug 2: refresh Me tab counts after any savedWalks merge
+        updateMeStats();
+        // Bug 3: refresh heart button states
+        if (typeof updateHeartStates === 'function') updateHeartStates();
       }).catch(function(e) { console.warn('merge savedWalks failed:', e); });
 
     // walkLog: union by ts dedup key; local-only entries pushed to Firestore
@@ -16882,6 +16965,8 @@
         localLog.forEach(function(entry) {
           if (entry.ts && !remoteTs[String(entry.ts)]) fsWriteWalkLogEntry(entry);
         });
+        // Bug 2: refresh Me tab counts after walkLog merge
+        updateMeStats();
       }).catch(function(e) { console.warn('merge walkLog failed:', e); });
 
     // dogs: Firestore wins if it has data; local used as fallback
