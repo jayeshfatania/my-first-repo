@@ -7,7 +7,7 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; background: #f5f5f5; color: #222; }
-  .page { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; }
+  .page { max-width: 1200px; margin: 0 auto; padding: 24px 16px 64px; }
   h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
   .subtitle { color: #666; font-size: 13px; margin-bottom: 20px; }
 
@@ -30,9 +30,9 @@
   .copy-btn { padding: 7px 14px; background: #444; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap; }
   .copy-btn:hover { background: #222; }
 
-  /* Geograph helper */
-  .geo-helper { background: #fffbe6; border: 1px solid #e6d800; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 13px; color: #555; line-height: 1.5; }
-  .geo-helper a { color: #2a7a2a; text-decoration: underline; }
+  /* Licence note */
+  .licence-note { background: #fffbe6; border: 1px solid #e6d800; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 13px; color: #555; line-height: 1.5; }
+  .licence-note a { color: #2a7a2a; text-decoration: underline; }
   .geo-credit { font-family: monospace; font-size: 12px; background: #f0f0e0; padding: 2px 6px; border-radius: 3px; }
 
   /* Section headers */
@@ -41,31 +41,33 @@
   .section-count { background: #eee; border-radius: 20px; padding: 2px 10px; font-size: 12px; color: #666; }
 
   /* Table */
-  .table-wrap { background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
-  table { width: 100%; border-collapse: collapse; }
+  .table-wrap { background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 780px; }
   thead th { background: #f0f0f0; padding: 10px 12px; text-align: left; font-size: 12px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #ddd; white-space: nowrap; }
   tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
   tbody tr:last-child { border-bottom: none; }
   tbody tr.done-row { background: #f0faf0; }
   tbody tr:hover { background: #fafafa; }
   tbody tr.done-row:hover { background: #e8f5e8; }
-  td { padding: 8px 12px; vertical-align: middle; }
-  td.name-cell { font-weight: 500; max-width: 220px; }
-  td.file-cell { font-family: monospace; font-size: 12px; color: #555; white-space: nowrap; }
-  td.input-cell { min-width: 150px; }
-  td.url-cell { min-width: 200px; }
-  td.status-cell { text-align: center; width: 70px; }
+  td { padding: 7px 10px; vertical-align: middle; }
+  td.name-cell { font-weight: 500; min-width: 180px; max-width: 220px; font-size: 13px; }
+  td.file-cell { min-width: 160px; }
+  td.src-cell { min-width: 110px; }
+  td.photo-cell { min-width: 130px; }
+  td.url-cell { min-width: 180px; }
+  td.done-cell { text-align: center; width: 56px; }
 
-  /* Inline inputs */
-  .field-input { width: 100%; padding: 5px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; color: #333; background: #fff; }
+  /* Inputs */
+  .field-input { width: 100%; padding: 5px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; color: #333; background: #fff; font-family: inherit; }
   .field-input:focus { outline: none; border-color: #2a7a2a; }
-  .url-link { display: block; font-size: 12px; color: #2a7a2a; text-decoration: underline; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px; }
+  .field-input[disabled] { background: #f5f5f5; color: #bbb; cursor: not-allowed; }
+  .file-input { font-family: monospace; }
+  .src-select { width: 100%; padding: 5px 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; color: #333; background: #fff; }
+  .src-select:focus { outline: none; border-color: #2a7a2a; }
+  .url-link { display: block; font-size: 11px; color: #2a7a2a; text-decoration: underline; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; margin-bottom: 3px; }
 
-  /* Status button */
-  .status-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #ccc; background: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s; font-size: 16px; }
-  .status-btn.done { background: #2a7a2a; border-color: #2a7a2a; color: #fff; }
-  .status-btn:not(.done) { color: #ccc; }
-  .status-btn:hover { transform: scale(1.1); }
+  /* Checkbox */
+  .done-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: #2a7a2a; }
 
   /* Hidden rows */
   tr.hidden { display: none; }
@@ -78,7 +80,7 @@
 <div class="page">
 
   <h1>Sniffout Image Checklist</h1>
-  <p class="subtitle">Track image sourcing for walk pages and guide articles. Progress saves automatically.</p>
+  <p class="subtitle">Track image sourcing for walk pages and guide articles. Progress saves automatically (key: sniffout-image-checklist-v2).</p>
 
   <div class="progress-grid">
     <div class="progress-card">
@@ -103,14 +105,15 @@
     <button class="copy-btn" onclick="copyRemaining()">Copy all remaining filenames</button>
   </div>
 
-  <div class="geo-helper">
-    Source images from <a href="https://www.geograph.org.uk/search.php?q=" target="_blank" rel="noopener">geograph.org.uk</a> - search by location name.
-    Credit format: <span class="geo-credit">Photo: [Name] / Geograph, CC BY-SA 2.0</span>
+  <div class="licence-note">
+    <strong>Geograph</strong> (<a href="https://www.geograph.org.uk/search.php?q=" target="_blank" rel="noopener">geograph.org.uk</a>) images are CC BY-SA 2.0 - search by location name, note the photographer.
+    Credit format: <span class="geo-credit">Photo: [Name] / Geograph, CC BY-SA 2.0</span><br>
+    <strong>Pexels</strong> images are free to use - no photographer credit required in-app, but record the URL for reference.
   </div>
 
-  <!-- Section 1 -->
+  <!-- Section A: Walk Images -->
   <div class="section-header">
-    <h2>Section 1: Walk Images</h2>
+    <h2>Section A: Walk Images</h2>
     <span class="section-count" id="walks-count"></span>
   </div>
   <div class="table-wrap">
@@ -119,18 +122,19 @@
         <tr>
           <th>Walk Name</th>
           <th>Filename</th>
+          <th>Source</th>
           <th>Photographer</th>
           <th>Geograph URL</th>
-          <th>Status</th>
+          <th>Done</th>
         </tr>
       </thead>
       <tbody id="walks-tbody"></tbody>
     </table>
   </div>
 
-  <!-- Section 2 -->
+  <!-- Section B: Article / Guide Images -->
   <div class="section-header">
-    <h2>Section 2: Article / Guide Images</h2>
+    <h2>Section B: Article / Guide Images</h2>
     <span class="section-count" id="articles-count"></span>
   </div>
   <div class="table-wrap">
@@ -139,9 +143,10 @@
         <tr>
           <th>Article</th>
           <th>Filename</th>
+          <th>Source</th>
           <th>Photographer</th>
           <th>Geograph URL</th>
-          <th>Status</th>
+          <th>Done</th>
         </tr>
       </thead>
       <tbody id="articles-tbody"></tbody>
@@ -152,138 +157,136 @@
 
 <script>
 // ---- DATA ----
+// Walks: exact IDs and names from WALKS_DB.
+// done:true = imageUrl already set in WALKS_DB (file is the extracted filename).
+// done:false = no image yet (file is the proposed filename to use).
 
 const WALKS = [
-  // DONE: standard batch
-  {id:'box-hill-summit-loop',          name:'Box Hill Summit Loop',                  file:'box-hill.jpg',                    done:true},
-  {id:'richmond-park-dog-walk',        name:'Richmond Park Dog Walk',                file:'richmond-park.jpg',               done:true},
-  {id:'isabella-plantation',           name:'Isabella Plantation',                   file:'isabella-plantation.jpg',         done:true},
-  {id:'leith-hill-coldharbour',        name:'Leith Hill and Coldharbour',            file:'leith-hill.jpg',                  done:true},
-  {id:'frensham-great-pond',           name:'Frensham Great Pond',                   file:'frensham-great-pond.jpg',         done:true},
-  {id:'new-forest-dog-walk',           name:'New Forest Dog Walk',                   file:'new-forest.jpg',                  done:true},
-  {id:'dartmoor-haytor-dog-walk',      name:'Dartmoor Haytor Dog Walk',              file:'dartmoor-haytor.jpg',             done:true},
-  {id:'yorkshire-dales-dog-walk',      name:'Yorkshire Dales Dog Walk',              file:'yorkshire-dales.jpg',             done:true},
-  {id:'peak-district-dog-walk',        name:'Peak District Dog Walk',                file:'peak-district.jpg',               done:true},
-  {id:'lake-district-helvellyn',       name:'Lake District Helvellyn',               file:'lake-district-helvellyn.jpg',     done:true},
-  {id:'snowdonia-snowdon',             name:'Snowdonia Snowdon',                     file:'snowdonia-snowdon.jpg',           done:true},
-  {id:'brecon-beacons-pen-y-fan',      name:'Brecon Beacons Pen y Fan',             file:'brecon-pen-y-fan.jpg',            done:true},
-  // DONE: sourced by owner
-  {id:'headley-heath-dog-walk',        name:'Headley Heath',                         file:'headley-heath.jpg',               done:true},
-  {id:'ashridge-estate-dog-walk',      name:'Ashridge Estate Bluebell Walk',         file:'ashridge-estate.jpg',             done:true},
-  {id:'newlands-corner-dog-walk',      name:'Newlands Corner and Albury Downs',      file:'newlands-corner.jpg',             done:true},
-  {id:'bamburgh-beach-dog-walk',       name:'Bamburgh Beach and Dunes',              file:'bamburgh-castle.jpg',             done:true},
-  {id:'formby-beach-dog-walk',         name:'Formby Beach',                          file:'bamburgh-castle.jpg',             done:true},
-  {id:'loch-lomond-dog-walk',          name:'Loch Lomond',                           file:'loch-lomond.jpg',                 done:true},
-  {id:'glen-coe-dog-walk',             name:'Glen Coe',                              file:'glen-coe.jpg',                    done:true},
-  {id:'brecon-beacons-dog-walk',       name:'Brecon Beacons',                        file:'brecon-pen-y-fan.jpg',            done:true},
-  {id:'rhossili-bay-dog-walk',         name:"Rhossili Bay and Worm's Head",          file:'gower-peninsula.jpg',             done:true},
-  {id:'pembrokeshire-coastpath-dog-walk', name:'Pembrokeshire Coast',                file:'pembrokeshire-coast.jpg',         done:true},
-  {id:'snowdon-pyg-track-dog-walk',    name:'Snowdon via the Pyg Track',             file:'snowdonia-aber-falls.jpg',        done:true},
-  {id:'lake-district-wastwater',       name:'Lake District Wastwater',               file:'lake-district-wastwater.jpg',     done:true},
-  {id:'lake-district-buttermere',      name:'Lake District Buttermere',              file:'lake-district-buttermere.jpg',    done:true},
-  {id:'lake-district-ullswater',       name:'Lake District Ullswater',               file:'lake-district-ullswater.jpg',     done:true},
-  {id:'lake-district-coniston',        name:'Lake District Coniston',                file:'lake-district-coniston.jpg',      done:true},
-  {id:'yorkshire-pen-y-ghent',         name:'Yorkshire Pen y Ghent',                 file:'yorkshire-pen-y-ghent.jpg',       done:true},
-  // NOT DONE: from WALKS_DB
-  {id:'hindhead-common-devils-punch-bowl', name:'Hindhead Common and Devils Punch Bowl', file:'hindhead-common-devils-punch-bowl.jpg', done:false},
-  {id:'seven-sisters-cliffs',          name:'Seven Sisters Cliffs',                  file:'seven-sisters-cliffs.jpg',        done:false},
-  {id:'devils-dyke-dog-walk',          name:'Devils Dyke',                           file:'devils-dyke.jpg',                 done:false},
-  {id:'hampstead-heath-ponds',         name:'Hampstead Heath Ponds',                 file:'hampstead-heath-ponds.jpg',       done:false},
-  {id:'wimbledon-common-loop',         name:'Wimbledon Common Loop',                 file:'wimbledon-common-loop.jpg',       done:false},
-  {id:'ranmore-common-dog-walk',       name:'Ranmore Common',                        file:'ranmore-common.jpg',              done:false},
-  {id:'haytor-and-hound-tor',          name:'Haytor and Hound Tor',                  file:'haytor-and-hound-tor.jpg',        done:false},
-  {id:'burley-village-forest',         name:'Burley Village Forest',                 file:'burley-village-forest.jpg',       done:false},
-  {id:'stanage-edge-hathersage-moor',  name:'Stanage Edge and Hathersage Moor',      file:'stanage-edge-hathersage-moor.jpg',done:false},
-  {id:'dovedale-dog-walk',             name:'Dovedale and the Stepping Stones',      file:'dovedale.jpg',                    done:false},
-  {id:'mam-tor-dog-walk',              name:'Mam Tor and the Great Ridge',           file:'mam-tor.jpg',                     done:false},
-  {id:'kinder-scout-dog-walk',         name:'Kinder Scout from Edale',               file:'kinder-scout.jpg',                done:false},
-  {id:'malham-cove-gordale',           name:'Malham Cove and Gordale Scar',          file:'malham-cove-gordale.jpg',         done:false},
-  {id:'grasmere-lake-circuit',         name:'Grasmere Lake Circuit',                 file:'grasmere-lake-circuit.jpg',       done:false},
-  {id:'bookham-common-dog-walk',       name:'Bookham Common',                        file:'bookham-common.jpg',              done:false},
-  {id:'st-marthas-hill-dog-walk',      name:'St Marthas Hill',                       file:'st-marthas-hill.jpg',             done:false},
-  {id:'hurtwood-ridge-dog-walk',       name:'Hurtwood Ridge',                        file:'hurtwood-ridge.jpg',              done:false},
-  {id:'epsom-common-dog-walk',         name:'Epsom Common',                          file:'epsom-common.jpg',                done:false},
-  {id:'shere-abinger-roughs-dog-walk', name:'Shere and Abinger Roughs',              file:'shere-abinger-roughs.jpg',        done:false},
-  {id:'cuckmere-haven-dog-walk',       name:'Cuckmere Haven',                        file:'cuckmere-haven.jpg',              done:false},
-  {id:'cissbury-ring-dog-walk',        name:'Cissbury Ring',                         file:'cissbury-ring.jpg',               done:false},
-  {id:'arthurs-seat-dog-walk',         name:"Arthur's Seat",                         file:'arthurs-seat.jpg',                done:false},
-  {id:'threipmuir-reservoirs-dog-walk',name:'Threipmuir Reservoirs',                 file:'threipmuir-reservoirs.jpg',       done:false},
-  {id:'hermitage-dunkeld-dog-walk',    name:'The Hermitage and Black Linn Falls',    file:'hermitage-dunkeld.jpg',           done:false},
-  {id:'tentsmuir-forest-dog-walk',     name:'Tentsmuir Forest and Beach',            file:'tentsmuir-forest.jpg',            done:false},
-  {id:'balmaha-loch-lomond-dog-walk',  name:'Balmaha and Loch Lomond Shore',         file:'balmaha-loch-lomond.jpg',         done:false},
-  {id:'pen-y-fan-dog-walk',            name:'Pen y Fan and Corn Du Circuit',          file:'pen-y-fan.jpg',                   done:false},
-  {id:'llyn-padarn-dog-walk',          name:'Llyn Padarn Lake Circuit',              file:'llyn-padarn.jpg',                 done:false},
-  {id:'hardcastle-crags-hebden',       name:'Hardcastle Crags Hebden',               file:'hardcastle-crags-hebden.jpg',     done:false},
-  {id:'bute-park-dog-walk',            name:'Bute Park and Taff Trail',              file:'bute-park.jpg',                   done:false},
-  {id:'roseberry-topping',             name:'Roseberry Topping',                     file:'roseberry-topping.jpg',           done:false},
-  {id:'penllergare-valley-dog-walk',   name:'Penllergare Valley Woods and Waterfall',file:'penllergare-valley.jpg',          done:false},
-  {id:'llansteffan-castle-dog-walk',   name:'Llansteffan Castle and Estuary Walk',   file:'llansteffan-castle.jpg',          done:false},
-  {id:'kinnoull-hill-dog-walk',        name:'Kinnoull Hill and Tay Valley Views',    file:'kinnoull-hill.jpg',               done:false},
-  {id:'elterwater-langdale-dog-walk',  name:'Elterwater and Langdale Valley',        file:'elterwater-langdale.jpg',         done:false},
-  {id:'rhossili-down-dog-walk',        name:'Rhossili Down Ridge Walk',              file:'rhossili-down.jpg',               done:false},
-  {id:'farley-mount-dog-walk',         name:'Farley Mount Country Park',             file:'farley-mount.jpg',                done:false},
-  {id:'lepe-beach-dog-walk',           name:'Lepe Beach and Country Park',           file:'lepe-beach.jpg',                  done:false},
-  {id:'hadrians-wall-dog-walk',        name:"Hadrian's Wall",                        file:'hadrians-wall.jpg',               done:false},
-  {id:'alnmouth-warkworth-coast-dog-walk', name:'Alnmouth and Warkworth Coast',      file:'alnmouth-warkworth-coast.jpg',    done:false},
-  {id:'kielder-water-forest-dog-walk', name:'Kielder Water and Forest',              file:'kielder-water-forest.jpg',        done:false},
-  {id:'hamsterley-forest-dog-walk',    name:'Hamsterley Forest',                     file:'hamsterley-forest.jpg',           done:false},
-  {id:'plessey-woods-dog-walk',        name:'Plessey Woods',                         file:'plessey-woods.jpg',               done:false},
-  {id:'beacon-fell-dog-walk',          name:'Beacon Fell',                           file:'beacon-fell.jpg',                 done:false},
-  {id:'rivington-pike-dog-walk',       name:'Rivington Pike',                        file:'rivington-pike.jpg',              done:false},
-  {id:'lyme-park-dog-walk',            name:'Lyme Park',                             file:'lyme-park.jpg',                   done:false},
-  {id:'bradgate-park-dog-walk',        name:'Bradgate Park',                         file:'bradgate-park.jpg',               done:false},
-  {id:'calke-abbey-dog-walk',          name:'Calke Abbey',                           file:'calke-abbey.jpg',                 done:false},
-  {id:'cannock-chase-dog-walk',        name:'Cannock Chase',                         file:'cannock-chase.jpg',               done:false},
-  {id:'sherwood-forest-dog-walk',      name:'Sherwood Forest',                       file:'sherwood-forest.jpg',             done:false},
-  {id:'clumber-park-dog-walk',         name:'Clumber Park',                          file:'clumber-park.jpg',                done:false},
-  {id:'lickey-hills-dog-walk',         name:'Lickey Hills',                          file:'lickey-hills.jpg',                done:false},
-  {id:'chipping-campden-dovers-hill-dog-walk', name:"Chipping Campden and Dover's Hill", file:'chipping-campden-dovers-hill.jpg', done:false},
-  {id:'bourton-on-the-water-dog-walk', name:'Bourton on the Water',                  file:'bourton-on-the-water.jpg',        done:false},
-  {id:'broadway-tower-dog-walk',       name:'Broadway Tower',                        file:'broadway-tower.jpg',              done:false},
-  {id:'cleeve-hill-dog-walk',          name:'Cleeve Hill',                           file:'cleeve-hill.jpg',                 done:false},
-  {id:'symonds-yat-dog-walk',          name:'Symonds Yat',                           file:'symonds-yat.jpg',                 done:false},
-  {id:'malvern-hills-dog-walk',        name:'Malvern Hills',                         file:'malvern-hills.jpg',               done:false},
-  {id:'stiperstones-dog-walk',         name:'Stiperstones Ridge',                    file:'stiperstones.jpg',                done:false},
-  {id:'long-mynd-carding-mill-dog-walk', name:'Long Mynd and Carding Mill Valley',   file:'long-mynd-carding-mill.jpg',      done:false},
-  {id:'wenlock-edge-dog-walk',         name:'Wenlock Edge',                          file:'wenlock-edge.jpg',                done:false},
-  {id:'clent-hills-dog-walk',          name:'Clent Hills',                           file:'clent-hills.jpg',                 done:false},
-  {id:'dunwich-heath-dog-walk',        name:'Dunwich Heath and Beach',               file:'dunwich-heath.jpg',               done:false},
-  {id:'thetford-forest-dog-walk',      name:'Thetford Forest',                       file:'thetford-forest.jpg',             done:false},
-  {id:'sheringham-park-dog-walk',      name:'Sheringham Park',                       file:'sheringham-park.jpg',             done:false},
-  {id:'tehidy-country-park-dog-walk',  name:'Tehidy Country Park',                   file:'tehidy-country-park.jpg',         done:false},
-  {id:'moors-valley-dog-walk',         name:'Moors Valley Country Park',             file:'moors-valley.jpg',                done:false},
-  {id:'golden-cap-dog-walk',           name:'Golden Cap',                            file:'golden-cap.jpg',                  done:false},
-  {id:'watersmeet-exmoor-dog-walk',    name:'Watersmeet Exmoor',                     file:'watersmeet-exmoor.jpg',           done:false},
-  {id:'quantock-hills-dog-walk',       name:'Quantock Hills',                        file:'quantock-hills.jpg',              done:false},
-  {id:'burrator-reservoir-dog-walk',   name:'Burrator Reservoir',                    file:'burrator-reservoir.jpg',          done:false},
+  {id:'box-hill-summit-loop',                name:'Box Hill Summit Loop',                            location:'Dorking, Surrey',                     file:'box-hill.jpg',                      done:true},
+  {id:'richmond-park-dog-walk',              name:'Richmond Park Dog Walk',                          location:'Richmond, London',                    file:'richmond-park.jpg',                 done:true},
+  {id:'isabella-plantation',                 name:'Isabella Plantation',                             location:'Richmond Park, London',               file:'isabella-plantation.jpg',           done:true},
+  {id:'leith-hill-coldharbour',              name:'Leith Hill and Coldharbour',                      location:'Coldharbour, Surrey',                 file:'leith-hill.jpg',                    done:true},
+  {id:'frensham-great-pond',                 name:'Frensham Great Pond',                             location:'Frensham, Surrey',                    file:'frensham-great-pond.jpg',           done:true},
+  {id:'hindhead-common-devils-punch-bowl',   name:'Hindhead Common and Devils Punch Bowl',           location:'Hindhead, Surrey',                    file:'hindhead-common.png',               done:true},
+  {id:'seven-sisters-cliffs',                name:'Seven Sisters Cliffs',                            location:'Seaford, East Sussex',                file:'seven-sisters.jpg',                 done:true},
+  {id:'hampstead-heath-ponds',               name:'Hampstead Heath and Ponds',                       location:'Hampstead, London',                   file:'hampstead-heath.jpg',               done:true},
+  {id:'wimbledon-common-loop',               name:'Wimbledon Common Loop',                           location:'Wimbledon, London',                   file:'wimbledon-common.jpg',              done:true},
+  {id:'haytor-and-hound-tor',                name:'Haytor and Hound Tor',                            location:'Dartmoor, Devon',                     file:'haytor-dartmoor.jpg',               done:true},
+  {id:'burley-village-forest',               name:'Burley Village and Forest Walks',                 location:'Burley, Hampshire',                   file:'burley-new-forest.png',             done:true},
+  {id:'stanage-edge-hathersage-moor',        name:'Stanage Edge and Hathersage Moor',                location:'Hathersage, Derbyshire',              file:'stanage-edge.jpg',                  done:true},
+  {id:'malham-cove-gordale',                 name:'Malham Cove and Gordale Scar',                    location:'Malham, North Yorkshire',             file:'malham-cove.jpg',                   done:true},
+  {id:'grasmere-lake-circuit',               name:'Grasmere Lake Circuit',                           location:'Grasmere, Cumbria',                   file:'grasmere-lake.jpg',                 done:true},
+  {id:'devils-dyke-dog-walk',                name:"Devil's Dyke and South Downs",                    location:'Brighton, West Sussex',               file:'devils-dyke.jpg',                   done:false},
+  {id:'ashridge-estate-dog-walk',            name:'Ashridge Estate Bluebell Walk',                   location:'Berkhamsted, Hertfordshire',          file:'ashridge-estate.jpg',               done:false},
+  {id:'newlands-corner-dog-walk',            name:'Newlands Corner and Albury Downs',                location:'Guildford, Surrey',                   file:'newlands-corner.jpg',               done:false},
+  {id:'ranmore-common-dog-walk',             name:'Ranmore Common and Denbies',                      location:'Dorking, Surrey',                     file:'ranmore-common.jpg',                done:false},
+  {id:'dovedale-dog-walk',                   name:'Dovedale and the Stepping Stones',                location:'Thorpe, Ashbourne, Derbyshire',       file:'dovedale.jpg',                      done:false},
+  {id:'mam-tor-dog-walk',                    name:'Mam Tor and the Great Ridge',                     location:'Castleton, Derbyshire',               file:'mam-tor.jpg',                       done:false},
+  {id:'kinder-scout-dog-walk',               name:'Kinder Scout from Edale',                         location:'Edale, Derbyshire',                   file:'kinder-scout.jpg',                  done:false},
+  {id:'headley-heath-dog-walk',              name:'Headley Heath',                                   location:'Headley, Surrey',                     file:'headley-heath.jpg',                 done:false},
+  {id:'bookham-common-dog-walk',             name:'Bookham Common and Fetcham Downs',                location:'Great Bookham, Surrey',               file:'bookham-common.jpg',                done:false},
+  {id:'st-marthas-hill-dog-walk',            name:"St Martha's Hill and Chilworth",                  location:'Guildford, Surrey',                   file:'st-marthas-hill.jpg',               done:false},
+  {id:'hurtwood-ridge-dog-walk',             name:'The Hurtwood Ridge Walk',                         location:'Ewhurst, Surrey',                     file:'hurtwood-ridge.jpg',                done:false},
+  {id:'epsom-common-dog-walk',               name:'Epsom Common and Stew Ponds',                     location:'Epsom, Surrey',                       file:'epsom-common.jpg',                  done:false},
+  {id:'shere-abinger-roughs-dog-walk',       name:'Shere Village and Abinger Roughs',                location:'Shere, Surrey',                       file:'shere-abinger-roughs.jpg',          done:false},
+  {id:'cuckmere-haven-dog-walk',             name:'Cuckmere Haven and Litlington',                   location:'Seaford, East Sussex',                file:'cuckmere-haven.jpg',                done:false},
+  {id:'cissbury-ring-dog-walk',              name:'Cissbury Ring',                                   location:'Worthing, West Sussex',               file:'cissbury-ring.jpg',                 done:false},
+  {id:'arthurs-seat-dog-walk',               name:"Arthur's Seat and Holyrood Park",                 location:'Edinburgh',                           file:'arthurs-seat.jpg',                  done:false},
+  {id:'threipmuir-reservoirs-dog-walk',      name:'Threipmuir and Harlaw Reservoirs',                location:'Balerno, Edinburgh',                  file:'threipmuir-reservoirs.jpg',         done:false},
+  {id:'hermitage-dunkeld-dog-walk',          name:'The Hermitage and Black Linn Falls',              location:'Dunkeld, Perthshire',                 file:'hermitage-dunkeld.jpg',             done:false},
+  {id:'tentsmuir-forest-dog-walk',           name:'Tentsmuir Forest and Beach',                      location:'Leuchars, Fife',                      file:'tentsmuir-forest.jpg',              done:false},
+  {id:'balmaha-loch-lomond-dog-walk',        name:'Balmaha and Loch Lomond Shore',                   location:'Balmaha, Loch Lomond',                file:'balmaha-loch-lomond.jpg',           done:false},
+  {id:'pen-y-fan-dog-walk',                  name:'Pen y Fan and Corn Du Circuit',                   location:'Libanus, Powys',                      file:'pen-y-fan.jpg',                     done:false},
+  {id:'llyn-padarn-dog-walk',                name:'Llyn Padarn Lake Circuit',                        location:'Llanberis, Gwynedd',                  file:'llyn-padarn.jpg',                   done:false},
+  {id:'rhossili-bay-dog-walk',               name:'Rhossili Bay and Worms Head',                     location:'Rhossili, Swansea',                   file:'rhossili-bay.jpg',                  done:false},
+  {id:'hardcastle-crags-hebden',             name:'Hardcastle Crags and Gibson Mill',                location:'Hebden Bridge, West Yorkshire',       file:'hardcastle-crags.jpg',              done:false},
+  {id:'bute-park-dog-walk',                  name:'Bute Park and Taff Trail',                        location:'Cardiff',                             file:'bute-park.jpg',                     done:false},
+  {id:'roseberry-topping',                   name:'Roseberry Topping and Newton Wood',               location:'Great Ayton, North Yorkshire',        file:'roseberry-topping.jpg',             done:false},
+  {id:'penllergare-valley-dog-walk',         name:'Penllergare Valley Woods and Waterfall',          location:'Penllergaer, Swansea',                file:'penllergare-valley.jpg',            done:false},
+  {id:'llansteffan-castle-dog-walk',         name:'Llansteffan Castle and Estuary Walk',             location:'Llansteffan, Carmarthenshire',        file:'llansteffan-castle.jpg',            done:false},
+  {id:'kinnoull-hill-dog-walk',              name:'Kinnoull Hill and Tay Valley Views',              location:'Perth, Perth and Kinross',            file:'kinnoull-hill.jpg',                 done:false},
+  {id:'elterwater-langdale-dog-walk',        name:'Elterwater and Langdale Valley',                  location:'Elterwater, Cumbria',                 file:'elterwater-langdale.jpg',           done:false},
+  {id:'rhossili-down-dog-walk',              name:'Rhossili Down Ridge Walk',                        location:'Rhossili, Gower, Swansea',            file:'rhossili-down.jpg',                 done:false},
+  {id:'farley-mount-dog-walk',               name:'Farley Mount Country Park',                       location:'Sparsholt, Hampshire',                file:'farley-mount.jpg',                  done:false},
+  {id:'lepe-beach-dog-walk',                 name:'Lepe Beach and Solent Shore',                     location:'Exbury, Hampshire',                   file:'lepe-beach.jpg',                    done:false},
+  {id:'hadrians-wall-dog-walk',              name:"Hadrian's Wall: Housesteads to Steel Rigg",       location:'Bardon Mill, Northumberland',         file:'hadrians-wall.jpg',                 done:false},
+  {id:'bamburgh-beach-dog-walk',             name:'Bamburgh Beach and Castle',                       location:'Bamburgh, Northumberland',            file:'bamburgh-beach.jpg',                done:false},
+  {id:'alnmouth-warkworth-coast-dog-walk',   name:'Alnmouth to Warkworth Coast Path',                location:'Alnmouth to Warkworth, Northumberland',file:'alnmouth-warkworth-coast.jpg',    done:false},
+  {id:'kielder-water-forest-dog-walk',       name:'Kielder Forest: Duchess Trail and Lakeshore',     location:'Kielder, Northumberland',             file:'kielder-forest.jpg',                done:false},
+  {id:'hamsterley-forest-dog-walk',          name:'Hamsterley Forest: Three Becks Walk',             location:'Hamsterley, County Durham',           file:'hamsterley-forest.jpg',             done:false},
+  {id:'plessey-woods-dog-walk',              name:'Plessey Woods Country Park',                      location:'Bedlington, Northumberland',          file:'plessey-woods.jpg',                 done:false},
+  {id:'formby-beach-dog-walk',               name:'Formby Beach and Red Squirrel Reserve',           location:'Formby, Merseyside',                  file:'formby-beach.jpg',                  done:false},
+  {id:'beacon-fell-dog-walk',                name:'Beacon Fell Country Park',                        location:'Beacon Fell, Lancashire',             file:'beacon-fell.jpg',                   done:false},
+  {id:'rivington-pike-dog-walk',             name:'Rivington Pike and Lower Rivington Reservoir',    location:'Rivington, Lancashire',               file:'rivington-pike.jpg',                done:false},
+  {id:'lyme-park-dog-walk',                  name:'Lyme Park and Lyme Cage',                         location:'Disley, Cheshire',                    file:'lyme-park.jpg',                     done:false},
+  {id:'bradgate-park-dog-walk',              name:'Bradgate Park and Old John Circular',             location:'Newtown Linford, Leicestershire',     file:'bradgate-park.jpg',                 done:false},
+  {id:'calke-abbey-dog-walk',                name:'Calke Abbey Parkland Walk',                       location:'Ticknall, South Derbyshire',          file:'calke-abbey.jpg',                   done:false},
+  {id:'cannock-chase-dog-walk',              name:'Cannock Chase Forest: Tackeroo Trail',            location:'Rugeley, Staffordshire',              file:'cannock-chase.jpg',                 done:false},
+  {id:'sherwood-forest-dog-walk',            name:'Sherwood Forest and the Major Oak',               location:'Edwinstowe, Nottinghamshire',         file:'sherwood-forest.jpg',               done:false},
+  {id:'clumber-park-dog-walk',               name:'Clumber Park Lake Circuit',                       location:'Worksop, Nottinghamshire',            file:'clumber-park.jpg',                  done:false},
+  {id:'lickey-hills-dog-walk',               name:'Lickey Hills Country Park',                       location:'Rednal, Birmingham',                  file:'lickey-hills.jpg',                  done:false},
+  {id:'chipping-campden-dovers-hill-dog-walk',name:"Chipping Campden and Dover's Hill",             location:'Chipping Campden, Gloucestershire',   file:'chipping-campden.jpg',              done:false},
+  {id:'bourton-on-the-water-dog-walk',       name:'Bourton-on-the-Water and the Windrush Valley',    location:'Bourton-on-the-Water, Gloucestershire',file:'bourton-on-the-water.jpg',         done:false},
+  {id:'broadway-tower-dog-walk',             name:'Broadway Tower and Fish Hill',                    location:'Broadway Tower, Worcestershire',      file:'broadway-tower.jpg',                done:false},
+  {id:'cleeve-hill-dog-walk',                name:'Cleeve Hill and Cleeve Common',                   location:'Cleeve Hill, Gloucestershire',        file:'cleeve-hill.jpg',                   done:false},
+  {id:'symonds-yat-dog-walk',                name:'Symonds Yat Rock and the Wye Valley',             location:'Symonds Yat, Herefordshire',          file:'symonds-yat.jpg',                   done:false},
+  {id:'malvern-hills-dog-walk',              name:'Malvern Hills Worcestershire Beacon Circuit',     location:'Malvern Hills, Worcestershire',       file:'malvern-hills.jpg',                 done:false},
+  {id:'stiperstones-dog-walk',               name:"Stiperstones and the Devil's Chair",              location:'Stiperstones, Shropshire',            file:'stiperstones.jpg',                  done:false},
+  {id:'long-mynd-carding-mill-dog-walk',     name:'The Long Mynd and Carding Mill Valley',           location:'Church Stretton, Shropshire',         file:'long-mynd.jpg',                     done:false},
+  {id:'wenlock-edge-dog-walk',               name:'Wenlock Edge',                                    location:'Much Wenlock, Shropshire',            file:'wenlock-edge.jpg',                  done:false},
+  {id:'clent-hills-dog-walk',                name:'Clent Hills',                                     location:'Clent Hills, Worcestershire',         file:'clent-hills.jpg',                   done:false},
+  {id:'dunwich-heath-dog-walk',              name:'Dunwich Heath and Beach',                         location:'Dunwich, Suffolk',                    file:'dunwich-heath.jpg',                 done:false},
+  {id:'thetford-forest-dog-walk',            name:'Thetford Forest High Lodge',                      location:'Santon Downham, Brandon, Suffolk',    file:'thetford-forest.jpg',               done:false},
+  {id:'sheringham-park-dog-walk',            name:'Sheringham Park',                                 location:'Upper Sheringham, Norfolk',           file:'sheringham-park.jpg',               done:false},
+  {id:'tehidy-country-park-dog-walk',        name:'Tehidy Country Park',                             location:'Camborne, Cornwall',                  file:'tehidy-country-park.jpg',           done:false},
+  {id:'moors-valley-dog-walk',               name:'Moors Valley Country Park and Forest',            location:'Ashley Heath, Dorset',                file:'moors-valley.jpg',                  done:false},
+  {id:'golden-cap-dog-walk',                 name:'Golden Cap',                                      location:'Chideock, Dorset',                    file:'golden-cap.jpg',                    done:false},
+  {id:'watersmeet-exmoor-dog-walk',          name:'Watersmeet and the Lynmouth Gorge',               location:'Lynmouth, Devon',                     file:'watersmeet-exmoor.jpg',             done:false},
+  {id:'quantock-hills-dog-walk',             name:'Quantock Hills - Holford and Rams Combe',         location:'Holford, Somerset',                   file:'quantock-hills.jpg',                done:false},
+  {id:'burrator-reservoir-dog-walk',         name:'Dartmoor - Burrator Reservoir Circuit',           location:'Yelverton, Devon',                    file:'burrator-reservoir.jpg',            done:false},
 ];
 
-const ARTICLES = [
-  {id:'heatstroke-hero',             article:'Heatstroke and Hot Weather Walking',     type:'hero',   file:'heatstroke-hero.jpg',             done:false},
-  {id:'heatstroke-inline-1',         article:'Heatstroke and Hot Weather Walking',     type:'inline', file:'heatstroke-inline-1.jpg',         done:false},
-  {id:'alabama-rot-hero',            article:'Alabama Rot',                            type:'hero',   file:'alabama-rot-hero.jpg',             done:false},
-  {id:'blue-green-algae-hero',       article:'Blue-Green Algae',                       type:'hero',   file:'blue-green-algae-hero.jpg',        done:false},
-  {id:'ticks-hero',                  article:'Ticks',                                  type:'hero',   file:'ticks-hero.jpg',                   done:false},
-  {id:'cattle-dog-walkers-hero',     article:'Cattle and Dog Walkers',                 type:'hero',   file:'cattle-dog-walkers-hero.jpg',      done:false},
-  {id:'antifreeze-hero',             article:'Antifreeze',                             type:'hero',   file:'antifreeze-hero.jpg',              done:false},
-  {id:'grass-seeds-hero',            article:'Grass Seeds',                            type:'hero',   file:'grass-seeds-hero.jpg',             done:false},
-  {id:'adder-bites-hero',            article:'Adder Bites',                            type:'hero',   file:'adder-bites-hero.jpg',             done:true},
-  {id:'senior-dog-walking-hero',     article:'Senior Dog Walking',                     type:'hero',   file:'senior-dog-walking-hero.jpg',      done:false},
-  {id:'shar-pei-walking-hero',       article:'Walking a Shar Pei',                     type:'hero',   file:'shar-pei-walking-hero.jpg',        done:false},
-  {id:'brachycephalic-walking-hero', article:'Brachycephalic Breeds Walking Guide',    type:'hero',   file:'brachycephalic-walking-hero.jpg',  done:false},
-  {id:'french-bulldog-walking-hero', article:'French Bulldog Walking Guide',           type:'hero',   file:'french-bulldog-walking-hero.jpg',  done:false},
-  {id:'cockapoo-walking-hero',       article:'Cockapoo Walking Guide',                 type:'hero',   file:'cockapoo-walking-hero.jpg',         done:false},
-  {id:'labrador-walking-hero',       article:'Labrador Walking Guide',                 type:'hero',   file:'labrador-walking-hero.jpg',         done:false},
-  {id:'temperature-guide-hero',      article:'Temperature Guide (Is it too hot?)',     type:'hero',   file:'temperature-guide-hero.jpg',        done:false},
-  {id:'how-far-walk-dog-hero',       article:'How Far Should I Walk My Dog',           type:'hero',   file:'how-far-walk-dog-hero.jpg',         done:false},
-  {id:'shar-pei-fever-hero',         article:'Shar Pei Fever (SPAID)',                 type:'hero',   file:'shar-pei-fever-hero.jpg',           done:false},
-  {id:'shar-pei-skin-fold-hero',     article:'Shar Pei Skin Fold Care',                type:'hero',   file:'shar-pei-skin-fold-hero.jpg',       done:false},
-  {id:'autumn-dog-walks-hero',       article:'Autumn Dog Walks UK',                    type:'hero',   file:'autumn-dog-walks-hero.jpg',         done:false},
+// Article image types: hero, inline-1, inline-2, inline-3
+// Only adder-bites-hero starts done.
+const ARTICLE_DEFS = [
+  {slug:'heatstroke-hot-weather',  label:'Heatstroke and Hot Weather Walking'},
+  {slug:'alabama-rot',             label:'Alabama Rot'},
+  {slug:'blue-green-algae',        label:'Blue-Green Algae'},
+  {slug:'ticks-dogs',              label:'Ticks'},
+  {slug:'cattle-dog-walkers',      label:'Cattle and Dog Walkers'},
+  {slug:'antifreeze-dogs',         label:'Antifreeze'},
+  {slug:'grass-seeds-dogs',        label:'Grass Seeds'},
+  {slug:'adder-bites',             label:'Adder Bites'},
+  {slug:'senior-dog-walking',      label:'Senior Dog Walking'},
+  {slug:'french-bulldog-walking',  label:'French Bulldog Walking Guide'},
+  {slug:'cockapoo-walking',        label:'Cockapoo Walking Guide'},
+  {slug:'labrador-walking',        label:'Labrador Walking Guide'},
+  {slug:'brachycephalic-walking',  label:'Brachycephalic Breeds Walking Guide'},
+  {slug:'shar-pei-walking',        label:'Shar Pei Walking Guide'},
+  {slug:'shar-pei-fever',          label:'Shar Pei Fever (SPAID)'},
+  {slug:'shar-pei-skin-fold',      label:'Shar Pei Skin Fold Care'},
+  {slug:'temperature-guide',       label:'Temperature Guide: Is It Too Hot?'},
+  {slug:'how-far-walk-dog',        label:'How Far Should I Walk My Dog'},
+  {slug:'autumn-dog-walks',        label:'Autumn Dog Walks UK'},
 ];
+
+const IMAGE_TYPES = ['hero', 'inline-1', 'inline-2', 'inline-3'];
+
+// Expand ARTICLE_DEFS into flat ARTICLES list
+const ARTICLES = [];
+ARTICLE_DEFS.forEach(function(a) {
+  IMAGE_TYPES.forEach(function(type) {
+    var id = a.slug + '-' + type;
+    var file = a.slug + '-' + type + '.jpg';
+    // Only adder-bites-hero is pre-done
+    var done = (id === 'adder-bites-hero');
+    ARTICLES.push({id:id, article:a.label, slug:a.slug, type:type, file:file, done:done});
+  });
+});
 
 // ---- LOCALSTORAGE ----
 
-const LS_KEY = 'sniffout-image-checklist';
+const LS_KEY = 'sniffout-image-checklist-v2';
 
 function loadState() {
   try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }
@@ -303,79 +306,83 @@ function getItem(state, id) {
 let state = loadState();
 let currentFilter = 'all';
 
-// Seed initial done values into state if not already set
 function initState() {
   var changed = false;
   WALKS.forEach(function(w) {
-    if (!(w.id in state)) { state[w.id] = {done: w.done, photographer: '', url: ''}; changed = true; }
+    if (!(w.id in state)) { state[w.id] = {done: w.done, file: w.file, source: '', photographer: '', url: ''}; changed = true; }
   });
   ARTICLES.forEach(function(a) {
-    if (!(a.id in state)) { state[a.id] = {done: a.done, photographer: '', url: ''}; changed = true; }
+    if (!(a.id in state)) { state[a.id] = {done: a.done, file: a.file, source: '', photographer: '', url: ''}; changed = true; }
   });
   if (changed) saveState(state);
+}
+
+// ---- HELPERS ----
+
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function sourceOptions(selected) {
+  var opts = ['', 'Pexels', 'Geograph', 'Unsplash', 'Own', 'Other'];
+  return opts.map(function(o) {
+    return '<option value="' + esc(o) + '"' + (selected === o ? ' selected' : '') + '>' + (o || '-- source --') + '</option>';
+  }).join('');
+}
+
+function makeRow(id, nameHtml, file, source, photographer, url, done, dataName, dataFile) {
+  var photoDisabled = (source === 'Pexels') ? ' disabled' : '';
+  var trClass = done ? 'done-row' : '';
+  var urlInput = '<input class="field-input" type="text" placeholder="https://www.geograph.org.uk/photo/..." value="' + esc(url) + '" oninput="updateField(\'' + id + '\',\'url\',this.value)">';
+  var urlDisplay = url && url.trim() ? '<a class="url-link" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(url.length > 40 ? url.slice(0,40) + '...' : url) + '</a>' + urlInput : urlInput;
+
+  return '<tr id="row-' + id + '" class="' + trClass + '" data-name="' + esc(dataName) + '" data-file="' + esc(dataFile) + '" data-done="' + (done ? '1' : '0') + '">' +
+    '<td class="name-cell">' + nameHtml + '</td>' +
+    '<td class="file-cell"><input class="field-input file-input" type="text" value="' + esc(file) + '" oninput="updateField(\'' + id + '\',\'file\',this.value)"></td>' +
+    '<td class="src-cell"><select class="src-select" onchange="updateSource(\'' + id + '\',this.value)">' + sourceOptions(source) + '</select></td>' +
+    '<td class="photo-cell"><input class="field-input" type="text" placeholder="Photographer name"' + photoDisabled + ' value="' + esc(photographer) + '" oninput="updateField(\'' + id + '\',\'photographer\',this.value)"></td>' +
+    '<td class="url-cell">' + urlDisplay + '</td>' +
+    '<td class="done-cell"><input type="checkbox" class="done-checkbox"' + (done ? ' checked' : '') + ' onchange="toggleDone(\'' + id + '\',this.checked)"></td>' +
+    '</tr>';
 }
 
 // ---- RENDER ----
 
 function renderWalks() {
   var tbody = document.getElementById('walks-tbody');
-  tbody.innerHTML = '';
+  var html = '';
   WALKS.forEach(function(w) {
     var s = getItem(state, w.id);
     var done = s.done;
+    var file = s.file !== undefined ? s.file : w.file;
+    var source = s.source || '';
     var photographer = s.photographer || '';
     var url = s.url || '';
-    var tr = document.createElement('tr');
-    tr.id = 'row-' + w.id;
-    tr.className = done ? 'done-row' : '';
-    tr.dataset.name = w.name.toLowerCase();
-    tr.dataset.file = w.file.toLowerCase();
-    tr.dataset.done = done ? '1' : '0';
-    tr.innerHTML =
-      '<td class="name-cell">' + esc(w.name) + '</td>' +
-      '<td class="file-cell">' + esc(w.file) + '</td>' +
-      '<td class="input-cell"><input class="field-input" type="text" placeholder="Photographer name" value="' + esc(photographer) + '" onchange="updateField(\'' + w.id + '\',\'photographer\',this.value)" onblur="updateField(\'' + w.id + '\',\'photographer\',this.value)"></td>' +
-      '<td class="url-cell">' + urlCell(w.id, url) + '</td>' +
-      '<td class="status-cell"><button class="status-btn' + (done ? ' done' : '') + '" onclick="toggleDone(\'' + w.id + '\')" title="' + (done ? 'Mark as needed' : 'Mark as done') + '">' + (done ? '&#10003;' : '&#9675;') + '</button></td>';
-    tbody.appendChild(tr);
+    var nameHtml = esc(w.name) + ' <span style="font-size:11px;color:#999;font-weight:400">' + esc(w.location) + '</span>';
+    html += makeRow(w.id, nameHtml, file, source, photographer, url, done, (w.name + ' ' + w.location).toLowerCase(), file.toLowerCase());
   });
+  tbody.innerHTML = html;
   updateCounts();
   applyFilters();
 }
 
 function renderArticles() {
   var tbody = document.getElementById('articles-tbody');
-  tbody.innerHTML = '';
+  var html = '';
   ARTICLES.forEach(function(a) {
     var s = getItem(state, a.id);
     var done = s.done;
+    var file = s.file !== undefined ? s.file : a.file;
+    var source = s.source || '';
     var photographer = s.photographer || '';
     var url = s.url || '';
-    var tr = document.createElement('tr');
-    tr.id = 'row-' + a.id;
-    tr.className = done ? 'done-row' : '';
-    tr.dataset.name = (a.article + ' ' + a.type).toLowerCase();
-    tr.dataset.file = a.file.toLowerCase();
-    tr.dataset.done = done ? '1' : '0';
-    var nameCell = esc(a.article) + ' <span style="font-size:11px;color:#888;font-weight:400">(' + a.type + ')</span>';
-    tr.innerHTML =
-      '<td class="name-cell">' + nameCell + '</td>' +
-      '<td class="file-cell">' + esc(a.file) + '</td>' +
-      '<td class="input-cell"><input class="field-input" type="text" placeholder="Photographer name" value="' + esc(photographer) + '" onchange="updateField(\'' + a.id + '\',\'photographer\',this.value)" onblur="updateField(\'' + a.id + '\',\'photographer\',this.value)"></td>' +
-      '<td class="url-cell">' + urlCell(a.id, url) + '</td>' +
-      '<td class="status-cell"><button class="status-btn' + (done ? ' done' : '') + '" onclick="toggleDone(\'' + a.id + '\')" title="' + (done ? 'Mark as needed' : 'Mark as done') + '">' + (done ? '&#10003;' : '&#9675;') + '</button></td>';
-    tbody.appendChild(tr);
+    var typeLabel = a.type === 'hero' ? 'hero' : a.type;
+    var nameHtml = esc(a.article) + ' <span style="font-size:11px;color:#888;font-weight:400">(' + typeLabel + ')</span>';
+    html += makeRow(a.id, nameHtml, file, source, photographer, url, done, (a.article + ' ' + a.type).toLowerCase(), file.toLowerCase());
   });
+  tbody.innerHTML = html;
   updateCounts();
   applyFilters();
-}
-
-function urlCell(id, url) {
-  if (url && url.trim()) {
-    return '<a class="url-link" href="' + esc(url) + '" target="_blank" rel="noopener" title="' + esc(url) + '">' + esc(url) + '</a>' +
-           '<input class="field-input" type="text" style="margin-top:4px;font-size:11px" placeholder="Geograph URL" value="' + esc(url) + '" onchange="updateField(\'' + id + '\',\'url\',this.value)" onblur="updateField(\'' + id + '\',\'url\',this.value)">';
-  }
-  return '<input class="field-input" type="text" placeholder="https://www.geograph.org.uk/photo/..." value="" onchange="updateField(\'' + id + '\',\'url\',this.value)" onblur="updateField(\'' + id + '\',\'url\',this.value)">';
 }
 
 function updateCounts() {
@@ -394,31 +401,50 @@ function updateCounts() {
 
 // ---- INTERACTIONS ----
 
-function toggleDone(id) {
+function toggleDone(id, checked) {
   if (!state[id]) state[id] = {};
-  state[id].done = !state[id].done;
+  state[id].done = checked;
   saveState(state);
   var tr = document.getElementById('row-' + id);
-  var btn = tr.querySelector('.status-btn');
-  var done = state[id].done;
-  tr.className = done ? 'done-row' : '';
-  tr.dataset.done = done ? '1' : '0';
-  btn.className = 'status-btn' + (done ? ' done' : '');
-  btn.innerHTML = done ? '&#10003;' : '&#9675;';
-  btn.title = done ? 'Mark as needed' : 'Mark as done';
+  if (tr) {
+    tr.className = checked ? 'done-row' : '';
+    tr.dataset.done = checked ? '1' : '0';
+  }
   updateCounts();
   applyFilters();
+}
+
+function updateSource(id, value) {
+  if (!state[id]) state[id] = {};
+  state[id].source = value;
+  saveState(state);
+  // Grey out photographer if Pexels
+  var tr = document.getElementById('row-' + id);
+  if (tr) {
+    var photoInput = tr.querySelector('.photo-cell .field-input');
+    if (photoInput) {
+      photoInput.disabled = (value === 'Pexels');
+      if (value === 'Pexels') { photoInput.value = ''; state[id].photographer = ''; saveState(state); }
+    }
+  }
 }
 
 function updateField(id, field, value) {
   if (!state[id]) state[id] = {};
   state[id][field] = value;
   saveState(state);
+  if (field === 'file') {
+    var tr = document.getElementById('row-' + id);
+    if (tr) tr.dataset.file = value.toLowerCase();
+  }
   if (field === 'url') {
+    // Refresh just the URL cell to show/hide the clickable link
     var tr = document.getElementById('row-' + id);
     if (tr) {
-      var urlTd = tr.cells[3];
-      urlTd.innerHTML = urlCell(id, value);
+      var urlTd = tr.querySelector('.url-cell');
+      var urlInput = '<input class="field-input" type="text" placeholder="https://www.geograph.org.uk/photo/..." value="' + esc(value) + '" oninput="updateField(\'' + id + '\',\'url\',this.value)">';
+      var urlDisplay = value && value.trim() ? '<a class="url-link" href="' + esc(value) + '" target="_blank" rel="noopener">' + esc(value.length > 40 ? value.slice(0,40) + '...' : value) + '</a>' + urlInput : urlInput;
+      urlTd.innerHTML = urlDisplay;
     }
   }
 }
@@ -434,7 +460,6 @@ function applyFilters() {
   var q = (document.getElementById('search').value || '').toLowerCase().trim();
   ['walks-tbody', 'articles-tbody'].forEach(function(tbodyId) {
     var rows = document.getElementById(tbodyId).querySelectorAll('tr');
-    var visible = 0;
     rows.forEach(function(tr) {
       var name = tr.dataset.name || '';
       var file = tr.dataset.file || '';
@@ -443,8 +468,8 @@ function applyFilters() {
       var matchesFilter = currentFilter === 'all' ||
                          (currentFilter === 'done' && done) ||
                          (currentFilter === 'needed' && !done);
-      if (matchesSearch && matchesFilter) { tr.classList.remove('hidden'); visible++; }
-      else { tr.classList.add('hidden'); }
+      if (matchesSearch && matchesFilter) tr.classList.remove('hidden');
+      else tr.classList.add('hidden');
     });
   });
 }
@@ -452,29 +477,36 @@ function applyFilters() {
 function copyRemaining() {
   var lines = [];
   WALKS.forEach(function(w) {
-    if (!getItem(state, w.id).done) lines.push(w.file);
+    var s = getItem(state, w.id);
+    if (!s.done) lines.push(s.file !== undefined ? s.file : w.file);
   });
   ARTICLES.forEach(function(a) {
-    if (!getItem(state, a.id).done) lines.push(a.file);
+    var s = getItem(state, a.id);
+    if (!s.done) lines.push(s.file !== undefined ? s.file : a.file);
   });
   if (!lines.length) { alert('All images are marked as done.'); return; }
-  navigator.clipboard.writeText(lines.join('\n')).then(function() {
-    var btn = document.querySelector('.copy-btn');
-    var orig = btn.textContent;
-    btn.textContent = 'Copied ' + lines.length + ' filenames';
-    setTimeout(function(){ btn.textContent = orig; }, 2500);
-  }).catch(function() {
-    var ta = document.createElement('textarea');
-    ta.value = lines.join('\n');
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-  });
+  var text = lines.join('\n');
+  var btn = document.querySelector('.copy-btn');
+  var orig = btn.textContent;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = 'Copied ' + lines.length + ' filenames';
+      setTimeout(function(){ btn.textContent = orig; }, 2500);
+    }).catch(function() { fallbackCopy(text, btn, orig, lines.length); });
+  } else {
+    fallbackCopy(text, btn, orig, lines.length);
+  }
 }
 
-function esc(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function fallbackCopy(text, btn, orig, count) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); btn.textContent = 'Copied ' + count + ' filenames'; setTimeout(function(){ btn.textContent = orig; }, 2500); }
+  catch(e) { alert('Copy failed. Use Ctrl+C manually.'); }
+  document.body.removeChild(ta);
 }
 
 // ---- BOOT ----
