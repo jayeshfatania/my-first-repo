@@ -108,6 +108,7 @@
   <div class="licence-note">
     <strong>Geograph</strong> (<a href="https://www.geograph.org.uk/search.php?q=" target="_blank" rel="noopener">geograph.org.uk</a>) images are CC BY-SA 2.0 - search by location name, note the photographer.
     Credit format: <span class="geo-credit">Photo: [Name] / Geograph, CC BY-SA 2.0</span><br>
+    <strong>Wikimedia Commons</strong> images: credit as <span class="geo-credit">Photo: [Name] / Wikimedia Commons, CC BY-SA 4.0</span> - only use CC BY, CC BY-SA, CC0 or Public Domain images. Avoid anything with NC or ND in the licence.<br>
     <strong>Pexels</strong> images are free to use - no photographer credit required in-app, but record the URL for reference.
   </div>
 
@@ -324,7 +325,7 @@ function esc(str) {
 }
 
 function sourceOptions(selected) {
-  var opts = ['', 'Pexels', 'Geograph', 'Unsplash', 'Own', 'Other'];
+  var opts = ['', 'Pexels', 'Geograph', 'Wikimedia Commons', 'Unsplash', 'Own', 'Other'];
   return opts.map(function(o) {
     return '<option value="' + esc(o) + '"' + (selected === o ? ' selected' : '') + '>' + (o || '-- source --') + '</option>';
   }).join('');
