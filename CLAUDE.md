@@ -456,10 +456,11 @@ AWIN: Account approved April 11 2026. Programmes applied: Everypaw, tails.com, V
 - UI parity fixes (April 10 2026): --ink-2 updated to #555555; difficulty badges portrait/trail cards now tinted not solid; walk detail overlay badge brand green/sienna per type; heart button blur removed, border none, SVG stroke white, box-shadow removed; section labels unified under .section-label class; walk card placeholder gradient aligned to website; --border token rgba(0,0,0,0.08)
 - Firebase Phase 3A: complete (anonymous auth, saved walks, Me tab prompt, account row)
 - Firebase Phase 3B: largely complete (see Phase 3 Plan above)
+- B2 beforeunload handler: closed April 13 2026. Owner confirmed not an issue, no fix required.
 
 **PWA backlog:**
 - Push notifications spec (Phase 4)
-- B2 beforeunload handler - deferred, manual test on Android needed
+
 - Multi-device merge on sign-in: BUILT, needs on-device testing
 
 **Website backlog:**
