@@ -16849,14 +16849,18 @@
       var walkLog = JSON.parse(localStorage.getItem('sniffout_walk_log') || '[]') || [];
       walkLog.forEach(function(entry) {
         var docId = String(entry.ts || entry.timestamp || Date.now());
+        var uploadWalkId = entry.id || entry.walkId || null;
+        var uploadWalk = uploadWalkId ? WALKS_DB.find(function(w) { return w.id === uploadWalkId; }) : null;
+        var uploadDist = entry.distance != null ? entry.distance : (uploadWalk ? uploadWalk.distance || null : null);
         db.collection('users').doc(uid).collection('walkLog').doc(docId)
           .set({
-            walkId:    entry.id       || entry.walkId   || null,
+            walkId:    uploadWalkId,
             walkName:  entry.name     || entry.walkName || '',
             date:      entry.date     || null,
             notes:     entry.note     || entry.notes    || null,
             rating:    entry.rating   || null,
             duration:  entry.duration || null,
+            distance:  uploadDist,
             type:      entry.type     || 'curated',
             dogId:     entry.dogId    || null,
             ts:        entry.ts       || null,
@@ -16877,6 +16881,26 @@
         .catch(function(e) { console.warn('Upload settings failed:', e); });
       console.log('[Sniffout] upload Step 4: settings uploaded');
     } catch(e) { console.warn('fsUploadAllLocalData settings error:', e); }
+
+    // Step 5: Saved places
+    try {
+      var savedPlaces = JSON.parse(localStorage.getItem(PLACE_FAVS_KEY) || '[]') || [];
+      savedPlaces.forEach(function(place) {
+        var pid = String(place.placeId || place.id || '');
+        if (!pid) return;
+        db.collection('users').doc(uid).collection('savedPlaces').doc(pid)
+          .set({
+            placeId:   pid,
+            placeName: place.name    || '',
+            placeType: place.cat     || '',
+            address:   place.address || null,
+            mapsUrl:   place.mapsUrl || null,
+            savedAt:   firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true })
+          .catch(function(e) { console.warn('Upload savedPlace failed:', e); });
+      });
+      console.log('[Sniffout] upload Step 5: saved places uploaded, count=' + savedPlaces.length);
+    } catch(e) { console.warn('fsUploadAllLocalData savedPlaces error:', e); }
   }
 
   /* ─── Task 1: Write dog profile to Firestore on sign-in ─── */
@@ -16949,7 +16973,25 @@
         var toAdd = [];
         snap.forEach(function(doc) {
           var d = doc.data();
-          if (d.ts && !localTs[String(d.ts)]) toAdd.push(d);
+          if (d.ts && !localTs[String(d.ts)]) {
+            // Normalise Firestore field names to match local walk log format
+            // (Firestore uses walkId/walkName; local uses id/name)
+            toAdd.push({
+              id:       d.walkId   || d.id   || null,
+              name:     d.walkName || d.name || '',
+              walkId:   d.walkId   || null,
+              walkName: d.walkName || '',
+              date:     d.date     || null,
+              note:     d.notes    || d.note || null,
+              notes:    d.notes    || d.note || null,
+              rating:   d.rating   || null,
+              duration: d.duration || null,
+              distance: d.distance || null,
+              type:     d.type     || 'curated',
+              dogId:    d.dogId    || null,
+              ts:       d.ts
+            });
+          }
         });
         if (toAdd.length > 0) {
           var merged = localLog.concat(toAdd);
@@ -16965,9 +17007,40 @@
         localLog.forEach(function(entry) {
           if (entry.ts && !remoteTs[String(entry.ts)]) fsWriteWalkLogEntry(entry);
         });
-        // Bug 2: refresh Me tab counts after walkLog merge
+        // Refresh Me tab counts after walkLog merge
         updateMeStats();
       }).catch(function(e) { console.warn('merge walkLog failed:', e); });
+
+    // savedPlaces: union by placeId; Firestore entries added to localStorage
+    db.collection('users').doc(uid).collection('savedPlaces').get()
+      .then(function(snap) {
+        if (snap.empty) { console.log('[Sniffout] savedPlaces: no Firestore data'); return; }
+        var localPlaces = getPlaceFavourites();
+        var localIds = {};
+        localPlaces.forEach(function(p) { if (p.placeId) localIds[p.placeId] = true; });
+        var toAddPlaces = [];
+        snap.forEach(function(doc) {
+          var d = doc.data();
+          if (d.placeId && !localIds[d.placeId]) {
+            toAddPlaces.push({
+              placeId: d.placeId,
+              name:    d.placeName || '',
+              cat:     d.placeType || '',
+              address: d.address   || '',
+              mapsUrl: d.mapsUrl   || '',
+              savedAt: d.savedAt && d.savedAt.toMillis ? d.savedAt.toMillis() : Date.now()
+            });
+          }
+        });
+        if (toAddPlaces.length > 0) {
+          var merged = localPlaces.concat(toAddPlaces);
+          savePlaceFavourites(merged);
+          updateMeStats();
+          console.log('[Sniffout] savedPlaces merged: added ' + toAddPlaces.length + ' from Firestore');
+        } else {
+          console.log('[Sniffout] savedPlaces: no new remote entries, local=' + localPlaces.length);
+        }
+      }).catch(function(e) { console.warn('merge savedPlaces failed:', e); });
 
     // dogs: Firestore wins if it has data; local used as fallback
     db.collection('users').doc(uid).collection('dogs').get()
