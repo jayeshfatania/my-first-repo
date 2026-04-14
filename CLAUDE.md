@@ -125,7 +125,7 @@ The companion website is a Hugo static site in a separate repo: github.com/jayes
 - Intros written by Saoirse persona (50-80 words each)
 
 ### Walk pages
-- 77 walk pages live with FAQ blocks, schema.org FAQ markup, and weather preview cards. All 12 batches complete.
+- 87 walk pages live with FAQ blocks, schema.org FAQ markup, and weather preview cards.
 - FAQ blocks improve rich result eligibility in Google search
 
 ### SEO research
@@ -440,7 +440,7 @@ Firebase:
 
 Other:
 - T16: Full end-to-end test pass - not started
-- Multi-device merge: BUILT, needs on-device testing before sign-off
+- Multi-device merge: BUILT. This month stats now sync correctly. 1 journal entry and 3km gap on total distance remains - parked April 14 2026, not a launch blocker.
 
 AWIN: Account approved April 11 2026. Programmes applied: Everypaw, tails.com, VioVet. Booking.com via CJ Affiliate still to join. Payment details still to add to AWIN dashboard (required before first commission).
 
@@ -526,3 +526,11 @@ Applies to all sign-in flows, account prompts, and account creation UI (Phase 3B
 - **Never use:** "register", "sign up", "create an account"
 - **Always use:** "Save your walks", "Keep your data safe", "Access on any device"
 - Account creation is always optional — never gated. Users must be able to dismiss any account prompt without penalty.
+
+## New features shipped April 13-14 2026
+
+- **Walk page photo gallery strip:** Optional `gallery` frontmatter array on walk pages. Multiple images per walk. Caption and credit fields. Lightbox on desktop.
+- **Linear walk template support:** `walkType`, `startPoint`, `endPoint`, `returnOptions`, `waterAccess`, `canalWater`, `tidal` frontmatter fields. Getting back section in Before you go sidebar. All blocks invisible on circular walks.
+- **Before you go + For your dog sections:** Live on all walk pages. See spec at ~/Desktop/sniffout-website/docs/design/walk-page-sections-spec-april-13.md
+- **Author bylines:** Live on all Tom guide articles. Fact checked badge. Methodology link.
+- **Website weather chart timezone fix:** Was showing UTC hour, now uses Europe/London.
