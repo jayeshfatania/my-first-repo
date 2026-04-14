@@ -16797,6 +16797,70 @@
     // Upload all local data first, then merge Firestore with local
     fsUploadAllLocalData(user.uid);
     mergeFirestoreWithLocal(user.uid);
+    // Re-sync walkLog and savedWalks with complete data (fixes missing distance field)
+    fsResyncWalkLog();
+    fsResyncSavedWalks();
+  }
+
+  /* ─── Phase 3B: Re-sync walkLog to Firestore with complete data (fixes missing distance) ─── */
+  function fsResyncWalkLog() {
+    var uid = auth.currentUser && auth.currentUser.uid;
+    if (!uid || (auth.currentUser && auth.currentUser.isAnonymous)) return;
+    if (!FIREBASE_WRITE_ENABLED || !db) return;
+
+    var log = JSON.parse(localStorage.getItem('sniffout_walk_log') || '[]');
+    if (!log.length) return;
+
+    console.log('Phase 3B: resyncing ' + log.length + ' walk log entries to Firestore');
+
+    log.forEach(function(entry) {
+      var walk = WALKS_DB.find(function(w) { return w.id === (entry.id || entry.walkId); });
+      var distance = entry.distance != null ? entry.distance : (walk ? (walk.distance || 0) : 0);
+      var docId = String(entry.ts || entry.timestamp || entry.date || Date.now());
+
+      db.collection('users').doc(uid).collection('walkLog').doc(docId)
+        .set({
+          walkId:    entry.id       || entry.walkId   || null,
+          walkName:  entry.name     || entry.walkName || '',
+          date:      entry.date     || null,
+          notes:     entry.notes    || entry.note     || null,
+          rating:    entry.rating   || null,
+          duration:  entry.duration || null,
+          distance:  distance,
+          type:      entry.type     || 'curated',
+          dogId:     entry.dogId    || null,
+          createdAt: entry.createdAt || firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true })
+        .catch(function(err) { console.warn('fsResyncWalkLog write failed:', err); });
+    });
+
+    console.log('Phase 3B: walkLog resync complete');
+  }
+
+  /* ─── Phase 3B: Re-sync savedWalks to Firestore ─── */
+  function fsResyncSavedWalks() {
+    var uid = auth.currentUser && auth.currentUser.uid;
+    if (!uid || (auth.currentUser && auth.currentUser.isAnonymous)) return;
+    if (!FIREBASE_WRITE_ENABLED || !db) return;
+
+    var favs = JSON.parse(localStorage.getItem('sniffout_favs') || '[]');
+    if (!favs.length) return;
+
+    console.log('Phase 3B: resyncing ' + favs.length + ' saved walks to Firestore');
+
+    favs.forEach(function(walkId) {
+      var walk = WALKS_DB.find(function(w) { return w.id === walkId; });
+      if (!walk) return;
+
+      db.collection('users').doc(uid).collection('savedWalks').doc(walkId)
+        .set({
+          walkId:    walkId,
+          walkName:  walk.name     || '',
+          location:  walk.location || '',
+          savedAt:   firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true })
+        .catch(function(err) { console.warn('fsResyncSavedWalks write failed:', err); });
+    });
   }
 
   /* ─── Bug 1: Upload all localStorage data to Firestore on sign-in/account creation ─── */
@@ -17057,6 +17121,9 @@
 
     // settings: local wins, no overwrite
     console.log('[Sniffout] settings: local wins, skipping overwrite');
+
+    // Re-sync walkLog after local state is up to date from Firestore
+    fsResyncWalkLog();
   }
 
   /* ─── Task 5: Account deletion ─── */
