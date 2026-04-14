@@ -16794,12 +16794,12 @@
     closeAuthSheet();
     updateMeAuthHeader();
     showToast(isNew ? 'Account created. Your walks are safe.' : 'Signed in.');
-    // Upload all local data first, then merge Firestore with local
-    fsUploadAllLocalData(user.uid);
-    mergeFirestoreWithLocal(user.uid);
-    // Re-sync walkLog and savedWalks with complete data (fixes missing distance field)
+    // Step 1: push local data UP to Firestore (resync with complete fields)
     fsResyncWalkLog();
     fsResyncSavedWalks();
+    fsUploadAllLocalData(user.uid);
+    // Step 2: pull Firestore data back DOWN and merge
+    mergeFirestoreWithLocal(user.uid);
   }
 
   /* ─── Phase 3B: Re-sync walkLog to Firestore with complete data (fixes missing distance) ─── */
@@ -16809,9 +16809,8 @@
     if (!FIREBASE_WRITE_ENABLED || !db) return;
 
     var log = JSON.parse(localStorage.getItem('sniffout_walk_log') || '[]');
+    console.log('Phase3B resync: found ' + log.length + ' local entries, uid=' + uid);
     if (!log.length) return;
-
-    console.log('Phase 3B: resyncing ' + log.length + ' walk log entries to Firestore');
 
     log.forEach(function(entry) {
       var walk = WALKS_DB.find(function(w) { return w.id === (entry.id || entry.walkId); });
@@ -16834,7 +16833,7 @@
         .catch(function(err) { console.warn('fsResyncWalkLog write failed:', err); });
     });
 
-    console.log('Phase 3B: walkLog resync complete');
+    console.log('Phase3B resync: wrote ' + log.length + ' entries to Firestore');
   }
 
   /* ─── Phase 3B: Re-sync savedWalks to Firestore ─── */
@@ -17008,6 +17007,7 @@
   function mergeFirestoreWithLocal(uid) {
     if (!FIREBASE_WRITE_ENABLED || !db || !uid) return;
     console.log('[Sniffout] Task 4: mergeFirestoreWithLocal starting for uid:', uid);
+    console.log('Phase3B merge: starting merge for uid=' + uid);
 
     // savedWalks: union of local + Firestore
     db.collection('users').doc(uid).collection('savedWalks').get()
@@ -17073,6 +17073,10 @@
         });
         // Refresh Me tab counts after walkLog merge
         updateMeStats();
+        if (typeof renderMeTab === 'function') renderMeTab();
+        // Now resync walkLog UP to Firestore — runs here so localStorage is fully up to date
+        fsResyncWalkLog();
+        console.log('Phase3B merge: complete, re-rendering Me tab');
       }).catch(function(e) { console.warn('merge walkLog failed:', e); });
 
     // savedPlaces: union by placeId; Firestore entries added to localStorage
@@ -17121,9 +17125,6 @@
 
     // settings: local wins, no overwrite
     console.log('[Sniffout] settings: local wins, skipping overwrite');
-
-    // Re-sync walkLog after local state is up to date from Firestore
-    fsResyncWalkLog();
   }
 
   /* ─── Task 5: Account deletion ─── */
