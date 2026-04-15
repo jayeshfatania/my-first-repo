@@ -402,7 +402,28 @@
       "Bash(tmux list-windows:*)",
       "Bash(git:*)",
       "Bash(grep -n \"footer\\\\|Dog walks UK\" /Users/jayeshfatania/Desktop/sniffout-website/docs/guides/ticks-dogs-uk/index.html 2>/dev/null | head -5\necho \"---\"\ngrep -n \"footer\\\\|Dog walks UK\" /Users/jayeshfatania/Desktop/sniffout-website/docs/get/index.html 2>/dev/null | head -5)",
-      "Bash(curl -s https://sniffout-website.pages.dev/ | head -200)"
+      "Bash(curl -s https://sniffout-website.pages.dev/ | head -200)",
+      "Bash(find /Users/jayeshfatania/Desktop/sniffout-website/themes/sniffout/layouts -name \"*.html\" 2>/dev/null | sort)",
+      "Bash(do)",
+      "Bash(echo \"=== $f ===\")",
+      "Read(//Users/jayeshfatania/Desktop/sniffout-website/content/guides/**)",
+      "Bash(grep -n \"mergeFirestoreWithLocal\\\\|console.log.*mergeFirestore\\\\|} // end merge\\\\|^  }\" /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html | awk 'NR>=20 && NR<=60')",
+      "Bash(awk 'NR>=17050 && NR<=17110' /Users/jayeshfatania/Desktop/my-first-repo/sniffout-v2.html)",
+      "Bash(hugo --minify -v)",
+      "Bash(hugo --buildFuture --minify)",
+      "Bash(hugo list:*)",
+      "Bash(hugo --minify --verbose)",
+      "Bash(hugo --minify --logLevel debug)",
+      "Bash(hugo --minify --destination /tmp/sniffout-test)",
+      "Bash(hugo --minify --destination /tmp/sniffout-gallery-test)",
+      "Bash(hugo --destination /tmp/sniffout-schema-test --quiet)",
+      "Bash(hugo version:*)",
+      "Bash(xxd)",
+      "Bash(hugo --destination /tmp/sniffout-schema-test2 --quiet)",
+      "Bash(hugo --destination docs --quiet)",
+      "Bash(hugo --destination docs --minify)",
+      "Bash(hugo --destination /tmp/sniffout-nomini --quiet)",
+      "Bash(find . -name '.DS_Store' -exec git rm --cached {} +)"
     ]
   }
 }
