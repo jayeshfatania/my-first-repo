@@ -26,7 +26,7 @@ The community features (user-submitted walks, ratings, reviews) are planned but 
 
 ## Competitive Context
 
-Closest competitor is PlayDogs (France/Switzerland, 170k downloads), but it relies on community-generated content so is empty in new regions. Sniffout differentiates with curated content from day one plus live weather integration. No UK competitor combines walk discovery + live weather + dog-specific hazard context in a single product. Closest competitor is PlayDogs (France/Switzerland, 170k downloads) which relies on community-generated content so is empty in new regions.
+Closest competitor is PlayDogs (France/Switzerland, 170k downloads), but it relies on community-generated content so is empty in new regions. Sniffout differentiates with curated content from day one plus live weather integration. No UK competitor combines walk discovery + live weather + dog-specific hazard context in a single product.
 
 ## Monetisation Strategy
 
@@ -125,7 +125,7 @@ The companion website is a Hugo static site in a separate repo: github.com/jayes
 - Intros written by Saoirse persona (50-80 words each)
 
 ### Walk pages
-- 87 walk pages live with FAQ blocks, schema.org FAQ markup, and weather preview cards.
+- 87 walk pages live with FAQ accordion (details/summary), schema.org FAQPage markup, weather preview cards, Before you go and For your dog sections.
 - FAQ blocks improve rich result eligibility in Google search
 
 ### SEO research
@@ -429,7 +429,7 @@ These items are not yet implemented. Do not start any of these without an explic
 
 GDPR/Legal:
 - L1: GDPR sign-off - STILL NEEDED before public launch with real users. Development/internal testing can proceed without it.
-- L5: T&C consent screen - still needed, blocked on Sprintlaw call
+- L5: T&C consent screen - still needed, blocked on solicitor engagement (LawBite confirmed non-existent; see handoff-april-15 for verified alternatives: Sprintlaw UK, LegalVision UK, PAIL Solicitors, JPP Law)
 - ICO registration: still needed before launch
 
 Firebase:
@@ -534,3 +534,19 @@ Applies to all sign-in flows, account prompts, and account creation UI (Phase 3B
 - **Before you go + For your dog sections:** Live on all walk pages. See spec at ~/Desktop/sniffout-website/docs/design/walk-page-sections-spec-april-13.md
 - **Author bylines:** Live on all Tom guide articles. Fact checked badge. Methodology link.
 - **Website weather chart timezone fix:** Was showing UTC hour, now uses Europe/London.
+
+## Website fixes shipped April 15 2026
+
+- **FAQ accordion on all walk pages:** Native details/summary pattern, collapsed by default, schema.org FAQPage markup preserved.
+- **Kingston walk page fixes:** fullOff-lead concatenation bug, schema.org JSON-LD escaped quotes, x2Park concatenation, getting back text overflow, distance corrected to 5.6 km, deer rut hazard removed, two-car return option removed.
+- **Walk description lead-in styling:** .ws-description at 17px, font-weight 500, line-height 1.6 across all walk pages.
+
+## Linear Walk Content Rules
+
+These apply to both repos where walk content is authored.
+
+- Always list "walk back the same route" FIRST as return option before any transport options.
+- Transport options must be verified accurate before publishing. Wrong bus numbers must never appear. If unverified, omit.
+- Return options must be realistic for the walk distance. No two-car suggestions for short walks.
+- Never assume leads required on towpaths - research thoroughly.
+- Where dual paths exist (shared cyclist/pedestrian upper vs pedestrian-only lower) describe explicitly.
