@@ -5450,7 +5450,7 @@
         <div class="me-hero-stats-row">
           <div class="me-hero-stat">
             <span class="me-hero-stat-val" id="heroStatDist">-</span>
-            <span class="me-hero-stat-lbl">km walked</span>
+            <span class="me-hero-stat-lbl" id="heroStatDistLbl">km walked</span>
           </div>
           <div class="me-hero-stat">
             <span class="me-hero-stat-val" id="heroStatWalks">-</span>
@@ -5486,7 +5486,7 @@
           </div>
           <div class="me-month-stat">
             <span class="me-month-stat-val" id="meMonthKm">0</span>
-            <span class="me-month-stat-lbl">km</span>
+            <span class="me-month-stat-lbl" id="meMonthKmLbl">km</span>
           </div>
           <div class="me-month-stat">
             <span class="me-month-stat-val" id="meMonthPlaces">0</span>
@@ -12336,8 +12336,11 @@
     var heroStatDistEl  = document.getElementById('heroStatDist');
     var heroStatWalksEl = document.getElementById('heroStatWalks');
     var heroStatWalksLblEl = document.getElementById('heroStatWalksLbl');
-    var totalKm = getTotalDistanceMi() * 1.60934;
-    if (heroStatDistEl)  heroStatDistEl.textContent  = log.length > 0 ? '~' + (Math.round(totalKm * 10) / 10).toFixed(1) : '-';
+    var totalMi = getTotalDistanceMi();
+    var heroDistNum = getSavedUnits() === 'mi' ? totalMi : totalMi * 1.60934;
+    if (heroStatDistEl) heroStatDistEl.textContent = log.length > 0 ? '~' + heroDistNum.toFixed(1) : '-';
+    var heroStatDistLblEl = document.getElementById('heroStatDistLbl');
+    if (heroStatDistLblEl) heroStatDistLblEl.textContent = getSavedUnits() === 'mi' ? 'miles walked' : 'km walked';
     if (heroStatWalksEl) heroStatWalksEl.textContent = log.length > 0 ? log.length : '-';
     if (heroStatWalksLblEl) heroStatWalksLblEl.textContent = log.length === 1 ? 'walk logged' : 'walks logged';
 
@@ -12363,9 +12366,14 @@
       return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
     });
     var monthWalks = thisMonthLog.length;
-    var monthKm = 0;
+    var monthKm = 0; // always stored in km for note text
+    var monthMi = 0;
     thisMonthLog.forEach(function(e) {
-      if (e.type !== 'custom' && walkById[e.id]) monthKm += (walkById[e.id].distance || 0) * 1.60934;
+      if (e.type !== 'custom' && walkById[e.id]) {
+        var d = walkById[e.id].distance || 0;
+        monthMi += d;
+        monthKm += d * 1.60934;
+      }
     });
 
     // New places this month: walk IDs visited this month that had not appeared in earlier log entries
@@ -12388,8 +12396,11 @@
     var monthWalksEl  = document.getElementById('meMonthWalks');
     var monthKmEl     = document.getElementById('meMonthKm');
     var monthPlacesEl = document.getElementById('meMonthPlaces');
+    var monthDisplayNum = getSavedUnits() === 'mi' ? monthMi : monthKm;
+    var monthKmLblEl = document.getElementById('meMonthKmLbl');
     if (monthWalksEl)  monthWalksEl.textContent  = monthWalks;
-    if (monthKmEl)     monthKmEl.textContent     = monthKm > 0 ? '~' + (Math.round(monthKm * 10) / 10).toFixed(1) : '-';
+    if (monthKmEl)     monthKmEl.textContent     = monthDisplayNum > 0 ? '~' + monthDisplayNum.toFixed(1) : '-';
+    if (monthKmLblEl)  monthKmLblEl.textContent  = getSavedUnits() === 'mi' ? 'mi' : 'km';
     if (monthPlacesEl) monthPlacesEl.textContent = newPlacesCount;
 
     // Personal note
@@ -12416,8 +12427,10 @@
             }
             noteHtml = '<strong style="color:var(--brand);font-style:normal;">You explored ' + escHtml(firstVisitName) + ' for the first time this month.</strong> ' + escHtml(dogDisplayName) + ' has been to ' + totalUniqueExplored + ' different places with you so far.';
           } else {
-            var kmFmt = monthKm > 0 ? '~' + (Math.round(monthKm * 10) / 10).toFixed(1) : '0';
-            noteHtml = '<strong style="color:var(--brand);font-style:normal;">' + escHtml(dogDisplayName) + ' and you have covered ' + kmFmt + ' km together this month.</strong>';
+            var noteDist = getSavedUnits() === 'mi' ? monthMi : monthKm;
+            var noteUnit = getSavedUnits() === 'mi' ? 'mi' : 'km';
+            var kmFmt = noteDist > 0 ? '~' + noteDist.toFixed(1) : '0';
+            noteHtml = '<strong style="color:var(--brand);font-style:normal;">' + escHtml(dogDisplayName) + ' and you have covered ' + kmFmt + ' ' + noteUnit + ' together this month.</strong>';
           }
           monthNoteTextEl.innerHTML = noteHtml;
         }
@@ -15746,6 +15759,8 @@
         updateMeStats();
         // Re-render walk cards so distances update without a page refresh
         renderWalksTab(walksUserLat, walksUserLon);
+        // Re-render Me tab so stat labels and values update live
+        if (typeof renderMeTab === 'function') renderMeTab();
       });
     });
   });
