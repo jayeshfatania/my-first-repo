@@ -14565,8 +14565,14 @@
 
   /* ─── Hoisted: units helpers (needed by init) ─── */
   const UNITS_KEY = 'sniffout_units';
-  function getSavedUnits() { try { return localStorage.getItem(UNITS_KEY) || 'km'; } catch(e) { return 'km'; } }
-  function saveUnits(u)    { try { localStorage.setItem(UNITS_KEY, u); } catch(e) {} }
+  function getSavedUnits() {
+    try {
+      var v = localStorage.getItem(UNITS_KEY) || 'km';
+      // Normalise legacy 'miles' value to 'mi' so all === 'mi' checks work
+      return v === 'miles' ? 'mi' : v;
+    } catch(e) { return 'km'; }
+  }
+  function saveUnits(u) { try { localStorage.setItem(UNITS_KEY, u); } catch(e) {} }
 
   /* ─── Hoisted: recently viewed helpers (needed by init) ─── */
   const RECENT_WALKS_KEY = 'sniffout_recent_walks';
@@ -15738,6 +15744,8 @@
         saveUnits(u);
         applyUnitsPreference(u);
         updateMeStats();
+        // Re-render walk cards so distances update without a page refresh
+        renderWalksTab(walksUserLat, walksUserLon);
       });
     });
   });
