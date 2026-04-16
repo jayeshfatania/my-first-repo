@@ -11265,6 +11265,75 @@
       hazards: ['livestock'],
       wetNote: 'Well-surfaced throughout. Suitable year-round.',
       hotNote: 'Thames accessible for paddling above Teddington Lock. Avoid the weir and tidal sections below the lock.'
+    },
+    {
+      id: 'oxleas-wood-shooters-hill',
+      name: 'Oxleas Wood and Shooters Hill',
+      location: 'Shooters Hill, South East London',
+      lat: 51.4657, lon: 0.0715,
+      description: 'Ancient broadleaf woodland in SE London. Off-lead throughout with Severndroog Castle folly and a dog-friendly tea room.',
+      offLead: 'full',
+      livestock: false,
+      hasStiles: false,
+      hasParking: true,
+      terrain: 'mixed',
+      difficulty: 'easy',
+      imageUrl: '',
+      badge: 'Hidden gem',
+      rating: 0,
+      reviewCount: 0,
+      distance: 3.5,
+      duration: 90,
+      source: 'curated',
+      hazards: [],
+      wetNote: 'Natural woodland paths can be muddy after rain. Tarmac sections near cafe and car park are passable year-round.',
+      hotNote: 'Woodland shade throughout. Tarmac paths near cafe can be hot in direct summer sun - stick to shaded paths.'
+    },
+    {
+      id: 'holkham-beach-pinewoods',
+      name: 'Holkham Beach and Pinewoods',
+      location: 'Holkham, North Norfolk',
+      lat: 52.9680, lon: 0.8070,
+      description: 'One of Englands widest beaches backed by ancient pinewoods. Dogs welcome year-round with over 70 percent of the beach off-lead.',
+      offLead: 'partial',
+      livestock: false,
+      hasStiles: false,
+      hasParking: true,
+      terrain: 'mixed',
+      difficulty: 'easy',
+      imageUrl: '',
+      badge: 'Sniffout Pick',
+      rating: 0,
+      reviewCount: 0,
+      distance: 3,
+      duration: 90,
+      source: 'curated',
+      hazards: ['flooding'],
+      wetNote: 'Sandy and boardwalk sections passable year-round. Pinewoods path is compacted sand.',
+      hotNote: 'Sand can become very hot in direct sun. Walk during cooler parts of the day. Wet sand near the shoreline is safer for paws.'
+    },
+    {
+      id: 'epping-forest-connaught-water',
+      name: 'Epping Forest - Connaught Water',
+      location: 'Chingford, East London',
+      lat: 51.6340, lon: 0.0130,
+      description: 'Ancient pollarded hornbeam forest with a clear ornamental lake at its heart. Off-lead throughout for dogs with reliable recall.',
+      offLead: 'full',
+      livestock: true,
+      hasStiles: false,
+      hasParking: true,
+      terrain: 'mixed',
+      difficulty: 'easy',
+      imageUrl: '',
+      badge: 'Hidden gem',
+      rating: 0,
+      reviewCount: 0,
+      distance: 2.8,
+      duration: 90,
+      source: 'curated',
+      hazards: ['livestock', 'algae'],
+      wetNote: 'Forest paths can be very muddy October to March. Connaught Water path is hard and level year-round.',
+      hotNote: 'Check blue-green algae notices before letting dogs in Connaught Water in warm weather. Plenty of shade from ancient woodland canopy.'
     }
   ]
 
@@ -15750,19 +15819,17 @@
     if (pill) pill.setAttribute('data-active', String(idx));
   }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('#segment-control-units .segment-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var u = btn.getAttribute('data-units');
-        saveUnits(u);
-        applyUnitsPreference(u);
-        updateMeStats();
-        // Re-render walk cards so distances update without a page refresh
-        renderWalksTab(walksUserLat, walksUserLon);
-        // Re-render Me tab so stat labels and values update live
-        if (typeof renderMeTab === 'function') renderMeTab();
-      });
-    });
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('#segment-control-units .segment-btn');
+    if (!btn) return;
+    var u = btn.getAttribute('data-units');
+    saveUnits(u);
+    applyUnitsPreference(u);
+    updateMeStats();
+    // Re-render walk cards so distances update without a page refresh
+    renderWalksTab(walksUserLat, walksUserLon);
+    // Re-render Me tab so stat labels and values update live
+    if (typeof renderMeTab === 'function') renderMeTab();
   });
 
   function formatDist(miles) {
@@ -15919,6 +15986,9 @@
     _origSwitchTab(id);
     if (id === 'today' || id === 'weather') {
       silentWeatherRefresh();
+    }
+    if (id === 'me') {
+      if (typeof renderMeTab === 'function') renderMeTab();
     }
   };
   /* ═══════════════════════════════
