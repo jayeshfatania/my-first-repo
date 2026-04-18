@@ -9265,7 +9265,7 @@
   function openWalkDetail(id) {
     var walk = null;
     for (var i = 0; i < WALKS_DB.length; i++) {
-      if (WALKS_DB[i].id === id) { walk = WALKS_DB[i]; break; }
+      if (WALKS_DB[i] && WALKS_DB[i].id === id) { walk = WALKS_DB[i]; break; }
     }
     if (!walk) return;
     _wishlistPromptDismissed = false;
@@ -11232,7 +11232,7 @@
       hasParking: true,
       terrain: 'paved',
       difficulty: 'easy',
-      imageUrl: '/img/walks/kingston-teddington.jpg',
+      imageUrl: '',
       badge: 'Sniffout Pick',
       rating: 0,
       reviewCount: 0,
