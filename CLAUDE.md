@@ -234,7 +234,7 @@ Note: `communityWalks` is not part of v2 — community features are deferred.
 
 ### Data
 
-Walk data is hardcoded in `WALKS_DB` (93 UK walks with hazard tagging). No backend — all persistence is `localStorage`. The v2 schema for each walk entry:
+Walk data is hardcoded in `WALKS_DB` (99 UK walks with hazard tagging). No backend — all persistence is `localStorage`. The v2 schema for each walk entry:
 
 ```
 id, name, location, lat, lon, description
@@ -526,6 +526,34 @@ Applies to all sign-in flows, account prompts, and account creation UI (Phase 3B
 - **Never use:** "register", "sign up", "create an account"
 - **Always use:** "Save your walks", "Keep your data safe", "Access on any device"
 - Account creation is always optional — never gated. Users must be able to dismiss any account prompt without penalty.
+
+## PWA updates April 15-19 2026
+
+### New walks added to WALKS_DB (6 walks, session April 15-19)
+- Kingston to Teddington Lock (Thames Path, Surrey)
+- Teddington to Richmond (Thames Path, SW London)
+- Cookham to Marlow (Thames Path, Berkshire)
+- Oxleas Wood and Shooters Hill (SE London)
+- Holkham Beach and Pinewoods (North Norfolk)
+- Epping Forest - Connaught Water (Essex / East London)
+
+Total WALKS_DB entries: 99
+
+### Bug fixes (April 15-19)
+- Walk card tap crash fixed: null guard added on `WALKS_DB[i]` at line 9268 in `openWalkDetail` — sparse array entries caused crash when tapping walk cards
+- Walk card image fallback fixed: empty `imageUrl` now correctly shows woodland pattern placeholder
+- Kingston and Teddington walk images copied from website repo to PWA `/img/walks/`
+- Kingston distance corrected: 1.8 miles (2.9 km one way)
+- Teddington distance corrected: 3.17 miles (5.1 km one way)
+- Walk detail descriptions expanded for all 6 new walks with richer content
+
+### Key learnings (April 15-19)
+- WALKS_DB has 11 undefined/sparse entries from legacy data — any code iterating WALKS_DB must null-check with `WALKS_DB[i] &&` before accessing properties
+- PWA and website have separate image folders — walk images must be copied to both repos to render correctly in both contexts
+- New walks added to WALKS_DB need testing on the Walks tab (card tap + image rendering) before considering them done
+- Smoke test checklist lives at: `~/Desktop/my-first-repo/docs/qa/smoke-test-checklist.md`
+
+---
 
 ## New features shipped April 13-14 2026
 
