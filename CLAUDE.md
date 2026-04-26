@@ -105,6 +105,8 @@ The companion website is a Hugo static site in a separate repo: github.com/jayes
 ### URLs
 - Live: sniffout-website.pages.dev (baseURL in config.toml)
 - Custom domain: sniffout.co.uk — NOT yet connected. Do not change baseURL until the domain is live.
+- CMS: sniffout-website.pages.dev/admin (Sveltia CMS, login with GitHub)
+- OAuth Worker: sniffout-cms-auth.sniffout.workers.dev (Cloudflare Worker, source: ~/Desktop/sniffout-cms-auth/)
 
 ### Design decisions locked
 - Typeface: Plus Jakarta Sans sole typeface throughout. Fraunces display serif is permanently rejected.
@@ -459,8 +461,9 @@ AWIN: Account approved April 11 2026. Programmes applied: Everypaw, tails.com, V
 - B2 beforeunload handler: closed April 13 2026. Owner confirmed not an issue, no fix required.
 
 **PWA backlog:**
+- **Me tab visual redesign (April 2026 - START HERE next session):** Design handoff reviewed and agreed. Scope is visual-only using existing elements only. No functional changes. No new pages. Font: Plus Jakarta Sans only (ignore Inter in design spec). Rows to regroup: Activity (Journal, Walks Explored, Recently Viewed) / Library (Saved Walks, Saved Places, Badges) / Account (Account, Your Dog). Hero card and month card visual polish. Brief NOT yet written - start here.
+- Image checklist WALKS array: 10 missing walks need adding to image-checklist.html. Brief written, verify paste completed: cookham-to-marlow-thames-path, durham-riverside-dog-walk, epping-forest-connaught-water, holkham-beach-pinewoods, kingston-teddington-lock-thames-path, oxleas-wood-shooters-hill-dog-walk, regents-canal-little-venice-camden, river-wey-navigation-guildford-godalming, teddington-to-richmond-thames-path, threipmuir-harlaw-dog-walk
 - Push notifications spec (Phase 4)
-
 - Multi-device merge on sign-in: BUILT, needs on-device testing
 
 **Website backlog:**
