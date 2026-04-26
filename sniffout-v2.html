@@ -2998,6 +2998,219 @@
     .me-most-visited-label { font: 700 10px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; display: block; }
     .me-most-visited-name { font: 700 14px/1.2 'Plus Jakarta Sans', sans-serif; color: var(--ink); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .me-most-visited-meta { font: 400 11px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-3); display: block; margin-top: 1px; }
+
+    /* ─── Profile hero (Task 1) ─── */
+    .me-profile-hero {
+      background: var(--bg);
+      padding: 20px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease;
+    }
+    .me-profile-hero:active { transform: scale(0.98); }
+    .me-profile-hero-avatar {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: var(--brand-tint);
+      border: 3px solid var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; overflow: hidden;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(44,74,20,0.12);
+    }
+    .me-profile-hero-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .me-profile-hero-name-row { display: flex; align-items: center; gap: 4px; }
+    .me-profile-hero-name { font: 700 22px/1.2 'Plus Jakarta Sans', sans-serif; color: var(--ink); }
+    .me-profile-hero-chevron { color: var(--ink-3); flex-shrink: 0; }
+    .me-profile-hero-breed { font: 400 14px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-3); margin-top: 4px; min-height: 14px; }
+
+    /* ─── Stats card (Task 2) ─── */
+    .me-stats-card {
+      margin: 0 16px 12px;
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .me-stats-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+    }
+    .me-stats-toggle {
+      display: flex;
+      gap: 3px;
+      background: var(--bg);
+      border-radius: 999px;
+      padding: 3px;
+    }
+    .me-stats-toggle-pill {
+      font: 600 12px/1 'Plus Jakarta Sans', sans-serif;
+      border: none;
+      border-radius: 999px;
+      padding: 6px 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease;
+      color: var(--ink-3);
+      background: transparent;
+    }
+    .me-stats-toggle-pill:active { transform: scale(0.97); }
+    .me-stats-toggle-pill--active { background: var(--brand); color: #fff; }
+    .me-stats-period { font: 400 12px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-3); }
+    .me-stats-row {
+      display: flex;
+      align-items: stretch;
+      padding: 0 0 16px;
+    }
+    .me-stats-cell {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding-top: 4px;
+    }
+    .me-stats-divider-v { width: 1px; background: var(--border); align-self: stretch; margin: 4px 0; }
+    .me-stats-num { font: 700 24px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink); letter-spacing: -0.5px; }
+    .me-stats-lbl { font: 500 11px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.05em; }
+    .me-stats-card-hr { height: 1px; background: var(--border); }
+    .me-stats-note {
+      padding: 10px 16px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease;
+    }
+    .me-stats-note:active { transform: scale(0.99); }
+    .me-stats-note-text { font: 400 13px/1.4 'Plus Jakarta Sans', sans-serif; color: var(--ink-3); }
+
+    /* ─── Most visited card restyled (Task 3) ─── */
+    .me-most-visited-card {
+      margin: 0 16px 12px;
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .me-most-visited-card:active { transform: scale(0.97); }
+    .me-most-visited-card .me-most-visited-thumb {
+      width: 64px; height: 64px; border-radius: 12px;
+      flex-shrink: 0; overflow: hidden;
+      background: linear-gradient(135deg, #6A8A4A, #3D6B22);
+    }
+    .me-most-visited-card .me-most-visited-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .me-most-visited-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .me-most-visited-overline { font: 600 10px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 2px; }
+    .me-most-visited-card-name { font: 700 16px/1.2 'Plus Jakarta Sans', sans-serif; color: var(--ink); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .me-most-visited-card-meta { font: 400 13px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-3); display: block; margin-top: 2px; }
+    .me-most-visited-card-chevron { color: var(--ink-3); flex-shrink: 0; }
+
+    /* ─── Two-column Activity / Library (Task 4) ─── */
+    .me-two-col { display: flex; gap: 10px; margin: 0 16px 12px; }
+    .me-compact-group { flex: 1; min-width: 0; }
+    .me-compact-group-label {
+      font: 600 11px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .me-compact-card {
+      background: var(--surface);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .me-compact-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease;
+      background: var(--surface);
+      border: none;
+      border-bottom: 1px solid var(--border);
+      width: 100%;
+      text-align: left;
+    }
+    .me-compact-row:last-child { border-bottom: none; }
+    .me-compact-row:active { transform: scale(0.97); }
+    .me-compact-row--info { cursor: default; }
+    .me-compact-row--info:active { transform: none; }
+    .me-compact-row-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .me-compact-row-label { font: 600 13px/1.2 'Plus Jakarta Sans', sans-serif; color: var(--ink); display: block; }
+    .me-compact-row-sub { font: 400 12px/1.3 'Plus Jakarta Sans', sans-serif; color: var(--ink-3); display: block; }
+    .me-compact-row-chevron { color: var(--ink-3); flex-shrink: 0; }
+
+    /* ─── Account card (Task 5) ─── */
+    .me-account-section { margin: 0 16px 12px; }
+    .me-account-group-label {
+      font: 600 11px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .me-account-card {
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .me-account-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease;
+      background: var(--surface);
+      border: none;
+      border-bottom: 1px solid var(--border);
+      width: 100%;
+      text-align: left;
+    }
+    .me-account-row:last-child { border-bottom: none; }
+    .me-account-row:active { transform: scale(0.97); }
+    .me-account-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(44,74,20,0.08);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      color: var(--brand);
+    }
+    .me-account-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .me-account-label { font: 600 15px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink); }
+    .me-account-sub { font: 400 13px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .me-account-chevron { color: var(--ink-3); flex-shrink: 0; }
+
+    /* ─── Version footer (Task 6) ─── */
+    .me-version-footer {
+      text-align: center;
+      padding: 12px 16px 100px;
+      font: 400 12px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-3);
+      opacity: 0.5;
+    }
+
+    /* ─── Dark mode for new Me tab elements ─── */
+    body.night .me-stats-toggle { background: rgba(255,255,255,0.06); }
+    body.night .me-account-icon { background: rgba(255,255,255,0.08); }
+
     /* Legacy stat classes kept for compatibility */
     .me-stat-number {
       font-family: var(--font-display);
@@ -5431,32 +5644,15 @@
         <div id="meAuthStatus" style="display:none; padding: 0 16px 8px;"></div>
       </header>
 
-      <!-- Hero card -->
-      <div class="me-hero-card" id="meDogCard" onclick="openMeSubpage('dog')">
-        <button class="me-hero-cog" id="meDogCogBtn" aria-label="Settings" onclick="event.stopPropagation();openMeSettingsSheet()">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        </button>
-        <div class="me-hero-top-row">
-          <div class="me-hero-avatar" id="meDogCardAvatar">
-            <!-- populated by renderMeTab() -->
-          </div>
-          <div class="me-hero-info">
-            <span class="me-hero-name" id="meDogCardName">Add your dog</span>
-            <span class="me-hero-breed" id="meDogCardBreed"></span>
-            <span class="me-hero-owner" id="meDogCardOwner"></span>
-            <span class="me-hero-email" id="meDogCardEmail"></span>
-          </div>
+      <!-- Profile hero -->
+      <div class="me-profile-hero" id="meDogCard" onclick="openMeSubpage('dog')">
+        <div class="me-profile-hero-avatar" id="meDogCardAvatar"></div>
+        <div class="me-profile-hero-name-row">
+          <h2 class="me-profile-hero-name" id="meDogCardName">Add your dog</h2>
+          <svg class="me-profile-hero-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
-        <div class="me-hero-stats-row">
-          <div class="me-hero-stat">
-            <span class="me-hero-stat-val" id="heroStatDist">-</span>
-            <span class="me-hero-stat-lbl" id="heroStatDistLbl">km walked</span>
-          </div>
-          <div class="me-hero-stat">
-            <span class="me-hero-stat-val" id="heroStatWalks">-</span>
-            <span class="me-hero-stat-lbl" id="heroStatWalksLbl">walks logged</span>
-          </div>
-        </div>
+        <p class="me-profile-hero-breed" id="meDogCardBreed"></p>
+        <span id="meDogCardOwner" style="display:none"></span>
       </div>
 
       <!-- Dog profile prompt (shown when no dog set up) -->
@@ -5473,195 +5669,191 @@
         </button>
       </div>
 
-      <!-- This month card -->
-      <div class="me-month-card">
-        <div class="me-month-header">
-          <span class="me-month-title">This month</span>
-          <span class="me-month-period" id="meMonthPeriod"></span>
+      <!-- Stats card -->
+      <div class="me-stats-card">
+        <div class="me-stats-card-header">
+          <div class="me-stats-toggle">
+            <button class="me-stats-toggle-pill me-stats-toggle-pill--active">This month</button>
+            <button class="me-stats-toggle-pill">Lifetime</button>
+          </div>
+          <span class="me-stats-period" id="meMonthPeriod"></span>
         </div>
-        <div class="me-month-stats-row">
-          <div class="me-month-stat">
-            <span class="me-month-stat-val" id="meMonthWalks">0</span>
-            <span class="me-month-stat-lbl">walks</span>
+        <div class="me-stats-row">
+          <div class="me-stats-cell">
+            <span class="me-stats-num" id="meMonthWalks">0</span>
+            <span class="me-stats-lbl">Walks</span>
           </div>
-          <div class="me-month-stat">
-            <span class="me-month-stat-val" id="meMonthKm">0</span>
-            <span class="me-month-stat-lbl" id="meMonthKmLbl">km</span>
+          <div class="me-stats-divider-v"></div>
+          <div class="me-stats-cell">
+            <span class="me-stats-num" id="meMonthKm">0</span>
+            <span class="me-stats-lbl" id="meMonthKmLbl">KM</span>
           </div>
-          <div class="me-month-stat">
-            <span class="me-month-stat-val" id="meMonthPlaces">0</span>
-            <span class="me-month-stat-lbl">new places</span>
+          <div class="me-stats-divider-v"></div>
+          <div class="me-stats-cell">
+            <span class="me-stats-num" id="meMonthPlaces">0</span>
+            <span class="me-stats-lbl">New Places</span>
           </div>
         </div>
-        <div class="me-month-note" id="meMonthNote">
-          <span class="me-month-note-text" id="meMonthNoteText">No walks logged this month</span>
+        <div class="me-stats-card-hr"></div>
+        <div class="me-stats-note" id="meMonthNote" onclick="openMeSubpage('journal')">
+          <span class="me-stats-note-text" id="meMonthNoteText">No walks logged this month</span>
         </div>
       </div>
 
       <!-- Most visited card -->
-      <div class="me-most-visited" id="meMostVisited" style="display:none" onclick="openWalkLogSheet()">
+      <div class="me-most-visited-card" id="meMostVisited" style="display:none" onclick="openMeSubpage('journal')">
         <div class="me-most-visited-thumb" id="meMostVisitedThumb"></div>
-        <div class="me-most-visited-body">
-          <span class="me-most-visited-label">Your most visited</span>
-          <span class="me-most-visited-name" id="meMostVisitedName"></span>
-          <span class="me-most-visited-meta" id="meMostVisitedMeta"></span>
+        <div class="me-most-visited-card-body">
+          <span class="me-most-visited-overline">Your most visited</span>
+          <span class="me-most-visited-card-name" id="meMostVisitedName"></span>
+          <span class="me-most-visited-card-meta" id="meMostVisitedMeta"></span>
+        </div>
+        <svg class="me-most-visited-card-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <!-- Two-column Activity / Library -->
+      <div class="me-two-col" id="meEntries">
+
+        <div class="me-compact-group">
+          <span class="me-compact-group-label">Activity</span>
+          <div class="me-compact-card">
+
+            <button class="me-compact-row" onclick="openMeSubpage('journal')" id="entryJournal">
+              <div class="me-compact-row-body">
+                <span class="me-compact-row-label">Journal</span>
+                <span class="me-compact-row-sub" id="compactJournalSub">No entries yet</span>
+              </div>
+              <svg class="me-compact-row-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+
+            <div class="me-compact-row me-compact-row--info" id="entryExplored">
+              <div class="me-compact-row-body">
+                <span class="me-compact-row-label">Most visited</span>
+                <span class="me-compact-row-sub" id="compactMostVisitedSub">None yet</span>
+              </div>
+            </div>
+
+            <button class="me-compact-row" onclick="openMeSubpage('recentlyviewed')" id="entryRecentlyViewed">
+              <div class="me-compact-row-body">
+                <span class="me-compact-row-label">Recently viewed</span>
+                <span class="me-compact-row-sub" id="compactRecentSub">None yet</span>
+              </div>
+              <svg class="me-compact-row-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+
+          </div>
+        </div>
+
+        <div class="me-compact-group">
+          <span class="me-compact-group-label">Library</span>
+          <div class="me-compact-card">
+
+            <button class="me-compact-row" onclick="openMeSubpage('savedwalks')" id="entrySavedWalks">
+              <div class="me-compact-row-body">
+                <span class="me-compact-row-label">Saved walks</span>
+                <span class="me-compact-row-sub" id="compactSavedWalksSub">None saved</span>
+              </div>
+              <svg class="me-compact-row-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+
+            <button class="me-compact-row" onclick="openMeSubpage('savedplaces')" id="entrySavedPlaces">
+              <div class="me-compact-row-body">
+                <span class="me-compact-row-label">Saved places</span>
+                <span class="me-compact-row-sub" id="compactSavedPlacesSub">None saved</span>
+              </div>
+              <svg class="me-compact-row-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+
+            <button class="me-compact-row" onclick="openMeSubpage('badges')" id="entryBadges">
+              <div class="me-compact-row-body">
+                <span class="me-compact-row-label">Badges</span>
+                <span class="me-compact-row-sub" id="compactBadgesSub">None yet</span>
+              </div>
+              <svg class="me-compact-row-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+
+          </div>
+        </div>
+
+      </div><!-- /me-two-col -->
+
+      <!-- Account creation prompt (shown when >=3 saves + anonymous) -->
+      <div id="fsAccountPrompt" style="display:none;" class="fs-account-prompt">
+        <button class="fs-account-prompt-dismiss" onclick="dismissAccountPrompt()" aria-label="Dismiss">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div class="fs-account-prompt-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="fs-account-prompt-body">
+          <p class="fs-account-prompt-title">Keep your walks safe</p>
+          <p class="fs-account-prompt-text">Create an account to access your saved walks on any device.</p>
+          <button class="fs-account-prompt-cta" onclick="openAuthSheet('signup')">Save my walks</button>
         </div>
       </div>
 
-      <!-- Grouped entry rows -->
-      <div class="me-groups" id="meEntries">
+      <!-- Account section -->
+      <div class="me-account-section">
+        <span class="me-account-group-label">Account</span>
+        <div class="me-account-card">
 
-        <!-- Group 1: Your walks -->
-        <p class="me-section-label">Your walks</p>
-        <div class="me-group-card">
+          <button class="me-account-row" id="entryAccount" onclick="onMeAccountTap()">
+            <div class="me-account-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="me-account-text">
+              <span class="me-account-label">Your profile</span>
+              <span class="me-account-sub" id="meDogCardEmail">Keep your walks safe</span>
+            </div>
+            <svg class="me-account-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
 
-          <button class="me-entry-row" onclick="openMeSubpage('journal')" id="entryJournal">
-            <div class="me-entry-icon" style="background:#EDF2E8;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-                <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-                <line x1="8" y1="7" x2="16" y2="7"/>
-                <line x1="8" y1="11" x2="14" y2="11"/>
+          <button class="me-account-row" id="entryDog" onclick="openMeSubpage('dog')">
+            <div class="me-account-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="4" r="2"/><circle cx="18" cy="4" r="2"/>
+                <circle cx="20" cy="10.5" r="2"/><circle cx="4" cy="10.5" r="2"/>
+                <path d="M12 22C7.92 22 5 20 5 15.7V15c0-2.21 3.13-4 7-4s7 1.79 7 4v.7C19 20 16.08 22 12 22z"/>
               </svg>
             </div>
-            <div class="me-entry-text">
-              <span class="me-entry-label">Walk Journal</span>
-              <span class="me-entry-preview" id="journalPreview">No walks logged yet</span>
+            <div class="me-account-text">
+              <span class="me-account-label">Your dog</span>
+              <span class="me-account-sub" id="dogEntryPreview">Add your dog</span>
             </div>
-            <div class="me-entry-right">
-              <span class="me-entry-count" id="journalCount"></span>
-              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
+            <svg class="me-account-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
 
-          <div class="me-entry-row" id="entryExplored" style="cursor:default;">
-            <div class="me-entry-icon" style="background:#EDF2E8;">
-              <i data-lucide="map" style="width:20px;height:20px;color:#2C4A14;" aria-hidden="true"></i>
+          <button class="me-account-row" onclick="openMeSettingsSheet()">
+            <div class="me-account-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </div>
-            <div class="me-entry-text">
-              <span class="me-entry-label">Walks Explored</span>
-              <span class="me-entry-preview" id="exploredPreview">None yet</span>
+            <div class="me-account-text">
+              <span class="me-account-label">Settings</span>
+              <span class="me-account-sub">App settings</span>
             </div>
-          </div>
-
-          <button class="me-entry-row" onclick="openMeSubpage('savedwalks')" id="entrySavedWalks">
-            <div class="me-entry-icon" style="background:#EDF2E8;">
-              <i data-lucide="bookmark" style="width:20px;height:20px;color:#2C4A14;"></i>
-            </div>
-            <div class="me-entry-text">
-              <span class="me-entry-label">Saved Walks</span>
-              <span class="me-entry-preview" id="savedWalksPreview">None saved yet</span>
-            </div>
-            <div class="me-entry-right">
-              <span class="me-entry-count" id="savedWalksCount"></span>
-              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
+            <svg class="me-account-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
 
-          <button class="me-entry-row" id="entryAccount" onclick="onMeAccountTap()">
-            <div class="me-entry-icon" style="background:#F3F3F1;">
-              <i data-lucide="user" style="width:20px;height:20px;color:#6B7280;"></i>
-            </div>
-            <div class="me-entry-text">
-              <span class="me-entry-label">Account</span>
-              <span class="me-entry-preview" id="accountEntryPreview">Keep your walks safe</span>
-            </div>
-            <div class="me-entry-right">
-              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </button>
-
-          <button class="me-entry-row" onclick="openMeSubpage('recentlyviewed')" id="entryRecentlyViewed">
-            <div class="me-entry-icon" style="background:#F3F3F1;">
-              <i data-lucide="clock" style="width:20px;height:20px;color:#6B7280;"></i>
-            </div>
-            <div class="me-entry-text">
-              <span class="me-entry-label">Recently Viewed</span>
-              <span class="me-entry-preview" id="recentlyViewedPreview">No walks viewed yet</span>
-            </div>
-            <div class="me-entry-right">
-              <span class="me-entry-count" id="recentlyViewedCount"></span>
-              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </button>
-
-        </div><!-- /group 1 -->
-
-        <!-- Account creation prompt (shown when >=3 saves + anonymous) -->
-        <div id="fsAccountPrompt" style="display:none;" class="fs-account-prompt">
-          <button class="fs-account-prompt-dismiss" onclick="dismissAccountPrompt()" aria-label="Dismiss">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-          <div class="fs-account-prompt-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-          <div class="fs-account-prompt-body">
-            <p class="fs-account-prompt-title">Keep your walks safe</p>
-            <p class="fs-account-prompt-text">Create an account to access your saved walks on any device.</p>
-            <button class="fs-account-prompt-cta" onclick="openAuthSheet('signup')">Save my walks</button>
-          </div>
         </div>
+      </div><!-- /me-account-section -->
 
-        <!-- Group 2: Achievements -->
-        <p class="me-section-label">Achievements</p>
-        <div class="me-group-card">
+      <!-- Version footer -->
+      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 124</p>
 
-          <button class="me-entry-row" onclick="openMeSubpage('badges')" id="entryBadges">
-            <div class="me-entry-icon" style="background:#FEF3E2;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-                <circle cx="12" cy="8" r="6"/>
-                <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
-              </svg>
-            </div>
-            <div class="me-entry-text">
-              <span class="me-entry-label">Badges</span>
-              <span class="me-entry-preview" id="badgesPreview">None yet</span>
-            </div>
-            <div class="me-entry-right">
-              <span class="me-entry-count" id="badgesCount"></span>
-              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </button>
-
-        </div><!-- /group 2 -->
-
-        <!-- Group 3: Dog profile -->
-        <p class="me-section-label" id="meProfileSectionLabel">Dog profile</p>
-        <div class="me-group-card">
-
-          <button class="me-entry-row" onclick="openMeSubpage('dog')" id="entryDog">
-            <div class="me-entry-icon" style="background:#EDF2E8;">
-              <i data-lucide="paw-print" style="width:24px;height:24px;color:#2C4A14;" aria-hidden="true"></i>
-            </div>
-            <div class="me-entry-text">
-              <span class="me-entry-label">Your Dog</span>
-              <span class="me-entry-preview" id="dogEntryPreview">Add your dog</span>
-            </div>
-            <div class="me-entry-right">
-              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </button>
-
-          <button class="me-entry-row" onclick="openMeSubpage('savedplaces')" id="entrySavedPlaces">
-            <div class="me-entry-icon" style="background:#EDF2E8;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-                <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-            </div>
-            <div class="me-entry-text">
-              <span class="me-entry-label">Saved Places</span>
-              <span class="me-entry-preview" id="savedPlacesPreview">None saved yet</span>
-            </div>
-            <div class="me-entry-right">
-              <span class="me-entry-count" id="savedPlacesCount"></span>
-              <svg class="me-entry-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </button>
-
-        </div><!-- /group 3 -->
-
-      </div><!-- /me-groups -->
+      <!-- hidden compat spans preserved for JS -->
+      <span id="journalCount" style="display:none"></span>
+      <span id="journalPreview" style="display:none"></span>
+      <span id="exploredPreview" style="display:none"></span>
+      <span id="savedWalksCount" style="display:none"></span>
+      <span id="savedWalksPreview" style="display:none"></span>
+      <span id="recentlyViewedCount" style="display:none"></span>
+      <span id="recentlyViewedPreview" style="display:none"></span>
+      <span id="badgesCount" style="display:none"></span>
+      <span id="badgesPreview" style="display:none"></span>
+      <span id="savedPlacesCount" style="display:none"></span>
+      <span id="savedPlacesPreview" style="display:none"></span>
+      <span id="meProfileSectionLabel" style="display:none"></span>
+      <span id="accountEntryPreview" style="display:none"></span>
 
       <!-- Install prompt card (shown by JS when installable and not dismissed) -->
       <div class="me-install-prompt" id="meInstallPrompt" style="display:none">
@@ -12574,7 +12766,7 @@
           var todayStart = new Date(); todayStart.setHours(0,0,0,0);
           var diffDays = Math.floor((todayStart - lastDate) / (1000 * 60 * 60 * 24));
           var lastStr = diffDays <= 0 ? 'today' : diffDays === 1 ? 'yesterday' : diffDays + ' days ago';
-          mvMetaEl.textContent = 'Visited ' + topCount + ' time' + (topCount !== 1 ? 's' : '') + ' - Last walk ' + lastStr;
+          mvMetaEl.textContent = 'Visited ' + topCount + ' time' + (topCount !== 1 ? 's' : '') + ' · Last walk ' + lastStr;
         }
       } else {
         mostVisitedEl.style.display = 'none';
@@ -12662,6 +12854,41 @@
     var profileLabelEl = document.getElementById('meProfileSectionLabel');
     if (profileLabelEl) {
       profileLabelEl.textContent = (dog && dog.name) ? dog.name + '\u2019s profile' : 'Dog profile';
+    }
+
+    // Compact Activity / Library sublines
+    var cJournalSub = document.getElementById('compactJournalSub');
+    if (cJournalSub) cJournalSub.textContent = log.length > 0 ? log.length + (log.length === 1 ? ' walk' : ' walks') : 'No entries yet';
+
+    var cMostVisitedSub = document.getElementById('compactMostVisitedSub');
+    if (cMostVisitedSub) {
+      var mvEl = document.getElementById('meMostVisitedName');
+      cMostVisitedSub.textContent = (mvEl && mvEl.textContent) ? mvEl.textContent : 'None yet';
+    }
+
+    var cRecentSub = document.getElementById('compactRecentSub');
+    if (cRecentSub) {
+      var recentWalks = [];
+      try { recentWalks = JSON.parse(localStorage.getItem('sniffout_recent_walks') || '[]') || []; } catch(e) {}
+      cRecentSub.textContent = recentWalks.length > 0 ? recentWalks.length + (recentWalks.length === 1 ? ' walk' : ' walks') : 'None yet';
+    }
+
+    var cSavedWalksSub = document.getElementById('compactSavedWalksSub');
+    if (cSavedWalksSub) {
+      var fvsLen = getFavourites().length;
+      cSavedWalksSub.textContent = fvsLen > 0 ? fvsLen + (fvsLen === 1 ? ' saved' : ' saved') : 'None saved';
+    }
+
+    var cSavedPlacesSub = document.getElementById('compactSavedPlacesSub');
+    if (cSavedPlacesSub) {
+      var spLen = getPlaceFavourites().length;
+      cSavedPlacesSub.textContent = spLen > 0 ? spLen + (spLen === 1 ? ' place' : ' places') : 'None saved';
+    }
+
+    var cBadgesSub = document.getElementById('compactBadgesSub');
+    if (cBadgesSub) {
+      var earnedBdgs = getEarnedBadges();
+      cBadgesSub.textContent = earnedBdgs.length > 0 ? earnedBdgs.length + ' earned' : 'None yet';
     }
 
     // Check for newly earned badges
@@ -13381,7 +13608,6 @@
     backdrop.classList.add('open');
     sheet.classList.add('is-open');
     document.body.style.overflow = 'hidden';
-    if (nameEl) setTimeout(function() { nameEl.focus(); }, 300);
   }
 
   function closeLogWalkSheet() {
