@@ -3207,9 +3207,133 @@
       opacity: 0.5;
     }
 
+    /* ─── Me tab calendar card ─── */
+    .me-calendar-card {
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      margin: 0 16px 12px;
+      padding: 16px;
+    }
+    .me-calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .me-cal-nav {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      color: var(--ink-2);
+      display: flex;
+      align-items: center;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease;
+    }
+    .me-cal-nav:active { transform: scale(0.97); }
+    .me-cal-nav:disabled { opacity: 0.3; pointer-events: none; }
+    .me-calendar-title {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .me-calendar-title span:first-child {
+      font: 700 15px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink);
+    }
+    .me-cal-walks-count {
+      font: 400 12px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-2);
+    }
+    .me-cal-dow-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      margin-bottom: 6px;
+    }
+    .me-cal-dow-row span {
+      font: 600 11px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-2);
+      text-align: center;
+      padding: 4px 0;
+    }
+    .me-cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+    .me-cal-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 7px;
+      font: 500 13px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink);
+    }
+    .me-cal-day.walked {
+      background: #2C4A14;
+      color: #fff;
+      font-weight: 700;
+    }
+    .me-cal-day.today {
+      box-shadow: inset 0 0 0 2px #B85C2C;
+    }
+    .me-cal-day.today.walked {
+      box-shadow: inset 0 0 0 2px #B85C2C;
+    }
+    .me-cal-day.future {
+      color: var(--ink-2);
+      opacity: 0.4;
+    }
+    .me-cal-day.empty {
+      background: none;
+    }
+    .me-cal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .me-cal-legend {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .me-cal-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .me-cal-legend-walked { background: #2C4A14; }
+    .me-cal-legend-today { background: none; border: 2px solid #B85C2C; }
+    .me-cal-legend-label {
+      font: 400 12px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-2);
+      margin-right: 8px;
+    }
+    .me-cal-journal-link {
+      background: none;
+      border: none;
+      font: 600 13px/1 'Plus Jakarta Sans', sans-serif;
+      color: var(--brand);
+      cursor: pointer;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease;
+    }
+    .me-cal-journal-link:active { transform: scale(0.97); }
+
     /* ─── Dark mode for new Me tab elements ─── */
     body.night .me-stats-toggle { background: rgba(255,255,255,0.06); }
     body.night .me-account-icon { background: rgba(255,255,255,0.08); }
+    body.night .me-cal-day.walked { background: #3D6B22; }
 
     /* Legacy stat classes kept for compatibility */
     .me-stat-number {
@@ -3401,20 +3525,36 @@
       border-radius: 10px;
     }
 
-    /* ─── Me tab auth header pill ─── */
-    .me-auth-pill {
-      display: inline-block;
-      font: 400 12px/1 'Plus Jakarta Sans', sans-serif;
+    /* ─── Me tab header bar ─── */
+    .me-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--bg);
+    }
+    .me-header-bar-email {
+      font: 400 13px/1 'Plus Jakarta Sans', sans-serif;
       color: var(--ink-2);
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-pill);
-      padding: 5px 10px;
-      max-width: 220px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      flex: 1;
+      min-width: 0;
     }
+    .me-header-bar-gear {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      color: var(--ink-2);
+      display: flex;
+      align-items: center;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease;
+      flex-shrink: 0;
+    }
+    .me-header-bar-gear:active { transform: scale(0.97); }
 
     /* ─── Settings sheet sign-out ─── */
     .me-settings-account-row {
@@ -5636,12 +5776,17 @@
     <!-- ══════════ ME TAB ══════════ -->
     <div id="tab-me" class="tab-panel">
 
-      <!-- Header (identity only - gear moved into dog card) -->
+      <!-- Header bar: email left, settings cog right -->
       <header class="me-header">
+        <div class="me-header-bar">
+          <span class="me-header-bar-email" id="meHeaderEmail" style="display:none"></span>
+          <button class="me-header-bar-gear" onclick="openMeSettingsSheet()" aria-label="Settings">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        </div>
         <div class="me-header-identity" id="meHeaderIdentity">
           <!-- dog picker appended here by JS when multiple dogs exist -->
         </div>
-        <div id="meAuthStatus" style="display:none; padding: 0 16px 8px;"></div>
       </header>
 
       <!-- Profile hero -->
@@ -5709,6 +5854,40 @@
           <span class="me-most-visited-card-meta" id="meMostVisitedMeta"></span>
         </div>
         <svg class="me-most-visited-card-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <!-- Calendar card -->
+      <div class="me-calendar-card" id="meCalendarCard">
+        <div class="me-calendar-header">
+          <button class="me-cal-nav" id="meCalPrev" aria-label="Previous month">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="me-calendar-title">
+            <span id="meCalMonthLabel">April 2026</span>
+            <span class="me-cal-walks-count" id="meCalWalksCount">0 walks logged</span>
+          </div>
+          <button class="me-cal-nav" id="meCalNext" aria-label="Next month">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+
+        <div class="me-cal-dow-row">
+          <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+        </div>
+
+        <div class="me-cal-grid" id="meCalGrid">
+          <!-- days injected by JS -->
+        </div>
+
+        <div class="me-cal-footer">
+          <div class="me-cal-legend">
+            <span class="me-cal-legend-dot me-cal-legend-walked"></span>
+            <span class="me-cal-legend-label">Walked</span>
+            <span class="me-cal-legend-dot me-cal-legend-today"></span>
+            <span class="me-cal-legend-label">Today</span>
+          </div>
+          <button class="me-cal-journal-link" id="meCalJournalLink">See journal &#8594;</button>
+        </div>
       </div>
 
       <!-- Two-column Activity / Library -->
@@ -12596,6 +12775,91 @@
     container.innerHTML = html;
   }
 
+  /* -- Calendar module --------------------------------------------------- */
+  var meCalYear  = new Date().getFullYear();
+  var meCalMonth = new Date().getMonth();
+
+  var meCalMonthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function buildCalendar(year, month) {
+    var grid      = document.getElementById('meCalGrid');
+    var labelEl   = document.getElementById('meCalMonthLabel');
+    var countEl   = document.getElementById('meCalWalksCount');
+    var prevBtn   = document.getElementById('meCalPrev');
+    var nextBtn   = document.getElementById('meCalNext');
+    if (!grid) return;
+
+    var today = new Date();
+    var log   = getWalkLog();
+
+    var walkedDays = new Set();
+    var monthCount = 0;
+    log.forEach(function(e) {
+      var d = new Date(e.ts);
+      if (d.getFullYear() === year && d.getMonth() === month) {
+        walkedDays.add(d.getDate());
+        monthCount++;
+      }
+    });
+
+    if (labelEl) labelEl.textContent = meCalMonthNames[month] + ' ' + year;
+    if (countEl) countEl.textContent = monthCount === 1 ? '1 walk logged' : monthCount + ' walks logged';
+
+    var firstDay = new Date(year, month, 1);
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+    var firstDow = (firstDay.getDay() + 6) % 7;
+
+    var html = '';
+    for (var e = 0; e < firstDow; e++) {
+      html += '<div class="me-cal-day empty"></div>';
+    }
+
+    var isCurrentMonth = (year === today.getFullYear() && month === today.getMonth());
+    var isPastMonth    = (year < today.getFullYear()) || (year === today.getFullYear() && month < today.getMonth());
+
+    for (var day = 1; day <= daysInMonth; day++) {
+      var classes = 'me-cal-day';
+      if (walkedDays.has(day)) classes += ' walked';
+      if (isCurrentMonth && day === today.getDate()) classes += ' today';
+      if (isCurrentMonth && day > today.getDate()) classes += ' future';
+      html += '<div class="' + classes + '">' + day + '</div>';
+    }
+
+    grid.innerHTML = html;
+
+    if (nextBtn) {
+      nextBtn.disabled = (year === today.getFullYear() && month === today.getMonth());
+    }
+  }
+
+  function initCalendarListeners() {
+    var prevBtn  = document.getElementById('meCalPrev');
+    var nextBtn  = document.getElementById('meCalNext');
+    var journalBtn = document.getElementById('meCalJournalLink');
+    if (prevBtn && !prevBtn._calBound) {
+      prevBtn._calBound = true;
+      prevBtn.addEventListener('click', function() {
+        meCalMonth--;
+        if (meCalMonth < 0) { meCalMonth = 11; meCalYear--; }
+        buildCalendar(meCalYear, meCalMonth);
+      });
+    }
+    if (nextBtn && !nextBtn._calBound) {
+      nextBtn._calBound = true;
+      nextBtn.addEventListener('click', function() {
+        meCalMonth++;
+        if (meCalMonth > 11) { meCalMonth = 0; meCalYear++; }
+        buildCalendar(meCalYear, meCalMonth);
+      });
+    }
+    if (journalBtn && !journalBtn._calBound) {
+      journalBtn._calBound = true;
+      journalBtn.addEventListener('click', function() {
+        openMeSubpage('journal');
+      });
+    }
+  }
+
   /* -- Main Me tab render ----------------------------------------------- */
   function renderMeTab() {
     var log  = getWalkLog();
@@ -12894,6 +13158,10 @@
     // Check for newly earned badges
     checkBadgeEarned();
     renderFavouritesList();
+
+    // Calendar
+    initCalendarListeners();
+    buildCalendar(meCalYear, meCalMonth);
   }
 
   function dismissDogPrompt() {
@@ -17594,20 +17862,16 @@
 
   /* ─── Phase 3B: Me tab signed-in state ─── */
   function updateMeAuthHeader() {
-    var statusEl     = document.getElementById('meAuthStatus');
+    var emailEl      = document.getElementById('meHeaderEmail');
     var settingsAuth = document.getElementById('meSettingsAuthSection');
     var settingsEmail= document.getElementById('meSettingsAuthEmail');
     var settingsNote = document.getElementById('meSettingsNote');
     var isAnon = window.sniffoutIsAnon !== false;
     var email  = (!isAnon && auth && auth.currentUser) ? (auth.currentUser.email || '') : '';
 
-    if (statusEl) {
-      if (email) {
-        statusEl.innerHTML = '<span class="me-auth-pill">' + escHtml(email) + '</span>';
-        statusEl.style.display = '';
-      } else {
-        statusEl.style.display = 'none';
-      }
+    if (emailEl) {
+      emailEl.textContent = email || '';
+      emailEl.style.display = email ? '' : 'none';
     }
     // Settings sheet: account row text and sign-out button
     var settingsAccountText = document.getElementById('meSettingsAccountText');
