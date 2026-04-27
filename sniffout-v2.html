@@ -3020,11 +3020,11 @@
       flex-shrink: 0; overflow: hidden;
       margin-bottom: 10px;
       box-shadow: 0 2px 8px rgba(44,74,20,0.12);
+      cursor: pointer;
+      transition: opacity 0.2s ease;
     }
     .me-profile-hero-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-    .me-profile-hero-avatar { transition: transform 0.15s ease, opacity 0.15s ease; }
-    .me-profile-hero-avatar:active { transform: scale(0.97); }
-    .me-profile-hero-avatar.uploading { opacity: 0.6; pointer-events: none; }
+    .me-profile-hero-avatar:active { opacity: 0.7; }
     .me-profile-hero-name-row { display: flex; align-items: center; gap: 4px; }
     .me-profile-hero-name { font: 700 22px/1.2 'Plus Jakarta Sans', sans-serif; color: var(--ink); }
     .me-profile-hero-chevron { color: var(--ink-3); flex-shrink: 0; }
@@ -5817,7 +5817,7 @@
 
       <!-- Profile hero -->
       <div class="me-profile-hero" id="meDogCard" onclick="openMeSubpage('dog')">
-        <div class="me-profile-hero-avatar" id="meDogCardAvatar" onclick="onAvatarTap(event)"></div>
+        <div class="me-profile-hero-avatar" id="meDogCardAvatar" onclick="triggerProfilePhotoUpload()"></div>
         <div class="me-profile-hero-name-row">
           <h2 class="me-profile-hero-name" id="meDogCardName">Add your dog</h2>
           <svg class="me-profile-hero-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
@@ -5825,6 +5825,7 @@
         <p class="me-profile-hero-breed" id="meDogCardBreed"></p>
         <span id="meDogCardOwner" style="display:none"></span>
       </div>
+      <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;">
 
       <!-- Dog profile prompt (shown when no dog set up) -->
       <div class="me-dog-prompt" id="meDogPrompt" style="display:none" hidden>
@@ -6080,7 +6081,6 @@
 
       <!-- Hidden file input for photo uploads (kept for compatibility) -->
       <input type="file" id="journalPhotoInput" accept="image/*" style="display:none">
-      <input type="file" id="profilePhotoInput" accept="image/*" style="display:none">
 
     </div><!-- /tab-me -->
 
@@ -16706,13 +16706,11 @@
   /* -- Profile photo input handler ------------------------------------- */
 
   document.addEventListener('DOMContentLoaded', function() {
-    var profileInput = document.getElementById('profilePhotoInput');
-    if (profileInput) {
-      profileInput.addEventListener('change', function() {
-        var file = profileInput.files && profileInput.files[0];
-        if (file) uploadProfilePhoto(file);
-      });
-    }
+    document.getElementById('profilePhotoInput').addEventListener('change', function(e) {
+      var file = e.target.files && e.target.files[0];
+      if (file) uploadProfilePhoto(file);
+      this.value = '';
+    });
   });
 
   /* -- Badge tooltip global dismiss ------------------------------------ */
@@ -17601,54 +17599,51 @@
 
   window._profilePhotoUrl = null;
 
-  function setAvatarPhoto(url) {
-    window._profilePhotoUrl = url || null;
-    var el = document.getElementById('meDogCardAvatar');
-    if (!el) return;
-    if (url) {
-      el.innerHTML = '<img src="' + escHtml(url) + '" alt="Profile photo">';
-    } else {
-      el.innerHTML = luIcon('dog', 28);
-    }
-  }
-
-  function onAvatarTap(event) {
-    if (window.sniffoutIsAnon !== false) return;
-    if (event) event.stopPropagation();
-    var input = document.getElementById('profilePhotoInput');
-    if (input) { input.value = ''; input.click(); }
+  function triggerProfilePhotoUpload() {
+    var user = firebase.auth().currentUser;
+    if (!user) return;
+    document.getElementById('profilePhotoInput').click();
   }
 
   function uploadProfilePhoto(file) {
-    if (!file || !file.type.startsWith('image/')) return;
-    if (!storage || !fsUid || !db) return;
-    var avatarEl = document.getElementById('meDogCardAvatar');
-    if (avatarEl) avatarEl.classList.add('uploading');
-    var ref = storage.ref('users/' + fsUid + '/profile-photo.jpg');
-    ref.put(file)
-      .then(function() { return ref.getDownloadURL(); })
-      .then(function(url) {
-        db.collection('users').doc(fsUid).set({ profilePhotoUrl: url }, { merge: true })
-          .catch(function(e) { console.warn('profilePhotoUrl save failed:', e); });
-        setAvatarPhoto(url);
-        if (avatarEl) avatarEl.classList.remove('uploading');
-      })
-      .catch(function(err) {
-        console.warn('Profile photo upload failed:', err);
-        if (avatarEl) avatarEl.classList.remove('uploading');
-      });
+    var user = firebase.auth().currentUser;
+    if (!user || !file || !file.type.startsWith('image/')) return;
+
+    var avatar = document.getElementById('meDogCardAvatar');
+    if (avatar) { avatar.style.opacity = '0.5'; avatar.style.pointerEvents = 'none'; }
+
+    var storageRef = firebase.storage().ref('users/' + user.uid + '/profile-photo.jpg');
+    storageRef.put(file).then(function(snapshot) {
+      return snapshot.ref.getDownloadURL();
+    }).then(function(url) {
+      return db.collection('users').doc(user.uid).set({ profilePhotoUrl: url }, { merge: true })
+        .then(function() { return url; });
+    }).then(function(url) {
+      setAvatarPhoto(url);
+      if (avatar) { avatar.style.opacity = ''; avatar.style.pointerEvents = ''; }
+    }).catch(function(err) {
+      console.error('Profile photo upload failed:', err);
+      if (avatar) { avatar.style.opacity = ''; avatar.style.pointerEvents = ''; }
+    });
+  }
+
+  function setAvatarPhoto(url) {
+    window._profilePhotoUrl = url || null;
+    var avatar = document.getElementById('meDogCardAvatar');
+    if (!avatar) return;
+    avatar.innerHTML = '<img src="' + url + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" alt="Profile photo">';
   }
 
   function loadProfilePhotoFromFirestore() {
-    if (!db || !fsUid) return;
-    db.collection('users').doc(fsUid).get()
-      .then(function(doc) {
-        if (doc.exists) {
-          var data = doc.data();
-          if (data && data.profilePhotoUrl) setAvatarPhoto(data.profilePhotoUrl);
-        }
-      })
-      .catch(function(err) { console.warn('loadProfilePhoto failed:', err); });
+    var user = firebase.auth && firebase.auth().currentUser;
+    if (!user || !db) return;
+    db.collection('users').doc(user.uid).get().then(function(doc) {
+      if (doc.exists && doc.data().profilePhotoUrl) {
+        setAvatarPhoto(doc.data().profilePhotoUrl);
+      }
+    }).catch(function(err) {
+      console.warn('Could not load profile photo:', err);
+    });
   }
 
   /* ─── Task 4: Load saved walks from Firestore after auth resolves ─── */
