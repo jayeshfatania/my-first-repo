@@ -13539,6 +13539,8 @@
   function openMeSubpage(id) {
     var el = document.getElementById('subpage' + capitalizeSub(id));
     if (!el) return;
+    el.style.transform = '';
+    el.style.transition = '';
     renderMeSubpageContent(id);
     el.classList.add('is-open');
     document.body.style.overflow = 'hidden';
@@ -13551,6 +13553,8 @@
     }
     var el = document.getElementById('subpage' + capitalizeSub(id));
     if (!el) return;
+    el.style.transform = '';
+    el.style.transition = '';
     el.classList.remove('is-open');
     document.body.style.overflow = '';
   }
