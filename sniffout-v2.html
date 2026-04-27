@@ -3013,7 +3013,7 @@
     }
     .me-profile-hero:active { transform: scale(0.98); }
     .me-profile-hero-avatar {
-      width: 88px; height: 88px; border-radius: 50%;
+      width: 110px; height: 110px; border-radius: 50%;
       background: var(--brand-tint);
       border: 3px solid var(--surface);
       display: flex; align-items: center; justify-content: center;
@@ -5817,7 +5817,7 @@
 
       <!-- Profile hero -->
       <div class="me-profile-hero" id="meDogCard" onclick="openMeSubpage('dog')">
-        <div class="me-profile-hero-avatar" id="meDogCardAvatar" onclick="triggerProfilePhotoUpload()"></div>
+        <div class="me-profile-hero-avatar" id="meDogCardAvatar" onclick="triggerProfilePhotoUpload(event)"></div>
         <div class="me-profile-hero-name-row">
           <h2 class="me-profile-hero-name" id="meDogCardName">Add your dog</h2>
           <svg class="me-profile-hero-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
@@ -6044,7 +6044,7 @@
       </div><!-- /me-account-section -->
 
       <!-- Version footer -->
-      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 125</p>
+      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 126</p>
 
       <!-- hidden compat spans preserved for JS -->
       <span id="journalCount" style="display:none"></span>
@@ -16706,11 +16706,14 @@
   /* -- Profile photo input handler ------------------------------------- */
 
   document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('profilePhotoInput').addEventListener('change', function(e) {
-      var file = e.target.files && e.target.files[0];
-      if (file) uploadProfilePhoto(file);
-      this.value = '';
-    });
+    var profilePhotoInput = document.getElementById('profilePhotoInput');
+    if (profilePhotoInput) {
+      profilePhotoInput.addEventListener('change', function(e) {
+        var file = e.target.files && e.target.files[0];
+        if (file) uploadProfilePhoto(file);
+        this.value = '';
+      });
+    }
   });
 
   /* -- Badge tooltip global dismiss ------------------------------------ */
@@ -17454,7 +17457,13 @@
           window.sniffoutIsAnon = user.isAnonymous;
           console.log('Sniffout auth:', user.isAnonymous ? 'anonymous' : 'signed in', user.uid);
           loadSavedWalksFromFirestore();
-          loadProfilePhotoFromFirestore();
+          db.collection('users').doc(user.uid).get().then(function(doc) {
+            if (doc.exists && doc.data().profilePhotoUrl) {
+              setAvatarPhoto(doc.data().profilePhotoUrl);
+            }
+          }).catch(function(err) {
+            console.warn('Could not load profile photo:', err);
+          });
           if (typeof updateMeAuthHeader === 'function') updateMeAuthHeader();
         } else {
           auth.signInAnonymously().catch(function(err) {
@@ -17599,7 +17608,8 @@
 
   window._profilePhotoUrl = null;
 
-  function triggerProfilePhotoUpload() {
+  function triggerProfilePhotoUpload(event) {
+    if (event) event.stopPropagation();
     var user = firebase.auth().currentUser;
     if (!user) return;
     document.getElementById('profilePhotoInput').click();
@@ -17632,18 +17642,6 @@
     var avatar = document.getElementById('meDogCardAvatar');
     if (!avatar) return;
     avatar.innerHTML = '<img src="' + url + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" alt="Profile photo">';
-  }
-
-  function loadProfilePhotoFromFirestore() {
-    var user = firebase.auth && firebase.auth().currentUser;
-    if (!user || !db) return;
-    db.collection('users').doc(user.uid).get().then(function(doc) {
-      if (doc.exists && doc.data().profilePhotoUrl) {
-        setAvatarPhoto(doc.data().profilePhotoUrl);
-      }
-    }).catch(function(err) {
-      console.warn('Could not load profile photo:', err);
-    });
   }
 
   /* ─── Task 4: Load saved walks from Firestore after auth resolves ─── */
