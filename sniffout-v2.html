@@ -5825,8 +5825,8 @@
       <div class="me-stats-card">
         <div class="me-stats-card-header">
           <div class="me-stats-toggle">
-            <button class="me-stats-toggle-pill me-stats-toggle-pill--active">This month</button>
-            <button class="me-stats-toggle-pill">Lifetime</button>
+            <button id="meToggleThisMonth" class="me-stats-toggle-pill me-stats-toggle-pill--active" onclick="switchMeStatsView('thismonth')">This month</button>
+            <button id="meToggleLifetime" class="me-stats-toggle-pill" onclick="switchMeStatsView('lifetime')">Lifetime</button>
           </div>
           <span class="me-stats-period" id="meMonthPeriod"></span>
         </div>
@@ -5843,7 +5843,7 @@
           <div class="me-stats-divider-v"></div>
           <div class="me-stats-cell">
             <span class="me-stats-num" id="meMonthPlaces">0</span>
-            <span class="me-stats-lbl">New Places</span>
+            <span class="me-stats-lbl" id="meMonthPlacesLbl">New Places</span>
           </div>
         </div>
         <div class="me-stats-card-hr"></div>
@@ -12784,6 +12784,137 @@
     container.innerHTML = html;
   }
 
+  /* -- Stats toggle ------------------------------------------------------- */
+  var meStatsView = 'thismonth';
+
+  function switchMeStatsView(view) {
+    meStatsView = view;
+
+    var pillMonth    = document.getElementById('meToggleThisMonth');
+    var pillLifetime = document.getElementById('meToggleLifetime');
+    if (pillMonth)    pillMonth.classList.toggle('me-stats-toggle-pill--active',    view === 'thismonth');
+    if (pillLifetime) pillLifetime.classList.toggle('me-stats-toggle-pill--active', view === 'lifetime');
+
+    var log = getWalkLog();
+    var wById = {};
+    WALKS_DB.forEach(function(w) { if (w) wById[w.id] = w; });
+
+    var periodEl    = document.getElementById('meMonthPeriod');
+    var walksEl     = document.getElementById('meMonthWalks');
+    var kmEl        = document.getElementById('meMonthKm');
+    var kmLblEl     = document.getElementById('meMonthKmLbl');
+    var placesEl    = document.getElementById('meMonthPlaces');
+    var placesLblEl = document.getElementById('meMonthPlacesLbl');
+    var noteEl      = document.getElementById('meMonthNote');
+    var noteTextEl  = document.getElementById('meMonthNoteText');
+
+    var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var now   = new Date();
+    var units = getSavedUnits();
+
+    if (view === 'thismonth') {
+      if (periodEl)    periodEl.textContent    = monthNames[now.getMonth()] + ' ' + now.getFullYear();
+      if (placesLblEl) placesLblEl.textContent = 'New Places';
+
+      var monthLog = log.filter(function(e) {
+        var d = new Date(e.date || e.ts);
+        return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+      });
+      var mWalks = monthLog.length;
+      var mMi = 0, mKm = 0;
+      monthLog.forEach(function(e) {
+        if (e.type !== 'custom' && wById[e.id]) {
+          var dist = wById[e.id].distance || 0;
+          mMi += dist; mKm += dist * 1.60934;
+        }
+      });
+
+      var prevIds = {};
+      log.forEach(function(e) {
+        var d = new Date(e.date || e.ts);
+        if (!(d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()) && e.id) prevIds[e.id] = true;
+      });
+      var newIds = {}, newCount = 0;
+      monthLog.forEach(function(e) {
+        if (e.type !== 'custom' && e.id && !prevIds[e.id] && !newIds[e.id]) { newIds[e.id] = true; newCount++; }
+      });
+
+      var mDisp = units === 'mi' ? mMi : mKm;
+      if (walksEl)  walksEl.textContent  = mWalks;
+      if (kmEl)     kmEl.textContent     = mDisp > 0 ? '~' + mDisp.toFixed(1) : '-';
+      if (kmLblEl)  kmLblEl.textContent  = units === 'mi' ? 'mi' : 'km';
+      if (placesEl) placesEl.textContent = newCount;
+
+      if (noteEl) {
+        if (mWalks === 0) {
+          noteEl.style.display = 'none';
+        } else {
+          noteEl.style.display = '';
+          if (noteTextEl) {
+            var dog = getDog();
+            var dogName = (dog && dog.name) ? dog.name : 'your dog';
+            var explored = getExploredCount();
+            var html;
+            if (newCount > 0) {
+              var firstName = 'a new walk';
+              for (var i = 0; i < monthLog.length; i++) {
+                var me = monthLog[i];
+                if (me.type !== 'custom' && me.id && newIds[me.id]) {
+                  firstName = wById[me.id] ? wById[me.id].name : 'a new walk';
+                  break;
+                }
+              }
+              html = '<strong style="color:var(--brand);font-style:normal;">You explored ' + escHtml(firstName) + ' for the first time this month.</strong> ' + escHtml(dogName) + ' has been to ' + explored + ' different places with you so far.';
+            } else {
+              var noteDist = units === 'mi' ? mMi : mKm;
+              var noteUnit = units === 'mi' ? 'mi' : 'km';
+              var distFmt  = noteDist > 0 ? '~' + noteDist.toFixed(1) : '0';
+              html = '<strong style="color:var(--brand);font-style:normal;">' + escHtml(dogName) + ' and you have covered ' + distFmt + ' ' + noteUnit + ' together this month.</strong>';
+            }
+            noteTextEl.innerHTML = html;
+          }
+        }
+      }
+
+    } else { // lifetime
+      var oldest = Infinity;
+      log.forEach(function(e) { var t = e.date ? new Date(e.date).getTime() : e.ts; if (t < oldest) oldest = t; });
+      if (log.length > 0 && isFinite(oldest)) {
+        var od = new Date(oldest);
+        if (periodEl) periodEl.textContent = 'Since ' + monthNames[od.getMonth()] + ' ' + od.getFullYear();
+      } else {
+        if (periodEl) periodEl.textContent = 'All time';
+      }
+      if (placesLblEl) placesLblEl.textContent = 'Places';
+
+      var tMi   = getTotalDistanceMi();
+      var tDisp = units === 'mi' ? tMi : tMi * 1.60934;
+      if (walksEl)  walksEl.textContent  = log.length > 0 ? log.length : '-';
+      if (kmEl)     kmEl.textContent     = tDisp > 0 ? '~' + tDisp.toFixed(1) : '-';
+      if (kmLblEl)  kmLblEl.textContent  = units === 'mi' ? 'mi' : 'km';
+
+      var uniqPlaces = {};
+      log.forEach(function(e) { if (e.type !== 'custom' && e.id) uniqPlaces[e.id] = true; });
+      if (placesEl) placesEl.textContent = Object.keys(uniqPlaces).length;
+
+      if (noteEl) {
+        if (log.length === 0) {
+          noteEl.style.display = 'none';
+        } else {
+          noteEl.style.display = '';
+          if (noteTextEl) {
+            var dog2     = getDog();
+            var dogName2 = (dog2 && dog2.name) ? dog2.name : 'your dog';
+            var lifeUnit = units === 'mi' ? 'mi' : 'km';
+            var lifeDist = units === 'mi' ? tMi : tMi * 1.60934;
+            var lifeDistFmt = lifeDist > 0 ? '~' + lifeDist.toFixed(1) : '0';
+            noteTextEl.innerHTML = '<strong style="color:var(--brand);font-style:normal;">' + escHtml(dogName2) + ' and you have covered ' + lifeDistFmt + ' ' + lifeUnit + ' together in total.</strong>';
+          }
+        }
+      }
+    }
+  }
+
   /* -- Calendar module --------------------------------------------------- */
   var meCalYear  = new Date().getFullYear();
   var meCalMonth = new Date().getMonth();
@@ -13171,6 +13302,9 @@
     // Calendar
     initCalendarListeners();
     buildCalendar(meCalYear, meCalMonth);
+
+    // Stats toggle — restore active view (handles tab re-entry)
+    switchMeStatsView(meStatsView);
   }
 
   function dismissDogPrompt() {
