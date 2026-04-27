@@ -5825,7 +5825,7 @@
         <p class="me-profile-hero-breed" id="meDogCardBreed"></p>
         <span id="meDogCardOwner" style="display:none"></span>
       </div>
-      <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;">
+      <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;" onchange="handleProfilePhotoChange(event)">
 
       <!-- Dog profile prompt (shown when no dog set up) -->
       <div class="me-dog-prompt" id="meDogPrompt" style="display:none" hidden>
@@ -6044,7 +6044,7 @@
       </div><!-- /me-account-section -->
 
       <!-- Version footer -->
-      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 126</p>
+      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 127</p>
 
       <!-- hidden compat spans preserved for JS -->
       <span id="journalCount" style="display:none"></span>
@@ -16703,18 +16703,6 @@
     }
   });
 
-  /* -- Profile photo input handler ------------------------------------- */
-
-  document.addEventListener('DOMContentLoaded', function() {
-    var profilePhotoInput = document.getElementById('profilePhotoInput');
-    if (profilePhotoInput) {
-      profilePhotoInput.addEventListener('change', function(e) {
-        var file = e.target.files && e.target.files[0];
-        if (file) uploadProfilePhoto(file);
-        this.value = '';
-      });
-    }
-  });
 
   /* -- Badge tooltip global dismiss ------------------------------------ */
 
@@ -17509,9 +17497,10 @@
    * service firebase.storage {
    *   match /b/{bucket}/o {
    *
-   *     // Walk photos: only the owning user can read or write
-   *     match /users/{uid}/walkPhotos/{photo} {
-   *       allow read, write: if request.auth != null && request.auth.uid == uid;
+   *     // All user files: only the owning user can read or write
+   *     // Covers profile-photo.jpg and walkPhotos
+   *     match /users/{userId}/{allPaths=**} {
+   *       allow read, write: if request.auth != null && request.auth.uid == userId;
    *     }
    *
    *     // Deny everything else
@@ -17607,6 +17596,12 @@
   /* ─── Profile photo ─── */
 
   window._profilePhotoUrl = null;
+
+  function handleProfilePhotoChange(e) {
+    var file = e.target.files && e.target.files[0];
+    if (file) uploadProfilePhoto(file);
+    e.target.value = '';
+  }
 
   function triggerProfilePhotoUpload(event) {
     if (event) event.stopPropagation();
