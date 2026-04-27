@@ -3022,6 +3022,9 @@
       box-shadow: 0 2px 8px rgba(44,74,20,0.12);
     }
     .me-profile-hero-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .me-profile-hero-avatar { transition: transform 0.15s ease, opacity 0.15s ease; }
+    .me-profile-hero-avatar:active { transform: scale(0.97); }
+    .me-profile-hero-avatar.uploading { opacity: 0.6; pointer-events: none; }
     .me-profile-hero-name-row { display: flex; align-items: center; gap: 4px; }
     .me-profile-hero-name { font: 700 22px/1.2 'Plus Jakarta Sans', sans-serif; color: var(--ink); }
     .me-profile-hero-chevron { color: var(--ink-3); flex-shrink: 0; }
@@ -3278,7 +3281,10 @@
       background: #2C4A14;
       color: #fff;
       font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease;
     }
+    .me-cal-day.walked:active { transform: scale(0.97); }
     .me-cal-day.today {
       box-shadow: inset 0 0 0 2px #B85C2C;
     }
@@ -3929,6 +3935,19 @@
       object-fit: cover;
       max-height: 200px;
     }
+    .me-journal-date-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px 10px; border-bottom: 1px solid var(--border);
+    }
+    .me-journal-date-label {
+      font: 600 14px/1.2 'Plus Jakarta Sans', sans-serif; color: var(--ink);
+    }
+    .me-journal-show-all {
+      font: 500 13px/1 'Plus Jakarta Sans', sans-serif; color: var(--brand);
+      background: none; border: none; cursor: pointer; padding: 4px 0;
+      -webkit-tap-highlight-color: transparent; transition: transform 0.15s ease;
+    }
+    .me-journal-show-all:active { transform: scale(0.97); }
     /* Badge cards subpage */
     .badge-card {
       background: var(--surface);
@@ -5798,7 +5817,7 @@
 
       <!-- Profile hero -->
       <div class="me-profile-hero" id="meDogCard" onclick="openMeSubpage('dog')">
-        <div class="me-profile-hero-avatar" id="meDogCardAvatar"></div>
+        <div class="me-profile-hero-avatar" id="meDogCardAvatar" onclick="onAvatarTap(event)"></div>
         <div class="me-profile-hero-name-row">
           <h2 class="me-profile-hero-name" id="meDogCardName">Add your dog</h2>
           <svg class="me-profile-hero-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
@@ -6024,7 +6043,7 @@
       </div><!-- /me-account-section -->
 
       <!-- Version footer -->
-      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 124</p>
+      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 125</p>
 
       <!-- hidden compat spans preserved for JS -->
       <span id="journalCount" style="display:none"></span>
@@ -6061,6 +6080,7 @@
 
       <!-- Hidden file input for photo uploads (kept for compatibility) -->
       <input type="file" id="journalPhotoInput" accept="image/*" style="display:none">
+      <input type="file" id="profilePhotoInput" accept="image/*" style="display:none">
 
     </div><!-- /tab-me -->
 
@@ -12784,6 +12804,96 @@
     container.innerHTML = html;
   }
 
+  function openJournalForDate(dateStr) {
+    openMeSubpage('journal');
+    var el = document.getElementById('journalContent');
+    if (!el) return;
+
+    var log = getWalkLog();
+    var filtered = log.filter(function(e) {
+      return new Date(e.ts).toISOString().slice(0, 10) === dateStr;
+    });
+
+    var MONTHS_LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var parts = dateStr.split('-');
+    var dateLabel = 'Walks on ' + parseInt(parts[2], 10) + ' ' + MONTHS_LONG[parseInt(parts[1], 10) - 1] + ' ' + parts[0];
+
+    var headerHtml =
+      '<div class="me-journal-date-header">' +
+        '<span class="me-journal-date-label">' + escHtml(dateLabel) + '</span>' +
+        '<button class="me-journal-show-all" onclick="renderSubpageJournal()">Show all walks &#8594;</button>' +
+      '</div>';
+
+    if (filtered.length === 0) {
+      el.innerHTML = headerHtml +
+        '<div class="me-subpage-empty">' +
+          '<p class="me-subpage-empty-body">No walks logged on this date.</p>' +
+        '</div>';
+      return;
+    }
+
+    var walkById = {};
+    WALKS_DB.forEach(function(w) { if (w) walkById[w.id] = w; });
+    var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var journalDogName = getDogName();
+    var html = headerHtml;
+
+    filtered.forEach(function(entry) {
+      var type    = entry.type || 'curated';
+      var ts      = entry.ts ? new Date(entry.ts) : null;
+      var dStr    = ts ? ts.getDate() + ' ' + MONTHS[ts.getMonth()] + ' ' + ts.getFullYear() : '';
+      var note    = entry.note || '';
+      var rowKey  = (entry.id || 'custom') + '_' + (entry.ts || '');
+
+      if (type === 'custom') {
+        var cName     = entry.name || 'Untitled walk';
+        var cDistStr  = entry.distance ? formatDist(entry.distance) : '';
+        var cMeta = [cDistStr, dStr].filter(Boolean);
+        html +=
+          '<div class="journal-row" data-key="' + escHtml(rowKey) + '" onclick="toggleSubpageJournalRow(this)">' +
+            '<div class="journal-row-summary">' +
+              '<div class="journal-row-left">' +
+                '<span class="journal-row-name">' + escHtml(cName) + '<span class="journal-row-custom-chip">Your route</span></span>' +
+                (journalDogName ? '<span class="journal-row-with">with ' + escHtml(journalDogName) + '</span>' : '') +
+                (cMeta.length ? '<span class="journal-row-meta">' + escHtml(cMeta.join(' · ')) + '</span>' : '') +
+              '</div>' +
+              '<svg class="journal-row-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>' +
+            '</div>' +
+            '<div class="journal-row-detail" hidden>' +
+              (note ? '<p class="journal-row-note">' + escHtml(note) + '</p>' : '<p class="journal-row-note-empty">No note added.</p>') +
+            '</div>' +
+          '</div>';
+      } else {
+        var wId   = entry.walkId || entry.id;
+        var walk  = walkById[wId];
+        var wName = walk ? walk.name : wId;
+        var wDist = walk ? formatDist(walk.distance) : '';
+        var photo = entry.photoDataUrl || null;
+        var durStr = entry.duration ? entry.duration + ' min' : '';
+        var wMeta = [wDist, durStr, dStr].filter(Boolean);
+        var ratingHtml = entry.rating ? '<div class="journal-row-rating">' + '★'.repeat(entry.rating) + '</div>' : '';
+        html +=
+          '<div class="journal-row" data-key="' + escHtml(rowKey) + '" onclick="toggleSubpageJournalRow(this)">' +
+            '<div class="journal-row-summary">' +
+              '<div class="journal-row-left">' +
+                '<span class="journal-row-name">' + escHtml(wName) + '</span>' +
+                (journalDogName ? '<span class="journal-row-with">with ' + escHtml(journalDogName) + '</span>' : '') +
+                '<span class="journal-row-meta">' + escHtml(wMeta.join(' · ')) + '</span>' +
+              '</div>' +
+              '<svg class="journal-row-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>' +
+            '</div>' +
+            '<div class="journal-row-detail" hidden>' +
+              ratingHtml +
+              (note ? '<p class="journal-row-note">' + escHtml(note) + '</p>' : '<p class="journal-row-note-empty">No note added.</p>') +
+              (photo ? '<div class="journal-row-photo"><img src="' + photo + '" alt="Walk photo"></div>' : '') +
+            '</div>' +
+          '</div>';
+      }
+    });
+
+    el.innerHTML = html;
+  }
+
   /* -- Stats toggle ------------------------------------------------------- */
   var meStatsView = 'thismonth';
 
@@ -12959,10 +13069,17 @@
 
     for (var day = 1; day <= daysInMonth; day++) {
       var classes = 'me-cal-day';
-      if (walkedDays.has(day)) classes += ' walked';
+      var isWalked = walkedDays.has(day);
+      if (isWalked) classes += ' walked';
       if (isCurrentMonth && day === today.getDate()) classes += ' today';
       if (isCurrentMonth && day > today.getDate()) classes += ' future';
-      html += '<div class="' + classes + '">' + day + '</div>';
+      if (isWalked) {
+        var mo = month + 1;
+        var dateKey = year + '-' + (mo < 10 ? '0' + mo : mo) + '-' + (day < 10 ? '0' + day : day);
+        html += '<div class="' + classes + '" onclick="openJournalForDate(\'' + dateKey + '\')">' + day + '</div>';
+      } else {
+        html += '<div class="' + classes + '">' + day + '</div>';
+      }
     }
 
     grid.innerHTML = html;
@@ -13015,7 +13132,13 @@
     var heroNameEl   = document.getElementById('meDogCardName');
     var heroBreedEl  = document.getElementById('meDogCardBreed');
     var heroOwnerEl  = document.getElementById('meDogCardOwner');
-    if (heroAvatarEl) heroAvatarEl.innerHTML = luIcon('dog', 28);
+    if (heroAvatarEl) {
+      if (window._profilePhotoUrl) {
+        heroAvatarEl.innerHTML = '<img src="' + escHtml(window._profilePhotoUrl) + '" alt="Profile photo">';
+      } else {
+        heroAvatarEl.innerHTML = luIcon('dog', 28);
+      }
+    }
     if (heroNameEl)  heroNameEl.textContent  = (dog && dog.name) ? dog.name : 'Add your dog';
     if (heroBreedEl) heroBreedEl.textContent = (dog && dog.breed) ? dog.breed : '';
     if (heroOwnerEl) heroOwnerEl.textContent = name ? name + '\u2019s dog' : '';
@@ -16580,6 +16703,18 @@
     }
   });
 
+  /* -- Profile photo input handler ------------------------------------- */
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var profileInput = document.getElementById('profilePhotoInput');
+    if (profileInput) {
+      profileInput.addEventListener('change', function() {
+        var file = profileInput.files && profileInput.files[0];
+        if (file) uploadProfilePhoto(file);
+      });
+    }
+  });
+
   /* -- Badge tooltip global dismiss ------------------------------------ */
 
   document.addEventListener('click', function(e) {
@@ -17321,6 +17456,7 @@
           window.sniffoutIsAnon = user.isAnonymous;
           console.log('Sniffout auth:', user.isAnonymous ? 'anonymous' : 'signed in', user.uid);
           loadSavedWalksFromFirestore();
+          loadProfilePhotoFromFirestore();
           if (typeof updateMeAuthHeader === 'function') updateMeAuthHeader();
         } else {
           auth.signInAnonymously().catch(function(err) {
@@ -17461,6 +17597,60 @@
       console.warn('fsWriteUserProfile error:', e);
     }
   }
+  /* ─── Profile photo ─── */
+
+  window._profilePhotoUrl = null;
+
+  function setAvatarPhoto(url) {
+    window._profilePhotoUrl = url || null;
+    var el = document.getElementById('meDogCardAvatar');
+    if (!el) return;
+    if (url) {
+      el.innerHTML = '<img src="' + escHtml(url) + '" alt="Profile photo">';
+    } else {
+      el.innerHTML = luIcon('dog', 28);
+    }
+  }
+
+  function onAvatarTap(event) {
+    if (window.sniffoutIsAnon !== false) return;
+    if (event) event.stopPropagation();
+    var input = document.getElementById('profilePhotoInput');
+    if (input) { input.value = ''; input.click(); }
+  }
+
+  function uploadProfilePhoto(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    if (!storage || !fsUid || !db) return;
+    var avatarEl = document.getElementById('meDogCardAvatar');
+    if (avatarEl) avatarEl.classList.add('uploading');
+    var ref = storage.ref('users/' + fsUid + '/profile-photo.jpg');
+    ref.put(file)
+      .then(function() { return ref.getDownloadURL(); })
+      .then(function(url) {
+        db.collection('users').doc(fsUid).set({ profilePhotoUrl: url }, { merge: true })
+          .catch(function(e) { console.warn('profilePhotoUrl save failed:', e); });
+        setAvatarPhoto(url);
+        if (avatarEl) avatarEl.classList.remove('uploading');
+      })
+      .catch(function(err) {
+        console.warn('Profile photo upload failed:', err);
+        if (avatarEl) avatarEl.classList.remove('uploading');
+      });
+  }
+
+  function loadProfilePhotoFromFirestore() {
+    if (!db || !fsUid) return;
+    db.collection('users').doc(fsUid).get()
+      .then(function(doc) {
+        if (doc.exists) {
+          var data = doc.data();
+          if (data && data.profilePhotoUrl) setAvatarPhoto(data.profilePhotoUrl);
+        }
+      })
+      .catch(function(err) { console.warn('loadProfilePhoto failed:', err); });
+  }
+
   /* ─── Task 4: Load saved walks from Firestore after auth resolves ─── */
   window.sniffoutSavedWalks = {};
 
