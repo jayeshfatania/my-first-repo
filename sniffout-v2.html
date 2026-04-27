@@ -3536,6 +3536,8 @@
       position: sticky;
       top: 0;
       z-index: 20;
+      width: 100%;
+      box-sizing: border-box;
     }
     .me-header-bar-email {
       font: 400 13px/1 'Plus Jakarta Sans', sans-serif;
@@ -13009,7 +13011,7 @@
         if (visitCounts[k] > topCount) { topCount = visitCounts[k]; topKey = k; }
       });
       if (topKey && topCount > 1) {
-        mostVisitedEl.style.display = 'flex';
+        // card kept hidden — data still populated for compact row subline
         var mvWalkName, mvImgUrl;
         if (topKey.indexOf('custom:') === 0) {
           mvWalkName = topKey.slice(7) || 'Custom walk';
@@ -16678,19 +16680,20 @@
     var html = '';
     var shown = 0;
     for (var i = 0; i < ids.length; i++) {
-      var walk = null;
-      for (var j = 0; j < WALKS_DB.length; j++) {
-        if (WALKS_DB[j].id === ids[i]) { walk = WALKS_DB[j]; break; }
-      }
+      var walkId = ids[i];
+      var walk = WALKS_DB.find(function(w) { return w && w.id === walkId; });
       if (!walk) continue;
       var isLast = (i === ids.length - 1);
+      var metaParts = [];
+      if (walk.location) metaParts.push(escHtml(walk.location));
+      if (walk.distance) metaParts.push(walk.distance.toFixed(1) + ' mi');
       html +=
         '<div onclick="openRecentlyViewedWalk(\'' + walk.id + '\')" ' +
           'style="display:flex;align-items:center;gap:12px;padding:14px 0;' +
           (!isLast ? 'border-bottom:1px solid var(--border);' : '') + 'cursor:pointer;">' +
           '<div style="flex:1;min-width:0;">' +
             '<div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escHtml(walk.name) + '</div>' +
-            '<div style="font-size:13px;color:var(--ink-2);">' + escHtml(walk.location) + ' · ' + walk.distance.toFixed(1) + ' mi</div>' +
+            '<div style="font-size:13px;color:var(--ink-2);">' + metaParts.join(' · ') + '</div>' +
           '</div>' +
           '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--ink-2);" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>' +
         '</div>';
