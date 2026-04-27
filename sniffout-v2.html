@@ -3010,16 +3010,33 @@
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
       transition: transform 0.15s ease;
+      position: relative;
     }
     .me-profile-hero:active { transform: scale(0.98); }
+    .me-avatar-edit-btn {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #2C4A14;
+      border: 2px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #fff;
+      transition: transform 0.15s ease;
+      z-index: 2;
+    }
+    .me-avatar-edit-btn:active { transform: scale(0.92); }
     .me-profile-hero-avatar {
-      width: 110px; height: 110px; border-radius: 50%;
+      width: 120px; height: 120px; border-radius: 50%;
       background: var(--brand-tint);
-      border: 3px solid var(--surface);
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; overflow: hidden;
       margin-bottom: 10px;
-      box-shadow: 0 2px 8px rgba(44,74,20,0.12);
       cursor: pointer;
       transition: opacity 0.2s ease;
     }
@@ -3027,7 +3044,6 @@
     .me-profile-hero-avatar:active { opacity: 0.7; }
     .me-profile-hero-name-row { display: flex; align-items: center; gap: 4px; }
     .me-profile-hero-name { font: 700 22px/1.2 'Plus Jakarta Sans', sans-serif; color: var(--ink); }
-    .me-profile-hero-chevron { color: var(--ink-3); flex-shrink: 0; }
     .me-profile-hero-breed { font: 400 14px/1 'Plus Jakarta Sans', sans-serif; color: var(--ink-3); margin-top: 4px; min-height: 14px; }
 
     /* ─── Stats card (Task 2) ─── */
@@ -3531,43 +3547,6 @@
       border: 1px solid var(--border);
       border-radius: 10px;
     }
-
-    /* ─── Me tab header bar ─── */
-    .me-header-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      background: var(--bg);
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .me-header-bar-email {
-      font: 400 13px/1 'Plus Jakarta Sans', sans-serif;
-      color: var(--ink-2);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      flex: 1;
-      min-width: 0;
-    }
-    .me-header-bar-gear {
-      background: none;
-      border: none;
-      padding: 4px;
-      cursor: pointer;
-      color: var(--ink-2);
-      display: flex;
-      align-items: center;
-      -webkit-tap-highlight-color: transparent;
-      transition: transform 0.15s ease;
-      flex-shrink: 0;
-      margin-left: auto;
-    }
-    .me-header-bar-gear:active { transform: scale(0.97); }
 
     /* ─── Settings sheet sign-out ─── */
     .me-settings-account-row {
@@ -5802,14 +5781,7 @@
     <!-- ══════════ ME TAB ══════════ -->
     <div id="tab-me" class="tab-panel">
 
-      <!-- Header bar: email left, settings cog right -->
       <header class="me-header">
-        <div class="me-header-bar">
-          <span class="me-header-bar-email" id="meHeaderEmail" style="display:none"></span>
-          <button class="me-header-bar-gear" onclick="openMeSettingsSheet()" aria-label="Settings">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          </button>
-        </div>
         <div class="me-header-identity" id="meHeaderIdentity">
           <!-- dog picker appended here by JS when multiple dogs exist -->
         </div>
@@ -5817,10 +5789,12 @@
 
       <!-- Profile hero -->
       <div class="me-profile-hero" id="meDogCard" onclick="openMeSubpage('dog')">
-        <div class="me-profile-hero-avatar" id="meDogCardAvatar" onclick="triggerProfilePhotoUpload(event)"></div>
+        <div class="me-profile-hero-avatar" id="meDogCardAvatar" onclick="openAvatarFullscreen()"></div>
+        <button class="me-avatar-edit-btn" onclick="triggerProfilePhotoUpload(event)" aria-label="Update photo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </button>
         <div class="me-profile-hero-name-row">
           <h2 class="me-profile-hero-name" id="meDogCardName">Add your dog</h2>
-          <svg class="me-profile-hero-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <p class="me-profile-hero-breed" id="meDogCardBreed"></p>
         <span id="meDogCardOwner" style="display:none"></span>
@@ -6044,7 +6018,7 @@
       </div><!-- /me-account-section -->
 
       <!-- Version footer -->
-      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 127</p>
+      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 128</p>
 
       <!-- hidden compat spans preserved for JS -->
       <span id="journalCount" style="display:none"></span>
@@ -17597,6 +17571,19 @@
 
   window._profilePhotoUrl = null;
 
+  function openAvatarFullscreen() {
+    var avatarImg = document.getElementById('meDogCardAvatar') && document.getElementById('meDogCardAvatar').querySelector('img');
+    if (!avatarImg) return;
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;';
+    var img = document.createElement('img');
+    img.src = avatarImg.src;
+    img.style.cssText = 'max-width:90vw;max-height:90vh;border-radius:50%;object-fit:cover;';
+    overlay.appendChild(img);
+    overlay.addEventListener('click', function() { document.body.removeChild(overlay); });
+    document.body.appendChild(overlay);
+  }
+
   function handleProfilePhotoChange(e) {
     var file = e.target.files && e.target.files[0];
     if (file) uploadProfilePhoto(file);
@@ -17625,6 +17612,7 @@
         .then(function() { return url; });
     }).then(function(url) {
       setAvatarPhoto(url);
+      showToast('Profile photo updated');
       if (avatar) { avatar.style.opacity = ''; avatar.style.pointerEvents = ''; }
     }).catch(function(err) {
       console.error('Profile photo upload failed:', err);
@@ -17637,6 +17625,7 @@
     var avatar = document.getElementById('meDogCardAvatar');
     if (!avatar) return;
     avatar.innerHTML = '<img src="' + url + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" alt="Profile photo">';
+    avatar.style.background = 'transparent';
   }
 
   /* ─── Task 4: Load saved walks from Firestore after auth resolves ─── */
