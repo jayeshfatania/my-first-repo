@@ -2899,10 +2899,11 @@
       z-index: 90;
       transition: opacity 180ms ease, transform 180ms ease;
       -webkit-tap-highlight-color: transparent;
+      border: 3px solid rgba(255,255,255,0.85);
     }
     .me-log-fab:active { transform: translateX(-50%) scale(0.97); }
     .me-log-fab.fab-hidden { opacity: 0; pointer-events: none; transform: translateX(-50%) scale(0.88); }
-    body.night .me-log-fab { background: #3D6B22; box-shadow: 0 4px 12px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); }
+    body.night .me-log-fab { background: #3D6B22; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
 
     /* Month summary card */
     .me-month-card {
@@ -3532,6 +3533,9 @@
       justify-content: space-between;
       padding: 12px 16px;
       background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
     .me-header-bar-email {
       font: 400 13px/1 'Plus Jakarta Sans', sans-serif;
@@ -3553,6 +3557,7 @@
       -webkit-tap-highlight-color: transparent;
       transition: transform 0.15s ease;
       flex-shrink: 0;
+      margin-left: auto;
     }
     .me-header-bar-gear:active { transform: scale(0.97); }
 
@@ -5976,7 +5981,7 @@
         <span class="me-account-group-label">Account</span>
         <div class="me-account-card">
 
-          <button class="me-account-row" id="entryAccount" onclick="onMeAccountTap()">
+          <button class="me-account-row" id="entryAccount" onclick="openMeSubpage('account')">
             <div class="me-account-icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
@@ -6316,18 +6321,7 @@
       <button class="segment-btn" data-units="mi" aria-pressed="false"><span>miles</span></button>
     </div>
   </div>
-  <!-- Account row (always visible) -->
-  <div class="me-settings-section" id="meSettingsAuthSection">
-    <div class="segment-label">Account</div>
-    <button class="me-settings-account-row" id="meSettingsAccountBtn" onclick="onSettingsAccountTap()">
-      <span id="meSettingsAccountText">Keep your walks safe</span>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-    </button>
-    <button class="me-signout-btn" id="meSettingsSignoutBtn" style="display:none" onclick="signOutUser()">Sign out</button>
-    <button class="me-delete-account-btn" id="meSettingsDeleteBtn" style="display:none" onclick="openDeleteConfirmSheet()">Delete account</button>
-  </div>
-  <div class="me-settings-note" id="meSettingsNote">Your walks, favourites, and reviews are saved on this device. Sync across devices is coming in a future update.</div>
-  <div class="me-settings-note" style="margin-top:8px;">Weather guidance is general only and is not a substitute for veterinary advice.</div>
+  <div class="me-settings-note">Weather guidance is general only and is not a substitute for veterinary advice.</div>
 </div>
 
 <!-- Favourites sheet -->
@@ -6793,6 +6787,19 @@
     <div class="me-subpage-header-spacer"></div>
   </div>
   <div class="me-subpage-content" id="recentlyViewedContent"></div>
+</div>
+
+<!-- Account subpage -->
+<div class="me-subpage" id="subpageAccount" role="dialog" aria-modal="true" aria-label="Account">
+  <div class="me-subpage-handle"></div>
+  <div class="me-subpage-header">
+    <button class="me-subpage-back" onclick="closeMeSubpage('account')" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 class="me-subpage-title">Account</h2>
+    <div class="me-subpage-header-spacer"></div>
+  </div>
+  <div class="me-subpage-content" id="accountSubpageContent"></div>
 </div>
 
 
@@ -13553,6 +13560,53 @@
     else if (id === 'savedplaces')      renderSubpageSavedPlaces();
     else if (id === 'recentlyviewed')   renderSubpageRecentlyViewed();
     else if (id === 'dog')              populateDogSettings();
+    else if (id === 'account')          renderSubpageAccount();
+  }
+
+  /* ─── Account subpage ─── */
+  function renderSubpageAccount() {
+    var el = document.getElementById('accountSubpageContent');
+    if (!el) return;
+    var isAnon = window.sniffoutIsAnon !== false;
+    var email  = (!isAnon && auth && auth.currentUser) ? (auth.currentUser.email || '') : '';
+
+    var emailRowHtml =
+      '<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);">' +
+        '<div class="me-account-icon">' +
+          '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>' +
+        '</div>' +
+        '<span style="flex:1;min-width:0;font:400 14px/1 \'Plus Jakarta Sans\',sans-serif;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' +
+          (email ? escHtml(email) : 'Not signed in') +
+        '</span>' +
+      '</div>';
+
+    var signoutRowHtml = email
+      ? '<button class="me-account-row" style="border-radius:0;border-left:none;border-right:none;border-bottom:none;" onclick="closeMeSubpage(\'account\');signOutUser();">' +
+          '<div class="me-account-icon" style="background:rgba(0,0,0,0.05);color:var(--ink-2);">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' +
+          '</div>' +
+          '<div class="me-account-text">' +
+            '<span class="me-account-label" style="color:#D0372A;">Sign out</span>' +
+          '</div>' +
+        '</button>'
+      : '';
+
+    var deleteLinkHtml = email
+      ? '<div style="text-align:center;padding:16px 16px 8px;">' +
+          '<button onclick="closeMeSubpage(\'account\');openDeleteConfirmSheet();" style="background:none;border:none;font:400 13px/1 \'Plus Jakarta Sans\',sans-serif;color:var(--ink-2);cursor:pointer;padding:8px 0;-webkit-tap-highlight-color:transparent;transition:transform 0.15s ease;" onmousedown="this.style.transform=\'scale(0.97)\'" onmouseup="this.style.transform=\'\'" ontouchstart="this.style.transform=\'scale(0.97)\'" ontouchend="this.style.transform=\'\'">Delete account</button>' +
+        '</div>'
+      : '<div style="padding:16px;">' +
+          '<button onclick="closeMeSubpage(\'account\');openAuthSheet(\'signup\');" style="width:100%;padding:14px;background:var(--brand);color:#fff;border:none;border-radius:12px;font:600 15px/1 \'Plus Jakarta Sans\',sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform 0.15s ease;" onmousedown="this.style.transform=\'scale(0.97)\'" onmouseup="this.style.transform=\'\'" ontouchstart="this.style.transform=\'scale(0.97)\'" ontouchend="this.style.transform=\'\'">Save my walks</button>' +
+        '</div>';
+
+    el.innerHTML =
+      '<div style="margin:16px;">' +
+        '<div style="background:var(--surface);border-radius:16px;border:1px solid var(--border);overflow:hidden;">' +
+          emailRowHtml +
+          signoutRowHtml +
+        '</div>' +
+      '</div>' +
+      deleteLinkHtml;
   }
 
   /* ─── Walk Journal subpage ─── */
@@ -18142,6 +18196,11 @@
     document.getElementById('subpageRecentlyviewed'),
     document.getElementById('recentlyViewedContent'),
     function() { closeMeSubpage('recentlyviewed'); }
+  );
+  addSheetSwipe(
+    document.getElementById('subpageAccount'),
+    document.getElementById('accountSubpageContent'),
+    function() { closeMeSubpage('account'); }
   );
 (function() {
   var count = WALKS_DB.length + '+ walks';
