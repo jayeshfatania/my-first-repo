@@ -1931,150 +1931,59 @@
     .nearby-pill:active { transform: scale(0.97); }
     .nearby-pill--active { background: #2C4A14; border-color: #2C4A14; color: #fff; }
     body.night .nearby-pill--active { background: #3D6B28; border-color: #3D6B28; }
-    .nearby-toggle-row {
+    .nearby-section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(44,74,20,0.45); }
+    .nearby-count { font-size: 11px; font-weight: 600; color: var(--ink-2); letter-spacing: 0; text-transform: none; }
+    /* Nearby tab — sheet layout */
+    #tab-nearby.active { display: flex; flex-direction: column; overflow: hidden; }
+    #nearby-content { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+    #nearby-map { position: absolute; inset: 0; z-index: 0; }
+    .nearby-sheet {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10;
+      background: var(--bg);
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -2px 16px rgba(0,0,0,0.10);
+      display: flex;
+      flex-direction: column;
+      touch-action: none;
+      will-change: transform;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nearby-sheet-handle-bar {
+      display: flex;
+      justify-content: center;
+      padding: 10px 0 4px;
+      cursor: grab;
+      flex-shrink: 0;
+    }
+    .nearby-sheet-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--border);
+    }
+    .nearby-sheet-header { padding: 0 0 8px; flex-shrink: 0; }
+    .nearby-sheet-meta {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 4px 20px 10px;
+      padding: 4px 16px 0;
     }
-    .nearby-section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(44,74,20,0.45); }
-    .nearby-count { font-size: 11px; font-weight: 600; color: var(--ink-2); letter-spacing: 0; text-transform: none; }
-    #nearby-map {
-      width: 100%;
-      height: 300px;
-      display: none;
-      position: relative;
-      overflow: hidden;
-      z-index: 1;
-    }
-    #nearby-map.visible { display: block; }
-    body.night #nearby-map .leaflet-tile-pane { filter: brightness(0.75) contrast(1.05); }
-    /* Bottom category bar - shown in Nearby map view */
-    #nearby-map-cat-bar {
-      display: none;
-      position: fixed;
-      bottom: var(--nav-h);
-      left: 0;
-      right: 0;
-      height: 52px;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      overflow-x: auto;
+    .nearby-venues-scroll {
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      -webkit-mask-image: linear-gradient(to right, black calc(100% - 32px), transparent 100%);
-      mask-image: linear-gradient(to right, black calc(100% - 32px), transparent 100%);
-      z-index: 100;
-    }
-    #nearby-map-cat-bar::-webkit-scrollbar { display: none; }
-    #nearby-map-cat-bar.visible { display: flex; }
-    .nearby-cat-bar-chip {
-      font: 600 13px/1 'Plus Jakarta Sans', sans-serif;
-      color: var(--ink-2);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 0 14px;
-      height: 34px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: transform 0.15s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .nearby-cat-bar-chip:active { transform: scale(0.97); }
-    .nearby-cat-bar-chip.active { background: var(--brand); color: #fff; border-color: var(--brand); }
-    body.night .nearby-cat-bar-chip.active { background: #3D6B22; border-color: #3D6B22; }
-    /* Full screen nearby map overlay */
-    #nearby-map-fullscreen {
-      position: fixed;
-      inset: 0;
-      z-index: 200;
-      display: none;
-      flex-direction: column;
-      opacity: 0;
-      transform: scale(0.98);
-      transition: opacity 200ms ease, transform 200ms ease;
-    }
-    #nearby-map-fullscreen.open {
-      display: flex;
-      opacity: 1;
-      transform: scale(1);
-    }
-    .nearby-map-fullscreen-chips {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 48px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      z-index: 451;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .nearby-map-fullscreen-chips::-webkit-scrollbar { display: none; }
-    .fs-map-chip {
-      font: 600 13px/1 'Plus Jakarta Sans',sans-serif;
-      color: var(--ink);
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 0 14px;
-      height: 34px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: transform 0.15s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .fs-map-chip:active { transform: scale(0.97); }
-    .fs-map-chip.active { background: #3D6B22; color: #fff; border-color: #3D6B22; }
-    body.night .fs-map-chip { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.08); color: var(--ink); }
-    body.night .fs-map-chip.active { background: #3D6B22; border-color: #3D6B22; color: #fff; }
-    #nearby-map-fullscreen-map {
       flex: 1;
-      width: 100%;
-      height: 100%;
+      padding: 0 0 100px;
     }
-    body.night #nearby-map-fullscreen-map .leaflet-tile-pane { filter: brightness(0.75) contrast(1.05); }
-    .nearby-map-fs-close {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 32px;
-      height: 32px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--ink);
-      z-index: 452;
-      transition: transform 0.15s ease;
-      -webkit-tap-highlight-color: transparent;
+    .nearby-card--highlighted {
+      outline: 2px solid #2C4A14;
+      outline-offset: -2px;
+      border-radius: 16px;
+      transition: outline 0.3s ease;
     }
-    .nearby-map-fs-close:active { transform: scale(0.97); }
-    body.night .nearby-map-fs-close { box-shadow: 0 1px 4px rgba(0,0,0,0.5); }
     /* Venue pin styles */
     .venue-pin {
       width: 28px;
@@ -2097,66 +2006,6 @@
       box-shadow: 0 0 0 4px rgba(255,255,255,0.92), 0 2px 10px rgba(0,0,0,0.38);
       margin: -4px 0 0 -4px;
     }
-    /* Venue compact card (full screen mode) */
-    .nearby-map-card {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 16px;
-      z-index: 453;
-      transform: translateY(100%);
-      transition: transform 200ms ease;
-      pointer-events: none;
-    }
-    .nearby-map-card.open {
-      transform: translateY(0);
-      transition: transform 280ms cubic-bezier(0.34,1.56,0.64,1);
-      pointer-events: auto;
-    }
-    .nearby-map-card-name {
-      font-family: var(--font-display);
-      font-size: 19px;
-      font-weight: 600;
-      color: var(--ink);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .nearby-map-card-cat {
-      font: 500 12px/1 'Plus Jakarta Sans',sans-serif;
-      border-radius: 6px;
-      padding: 4px 8px;
-      display: inline-flex;
-      align-items: center;
-      margin-top: 4px;
-    }
-    .nearby-map-card-cat.cafe  { background: rgba(176,122,40,0.12); color: #B07A28; }
-    .nearby-map-card-cat.vet   { background: rgba(192,64,64,0.12); color: #C04040; }
-    .nearby-map-card-cat.green { background: var(--brand-tint); color: var(--brand); }
-    .nearby-map-card-dist {
-      font: 400 13px/1 'Plus Jakarta Sans',sans-serif;
-      color: var(--ink-2);
-      margin-top: 8px;
-    }
-    .nearby-map-card-btn {
-      display: block;
-      width: 100%;
-      height: 44px;
-      margin-top: 12px;
-      background: #fff;
-      color: var(--brand);
-      font: 600 14px/1 'Plus Jakarta Sans',sans-serif;
-      border: 1px solid var(--brand);
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.15s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .nearby-map-card-btn:active { transform: scale(0.97); }
-    body.night .nearby-map-card-btn { background: var(--surface); }
     .venue-card {
       display: flex;
       align-items: flex-start;
@@ -5723,19 +5572,9 @@
             <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:4px;">
-          <div class="walks-map-toggle" role="group" aria-label="Nearby view mode">
-            <button class="walks-map-toggle-btn active" id="nearby-list-view-btn" aria-label="List view" onclick="setNearbyView('list')">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            </button>
-            <button class="walks-map-toggle-btn" id="nearby-map-view-btn" aria-label="Map view" onclick="setNearbyView('map')">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-            </button>
-          </div>
-          <button class="filter-btn" id="nearby-radius-btn" aria-label="Filter by radius">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4-2V12L3 4z"/></svg>
-          </button>
-        </div>
+        <button class="filter-btn" id="nearby-radius-btn" aria-label="Filter by radius">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4-2V12L3 4z"/></svg>
+        </button>
       </div>
       <div id="nearby-location-search" style="display:none; padding:0 16px 12px;">
         <div class="search-input-row">
@@ -5753,25 +5592,24 @@
         <button class="chip radius-chip" data-km="10">10 km</button>
       </div>
       <div id="nearby-content">
-        <div class="empty-state">Set your location on the Today tab to find dog-friendly places near you.</div>
-      </div>
-      <div id="nearby-map">
-        <div class="map-fab-container" id="nearbyMapFab">
-          <div class="map-fab-panel" id="nearbyMapFabPanel">
-            <div class="map-fab-panel-label">Map style</div>
-            <div class="map-fab-panel-row map-fab-panel-row--active" id="nearbyStyleOsm" onclick="setMapStyle('osm');updateMapFabState('nearby')">
-              <span class="map-fab-panel-row-check" id="nearbyStyleOsmCheck"></span>
-              Standard
+        <div id="nearby-map">
+          <div class="map-fab-container" id="nearbyMapFab" style="display:none;">
+            <div class="map-fab-panel" id="nearbyMapFabPanel">
+              <div class="map-fab-panel-label">Map style</div>
+              <div class="map-fab-panel-row map-fab-panel-row--active" id="nearbyStyleOsm" onclick="setMapStyle('osm');updateMapFabState('nearby')">
+                <span class="map-fab-panel-row-check" id="nearbyStyleOsmCheck"></span>
+                Standard
+              </div>
+              <div class="map-fab-panel-row" id="nearbyStyleOutdoor" onclick="setMapStyle('outdoor');updateMapFabState('nearby')">
+                <span class="map-fab-panel-row-check" id="nearbyStyleOutdoorCheck"></span>
+                OS Map
+              </div>
             </div>
-            <div class="map-fab-panel-row" id="nearbyStyleOutdoor" onclick="setMapStyle('outdoor');updateMapFabState('nearby')">
-              <span class="map-fab-panel-row-check" id="nearbyStyleOutdoorCheck"></span>
-              OS Map
-            </div>
+            <button class="map-fab-btn" id="nearbyMapFabBtn" onclick="toggleMapFab('nearby')" aria-label="Map options" aria-expanded="false">
+              <span class="map-fab-btn-icon map-fab-btn-icon--layers"></span>
+              <span class="map-fab-btn-icon map-fab-btn-icon--close"></span>
+            </button>
           </div>
-          <button class="map-fab-btn" id="nearbyMapFabBtn" onclick="toggleMapFab('nearby')" aria-label="Map options" aria-expanded="false">
-            <span class="map-fab-btn-icon map-fab-btn-icon--layers"></span>
-            <span class="map-fab-btn-icon map-fab-btn-icon--close"></span>
-          </button>
         </div>
       </div>
     </div><!-- /tab-nearby -->
@@ -6018,7 +5856,7 @@
       </div><!-- /me-account-section -->
 
       <!-- Version footer -->
-      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 130</p>
+      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 131</p>
 
       <!-- hidden compat spans preserved for JS -->
       <span id="journalCount" style="display:none"></span>
@@ -6057,16 +5895,6 @@
       <input type="file" id="journalPhotoInput" accept="image/*" style="display:none">
 
     </div><!-- /tab-me -->
-
-  <!-- Nearby map full-screen overlay -->
-  <div id="nearby-map-fullscreen" role="dialog" aria-modal="true" aria-label="Full screen map">
-    <div id="nearby-map-fullscreen-map"></div>
-    <div class="nearby-map-fullscreen-chips" id="nearbyFsChips"></div>
-    <button class="nearby-map-fs-close" id="nearbyFsClose" aria-label="Exit full screen" onclick="closeNearbyMapFullscreen()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="21" y2="3"/><line x1="3" y1="21" x2="14" y2="10"/></svg>
-    </button>
-    <div class="nearby-map-card" id="nearbyMapCard"></div>
-  </div>
 
   <!-- Log a walk FAB (Me tab only - outside all tab-panels so position:fixed works) -->
   <button class="me-log-fab" id="meLogFab" aria-label="Log daily walk" style="display:none;" onclick="navigator.vibrate && navigator.vibrate(10); openLogWalkSheet();">
@@ -6852,14 +6680,12 @@
     // Dismiss walks map card when leaving Walks tab
     if (id !== 'walks' && typeof dismissWalksMapCard === 'function') dismissWalksMapCard();
 
-    // Hide nearby map chip bar (position: fixed - bleeds across tabs)
-    var _nearbyBar = document.getElementById('nearby-map-cat-bar');
-    if (_nearbyBar) _nearbyBar.classList.remove('visible');
-    var _fsChips = document.querySelector('.nearby-map-fullscreen-chips');
-    if (_fsChips) _fsChips.style.display = 'none';
-    // Restore cat bar when returning to Nearby in map mode
-    if (id === 'nearby' && typeof nearbyView !== 'undefined' && nearbyView === 'map') {
-      if (_nearbyBar) _nearbyBar.classList.add('visible');
+    // Invalidate map size and recalculate sheet when switching to Nearby tab
+    if (id === 'nearby') {
+      setTimeout(function() {
+        if (nearbyMap) nearbyMap.invalidateSize();
+        if (typeof initNearbySheet === 'function') initNearbySheet();
+      }, 100);
     }
 
     // Show/hide Me tab FAB
@@ -9949,12 +9775,6 @@
   window.addEventListener('popstate', function(e) {
     // Push synchronously first — before anything else — so the stack is never empty
     history.pushState(null, '', location.href);
-    // Check if nearby fullscreen is open first
-    var nearbyFs = document.getElementById('nearby-map-fullscreen');
-    if (nearbyFs && nearbyFs.classList.contains('open')) {
-      closeNearbyMapFullscreen();
-      return;
-    }
     closeTopSheet();
   });
 
@@ -15636,7 +15456,10 @@
   var nearbyUserLon      = null;
   var nearbyLocationName = '';
   var nearbyCategory     = 'pub';
-  var nearbyView         = 'list';
+  var nearbySheetSnap    = 'peek';
+  var nearbySheetEl      = null;
+  var nearbyPanelHeight  = 0;
+  var NEARBY_SNAP        = { peek: 0, mid: 0, full: 0 };
   var placesCache = {}; // { key: { ts, data } } — 30-min expiry for venues, 60-min for green spaces
   try {
     var _storedCache = localStorage.getItem('sniffout_places_cache');
@@ -15874,80 +15697,65 @@
 
   /* ─── Render ─── */
 
-  function setNearbyView(mode) {
-    var listBtn = document.getElementById('nearby-list-view-btn');
-    var mapBtn  = document.getElementById('nearby-map-view-btn');
-    if (listBtn) listBtn.classList.toggle('active', mode === 'list');
-    if (mapBtn)  mapBtn.classList.toggle('active', mode === 'map');
-
-    nearbyView = mode;
-
-    var mapEl    = document.getElementById('nearby-map');
+  function snapNearbySheet(position, animate) {
+    if (!nearbySheetEl) return;
+    nearbySheetSnap = position;
+    var y = NEARBY_SNAP[position] || 0;
+    nearbySheetEl.style.transition = (animate === false)
+      ? 'none'
+      : 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    nearbySheetEl.style.transform = 'translateY(' + y + 'px)';
     var venuesEl = document.getElementById('nearby-venues');
-    var nearbyFab = document.getElementById('nearbyMapFab');
-    var catBar   = document.getElementById('nearby-map-cat-bar');
-    var filterRow = document.getElementById('nearby-filter-row');
-    var toggleRow = document.getElementById('nearby-toggle-row');
+    if (venuesEl) venuesEl.style.overflowY = position === 'full' ? 'auto' : 'hidden';
+  }
 
-    function _showNearbyMap() {
-      var tabPanel = document.getElementById('tab-nearby');
-      var titleBar = tabPanel ? tabPanel.querySelector('.tab-title-bar') : null;
-      var usedH = titleBar ? titleBar.offsetHeight : 56;
-      var mapH = (tabPanel ? tabPanel.offsetHeight : window.innerHeight - 64) - usedH;
-      if (mapEl) {
-        mapEl.style.height = Math.max(200, mapH) + 'px';
-        mapEl.classList.add('visible');
-      }
-      if (nearbyFab) nearbyFab.style.display = 'flex';
-      if (toggleRow) toggleRow.style.display = 'none';
-      if (filterRow) filterRow.style.display = 'none';
-      if (catBar) {
-        catBar.innerHTML = CATEGORIES.map(function(c) {
-          return '<button class="nearby-cat-bar-chip' + (c.id === nearbyCategory ? ' active' : '') + '" data-nearby-cat="' + c.id + '" onclick="setNearbyCategory(\'' + c.id + '\')">' + (CATEGORY_CHIP_ICON[c.id] || '') + c.label + '</button>';
-        }).join('');
-        catBar.classList.add('visible');
-        syncIcons();
-      }
-      if (nearbyUserLat && nearbyUserLon) {
-        setTimeout(function() { initNearbyMap(nearbyUserLat, nearbyUserLon); }, 50);
-      }
-    }
-    if (mode === 'map') {
-      if (venuesEl && venuesEl.style.display !== 'none') {
-        venuesEl.style.transition = 'opacity 150ms ease';
-        venuesEl.style.opacity = '0';
-        setTimeout(function() {
-          venuesEl.style.display = 'none';
-          venuesEl.style.opacity = '';
-          venuesEl.style.transition = '';
-          _showNearbyMap();
-        }, 150);
-      } else {
-        if (venuesEl) venuesEl.style.display = 'none';
-        _showNearbyMap();
-      }
-    } else {
-      if (mapEl && mapEl.classList.contains('visible')) {
-        mapEl.style.transition = 'opacity 150ms ease';
-        mapEl.style.opacity = '0';
-        setTimeout(function() {
-          mapEl.classList.remove('visible');
-          mapEl.style.opacity = '';
-          mapEl.style.transition = '';
-          if (venuesEl) venuesEl.style.display = '';
-          if (nearbyFab) { nearbyFab.style.display = 'none'; closeAllMapFabs(); }
-          if (toggleRow) toggleRow.style.display = '';
-          if (filterRow) filterRow.style.display = '';
-          if (catBar) catBar.classList.remove('visible');
-        }, 150);
-      } else {
-        if (mapEl) mapEl.classList.remove('visible');
-        if (venuesEl) venuesEl.style.display = '';
-        if (nearbyFab) { nearbyFab.style.display = 'none'; closeAllMapFabs(); }
-        if (toggleRow) toggleRow.style.display = '';
-        if (filterRow) filterRow.style.display = '';
-        if (catBar) catBar.classList.remove('visible');
-      }
+  function snapNearbySheetToMid() { snapNearbySheet('mid', true); }
+
+  function initNearbySheetDrag() {
+    if (!nearbySheetEl) return;
+    var handleBar = nearbySheetEl.querySelector('.nearby-sheet-handle-bar');
+    if (!handleBar) return;
+    var startY = null;
+    var startTranslate = 0;
+    handleBar.addEventListener('touchstart', function(e) {
+      startY = e.touches[0].clientY;
+      var current = nearbySheetEl.style.transform;
+      var match = current.match(/translateY\(([^)]+)px\)/);
+      startTranslate = match ? parseFloat(match[1]) : 0;
+      nearbySheetEl.style.transition = 'none';
+    }, { passive: true });
+    handleBar.addEventListener('touchmove', function(e) {
+      if (startY === null) return;
+      var dy = e.touches[0].clientY - startY;
+      var newY = Math.min(0, Math.max(NEARBY_SNAP.full, startTranslate + dy));
+      nearbySheetEl.style.transform = 'translateY(' + newY + 'px)';
+    }, { passive: true });
+    handleBar.addEventListener('touchend', function(e) {
+      if (startY === null) return;
+      var dy = e.changedTouches[0].clientY - startY;
+      var currentY = startTranslate + dy;
+      var positions = ['peek', 'mid', 'full'];
+      var nearest = positions.reduce(function(best, pos) {
+        return Math.abs(NEARBY_SNAP[pos] - currentY) < Math.abs(NEARBY_SNAP[best] - currentY) ? pos : best;
+      }, 'peek');
+      snapNearbySheet(nearest, true);
+      startY = null;
+    }, { passive: true });
+  }
+
+  function initNearbySheet() {
+    nearbySheetEl = document.getElementById('nearby-sheet');
+    if (!nearbySheetEl) return;
+    var content = document.getElementById('nearby-content');
+    nearbyPanelHeight = content ? content.offsetHeight : 0;
+    if (nearbyPanelHeight <= 0) nearbyPanelHeight = Math.round(window.innerHeight * 0.65);
+    NEARBY_SNAP.peek = 0;
+    NEARBY_SNAP.mid  = -(nearbyPanelHeight * 0.25);
+    NEARBY_SNAP.full = -(nearbyPanelHeight * 0.57);
+    snapNearbySheet(nearbySheetSnap, false);
+    if (!nearbySheetEl._dragBound) {
+      nearbySheetEl._dragBound = true;
+      initNearbySheetDrag();
     }
   }
 
@@ -15961,14 +15769,11 @@
 
   function setNearbyCategory(cat) {
     if (isFetching) return; // debounce — 500ms minimum between API calls
+    snapNearbySheet('mid', true);
     nearbyCategory = cat;
     // Update pill rail
     document.querySelectorAll('.nearby-pill[data-nearby-cat]').forEach(function(b) {
       b.classList.toggle('nearby-pill--active', b.getAttribute('data-nearby-cat') === cat);
-    });
-    // Update bottom bar chips
-    document.querySelectorAll('.nearby-cat-bar-chip').forEach(function(b) {
-      b.classList.toggle('active', b.getAttribute('data-nearby-cat') === cat);
     });
     // Update section label
     var labelEl = document.getElementById('nearby-section-label');
@@ -15983,8 +15788,7 @@
     fetchNearbyPlaces(cat, nearbyUserLat, nearbyUserLon, nearbyLocationName, function(venues) {
       nearbyVenues = venues;
       renderVenueList();
-      if (nearbyView === 'map') updateMapMarkers();
-      if (nearbyFsMap && typeof renderNearbyFsMarkers === 'function') renderNearbyFsMarkers();
+      updateMapMarkers();
     });
   }
 
@@ -15992,6 +15796,7 @@
     nearbyUserLat      = lat;
     nearbyUserLon      = lon;
     nearbyLocationName = locationName || '';
+    nearbySheetSnap    = 'peek';
 
     var nearbyLocName = document.getElementById('nearby-location-name');
     var nearbyLocLine = document.getElementById('nearby-location-line');
@@ -16000,32 +15805,41 @@
 
     var content = document.getElementById('nearby-content');
     if (content) {
-      content.innerHTML =
-        '<div class="nearby-pill-rail" id="nearby-filter-row">' +
-          CATEGORIES.map(function(c) {
-            return '<button class="nearby-pill' + (c.id === nearbyCategory ? ' nearby-pill--active' : '') + '" data-nearby-cat="' + c.id + '" onclick="setNearbyCategory(\'' + c.id + '\')">' +
-              (CATEGORY_CHIP_ICON[c.id] || '') + c.label +
-            '</button>';
-          }).join('') +
-        '</div>' +
-        '<div class="nearby-toggle-row" id="nearby-toggle-row">' +
-          '<span class="nearby-section-label" id="nearby-section-label">Dog-friendly pubs</span>' +
-          '<span class="nearby-count" id="nearby-count">Loading...</span>' +
-        '</div>' +
-        '<div id="nearby-venues"><div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding places near you...</div></div></div>';
-    }
-    syncIcons();
+      // Save the persistent map element before wiping innerHTML
+      var nearbyMapEl = document.getElementById('nearby-map');
 
-    // Initial load — skip fetch if already fetched for this location (tab switch)
-    if (!nearbyHasFetched) {
-      nearbyHasFetched = true;
-      fetchNearbyPlaces(nearbyCategory, lat, lon, nearbyLocationName, function(venues) {
-        nearbyVenues = venues;
-        renderVenueList();
-      });
-    } else {
-      renderVenueList();
+      var pillsHtml = CATEGORIES.map(function(c) {
+        return '<button class="nearby-pill' + (c.id === nearbyCategory ? ' nearby-pill--active' : '') + '" data-nearby-cat="' + c.id + '" onclick="setNearbyCategory(\'' + c.id + '\')">' +
+          (CATEGORY_CHIP_ICON[c.id] || '') + c.label + '</button>';
+      }).join('');
+
+      content.innerHTML =
+        '<div id="nearby-sheet" class="nearby-sheet">' +
+          '<div class="nearby-sheet-handle-bar"><div class="nearby-sheet-handle"></div></div>' +
+          '<div class="nearby-sheet-header">' +
+            '<div class="nearby-pill-rail" id="nearby-filter-row">' + pillsHtml + '</div>' +
+            '<div class="nearby-sheet-meta">' +
+              '<span id="nearby-section-label" class="nearby-section-label">' + (NEARBY_SECTION_LABELS[nearbyCategory] || '') + '</span>' +
+              '<span id="nearby-count" class="nearby-count"></span>' +
+            '</div>' +
+          '</div>' +
+          '<div id="nearby-venues" class="nearby-venues-scroll"></div>' +
+        '</div>';
+
+      // Re-insert map element (was detached by innerHTML replacement)
+      if (nearbyMapEl) content.insertBefore(nearbyMapEl, content.firstChild);
     }
+
+    // Show FAB
+    var nearbyFab = document.getElementById('nearbyMapFab');
+    if (nearbyFab) nearbyFab.style.display = 'flex';
+
+    syncIcons();
+    initNearbySheet();
+    if (lat && lon) initNearbyMap(lat, lon);
+
+    // Fire initial category fetch through setNearbyCategory
+    setNearbyCategory(nearbyCategory);
   }
 
   function renderVenueList() {
@@ -16134,7 +15948,7 @@
     var chevronSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CCC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
 
     return (
-      '<a class="venue-card-gp" href="' + (venue.mapsUrl || '#') + '" target="_blank" rel="noopener">' +
+      '<a class="venue-card-gp" id="nearby-card-' + venue.id + '" href="' + (venue.mapsUrl || '#') + '" target="_blank" rel="noopener">' +
         photoHtml +
         '<div class="venue-card-body-gp">' +
           '<div class="venue-card-name-gp">' + escHtml(venue.name) + '</div>' +
@@ -16252,173 +16066,40 @@
 
   function updateMapMarkers() {
     if (!nearbyMap) return;
-    // Remove old venue markers (user marker kept by not tracking it separately)
     nearbyMap.eachLayer(function(layer) {
       if (layer instanceof L.Marker) nearbyMap.removeLayer(layer);
     });
 
-    nearbyVenues.forEach(function(v) {
-      if (!v.lat || !v.lon) return;
-      var icon  = CATEGORY_ICON[v.cat] || CATEGORY_ICON.other;
-      var label = escHtml(v.name);
-      L.marker([v.lat, v.lon])
-        .bindPopup('<strong>' + label + '</strong><br>' + CATEGORY_LABEL[v.cat])
-        .addTo(nearbyMap);
+    nearbyVenues.forEach(function(venue) {
+      if (!venue.lat || !venue.lon) return;
+      var pinClass = getCategoryPinClass(venue.cat);
+      var icon = L.divIcon({
+        className: '',
+        html: '<div class="venue-pin ' + pinClass + '"></div>',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      });
+      var marker = L.marker([venue.lat, venue.lon], { icon: icon });
+      marker.on('click', function() {
+        snapNearbySheetToMid();
+        var cardEl = document.getElementById('nearby-card-' + venue.id);
+        if (cardEl) {
+          var sheetBody = document.getElementById('nearby-venues');
+          if (sheetBody) sheetBody.scrollTop = cardEl.offsetTop - 8;
+          cardEl.classList.add('nearby-card--highlighted');
+          setTimeout(function() {
+            cardEl.classList.remove('nearby-card--highlighted');
+          }, 1500);
+        }
+      });
+      marker.addTo(nearbyMap);
     });
-
-  }
-
-  /* ─── Full screen nearby map ─── */
-  var nearbyFsMap = null;
-  var nearbyFsMarkers = [];
-  var nearbyFsSelectedId = null;
-  var nearbyFsCategory = null;
-
-  function openNearbyMapFullscreen() {
-    var overlay = document.getElementById('nearby-map-fullscreen');
-    if (!overlay) return;
-    var nav = document.getElementById('bottom-nav');
-    if (nav) nav.style.transform = 'translateY(64px)';
-
-    overlay.style.display = 'flex';
-    // Force reflow before adding .open for transition
-    overlay.offsetHeight;
-    overlay.classList.add('open');
-
-    history.pushState({ nearbyFs: true }, '', location.href);
-
-    // Build category chips
-    var chipsEl = document.getElementById('nearbyFsChips');
-    if (chipsEl) {
-      nearbyFsCategory = nearbyCategory;
-      chipsEl.innerHTML = CATEGORIES.filter(function(c) { return c.id !== 'saved'; }).map(function(c) {
-        return '<button class="fs-map-chip' + (c.id === nearbyFsCategory ? ' active' : '') + '" onclick="setNearbyFsCategory(\'' + c.id + '\')">' + (CATEGORY_CHIP_ICON[c.id] || '') + c.label + '</button>';
-      }).join('');
-      syncIcons();
-    }
-
-    initNearbyFsMap();
-  }
-
-  function closeNearbyMapFullscreen() {
-    var overlay = document.getElementById('nearby-map-fullscreen');
-    var nav = document.getElementById('bottom-nav');
-    if (overlay) {
-      overlay.classList.remove('open');
-      setTimeout(function() { overlay.style.display = 'none'; }, 200);
-    }
-    if (nav) nav.style.transform = '';
-    dismissNearbyMapCard();
-  }
-
-  function initNearbyFsMap() {
-    var mapEl = document.getElementById('nearby-map-fullscreen-map');
-    if (!mapEl) return;
-    var lat = nearbyUserLat, lon = nearbyUserLon;
-    if (!lat || !lon) { lat = 54.0; lon = -2.0; }
-
-    if (!nearbyFsMap) {
-      var style = getSavedMapStyle();
-      var tileUrl = OS_TILES[style] || OS_TILES.osm;
-      nearbyFsMap = L.map('nearby-map-fullscreen-map', { zoomControl: false, attributionControl: false });
-      L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(nearbyFsMap);
-      nearbyFsMap.on('click', function() { dismissNearbyMapCard(); });
-    }
-    nearbyFsMap.setView([lat, lon], 14);
-    setTimeout(function() { nearbyFsMap.invalidateSize(); }, 220);
-
-    // User pin
-    L.circleMarker([lat, lon], {
-      radius: 8, color: '#2C4A14', fillColor: '#2C4A14', fillOpacity: 0.9, weight: 2
-    }).addTo(nearbyFsMap);
-
-    renderNearbyFsMarkers();
   }
 
   function getCategoryPinClass(cat) {
     if (cat === 'cafe' || cat === 'pub') return 'cafe';
     if (cat === 'vet') return 'vet';
     return 'green';
-  }
-
-  function renderNearbyFsMarkers() {
-    if (!nearbyFsMap) return;
-    nearbyFsMarkers.forEach(function(m) { m.marker.remove(); });
-    nearbyFsMarkers = [];
-
-    var venues = nearbyVenues.filter(function(v) {
-      return v.lat && v.lon && (nearbyFsCategory ? v.cat === nearbyFsCategory : true);
-    });
-
-    venues.forEach(function(venue) {
-      var isSelected = venue.id === nearbyFsSelectedId;
-      var pinClass = getCategoryPinClass(venue.cat);
-      var icon = L.divIcon({
-        className: '',
-        html: '<div class="pin-wrap"><div class="venue-pin ' + pinClass + (isSelected ? ' selected' : '') + '"></div></div>',
-        iconSize: [44, 44],
-        iconAnchor: [22, 22]
-      });
-      var marker = L.marker([venue.lat, venue.lon], { icon: icon, zIndexOffset: isSelected ? 1000 : 0 });
-      marker.on('click', function(e) {
-        L.DomEvent.stopPropagation(e);
-        nearbyFsSelectedId = venue.id;
-        renderNearbyFsMarkers();
-        showNearbyMapCard(venue);
-      });
-      marker.addTo(nearbyFsMap);
-      nearbyFsMarkers.push({ id: venue.id, marker: marker });
-    });
-  }
-
-  function showNearbyMapCard(venue) {
-    var card = document.getElementById('nearbyMapCard');
-    if (!card) return;
-    var pinClass = getCategoryPinClass(venue.cat);
-    var catLabel = CATEGORY_LABEL[venue.cat] || 'Place';
-    var distText = venue.dist != null ? formatDist(venue.dist) : '';
-    var _hoursDetail = getVenueHoursLabel(venue);
-    var openHtml = _hoursDetail.text
-      ? ' &middot; <span class="nearby-hours-label ' + _hoursDetail.cls + '">' + escHtml(_hoursDetail.text) + '</span>'
-      : '';
-    var mapsUrl = venue.mapsUrl
-      ? venue.mapsUrl
-      : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(venue.name);
-    card.innerHTML =
-      '<div class="nearby-map-card-name">' + escHtml(venue.name) + '</div>' +
-      '<span class="nearby-map-card-cat ' + pinClass + '">' + escHtml(catLabel) + '</span>' +
-      '<div class="nearby-map-card-dist">' + escHtml(distText) + openHtml + '</div>' +
-      '<a href="' + escHtml(mapsUrl) + '" target="_blank" rel="noopener" class="nearby-map-card-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">Get directions</a>';
-    card.classList.add('open');
-  }
-
-  function dismissNearbyMapCard() {
-    var card = document.getElementById('nearbyMapCard');
-    if (card) card.classList.remove('open');
-    nearbyFsSelectedId = null;
-    renderNearbyFsMarkers();
-  }
-
-  function setNearbyFsCategory(cat) {
-    nearbyFsCategory = cat;
-    var chipsEl = document.getElementById('nearbyFsChips');
-    if (chipsEl) {
-      chipsEl.querySelectorAll('.fs-map-chip').forEach(function(btn) {
-        var btnCat = btn.getAttribute('onclick').match(/'(\w+)'/)[1];
-        btn.classList.toggle('active', btnCat === cat);
-      });
-    }
-    renderNearbyFsMarkers();
-  }
-
-  /* ─── Invalidate map size when switching to Nearby tab ─── */
-  var nearbyNavBtn = document.getElementById('nav-nearby');
-  if (nearbyNavBtn) {
-    nearbyNavBtn.addEventListener('click', function() {
-      setTimeout(function() {
-        if (nearbyMap && nearbyView === 'map') nearbyMap.invalidateSize();
-      }, 100);
-    });
   }
 
   /* ─── Hook into session restore + location load ─── */
@@ -18604,8 +18285,6 @@
 })();
 </script>
 
-<!-- Nearby map bottom category bar (shown in map view) -->
-<div id="nearby-map-cat-bar" aria-label="Category filter"></div>
 
 </body>
 </html>
