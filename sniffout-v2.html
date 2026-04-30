@@ -1903,30 +1903,34 @@
     /* ═══════════════════════════════
        NEARBY TAB — extra styles
     ═══════════════════════════════ */
-    .nearby-cat-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      padding: 10px 16px 16px;
-    }
-    .nearby-cat-tile {
-      background: var(--surface);
-      border-radius: 16px;
-      padding: 16px 12px 14px;
+    .nearby-pill-rail {
       display: flex;
-      flex-direction: column;
-      align-items: center;
       gap: 8px;
-      text-align: center;
-      box-shadow: 0 1px 8px rgba(44,74,20,0.06);
+      padding: 10px 16px 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .nearby-pill-rail::-webkit-scrollbar { display: none; }
+    .nearby-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
       cursor: pointer;
-      border: 2px solid transparent;
+      white-space: nowrap;
+      flex-shrink: 0;
       transition: transform 0.15s ease;
     }
-    .nearby-cat-tile:active { transform: scale(0.97); }
-    .nearby-cat-tile--active { border-color: #2C4A14; }
-    .nearby-cat-tile-name { font-size: 11px; font-weight: 700; color: var(--ink); }
-    .nearby-cat-tile-count { font-size: 10px; font-weight: 600; color: var(--ink-2); }
+    .nearby-pill:active { transform: scale(0.97); }
+    .nearby-pill--active { background: #2C4A14; border-color: #2C4A14; color: #fff; }
+    body.night .nearby-pill--active { background: #3D6B28; border-color: #3D6B28; }
     .nearby-toggle-row {
       display: flex;
       align-items: center;
@@ -4117,7 +4121,7 @@
     body.night .walk-tag.full         { background: rgba(106,155,74,0.15); color: #6A9B4A; }
     body.night .walk-tag              { background: rgba(255,255,255,0.08); color: var(--ink-2); }
     body.night .walk-tag.partial      { background: rgba(176,122,40,0.15); color: var(--amber); }
-    body.night .venue-open-gp.open    { background: rgba(106,155,74,0.12); }
+    body.night .nearby-hours-label--open { color: #6A9B4A; }
     body.night .chip.active           { background: var(--brand-mid); color: #FFFFFF; border-color: var(--brand-mid); }
     body.night .hazard-card.brand-variant { background: rgba(106,155,74,0.07); }
     body.night .weather-hero {
@@ -4269,24 +4273,12 @@
     .venue-rating-stars { font-size: 10px; color: #D4940A; letter-spacing: 1px; }
     .venue-rating-text { font-size: 10px; font-weight: 600; color: var(--ink-2); }
     .venue-rating-gp { color: #B07A28; font-weight: 500; }
-    .venue-open-gp { font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 20px; color: #fff; }
-    .venue-open-gp.open   { background: #2C4A14; }
-    .venue-open-gp.closed { background: #C0392B; }
+    .nearby-hours-label { font-size: 12px; font-weight: 500; }
+    .nearby-hours-label--open { color: #2C4A14; }
+    .nearby-hours-label--closed { color: #B85C2C; }
     .venue-address-gp { display: none; }
     .venue-maps-link-gp { display: none; }
     .venue-card-right { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; color: var(--ink-2); }
-    .venue-cat-tip {
-      margin: 0 16px 14px;
-      background: #EBF2E4;
-      border-radius: 14px;
-      padding: 12px 16px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    .venue-cat-tip-text { font-size: 12px; color: #2C4A14; line-height: 1.4; font-weight: 500; }
-    body.night .venue-cat-tip { background: rgba(44,74,20,0.18); }
-    body.night .venue-cat-tip-text { color: #A8D874; }
     .venue-info-pill {
       display: flex;
       align-items: center;
@@ -6026,7 +6018,7 @@
       </div><!-- /me-account-section -->
 
       <!-- Version footer -->
-      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 129</p>
+      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 130</p>
 
       <!-- hidden compat spans preserved for JS -->
       <span id="journalCount" style="display:none"></span>
@@ -12165,7 +12157,6 @@
       }
     }
     saveGreenspaceFavourites(favs);
-    if (nearbyCategory === 'saved') renderSavedVenueList();
   }
 
   function isPlaceFavourited(placeId) {
@@ -12212,11 +12203,7 @@
         }
       } catch(e) { console.warn('togglePlaceFavourite Firestore error:', e); }
     }
-    if (nearbyCategory === 'saved') {
-      renderSavedVenueList();
-    } else {
-      renderVenueList();
-    }
+    renderVenueList();
   }
   const EXPLORED_KEY = 'sniffout_explored';
 
@@ -15686,8 +15673,7 @@
     { id: 'pub',    label: 'Pubs' },
     { id: 'cafe',   label: 'Cafes' },
     { id: 'shop',   label: 'Pet Shops' },
-    { id: 'vet',    label: 'Vets' },
-    { id: 'saved',  label: 'Saved' }
+    { id: 'vet',    label: 'Vets' }
   ];
 
   var CATEGORY_ICON = {
@@ -15702,8 +15688,7 @@
     pub:    luIcon('beer', 15),
     cafe:   luIcon('coffee', 15),
     shop:   luIcon('shopping-bag', 15),
-    vet:    luIcon('stethoscope', 15),
-    saved:  luIcon('bookmark', 15)
+    vet:    luIcon('stethoscope', 15)
   };
 
   var CATEGORY_LABEL = {
@@ -15820,6 +15805,64 @@
     return false;
   }
 
+  function getVenueHoursLabel(venue) {
+    var openingHours = venue.openingHours;
+    if (!openingHours || !openingHours.length) return { text: '', cls: '' };
+    var now  = new Date();
+    var day  = now.getDay();
+    var mins = now.getHours() * 60 + now.getMinutes();
+
+    function fmtTime(h, m) {
+      var ampm = h >= 12 ? 'pm' : 'am';
+      var h12 = h % 12 || 12;
+      return m > 0 ? h12 + ':' + (m < 10 ? '0' : '') + m + ampm : h12 + ampm;
+    }
+
+    // Check if currently open and get closing time
+    for (var i = 0; i < openingHours.length; i++) {
+      var p = openingHours[i];
+      if (!p.open) continue;
+      var openDay  = p.open.day;
+      var openMins = p.open.hour * 60 + (p.open.minute || 0);
+      var closeDay  = p.close ? p.close.day  : openDay;
+      var closeMins = p.close ? p.close.hour * 60 + (p.close.minute || 0) : 24 * 60;
+      var isOpen = false;
+      if (closeDay !== openDay) {
+        var prevDay = (day + 6) % 7;
+        if (openDay === prevDay && mins < closeMins) isOpen = true;
+        if (openDay === day && mins >= openMins) isOpen = true;
+      } else {
+        if (openDay === day && mins >= openMins && mins < closeMins) isOpen = true;
+      }
+      if (isOpen) {
+        var closeStr = p.close ? ' · closes ' + fmtTime(p.close.hour, p.close.minute || 0) : '';
+        return { text: 'Open now' + closeStr, cls: 'nearby-hours-label--open' };
+      }
+    }
+
+    // Find next opening slot
+    var next = null;
+    var best = Infinity;
+    for (var j = 0; j < openingHours.length; j++) {
+      var pp = openingHours[j];
+      if (!pp.open) continue;
+      var od   = pp.open.day;
+      var om   = pp.open.hour * 60 + (pp.open.minute || 0);
+      var diff = ((od - day + 7) % 7) * 24 * 60 + om - mins;
+      if (diff <= 0) diff += 7 * 24 * 60;
+      if (diff < best) { best = diff; next = pp.open; }
+    }
+
+    if (next) {
+      var dayDiff = Math.floor(best / (24 * 60));
+      var timeStr = fmtTime(next.hour, next.minute || 0);
+      var when = dayDiff === 0 ? '' : dayDiff === 1 ? 'tomorrow ' : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][next.day] + ' ';
+      return { text: 'Closed · opens ' + when + timeStr, cls: 'nearby-hours-label--closed' };
+    }
+
+    return { text: 'Closed', cls: 'nearby-hours-label--closed' };
+  }
+
   /* ─── Directions URL (iOS → Apple Maps, others → Google Maps) ─── */
 
   function getDirectionsUrl(lat, lon) {
@@ -15908,21 +15951,20 @@
     }
   }
 
-  var NEARBY_SECTION_LABELS = { pub: 'Dog-friendly pubs', cafe: 'Dog-friendly cafes', shop: 'Pet shops', vet: 'Vets', saved: 'Saved places' };
+  var NEARBY_SECTION_LABELS = { pub: 'Dog-friendly pubs', cafe: 'Dog-friendly cafes', shop: 'Pet shops', vet: 'Vets' };
   var NEARBY_TIP_TEXT = {
     pub:   'Dog-friendly means dogs are welcome inside, not just in outdoor areas.',
     cafe:  'Many cafes welcome dogs inside. Look for a water bowl by the door.',
     shop:  'Most pet shops welcome dogs. A good place to pick up treats after a walk.',
-    vet:   'Saved here for emergencies when away from home. Call ahead if possible.',
-    saved: 'Your saved places from any category. Tap the heart on any venue to save it.'
+    vet:   'Saved here for emergencies when away from home. Call ahead if possible.'
   };
 
   function setNearbyCategory(cat) {
     if (isFetching) return; // debounce — 500ms minimum between API calls
     nearbyCategory = cat;
-    // Update tab-level tiles
-    document.querySelectorAll('.nearby-cat-tile[data-nearby-cat]').forEach(function(b) {
-      b.classList.toggle('nearby-cat-tile--active', b.getAttribute('data-nearby-cat') === cat);
+    // Update pill rail
+    document.querySelectorAll('.nearby-pill[data-nearby-cat]').forEach(function(b) {
+      b.classList.toggle('nearby-pill--active', b.getAttribute('data-nearby-cat') === cat);
     });
     // Update bottom bar chips
     document.querySelectorAll('.nearby-cat-bar-chip').forEach(function(b) {
@@ -15931,26 +15973,19 @@
     // Update section label
     var labelEl = document.getElementById('nearby-section-label');
     if (labelEl) labelEl.textContent = NEARBY_SECTION_LABELS[cat] || '';
-    // Update tip text
-    var tipEl = document.getElementById('nearby-tip-card');
-    if (tipEl) { var tipText = tipEl.querySelector('.venue-cat-tip-text'); if (tipText) tipText.textContent = NEARBY_TIP_TEXT[cat] || ''; }
     var venuesEl = document.getElementById('nearby-venues');
     var countEl  = document.getElementById('nearby-count');
-    if (cat === 'saved') {
-      if (typeof renderSavedVenueList === 'function') renderSavedVenueList();
-    } else {
-      isFetching = true;
-      setTimeout(function() { isFetching = false; }, 500);
-      if (typeof gtag === 'function') { gtag('event', 'nearby_search', { 'category': cat }); }
-      if (venuesEl) venuesEl.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding ' + ((CATEGORIES.find(function(c){return c.id===cat;})||{}).label||'places').toLowerCase() + ' near you...</div></div>';
-      if (countEl) countEl.textContent = 'Loading...';
-      fetchNearbyPlaces(cat, nearbyUserLat, nearbyUserLon, nearbyLocationName, function(venues) {
-        nearbyVenues = venues;
-        renderVenueList();
-        if (nearbyView === 'map') updateMapMarkers();
-        if (nearbyFsMap && typeof renderNearbyFsMarkers === 'function') renderNearbyFsMarkers();
-      });
-    }
+    isFetching = true;
+    setTimeout(function() { isFetching = false; }, 500);
+    if (typeof gtag === 'function') { gtag('event', 'nearby_search', { 'category': cat }); }
+    if (venuesEl) venuesEl.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Finding ' + ((CATEGORIES.find(function(c){return c.id===cat;})||{}).label||'places').toLowerCase() + ' near you...</div></div>';
+    if (countEl) countEl.textContent = 'Loading...';
+    fetchNearbyPlaces(cat, nearbyUserLat, nearbyUserLon, nearbyLocationName, function(venues) {
+      nearbyVenues = venues;
+      renderVenueList();
+      if (nearbyView === 'map') updateMapMarkers();
+      if (nearbyFsMap && typeof renderNearbyFsMarkers === 'function') renderNearbyFsMarkers();
+    });
   }
 
   function renderNearbyTab(lat, lon, locationName) {
@@ -15963,24 +15998,14 @@
     if (nearbyLocName && locationName) nearbyLocName.textContent = locationName;
     if (nearbyLocLine && locationName) nearbyLocLine.style.display = '';
 
-    var TILE_CONFIG = {
-      pub:   { iconBg: '#FEF5E4', iconStroke: '#B07A28', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B07A28" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h12l-1.5 14H6.5L5 3z"/><path d="M8 3V2M12 3V2M16 3V2"/><path d="M17 8h2a2 2 0 0 1 0 4h-2"/></svg>' },
-      cafe:  { iconBg: '#FEF0E8', iconStroke: '#B85C2C', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B85C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>' },
-      shop:  { iconBg: '#EBF2E4', iconStroke: '#2C4A14', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2C4A14" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="17" r="1.5" fill="#2C4A14"/><circle cx="17" cy="17" r="1.5" fill="#2C4A14"/><circle cx="9" cy="7" r="1.5" fill="#2C4A14"/><circle cx="17" cy="7" r="1.5" fill="#2C4A14"/><circle cx="13" cy="12" r="2" fill="#2C4A14"/></svg>' },
-      vet:   { iconBg: '#EDE8F5', iconStroke: '#7B5EA7', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7B5EA7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>' },
-      saved: { iconBg: '#FEF5E4', iconStroke: '#B07A28', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B07A28" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' }
-    };
     var content = document.getElementById('nearby-content');
     if (content) {
       content.innerHTML =
-        '<div class="nearby-cat-grid" id="nearby-filter-row">' +
+        '<div class="nearby-pill-rail" id="nearby-filter-row">' +
           CATEGORIES.map(function(c) {
-            var tc = TILE_CONFIG[c.id] || TILE_CONFIG.pub;
-            return '<div class="nearby-cat-tile' + (c.id === nearbyCategory ? ' nearby-cat-tile--active' : '') + '" data-nearby-cat="' + c.id + '" onclick="setNearbyCategory(\'' + c.id + '\')">' +
-              '<div style="width:44px;height:44px;border-radius:14px;background:' + tc.iconBg + ';display:flex;align-items:center;justify-content:center;">' + tc.icon + '</div>' +
-              '<div class="nearby-cat-tile-name">' + c.label + '</div>' +
-              '<div class="nearby-cat-tile-count" id="nearby-tile-count-' + c.id + '"></div>' +
-            '</div>';
+            return '<button class="nearby-pill' + (c.id === nearbyCategory ? ' nearby-pill--active' : '') + '" data-nearby-cat="' + c.id + '" onclick="setNearbyCategory(\'' + c.id + '\')">' +
+              (CATEGORY_CHIP_ICON[c.id] || '') + c.label +
+            '</button>';
           }).join('') +
         '</div>' +
         '<div class="nearby-toggle-row" id="nearby-toggle-row">' +
@@ -15991,12 +16016,8 @@
     }
     syncIcons();
 
-    // Category tiles use inline onclick - no additional listener needed
-
     // Initial load — skip fetch if already fetched for this location (tab switch)
-    if (nearbyCategory === 'saved') {
-      renderSavedVenueList();
-    } else if (!nearbyHasFetched) {
+    if (!nearbyHasFetched) {
       nearbyHasFetched = true;
       fetchNearbyPlaces(nearbyCategory, lat, lon, nearbyLocationName, function(venues) {
         nearbyVenues = venues;
@@ -16041,16 +16062,7 @@
         : venues.length + ' place' + (venues.length !== 1 ? 's' : '') + ' found';
     }
 
-    // Update tile count for active category
-    var tileCountEl = document.getElementById('nearby-tile-count-' + nearbyCategory);
-    if (tileCountEl) tileCountEl.textContent = venues.length + ' nearby';
-
-    var tipText = NEARBY_TIP_TEXT[nearbyCategory] || '';
-    var infoIconSVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(44,74,20,0.1)" stroke="#2C4A14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
-    var tipHtml = tipText
-      ? '<div class="venue-cat-tip" id="nearby-tip-card"><div style="width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">' + infoIconSVG + '</div><span class="venue-cat-tip-text">' + tipText + '</span></div>'
-      : '';
-    el.innerHTML = tipHtml + visibleVenues.map(renderVenueCard).join('') +
+    el.innerHTML = visibleVenues.map(renderVenueCard).join('') +
       '<div class="nearby-disclaimer">Results may not always be up to date. We recommend calling ahead or checking official sources to confirm dogs are welcome and to verify opening times.</div>';
 
     if (hiddenVenues.length > 0) {
@@ -16092,10 +16104,9 @@
       ? '<span class="venue-rating-gp">★ ' + venue.rating.toFixed(1) + ' (' + venue.ratingCount + ')</span>'
       : '';
 
-    var openHtml = '';
-    var _openNow = isVenueOpenNow(venue.openingHours);
-    if (_openNow === true)  openHtml = '<span class="venue-open-gp open">Open now</span>';
-    if (_openNow === false) openHtml = '<span class="venue-open-gp closed">Closed</span>';
+    var hoursHtml = '';
+    var _hours = getVenueHoursLabel(venue);
+    if (_hours.text) hoursHtml = '<span class="nearby-hours-label ' + _hours.cls + '">' + escHtml(_hours.text) + '</span>';
 
     var venuePlaceholders = {
       pub:  'https://raw.githubusercontent.com/jayeshfatania/my-first-repo/main/placeholder-pub.png',
@@ -16130,8 +16141,8 @@
           (typeLabel ? '<div class="venue-card-type-gp">' + typeLabel + '</div>' : '') +
           '<div class="venue-card-meta-gp">' +
             (distStr ? '<span>' + distStr + '</span>' : '') +
-            (distStr && openHtml ? '<span class="venue-meta-dot"></span>' : '') +
-            openHtml +
+            (distStr && hoursHtml ? '<span class="venue-meta-dot"></span>' : '') +
+            hoursHtml +
           '</div>' +
           starsHtml +
         '</div>' +
@@ -16366,13 +16377,10 @@
     var pinClass = getCategoryPinClass(venue.cat);
     var catLabel = CATEGORY_LABEL[venue.cat] || 'Place';
     var distText = venue.dist != null ? formatDist(venue.dist) : '';
-    var openHtml = '';
-    var _openNowDetail = isVenueOpenNow(venue.openingHours);
-    if (_openNowDetail === true) {
-      openHtml = ' &middot; <span style="color:#2D7A3A;font-weight:500">Open now</span>';
-    } else if (_openNowDetail === false) {
-      openHtml = ' &middot; <span style="color:var(--red);font-weight:500">Closed</span>';
-    }
+    var _hoursDetail = getVenueHoursLabel(venue);
+    var openHtml = _hoursDetail.text
+      ? ' &middot; <span class="nearby-hours-label ' + _hoursDetail.cls + '">' + escHtml(_hoursDetail.text) + '</span>'
+      : '';
     var mapsUrl = venue.mapsUrl
       ? venue.mapsUrl
       : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(venue.name);
