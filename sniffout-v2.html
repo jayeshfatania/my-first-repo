@@ -1934,9 +1934,21 @@
     .nearby-section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(44,74,20,0.45); }
     .nearby-count { font-size: 11px; font-weight: 600; color: var(--ink-2); letter-spacing: 0; text-transform: none; }
     /* Nearby tab — sheet layout */
+    #tab-nearby {
+      height: calc(100vh - 56px);
+      overflow: hidden;
+    }
     #tab-nearby.active { display: flex; flex-direction: column; overflow: hidden; }
     #nearby-content { position: relative; flex: 1; min-height: 0; overflow: hidden; }
-    #nearby-map { position: absolute; inset: 0; z-index: 0; }
+    #nearby-map {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: auto !important;
+      z-index: 0;
+    }
     .nearby-sheet {
       position: absolute;
       left: 0;
@@ -5858,7 +5870,7 @@
       </div><!-- /me-account-section -->
 
       <!-- Version footer -->
-      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 133</p>
+      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 134</p>
 
       <!-- hidden compat spans preserved for JS -->
       <span id="journalCount" style="display:none"></span>
@@ -15762,8 +15774,8 @@
     nearbySheetEl = document.getElementById('nearby-sheet');
     if (!nearbySheetEl) return;
 
-    // Fixed offsets: bottom nav ~56px, tab header ~50px
-    nearbyPanelHeight = window.innerHeight - 56 - 50;
+    var panel = document.getElementById('tab-nearby');
+    nearbyPanelHeight = panel ? panel.offsetHeight : (window.innerHeight - 56);
 
     NEARBY_SNAP.peek = 0;
     NEARBY_SNAP.mid  = -(nearbyPanelHeight * 0.38);
@@ -15860,7 +15872,9 @@
     syncIcons();
     initNearbySheet();
     if (lat && lon) initNearbyMap(lat, lon);
-    setTimeout(function() { if (nearbyMap) nearbyMap.invalidateSize(); }, 200);
+    if (nearbyMap) {
+      setTimeout(function() { nearbyMap.invalidateSize(); }, 50);
+    }
 
     // Defer initial fetch so initNearbyMap/initNearbySheet have time to complete
     setTimeout(function() {
