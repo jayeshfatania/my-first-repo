@@ -1939,7 +1939,6 @@
     #nearby-map { position: absolute; inset: 0; z-index: 0; }
     .nearby-sheet {
       position: absolute;
-      top: 0;
       left: 0;
       right: 0;
       bottom: 0;
@@ -1956,9 +1955,11 @@
     .nearby-sheet-handle-bar {
       display: flex;
       justify-content: center;
-      padding: 10px 0 4px;
+      align-items: center;
+      padding: 14px 0 10px;
       cursor: grab;
       flex-shrink: 0;
+      min-height: 44px;
       touch-action: none;
     }
     .nearby-sheet-handle {
@@ -5857,7 +5858,7 @@
       </div><!-- /me-account-section -->
 
       <!-- Version footer -->
-      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 132</p>
+      <p class="me-version-footer">Sniffout &middot; v0.4.2 &middot; build 133</p>
 
       <!-- hidden compat spans preserved for JS -->
       <span id="journalCount" style="display:none"></span>
@@ -15701,13 +15702,15 @@
   function snapNearbySheet(position, animate) {
     if (!nearbySheetEl) return;
     nearbySheetSnap = position;
-    var y = NEARBY_SNAP[position] !== undefined ? NEARBY_SNAP[position] : 0;
-    nearbySheetEl.style.transition = (animate === false)
+    var y = NEARBY_SNAP[position];
+    nearbySheetEl.style.transition = animate === false
       ? 'none'
       : 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)';
     nearbySheetEl.style.transform = 'translateY(' + y + 'px)';
     var venuesEl = document.getElementById('nearby-venues');
-    if (venuesEl) venuesEl.style.overflowY = position === 'full' ? 'auto' : 'hidden';
+    if (venuesEl) {
+      venuesEl.style.overflowY = (position === 'full' || position === 'mid') ? 'auto' : 'hidden';
+    }
   }
 
   function snapNearbySheetToMid() { snapNearbySheet('mid', true); }
@@ -15758,34 +15761,26 @@
   function initNearbySheet() {
     nearbySheetEl = document.getElementById('nearby-sheet');
     if (!nearbySheetEl) return;
-    var bottomNav  = document.querySelector('nav');
-    var navHeight  = bottomNav ? bottomNav.offsetHeight : 64;
-    var headerEl   = document.querySelector('.tab-title-bar');
-    var headerHeight = headerEl ? headerEl.offsetHeight : 60;
-    nearbyPanelHeight = window.innerHeight - navHeight - headerHeight;
-    NEARBY_SNAP.full = 0;
-    NEARBY_SNAP.mid  = nearbyPanelHeight * 0.35;
-    NEARBY_SNAP.peek = nearbyPanelHeight * 0.72;
-    snapNearbySheet(nearbySheetSnap, false);
+
+    // Fixed offsets: bottom nav ~56px, tab header ~50px
+    nearbyPanelHeight = window.innerHeight - 56 - 50;
+
+    NEARBY_SNAP.peek = 0;
+    NEARBY_SNAP.mid  = -(nearbyPanelHeight * 0.38);
+    NEARBY_SNAP.full = -(nearbyPanelHeight * 0.72);
+
+    console.log('nearbyPanelHeight:', nearbyPanelHeight, 'mid:', NEARBY_SNAP.mid, 'full:', NEARBY_SNAP.full);
+
+    snapNearbySheet('peek', false);
     if (!nearbySheetEl._dragBound) {
       nearbySheetEl._dragBound = true;
       initNearbySheetDrag();
     }
-    if (!window._nearbyResizeBound) {
-      window._nearbyResizeBound = true;
-      window.addEventListener('resize', function() {
-        var bn = document.querySelector('nav');
-        var nh = bn ? bn.offsetHeight : 64;
-        var he = document.querySelector('.tab-title-bar');
-        var hh = he ? he.offsetHeight : 60;
-        nearbyPanelHeight = window.innerHeight - nh - hh;
-        NEARBY_SNAP.full = 0;
-        NEARBY_SNAP.mid  = nearbyPanelHeight * 0.35;
-        NEARBY_SNAP.peek = nearbyPanelHeight * 0.72;
-        snapNearbySheet(nearbySheetSnap, false);
-      });
-    }
   }
+
+  window.addEventListener('resize', function() {
+    if (window.nearbySheetEl) initNearbySheet();
+  });
 
   var NEARBY_SECTION_LABELS = { pub: 'Dog-friendly pubs', cafe: 'Dog-friendly cafes', shop: 'Pet shops', vet: 'Vets' };
   var NEARBY_TIP_TEXT = {
@@ -15867,8 +15862,10 @@
     if (lat && lon) initNearbyMap(lat, lon);
     setTimeout(function() { if (nearbyMap) nearbyMap.invalidateSize(); }, 200);
 
-    // Fire initial category fetch through setNearbyCategory
-    setNearbyCategory(nearbyCategory);
+    // Defer initial fetch so initNearbyMap/initNearbySheet have time to complete
+    setTimeout(function() {
+      setNearbyCategory(nearbyCategory || 'pub');
+    }, 100);
   }
 
   function renderVenueList() {
